@@ -1,0 +1,64 @@
+{
+	"id":"testform",
+	"fields":[
+		{
+			"name":"tree",
+			"id":"tree",
+			"type":"Tree",
+			"label":"Testing Menu Structure",
+			"required":true,
+			"sql":"select id as value, title as text from pages where state=1",
+			"filter":"STRING",
+			"description":"Drag and drop to order your menu items. Default field sql is for published pages."
+		},
+		{
+			"name":"test_text_field",
+			"id":"test_text_field",
+			"type":"Text",
+			"label":"Test Text Field",
+			"required":true,
+			"description":"An example description",
+			"maxlength":255,
+			"minlength":3,
+			"filter":"STRING"
+		},
+		{
+			"name": "test_text_field2",
+			"id": "test_text_field2",
+			"type": "Rich",
+			"label": "Test Text Field 2",
+			"required": true,
+			"description": "HTML Field",
+			"filter": "RAW"
+		},
+		{
+			"name": "test_tagfield",
+			"id": "test_tagfield",
+			"type": "TagSingle",
+			"label": "Single Tag Test",
+			"required": false,
+			"description": "Single Tag Test Field",
+			"filter": "NUMBER",
+			"content_type":2
+		},
+		{
+			"name": "image",
+			"id": "image",
+			"type": "Image",
+			"label": "Choose Image",
+			"required": true,
+			"description": "Image Field Tester",
+			"filter": "NUM"
+		},
+		{
+			"name": "test_multitagfield",
+			"id": "test_multitagfield",
+			"type": "TagMultiple",
+			"label": "Multiple Tag Test",
+			"required": false,
+			"description": "Multiple Tag Test Field",
+			"filter": "NUMBER",
+			"content_type":2
+		}
+	]
+}

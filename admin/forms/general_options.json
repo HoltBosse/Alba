@@ -1,0 +1,51 @@
+{
+	"id":"general_options",
+	"fields":[
+		{
+			"name":"ga_key",
+			"id":"ga_key",
+			"type":"Text",
+			"label":"Google Analytics Key",
+			"input_type":"text",
+			"required":false,
+			"description":"Google Analytics key - if left blank, analytics will not be loaded.",
+			"maxlength":10,
+			"minlength":10,
+			"filter":"STRING",
+			"default":""
+		},
+		{
+			"name":"session_time",
+			"id":"session_time",
+			"type":"Text",
+			"label":"Session Timeout",
+			"input_type":"number",
+			"required":true,
+			"description":"Length of session in minutes",
+			"maxlength":86400,
+			"minlength":1,
+			"filter":"INT",
+			"default":15
+		},
+		{
+			"name":"debug",
+			"id":"debug",
+			"type":"Checkbox",
+			"label":"Show Debug Info",
+			"required":false,
+			"description":"Override main configuration debug setting - does not affect error reporting, only shows CMS debug output.",
+			"filter":"INT",
+			"default":0
+		},
+		{
+			"name": "admin_logo",
+			"id": "admin_logo",
+			"type": "Image",
+			"label": "Choose Logo Image",
+			"required": false,
+			"description": "Choose the logo to display in the admin section.",
+			"default":1,
+			"filter": "NUM"
+		}
+	]
+}

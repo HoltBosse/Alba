@@ -1,0 +1,36 @@
+{
+	"id": "position_options_fields",
+	"fields": [
+		{
+			"name": "position_control",
+			"id": "position_control",
+			"type": "Select",
+			"label": "Position Control",
+			"description": "Per-page option will ignore any position or pages previously set in this section.",
+			"filter": "NUMBER",
+			"default":1,
+			"select_options":[
+				{"value":1,"text":"On all pages except"},
+				{"value":0,"text":"Only on these pages"},
+				{"value":2,"text":"Choose position per-page"}
+			]
+		},
+		{
+			"label":"Page Selection",
+			"name":"position_pages",
+			"id":"position_pages",
+			"type":"Pageselector",
+			"required":false,
+			"filter":"ARRAYOFINT"
+		},
+		{
+			"name": "global_position",
+			"id": "global_position",
+			"type": "Positionselect",
+			"label": "Template Position",
+			"required":true,
+			"filter": "STRING",
+			"default":""
+		}
+	]
+}

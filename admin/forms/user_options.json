@@ -1,0 +1,25 @@
+{
+	"id":"user_options",
+	"fields":[
+		{
+			"name":"email_new_users",
+			"id":"email_new_users",
+			"type":"Checkbox",
+			"label":"Email New Users",
+			"required":true,
+			"description":"Send a welcome email to any new users created in the system",
+			"default":0,
+			"filter":"NUM"
+		},
+		{
+			"name":"test_text_field",
+			"id":"test_text_field",
+			"type":"Text",
+			"label":"Test Text Field",
+			"required":true,
+			"description":"Testing text field for configuration object",
+			"default":"test",
+			"filter":"STRING"
+		}
+	]
+}

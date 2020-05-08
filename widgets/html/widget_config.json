@@ -1,0 +1,16 @@
+{
+	"title":"HTML / Plain Content",
+	"location":"html",
+	"id":"widget_html_options",
+	"fields":[
+		{
+			"name":"markup",
+			"id":"markup",
+			"type":"Rich",
+			"label":"Content",
+			"required":true,
+			"minlength":3,
+			"filter":"RAW"
+		}
+	]
+}

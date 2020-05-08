@@ -1,0 +1,270 @@
+<?php
+// guest, registered, author, editor, admin
+defined('CMSPATH') or die; // prevent unauthorized access
+
+class Page {
+	public $id;
+	public $state;
+	public $title;
+	public $alias;
+	public $template;
+	public $parent;
+	public $content_type;
+	public $view;
+	public $updated;
+	public $view_configuration;
+
+
+
+	public function __construct() {
+		$this->id = 0;
+		$this->state = 1;
+		$this->title = "";
+		$this->alias = "";
+		$this->template = 1;
+		$this->parent = false;
+		$this->updated = date('Y-m-d H:i:s');
+		$this->content_type = null;
+		$this->view = null;
+		$this->view_configuration = false;
+	}
+
+	public function get_url() {
+		// TODO: save url in new column on page save/update
+		$segments = array($this->alias);
+		$parent = $this->parent;
+		while ($parent>=0) {
+			$query = "select parent,alias from pages where id=?";
+			$stmt = CMS::Instance()->pdo->prepare($query);
+			$stmt->execute(array($parent));
+			$result = $stmt->fetch();
+			$parent = $result->parent;
+			array_unshift ($segments, $result->alias);
+			//$segments[] = $result->alias;
+		}
+		$url = Config::$uripath . '/' . implode('/',$segments);
+		return $url;
+	}
+	
+
+	public static function get_page_depth($id) {
+		$parent_root = false;
+		$parent=$id;
+		$depth = 0;
+		while (!$parent_root) {
+			$query = "select parent,alias from pages where id=?";
+			$stmt = CMS::Instance()->pdo->prepare($query);
+			$stmt->execute(array($parent));
+			$result = $stmt->fetch();
+			$parent = $result->parent;
+			$depth++;
+			if ($parent=="-1") {
+				$parent_root=true;
+			}
+		}
+		return $depth;
+	}
+
+	// $pdo->prepare($sql)->execute([$name, $id]);
+	public static function get_all_pages() {
+		//echo "<p>Getting all users...</p>";
+		//$db = new db();
+		//$db = CMS::$pdo;
+		//$result = $db->pdo->query("select * from users")->fetchAll();
+		$result = CMS::Instance()->pdo->query("select * from pages where state>-1")->fetchAll();
+		return $result;
+	}
+
+	public static function get_all_pages_by_depth($parent=-1, $depth=-1) {
+		$depth = $depth+1;
+		$result=array();
+		$stmt = CMS::Instance()->pdo->prepare("select * from pages where state>-1 and parent=?");
+		$stmt->execute(array($parent));
+		$children = $stmt->fetchAll();
+		foreach ($children as $child) {
+			$child->depth = $depth;
+			$result[] = $child;
+			$result = array_merge ($result, Page::get_all_pages_by_depth($child->id, $depth));
+		}
+		return $result;
+	}
+
+
+	public static function get_pages_from_id_array ($id_array) {
+		if (is_array($id_array)) {
+			$in_string = implode(',',$id_array);
+			$query = "select * from pages where id in ({$in_string})";
+			return  CMS::Instance()->pdo->query($query)->fetchAll();
+		}
+		else {
+			CMS::Instance()->queue_message('Expected array in function get_pages_from_id_array', 'danger', Config::$uripath . "/admin");
+		}
+	}
+
+	public static function has_overrides ($page) {
+		//echo "Page:{$page} Template:{$template}";
+		$query = "select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($page));
+		$w = $stmt->fetchAll();
+		//CMS::pprint_r ($w);
+		return $w;
+	}
+
+	public function load_from_post() {
+		$this->title = CMS::getvar('title','TEXT');
+		$this->state = CMS::getvar('state','NUM');
+		if (!$this->state) {
+			$this->state = 1;
+		}
+		$this->template = CMS::getvar('template','NUM');
+		$this->alias = CMS::getvar('alias','TEXT');
+		if (!$this->alias) {
+			$this->alias = CMS::stringURLSafe($this->title);
+		}
+		$this->parent = CMS::getvar('parent','NUM');
+		$this->content_type = CMS::getvar('content_type','NUM');
+		$this->view = CMS::getvar('content_type_controller_view','NUM');
+
+		// OLD: view_options now handles by options_form.json in view
+		$this->view_configuration = CMS::getvar('view_options','ARRAYTOJSON');
+		// TODO: load from options_form
+		// e.g. $options_form = new Form(form location);
+		// $options_form->set_from_submit();
+		// validate
+		// jsonify
+		// save as $this->view_configuration
+		
+		$this->id = CMS::getvar('id','NUM');
+
+
+
+		return true;
+	}
+
+	public function load_from_id($id) {
+		$query = "select * from pages where id=?";
+		//$db = new db();
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($id));
+		$result = $stmt->fetch();
+		if ($result) {
+			$this->id = $result->id;
+			$this->state = $result->state;
+			$this->title = $result->title;
+			$this->alias = $result->alias;
+			$this->template = $result->template;
+			$this->parent = $result->parent;
+			$this->updated = $result->updated;
+			$this->content_type = $result->content_type;
+			$this->view = $result->content_view;
+			$this->view_configuration = $result->content_view_configuration;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+
+	public function load_from_alias($alias) {
+		$query = "select * from pages where alias=?";
+		//$db = new db();
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($alias));
+		$result = $stmt->fetch();
+		if ($result) {
+			$this->id = $result->id;
+			$this->state = $result->state;
+			$this->title = $result->title;
+			$this->alias = $result->alias;
+			$this->template = $result->template;
+			$this->parent = $result->parent;
+			$this->updated = $result->updated;
+			$this->content_type = $result->content_type;
+			$this->view = $result->content_view;
+			$this->view_configuration = $result->content_view_configuration;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+
+
+	public function save() {
+		if ($this->id) {
+			// update
+			$query = "update pages set state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, content_view_configuration=? where id=?";
+			$result = CMS::Instance()->pdo->prepare($query)->execute(array(
+				$this->state, 
+				$this->title, 
+				$this->alias, 
+				$this->content_type,
+				is_numeric($this->view) ? $this->view : NULL,
+				$this->parent,
+				$this->template,
+				$this->view_configuration,
+				$this->id
+			));
+			if ($result) {
+				// saved ok
+				return true;
+			}
+			else {
+				if (Config::$debug) {
+					echo "<code>" . $e->getMessage() . "</code>";
+					exit(0);
+				}
+				return false;
+			}
+		}
+		else {
+			// insert new
+			$query = "insert into pages (state, title, alias, content_type, content_view, parent, template, content_view_configuration) values(?,?,?,?,?,?,?,?)";
+			try {
+				$stmt = CMS::Instance()->pdo->prepare($query);
+				$result = $stmt->execute(array(
+					$this->state, 
+					$this->title, 
+					$this->alias, 
+					$this->content_type,
+					is_numeric($this->view) ? $this->view : NULL,
+					$this->parent,
+					$this->template,
+					$this->view_configuration
+				));	
+			}
+			catch (PDOException $e) {
+				//CMS::Instance()->queue_message('Error saving page','danger',Config::$uripath.'/admin/pages/');
+				if (Config::$debug) {
+					CMS::Instance()->queue_message('Error saving page: ' . $e->getMessage(),'danger',Config::$uripath.'/admin/pages/');
+					//echo "<code>" . $e->getMessage() . "</code>";
+				}
+				$result = false;
+				exit(0);
+			}
+			if ($result) {
+				// update page id with last pdo insert
+				$this->id = CMS::Instance()->pdo->lastInsertId();
+				return true;
+			}
+			else {
+				// todo - check for username/email already existing and clarify
+				CMS::Instance()->queue_message('Unable to create page.' . $query ,'danger',Config::$uripath.'/admin/pages');
+				return false;
+			}
+		}
+	}
+
+
+
+	
+
+
+
+
+
+
+}

@@ -1,0 +1,252 @@
+html {
+  box-sizing: border-box;
+  font-size:14px;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+#mm_container {
+  position:relative;
+}
+#mm_container {
+  display:flex;
+  flex-flow: row wrap; 
+  justify-content: flex-start;
+}
+.mm_item {
+  flex: auto; 
+  width:18%;
+  min-width:100px;
+  max-width:200px;
+      position: relative;
+    padding-bottom: 6em;
+	margin-bottom:3em;
+	margin-right:1em;
+  background-size:auto;
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+.mm_item.selected {
+  background:#ddd;
+  outline:1px solid #ccc;
+}
+.pull-right {
+	float:right;
+}
+#main {
+	margin-top:3rem;
+}
+
+.mm_push_bottom {
+	position:absolute;
+	bottom:0;
+	width:100%;
+}
+.mm_item img {
+  display:block;
+  max-width:100%;
+  transition:0.2s all ease;
+  margin:0 auto;
+  position:relative;
+  
+}
+
+.mm_item:hover {
+  cursor:pointer;
+}
+.mm_item:hover img {
+  transform:scale(1.04) ;
+}
+
+.mm_item .title {
+  text-align:center;
+  overflow-wrap: break-word;
+  padding:0.2em;
+  margin-bottom:2em;
+  background:rgba(255,255,255,0.8);
+}
+
+input.mm_url {
+	width:100%;
+	font-size:70%;
+	display:block;
+}
+
+.mm_dirname {
+  text-align:center;
+  overflow-wrap:break-word;
+}
+
+.container {
+	/* margin-left: 32px;
+    margin-right: 32px; */
+}
+
+.notification {
+	transform: translateY(1rem);
+}
+
+.mm_item.pdf {
+  background-image:url(http://www.stdicon.com/pdf);
+}
+.mm_item.zip {
+  background-image:url(http://www.stdicon.com/zip);
+}
+
+html > footer {
+	background:rgba(0,0,0,0.1);
+	padding:3rem;
+	margin-top:2rem;
+}
+p.center {
+	text-align:center;
+}
+
+span.user_list, td.note_td, .lighter_note, .unimportant, .usage {
+	font-size:70%; opacity:0.6;
+}
+
+.grip {
+	display:inline-block;
+	padding:0.6rem;
+	border-radius:0.2rem;
+	border:1px solid rgba(0,0,0,0.2);
+}
+.grip:hover {
+	cursor:move;
+}
+
+.toggle_wrap {
+	margin-top:1rem;
+}
+.toggle_wrap.hidden {
+	display:none;
+}
+
+.fixed-control-bar {
+	position:fixed;
+	overflow:hidden;
+	width:100vw;
+	padding:1rem;
+	border-bottom:1px solid #aaa;
+	box-shadow:0 0 10px rgba(0,0,0,0.5);
+	top:0;
+	left:0;
+	background:white;
+	z-index:40;
+}
+
+/* image selector */
+
+img.lazy {
+	height:0;
+}
+img.lazy.loaded {
+	height:auto;
+	padding-bottom:0;
+}
+.image_selector.hidden {
+	display:none;
+}
+.image_selector {
+	display:flex; 
+	overflow:scroll; 
+	width:100vw;
+	height:100vh;
+	position:fixed;
+	top:0;
+	left:0;
+	padding:1rem;
+	background:rgba(255,255,255,0.99);
+	z-index: 99;
+	flex-wrap:wrap;
+}
+.image_selector img { max-width:300px;object-fit:contain; } 
+img.image_selector_thumb{object-fit:contain; width:300px;}
+.selected_image_wrap.active p { display:none; }
+.selected_image_wrap img { display:none; }
+.selected_image_wrap.active img { display:inline-block;}
+
+/* tree */
+.available_tree_items {
+				max-width:25%;
+			}
+			.available_tree_items,.tree_field_tree_wrap {
+				margin:1rem;
+				border:2px solid rgba(0,0,0,0.1);
+				padding:1rem;
+			}
+			.tree_field_tree_wrap {
+				width:100%;
+			}
+			.tree_field_node_drop {
+				display:inline-block;
+				color:white;
+				margin:0.5rem; 
+				padding:0.5rem; 
+				/* background:#bdb;  */
+				border-radius:0.3rem;
+				border: 2px dashed rgba(0,0,0,0.1);
+				color:rgba(0,0,0,0.2);
+			}
+			.before_after_node_drop {
+				display:inline-block;
+				color:white;
+				margin:0.5rem; 
+				padding:0.5rem; 
+				/* background:#edb;  */
+				border-radius:0.3rem;
+				border: 2px dashed rgba(0,0,0,0.1);
+				color:rgba(0,0,0,0.2);
+			}
+			.tree_item:hover {
+				cursor:move;
+			}
+			.disabled.tree_item {
+				opacity:0.5;
+			}
+			.disabled.tree_item:hover {
+				cursor:not-allowed;
+			}
+			.node_children {
+				margin-left:3rem;
+			}
+			.tree_field_node.root > div:first-child {
+				border-bottom:2px solid rgba(0,0,0,0.1);
+			}
+			.root > div > .node_title {
+				display:none;
+			}
+			.node_title {
+				margin-top:1em;
+				margin-bottom:0;
+				flex-shrink: 0;
+   				width: 8em;
+				border-bottom: 1px solid rgba(0,0,0,0.1);
+			}
+			.node_title:hover {
+				cursor:move;
+			}
+			.tree_field_node_drop_wrap {
+				display: flex;
+				align-items: center;
+			}
+			.tree_field_container {
+				display:flex;
+				align-items: flex-start;
+			}
+
+
+/* editor misc */
+
+.rich_image.pull-left {
+	float:left;
+}
+.rich_image.pull-right {
+	float:right;
+}
+
+/* clean up multiselect using slimselect library */
+.select:not(.is-multiple):not(.is-loading)::after {
+	display:none;
+}

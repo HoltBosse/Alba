@@ -1,0 +1,15 @@
+{
+	"title":"HTML / Plain Content",
+	"id":"basic_html",
+	"fields":[
+		{
+			"name":"markup",
+			"id":"markup",
+			"type":"Rich",
+			"label":"Content",
+			"required":true,
+			"minlength":3,
+			"filter":"RAW"
+		}
+	]
+}

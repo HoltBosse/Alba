@@ -1,0 +1,13 @@
+# testing log
+cmslog.txt
+# used for synching remote installations
+version.json
+# testing scripts
+makepackage.php
+cleardb.php
+# htaccess
+.htaccess
+# phpmyadmin
+phpmyadmin/
+# ignore created packages
+latest.zip

@@ -1,0 +1,67 @@
+{
+	"id": "required_content_fields",
+	"fields": [
+		{
+			"label":"Content Title",
+			"name":"title",
+			"id":"title",
+			"type":"Text",
+			"required":true,
+			"filter":"STRING",
+			"maxlength":255
+		},
+		{
+			"label":"URL Friendly",
+			"name":"alias",
+			"id":"alias",
+			"type":"Text",
+			"filter":"ALIAS",
+			"maxlength":255,
+			"description":""
+		},
+		{
+			"label":"Note",
+			"name":"note",
+			"id":"note",
+			"type":"Text",
+			"required":false,
+			"filter":"STRING",
+			"maxlength":255,
+			"description":"Not required, but may be useful.",
+			"default":""
+		},
+		{
+			"name": "state",
+			"id": "state",
+			"type": "Select",
+			"label": "Content State",
+			"description": "Choose to show content or not globally.",
+			"filter": "NUMBER",
+			"default":1,
+			"select_options":[
+				{"value":1,"text":"Published"},
+				{"value":0,"text":"Unpublished"}
+			]
+		},
+		{
+			"label":"Start",
+			"name":"start",
+			"id":"start",
+			"type":"Text",
+			"required":false,
+			"filter":"STRING",
+			"maxlength":255,
+			"input_type":"date"
+		},
+		{
+			"label":"End",
+			"name":"end",
+			"id":"end",
+			"type":"Text",
+			"required":false,
+			"filter":"STRING",
+			"maxlength":255,
+			"input_type":"date"
+		}
+	]
+}

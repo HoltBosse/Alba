@@ -1,0 +1,15 @@
+{
+	"id":"tag_options_form",
+	"fields":[
+		{
+			"name": "blogtag",
+			"id": "blogtag",
+			"type": "TagSingle",
+			"label": "Blog Tag",
+			"required": true,
+			"description": "",
+			"filter": "NUMBER",
+			"content_type":1
+		}
+	]
+}
