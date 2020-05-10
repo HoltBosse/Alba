@@ -197,11 +197,13 @@ class Field_Rich extends Field {
 						var media_selector = document.createElement('div');
 						media_selector.innerHTML =`
 						<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
+						<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
 						<h1 style='color:white;'>Choose Image <a href='#' class='delete_parent'>X</a></h1>
 						<div class='media_selector'><h2>LOADING</h2></div>
 						</div>
 						`;
 						document.body.appendChild(media_selector);
+						
 						// fetch images
 						postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images"}, function(data) { 
 							var image_list = JSON.parse(data);
@@ -217,6 +219,11 @@ class Field_Rich extends Field {
 							});
 							image_list_markup += "</ul>";
 							media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
+							// handle click close
+							document.getElementById('media_selector_modal_close').addEventListener('click',function(e){
+								var modal = e.target.closest('.media_selector_modal');
+								modal.parentNode.removeChild(modal);
+							});
 							// handle modal close
 							media_selector.querySelector('.delete_parent').addEventListener('click',function(e){
 								e.preventDefault();
