@@ -421,7 +421,7 @@ final class CMS {
 		} 
 		
 		//$this->content = include_once(CMSPATH . DS . 'templates' . DS . $template . DS . 'index.php');
-		
+
 		//$this->include_once_content (CMSPATH .'/templates/' . $template . '/index.php');
 		// if ADMIN but guest, show login
 		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::$frontendlogin) ) {
@@ -520,7 +520,7 @@ final class CMS {
 				}
 				if (!$alias) {
 					// 404
-					echo "<h1>404</h1>";
+					echo "<h1>404!</h1>";
 					exit(0);
 				}
 				if (Config::$debug) {

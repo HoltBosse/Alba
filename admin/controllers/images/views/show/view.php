@@ -359,9 +359,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		if (xhr.readyState === 4) {
 		if (xhr.status === 200) {
 			// OK - Do something
-			console.log(xhr.responseText);
+			//console.logconsole.log(xhr.responseText);
 			// uploaded ok - go to discover page for naming / processing
-			//window.location.href = '<?php echo Config::$uripath;?>/admin/images/discover';
+			window.location.href = '<?php echo Config::$uripath;?>/admin/images/discover';
 		} else {
 			// ERROR - Do something
 			// console.error(xhr.statusText);
