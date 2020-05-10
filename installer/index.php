@@ -88,6 +88,16 @@ $config_path = __DIR__ . '/../config.php';
 if (!file_exists($config_path) || !is_readable($config_path) || !is_writable($config_path)) {
 	show_error('Config file not found, or not readable, or not writeable');
 }
+// check .htaccess files in both root and admin folders
+$htaccess_root_path = __DIR__ . '/../.htaccess';
+if (!file_exists($htaccess_root_path)) {
+	show_error('htaccess root file not found');
+}
+$htaccess_admin_path = __DIR__ . '/../admin/.htaccess';
+if (!file_exists($htaccess_admin_path)) {
+	show_error('htaccess admin file not found');
+}
+
 //define ("CMSPATH", realpath(dirname(__FILE__)));
 define ("CMSPATH", realpath(dirname($config_path)));
 include_once ($config_path);
