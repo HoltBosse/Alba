@@ -124,13 +124,15 @@ class Content {
 		foreach ($content_form->fields as $field) {
 			// insert field info
 			// TODO: handle arrays
-			/* CMS::pprint_r ($field); */
+			/* CMS::pprint_r ($field);  */
+			CMS::Instance()->log("Saving: " . $field->default);
 			$query = "insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)";
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$field_data = array($this->id, $field->name, $field->type, $field->default);
 			$result = $stmt->execute($field_data);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
+				CMS::Instance()->log("Error saving: " . $field->name);
 			}
 		}
 
