@@ -9,13 +9,15 @@ class Field_TagMultiple extends Field {
 		$this->id = "";
 		$this->name = "";
 		$this->select_options=[];
-		$this->default = $tagid;
+		$this->default = "";
 		$this->content_type="";
+		$this->type = "TagMultiple";
 	}
 
 	
 
 	public function display() {
+		$this->array_values = json_decode ($this->default);
 		$required="";
 		if ($this->content_type) {
 			$tags = Content::get_applicable_tags ($this->content_type);
@@ -28,14 +30,14 @@ class Field_TagMultiple extends Field {
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";
-					echo "<select class='is-multiple' multiple {$required} id='{$this->id}' name='{$this->name}'>";
+					echo "<select class='is-multiple' multiple {$required} id='{$this->id}' name='{$this->name}[]'>";
 						if ($this->required) {
 							echo "<option value='' >{$this->label}</option>";
 						}
 						foreach ($tags as $tag) {
 							if ($tag->state==1) {
 								$selected = "";
-								if ($tag->id == $this->default) { $selected="selected";}
+								if (in_array($tag->id, $this->array_values)) { $selected="selected";}
 								echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
 							}
 						}
@@ -47,9 +49,7 @@ class Field_TagMultiple extends Field {
 			echo "<p class='help'>" . $this->description . "</p>";
 		}
 		// Slimselect Multiple library 
-		echo "<script>new SlimSelect({
-			select: '#{$this->id}'
-		  })</script>";
+		echo "<script>new SlimSelect({ select: '#{$this->id}' })</script>";
 	}
 
 
@@ -89,7 +89,7 @@ class Field_TagMultiple extends Field {
 		$this->filter = $config->filter ?? 'NUMBER';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->select_options = $config->select_options ?? [];
-		$this->default = $config->default ?? '';
+		$this->default = json_decode($config->default) ?? "";
 		$this->type = $config->type ?? 'error!!!';
 		$this->content_type = $config->content_type ?? false;
 	}
