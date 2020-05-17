@@ -42,8 +42,6 @@ class Messages {
 		$_SESSION['flash_messages'][$type][] = $message;
 
 		if( !is_null($redirect_to) ) {
-			echo "<h5>{$message}</h5>";
-			echo "<code>Attempting redirect to: " . $redirect_to . "</code>";
 			header("Location: $redirect_to");
 			exit();
 		}

@@ -19,6 +19,7 @@ $stmt = CMS::Instance()->pdo->prepare($query);
 $stmt->execute(array());
 $all_content_types = $stmt->fetchAll();
 $missing_content_types=[];
+$missing=[];
 //CMS::pprint_r ($all_content_types);
 foreach (new DirectoryIterator(CMSPATH . '/controllers/') as $f) {
 	if($f->isDot()) continue; // no dot files, shouldn't even happen with PHP defaults

@@ -42,8 +42,11 @@ class Field {
 
 	public function set_from_submit() {
 		$value = CMS::getvar($this->name, $this->filter);
-		if ($value||is_numeric($value)) {
+		if (is_string($value)||is_numeric($value)) {
 			$this->default = $value;
+		}
+		if (is_array($value)) {
+			$this->default = json_encode($value);
 		}
 	}
 

@@ -152,12 +152,14 @@ if ($pdo) {
 	$stmt = $pdo->prepare($query);
 	$stmt->execute(array());
 	$table_count = $stmt->fetch()->c;
-	//echo "<h1>table count: {$table_count}</h1>";
 
-	if ($table_count===0) {
+	if ($table_count==0) {
 		// no tables found, assume install :)
 		try {
+			/* echo "<h1>no user table - running schema</h1>"; */
 			$tables_created = $pdo->exec($schema_sql);
+			/* echo "<pre>"; print_r ($schema_sql); echo "</pre>";
+			echo "Result: <pre>"; print_r ($tables_created); echo "</pre>"; */
 		}
 		catch (PDOException $e) {
 			//show_error('DB Error: ' . $e->getMessage());
@@ -166,7 +168,10 @@ if ($pdo) {
 			show_error('Unknown Error: Unable to create new tables.');
 		}
 	}
-
+	else {
+		echo "<h1>user table exists</h1>";
+	}
+	
 
 	// got here, db ok, tables ok
 	$query = "select count(*) as c from groups";
