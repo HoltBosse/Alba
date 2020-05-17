@@ -56,6 +56,7 @@ class Field_Checkbox extends Field {
 		$this->filter = $config->filter ?? 'NUMBER';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->default = $config->default ?? 0;
+		$this->type = 'Checkbox';
 	}
 
 	public function validate() {

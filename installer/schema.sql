@@ -1,26 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 4.9.5
--- https://www.phpmyadmin.net/
---
--- Host: localhost
--- Generation Time: Apr 25, 2020 at 10:07 AM
--- Server version: 5.7.28-0ubuntu0.16.04.2
--- PHP Version: 7.0.33-0ubuntu0.16.04.7
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `cmsadmin`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `configurations`
@@ -29,7 +6,7 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `configurations`;
 CREATE TABLE `configurations` (
   `name` varchar(255) NOT NULL,
-  `configuration` json NOT NULL
+  `configuration` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -146,7 +123,7 @@ CREATE TABLE `pages` (
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `parent` int(11) NOT NULL DEFAULT '-1',
   `template` int(11) NOT NULL DEFAULT '1',
-  `content_view_configuration` json DEFAULT NULL,
+  `content_view_configuration` text DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -269,7 +246,7 @@ CREATE TABLE `widgets` (
   `global_position` varchar(255) DEFAULT NULL,
   `page_list` varchar(255) DEFAULT NULL COMMENT 'csv string page ids',
   `note` varchar(255) DEFAULT NULL,
-  `options` json NOT NULL
+  `options` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -447,6 +424,4 @@ ALTER TABLE `widgets`
 ALTER TABLE `widget_types`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
