@@ -88,6 +88,16 @@ $config_path = __DIR__ . '/../config.php';
 if (!file_exists($config_path) || !is_readable($config_path) || !is_writable($config_path)) {
 	show_error('Config file not found, or not readable, or not writeable');
 }
+// check .htaccess files in both root and admin folders
+$htaccess_root_path = __DIR__ . '/../.htaccess';
+if (!file_exists($htaccess_root_path)) {
+	show_error('htaccess root file not found');
+}
+$htaccess_admin_path = __DIR__ . '/../admin/.htaccess';
+if (!file_exists($htaccess_admin_path)) {
+	show_error('htaccess admin file not found');
+}
+
 //define ("CMSPATH", realpath(dirname(__FILE__)));
 define ("CMSPATH", realpath(dirname($config_path)));
 include_once ($config_path);
@@ -142,12 +152,14 @@ if ($pdo) {
 	$stmt = $pdo->prepare($query);
 	$stmt->execute(array());
 	$table_count = $stmt->fetch()->c;
-	//echo "<h1>table count: {$table_count}</h1>";
 
 	if ($table_count==0) {
 		// no tables found, assume install :)
 		try {
+			/* echo "<h1>no user table - running schema</h1>"; */
 			$tables_created = $pdo->exec($schema_sql);
+			/* echo "<pre>"; print_r ($schema_sql); echo "</pre>";
+			echo "Result: <pre>"; print_r ($tables_created); echo "</pre>"; */
 		}
 		catch (PDOException $e) {
 			//show_error('DB Error: ' . $e->getMessage());
@@ -156,7 +168,10 @@ if ($pdo) {
 			show_error('Unknown Error: Unable to create new tables.');
 		}
 	}
-
+	else {
+		echo "<h1>user table exists</h1>";
+	}
+	
 
 	// got here, db ok, tables ok
 	$query = "select count(*) as c from groups";

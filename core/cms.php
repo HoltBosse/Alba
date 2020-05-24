@@ -424,6 +424,7 @@ final class CMS {
 
 		//$this->include_once_content (CMSPATH .'/templates/' . $template . '/index.php');
 		// if ADMIN but guest, show login
+	
 		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::$frontendlogin) ) {
 			// check for login attempt
 			//$username = $this->getvar('username','USERNAME'); // using email, username is now display name

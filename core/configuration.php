@@ -20,7 +20,8 @@ class Configuration {
 		if (strpos($setting_name, ' ') !== false) {
 			return false;
 		}
-		$query = 'select configuration->>"$.' . $setting_name . '" as value from configurations where name=?';
+
+		/* $query = 'select configuration->>"$.' . $setting_name . '" as value from configurations where name=?';
 		//CMS::pprint_r ($query);exit(0);
 		
 		$stmt = $pdo->prepare($query);
@@ -53,20 +54,26 @@ class Configuration {
 			return $default;
 			//CMS::Instance()->queue_message('Configuration not found for value ' . $setting_name . " from " . $form_name,'danger',Config::$uripath . "/admin");
 		}
-		return ($result->value);
+		return ($result->value); */
 
 		// fallback - get complete json and get property in PHP
 
-		/* $query = "select configuration from configurations where name=?";
+		$query = "select configuration from configurations where name=?";
 		$stmt = $pdo->prepare($query);
 		$ok = $stmt->execute(array($form_name));
-		$configuration = json_decode($stmt->fetch()->configuration);
-		if (property_exists($configuration, $setting_name)) {
-			return $configuration->{$setting_name};
+		$configuration = $stmt->fetch();
+		if ($configuration) {
+			$config = json_decode($configuration->configuration);
+			if (property_exists($config, $setting_name)) {
+				return $config->{$setting_name};
+			}
+			else {
+				return false;
+			}
 		}
 		else {
 			return false;
-		} */
+		}
 	}
 
 	function __construct($form) {
