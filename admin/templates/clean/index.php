@@ -103,6 +103,8 @@ require_once (CMSPATH . "/core/cms.php");
 								<hr class="dropdown-divider">
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/content/all">All Content</a>
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/content/types">Content Types</a>
+								<hr class="dropdown-divider">
+								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/content/check">Check Fields</a>
 							</div>
 						</div>
 

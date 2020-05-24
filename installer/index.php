@@ -144,7 +144,7 @@ if ($pdo) {
 	$table_count = $stmt->fetch()->c;
 	//echo "<h1>table count: {$table_count}</h1>";
 
-	if ($table_count===0) {
+	if ($table_count==0) {
 		// no tables found, assume install :)
 		try {
 			$tables_created = $pdo->exec($schema_sql);
