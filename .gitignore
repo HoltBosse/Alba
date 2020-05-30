@@ -13,3 +13,8 @@ phpmyadmin/
 latest.zip
 # ignore config.php - contains db stuff
 config.php
+# images
+images/processed/*
+images/upload/*
+!images/processed/index.html
+!images/upload/index.html
