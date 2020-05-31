@@ -14,6 +14,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <div id='upload_space'><h1>Drag & Drop New Images Here</h1></div>
 
+
+
 <p>Available Tags</p>
 <?php
 //CMS::pprint_r ($image_tags);
@@ -126,6 +128,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 }
 </style>
 
+
+<?php if (!$filter=='upload'):?>
+
 <div id='all_images'>
 	<?php foreach ($all_images as $image):?>
 		<div id="media_item_id_<?php echo $image->id;?>" data-id='<?php echo $image->id;?>' class='all_images_image_container'>
@@ -153,6 +158,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</div>
 	<?php endforeach; ?>
 </div>
+
+
+<?php endif; // skipped display of all images if filter==upload ?>
 
 <script>
 

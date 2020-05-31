@@ -12,6 +12,8 @@ class File {
 	public $filename;
 	public $mimetype;
 
+	
+
 	function __construct($filepath="") {
 		$this->id = null;
 		$this->type = null;
@@ -23,7 +25,7 @@ class File {
 		if ($filepath && is_file($filepath)) {
 			$this->filename = basename ($filepath);
 			$this->mimetype = mime_content_type ($filepath);
-			if ($this->mimetype=="image/jpeg" || $this->mimetype=="image/png") {
+			if ($this->is_image()) {
 				$image_info = getimagesize($filepath);
 				if (is_array($image_info)) {
 					$this->width = $image_info[0];
@@ -36,6 +38,16 @@ class File {
 		}
 		// TODO: 
 	}
+
+	public function is_image() {
+		if ($this->mimetype=="image/jpeg" || $this->mimetype=="image/png") {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 
 	public function recalc_height($new_width) {
 		$ratio = $new_width / (float)$this->width;
