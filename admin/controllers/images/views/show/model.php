@@ -6,4 +6,5 @@ $all_images = CMS::Instance()->pdo->query($query)->fetchAll();
 
 $image_tags = Content::get_applicable_tags ("-1");
 
+$filter = CMS::getvar('filter','STRING');
 

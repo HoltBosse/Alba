@@ -33,6 +33,9 @@ foreach ($all_image_files as $image_file) {
 			<?php foreach ($all_image_files as $image_filename):?>
 				<?php 
 				$file = new File(CMSPATH . '/images/upload/' . $image_filename);
+				if (!$file->is_image()) {
+					continue; // only process images
+				}
 				//CMS::pprint_r ($file);
 				?>
 				<tr>
