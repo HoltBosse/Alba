@@ -59,32 +59,7 @@ class Field_Rich extends Field {
 		.editor .rich_image_active {
 			outline:2px dotted green;
 		}
-		/* media popup */
-		.media_selector_list {
-			display:flex;
-			flex-wrap:wrap;
-		}
-		.media_selector_selection {
-			display:flex;
-			flex-direction:column;
-			position:relative;
-		}
-		.media_selector_selection img, .media_selector_selection span {
-			width:200px;
-		}
-		.media_selector_list li {
-			padding:0.5rem;
-		}
-		.media_selector_selection span {
-			pointer-events:none;
-			width:100%;background:rgba(0,0,0,0.9);
-			padding:0.5rem;
-			color:white;
-			font-size:0.9rem;
-			position:absolute;
-			bottom:0;
-			left:0;
-		}
+		
 		</style>
 		<script>
 			document.addEventListener("DOMContentLoaded", function(){

@@ -35,24 +35,7 @@ class Field_Image extends Field {
 		
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
-		echo "<div class='field'>";
-			
-			echo "<div class='control'>";
-					// TODO replace with api call / allow filtering / typing for title etc
-					$query = "select * from media where mimetype='image/jpeg' or mimetype='image/png'";
-					$stmt = CMS::Instance()->pdo->query($query);
-					$all_images = $stmt->fetchAll();
-					echo "<div id='image_selector_{$this->id}' class='hidden image_selector'>";
-					foreach ($all_images as $image) {
-						$src = Config::$uripath . "/image/" . $image->id . "/thumb";
-						$aspect = $image->height / $image->width;
-						echo "<img style='padding-bottom:{$aspect}%;' class='lazy' data-src='{$src}' data-width='{$image->width}' width='{$image->width}' data-height='{$image->height}' height='{$image->height}' data-id='{$image->id}' class='image_selector_thumb' src=''>";
-					}
-					echo "</div>";
-					
-				
-			echo "</div>";
-		echo "</div>";
+		echo "&nbsp;<a href='" . Config::$uripath . "/admin/images/show?filter=upload' target='_blank' type='button' id='trigger_image_upload_{$this->id}' class='button btn is-small is-info is-light'>Upload New Image</a>";
 
 		
 		
@@ -68,59 +51,85 @@ class Field_Image extends Field {
 
 		?>
 
-		<script>
-		// selector window event listener
-		var image_selector_<?php echo $this->id; ?> = document.getElementById('image_selector_<?php echo $this->id;?>');
-		image_selector_<?php echo $this->id; ?>.addEventListener('click',function(e){
-			var image_id = e.target.dataset.id;
-			var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
-			preview.src = '<?php echo Config::$uripath . '/image/';?>' + image_id + '/thumb/';
-			preview.closest('.selected_image_wrap').classList.add('active');
+		
 
-			hidden_input = document.getElementById('<?php echo $this->id;?>');
-			hidden_input.value = image_id;
-			//console.log('selected image id ',image_id);
-			//console.log(preview);
-			this.classList.toggle('hidden');
-		});
+		<script>
+
+		
+	
 
 		// choose new image button event listener
 		var trigger_image_selector_<?php echo $this->id; ?> = document.getElementById('trigger_image_selector_<?php echo $this->id;?>');
 		trigger_image_selector_<?php echo $this->id; ?>.addEventListener('click',function(e){
-			console.log('boo');
-			image_selector_<?php echo $this->id; ?>.classList.toggle('hidden');
+			// launch image selector
+			var media_selector = document.createElement('div');
+			media_selector.innerHTML =`
+			<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
+			<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
+			<h1 style='color:white;'>Choose Image <a href='#' class='delete_parent'>X</a></h1>
+			<div class='media_selector'><h2>LOADING</h2></div>
+			</div>
+			`;
+			document.body.appendChild(media_selector);
+			
+			// fetch images
+			postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images"}, function(data) { 
+				var image_list = JSON.parse(data);
+				var image_list_markup = "<ul class='media_selector_list single'>";
+				image_list.images.forEach(image => {
+					image_list_markup += `
+					<li>
+						<a class='media_selector_selection' data-id='${image.id}'>
+						<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::$uripath;?>/image/${image.id}/thumb'>
+						<span>${image.title}</span>
+						</a>
+					</li>`;
+				});
+				image_list_markup += "</ul>";
+				media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
+				// handle click close
+				document.getElementById('media_selector_modal_close').addEventListener('click',function(e){
+					var modal = e.target.closest('.media_selector_modal');
+					modal.parentNode.removeChild(modal);
+				});
+				// handle modal close
+				media_selector.querySelector('.delete_parent').addEventListener('click',function(e){
+					e.preventDefault();
+					e.target.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode);
+				});
+				// add click event handler to capture child selection clicks
+				media_selector.addEventListener('click',function(e){
+					//console.log(e.target);
+					e.preventDefault();
+					e.stopPropagation();
+					var selected_image = e.target.closest('.media_selector_selection');
+					console.log(selected_image);
+					if (selected_image!==null) {
+						var media_id = selected_image.dataset.id;
+						var url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
+						var image_markup = `<img class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
+						console.log(image_markup);
+						// this is only for rich editor
+						//document.execCommand('insertHTML',false, image_markup);
+						var modal = selected_image.closest('.media_selector_modal');
+						modal.parentNode.removeChild(modal);
+
+						// this is only for image field class
+						var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
+						preview.src = '<?php echo Config::$uripath . '/image/';?>' + media_id + '/thumb/';
+						preview.closest('.selected_image_wrap').classList.add('active');
+
+						hidden_input = document.getElementById('<?php echo $this->id;?>');
+						hidden_input.value = media_id;
+
+					} // else clicked on container not on an anchor or it's children
+				});
+			});
 		});
 		</script>
 		<?php
 	}
 
-
-	public function inject_designer_javascript() {
-		?>
-		<script>
-			window.Field_Image = {};
-			// template is what gets injected when the field 'insert new' button gets clicked
-			window.Field_Image.designer_template = `
-			<div class="field">
-				<h2 class='heading title'>Text Field</h2>	
-
-				<label class="label">Label</label>
-				<div class="control has-icons-left has-icons-right">
-					<input required name="label" class="input iss-success" type="label" placeholder="Label" value="">
-				</div>
-
-				<label class="label">Required</label>
-				<div class="control has-icons-left has-icons-right">
-					<input name="required" class="checkbox iss-success" type="checkbox"  value="">
-				</div>
-			</div>`;
-		</script>
-		<?php 
-	}
-
-	public function designer_display() {
-
-	}
 
 	public function load_from_config($config) {
 		//CMS::pprint_r ($config);
