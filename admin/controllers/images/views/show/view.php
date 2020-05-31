@@ -203,22 +203,26 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		}
 	});
 
-	document.getElementById('all_images').addEventListener('click',function(e){
-		e.preventDefault();
-		if (e.target.classList.contains('is-delete')) {
-			tag_id = e.target.closest('.tags').dataset.id;
-			media_id = e.target.closest('.all_images_image_container').dataset.id;
-			console.log('deleting tag ',tag_id,' from image id ',media_id);
-			api_data = {"action":"untag_media","id_list":[media_id],"tag_id":tag_id};
-			postAjax('<?php echo Config::$uripath;?>/admin/images/api', api_data, function(data){
-				response = JSON.parse(data);
-				response.untagged.forEach(item => {
-					untag_media_item (tag_id, item);
+	var all_images = document.getElementById('all_images');
+	// only applicable if filter not in place to hide all images
+	if (all_images) {
+		all_images.addEventListener('click',function(e){
+			e.preventDefault();
+			if (e.target.classList.contains('is-delete')) {
+				tag_id = e.target.closest('.tags').dataset.id;
+				media_id = e.target.closest('.all_images_image_container').dataset.id;
+				console.log('deleting tag ',tag_id,' from image id ',media_id);
+				api_data = {"action":"untag_media","id_list":[media_id],"tag_id":tag_id};
+				postAjax('<?php echo Config::$uripath;?>/admin/images/api', api_data, function(data){
+					response = JSON.parse(data);
+					response.untagged.forEach(item => {
+						untag_media_item (tag_id, item);
+					});
+					console.log(response); 
 				});
-				console.log(response); 
-			});
-		}
-	});
+			}
+		});
+	}
 
 	// called by 'tag_add' click handler
 	function add_tag_to_media_item (tag_id, tag_title, item_id) {
