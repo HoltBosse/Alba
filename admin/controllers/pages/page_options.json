@@ -1,0 +1,50 @@
+{
+	"id":"page_options",
+	"fields":[
+		{
+			"name":"og_description",
+			"id":"og_description",
+			"type":"Textarea",
+			"label":"Opengraph / Search Engine Description",
+			"required":false,
+			"default":"",
+			"description":"Description used for social sharing and SEO.",
+			"maxlength":1024,
+			"minlength":3,
+			"filter":"STRING"
+		},
+		{
+			"name":"seo_keywords",
+			"id":"seo_keywords",
+			"type":"Textarea",
+			"label":"SEO Keywords",
+			"required":false,
+			"default":"",
+			"description":"Keywords and phrases used for SEO - separate entries with a comma.",
+			"maxlength":255,
+			"minlength":3,
+			"filter":"STRING"
+		},
+		{
+			"name":"og_title",
+			"id":"og_title",
+			"type":"Text",
+			"label":"Opengraph Title",
+			"required":false,
+			"default":"",
+			"description":"Used for social sharing - leave blank to use page title",
+			"maxlength":255,
+			"minlength":3,
+			"filter":"STRING"
+		},
+		{
+			"name": "og_image",
+			"id": "og_image",
+			"type": "Image",
+			"label": "Opengraph Image",
+			"required": false,
+			"description": "Image used for social sharing",
+			"filter": "NUM"
+		}
+	]
+}

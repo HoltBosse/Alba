@@ -4,16 +4,17 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // any variables created here will be available to the view
 
 $page = new Page();
-
+$page_options_form = new Form(ADMINPATH . '/controllers/pages/page_options.json');
 $success=$page->load_from_post();
 
 if (!$success) {
 	CMS::Instance()->queue_message('Failed to create page object from form data','danger',Config::$uripath.'/admin/pages');
 }
 
+
 /* CMS::pprint_r ($page);
 CMS::pprint_r ($page->view_configuration);
-exit(0); */
+exit(0);  */
 
 // save content options / view configuration if available
 if ($page->content_type && $page->view) {
@@ -27,6 +28,13 @@ if ($page->content_type && $page->view) {
 	}
 	// get name/value pairs json from form to add to view_configuration of page
 	$page->view_configuration = $options_form->serialize_json();
+}
+
+// save page seo/og options
+$page->page_options = $page->page_options_form->serialize_json(); // not view options, page seo/og options :)
+$is_valid = $page_options_form->validate();
+if (!$is_valid) {
+	CMS::Instance()->queue_message('Page creation/update failed - invalid page options form','danger',Config::$uripath.'/admin/pages');
 }
 
 $success = $page->save();
