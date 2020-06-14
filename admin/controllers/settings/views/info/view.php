@@ -1,6 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+// TODO: move this to admin function
 function show_message ($heading, $text, $class) {
 	echo "<article class=\"message $class\">
 	<div class=\"message-header\">

@@ -13,6 +13,7 @@ class Page {
 	public $view;
 	public $updated;
 	public $view_configuration;
+	public $page_options; // json string from db / or serialized from form submission
 
 
 
@@ -27,6 +28,8 @@ class Page {
 		$this->content_type = null;
 		$this->view = null;
 		$this->view_configuration = false;
+		$this->page_options_form = new Form(ADMINPATH . "/controllers/pages/page_options.json");
+		$this->page_options = null;
 	}
 
 	public function get_url() {
@@ -137,7 +140,7 @@ class Page {
 		
 		$this->id = CMS::getvar('id','NUM');
 
-
+		$this->page_options_form->set_from_submit();
 
 		return true;
 	}
@@ -159,6 +162,8 @@ class Page {
 			$this->content_type = $result->content_type;
 			$this->view = $result->content_view;
 			$this->view_configuration = $result->content_view_configuration;
+			$this->page_options = $result->page_options;
+			$this->page_options_form->deserialize_json($this->page_options); // json from db pulled into form object in page
 			return true;
 		}
 		else {
@@ -184,6 +189,8 @@ class Page {
 			$this->content_type = $result->content_type;
 			$this->view = $result->content_view;
 			$this->view_configuration = $result->content_view_configuration;
+			$this->page_options = $result->page_options;
+			$this->page_options_form->deserialize_json($this->page_options); // json from db pulled into form object in page
 			return true;
 		}
 		else {
@@ -196,7 +203,7 @@ class Page {
 	public function save() {
 		if ($this->id) {
 			// update
-			$query = "update pages set state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, content_view_configuration=? where id=?";
+			$query = "update pages set state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=? where id=?";
 			$result = CMS::Instance()->pdo->prepare($query)->execute(array(
 				$this->state, 
 				$this->title, 
@@ -205,6 +212,7 @@ class Page {
 				is_numeric($this->view) ? $this->view : NULL,
 				$this->parent,
 				$this->template,
+				$this->page_options,
 				$this->view_configuration,
 				$this->id
 			));
@@ -222,7 +230,7 @@ class Page {
 		}
 		else {
 			// insert new
-			$query = "insert into pages (state, title, alias, content_type, content_view, parent, template, content_view_configuration) values(?,?,?,?,?,?,?,?)";
+			$query = "insert into pages (state, title, alias, content_type, content_view, parent, template, page_options, content_view_configuration) values(?,?,?,?,?,?,?,?,?)";
 			try {
 				$stmt = CMS::Instance()->pdo->prepare($query);
 				$result = $stmt->execute(array(
@@ -233,6 +241,7 @@ class Page {
 					is_numeric($this->view) ? $this->view : NULL,
 					$this->parent,
 					$this->template,
+					$this->page_options,
 					$this->view_configuration
 				));	
 			}
