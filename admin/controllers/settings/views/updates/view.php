@@ -1,5 +1,18 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
+
+function show_message ($heading, $text, $class) {
+	echo "<article class=\"message $class\">
+	<div class=\"message-header\">
+		<p>$heading</p>
+		<button class=\"delete\" aria-label=\"delete\"></button>
+	</div>
+	<div class=\"message-body\">
+		$text
+	</div>
+</article>";
+}
+
 ?>
 <h1 class='title is-1'>System Version and Updates</h1>
 <h4 class='title is-4'>Current version: <?php echo CMS::Instance()->version;?></h4>
@@ -24,3 +37,14 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		<h4 class='title is-4'>Unable to determine latest version</h4>
 	<?php endif; ?>
 <?php endif; ?>
+
+<hr>
+<h5 class='is-5 title is-title'>Legacy DB Checks/Fixes</h5>
+
+<?php 
+if ($page_options_ok) {
+	show_message ('Pages Table','Pages table OK.','is-success');
+}
+else {
+	show_message ('Pages Table','Missing pages page_options column - FIXED.','is-warning');
+}
