@@ -18,3 +18,5 @@ images/processed/*
 images/upload/*
 !images/processed/index.html
 !images/upload/index.html
+# misc testing scripts
+testing/
