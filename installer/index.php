@@ -191,36 +191,6 @@ if ($pdo) {
 	$pdo->exec($query);
 
 
-	// insert default user
-	$password = $_POST['password'];
-	$email = $_POST['email'];
-	$username = $_POST['name'];
-	$hash = password_hash ($password, PASSWORD_DEFAULT);
-	$query = "INSERT INTO users (username, email, password, state) VALUES (?,?,?,1)";
-	$new_user_ok = $pdo->prepare($query)->execute([$username,$email,$hash]);
-	// get inserted admin user id
-	$admin_user_id = $pdo->lastInsertId();
-	// insert user group map
-	// get admin group id
-	$query = "select id from groups where value='admin'";
-	$stmt = $pdo->prepare($query);
-	$stmt->execute(array());
-	$admin_group_id = $stmt->fetch()->id;
-
-
-	
-	// insert group mapping
-	$query = "insert into user_groups (user_id, group_id) values(?,?)";
-	$stmt = $pdo->prepare($query);
-	$stmt->execute(array($admin_group_id, $admin_user_id));
-	
-	if ($new_user_ok) {
-		show_error ('Installation complete!');
-	}
-	else {
-		show_error ('Database created - Error creating default user. Clear DB and try again!');
-	}
-
 	// setup default template
 	$query = "truncate table templates; ";
 	$query .= "insert into templates (is_default, title, folder, description) values (1,'basic','basic','A very simple template to get you started.');";
@@ -241,6 +211,35 @@ if ($pdo) {
 	$query .= "insert into content_views (content_type_id, title, location) ";
 	$query .= "values (2,'Single Article','blog');";
 	$pdo->exec($query);
+
+
+	// insert default user
+	$password = $_POST['password'];
+	$email = $_POST['email'];
+	$username = $_POST['name'];
+	$hash = password_hash ($password, PASSWORD_DEFAULT);
+	$query = "INSERT INTO users (username, email, password, state) VALUES (?,?,?,1)";
+	$new_user_ok = $pdo->prepare($query)->execute([$username,$email,$hash]);
+	// get inserted admin user id
+	$admin_user_id = $pdo->lastInsertId();
+	// insert user group map
+	// get admin group id
+	$query = "select id from groups where value='admin'";
+	$stmt = $pdo->prepare($query);
+	$stmt->execute(array());
+	$admin_group_id = $stmt->fetch()->id;
+
+	// insert group mapping
+	$query = "insert into user_groups (user_id, group_id) values(?,?)";
+	$stmt = $pdo->prepare($query);
+	$stmt->execute(array($admin_group_id, $admin_user_id));
+	
+	if ($new_user_ok) {
+		show_error ('Installation complete!');
+	}
+	else {
+		show_error ('Database created - Error creating default user. Clear DB and try again!');
+	}
 
 	// setup default widgets
 	// TODO: setup widgets
