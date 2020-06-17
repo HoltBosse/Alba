@@ -9,6 +9,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title><?php echo CMS::Instance()->page->title;?> | <?php echo Config::$sitename; ?></title>
+	<?php 
+	//echo CMS::Instance()->page->get_page_option_value("og_title");
+	$og_title = CMS::Instance()->page->get_page_option_value("og_title") ? CMS::Instance()->page->get_page_option_value("og_title") : CMS::Instance()->page->title; 
+	?>
+	<meta property="og:title" content="<?php echo $og_title; ?>" />
 	<style>
 		.menu_items_by_tag_wrap {
 			display: flex;

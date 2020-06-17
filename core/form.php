@@ -14,6 +14,9 @@ class Form {
 	public function load_json($path = CMSPATH . "/testform.json") {
 		if (!is_file($path)) {
 			echo "<h5>File {$path} not found</h5>";
+			if (Config::$debug) {
+				echo "<p class='help'>Called from /core/form.php load_json function</p>";
+			}
 		}
 		else {
 
