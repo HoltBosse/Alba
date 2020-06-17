@@ -13,4 +13,4 @@ Native PHP zip + 'fopen' PHP function availablity required for automatic updates
 3. In browser, go to /installation
 4. Follow instructions on screen
 
-That's it, now browse to /admin to start.
+That's it, now browse to /admin to start. See [wiki](https://github.com/bobmitch/SeamlessCMS/wiki) for more info.
