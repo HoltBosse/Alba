@@ -28,7 +28,7 @@ class Page {
 		$this->content_type = null;
 		$this->view = null;
 		$this->view_configuration = false;
-		$this->page_options_form = new Form(ADMINPATH . "/controllers/pages/page_options.json");
+		$this->page_options_form = new Form(CMSPATH . "/admin/" . "/controllers/pages/page_options.json"); // cmspath + admin, as ADMINPATH not available on front-end
 		$this->page_options = null;
 	}
 
@@ -47,6 +47,16 @@ class Page {
 		}
 		$url = Config::$uripath . '/' . implode('/',$segments);
 		return $url;
+	}
+
+	public function get_page_option_value($option_name) {
+		$field = $this->page_options_form->get_field_by_name('og_title');
+		if ($field) {
+			return $field->default;
+		}
+		else {
+			return false;
+		}
 	}
 	
 
@@ -150,7 +160,7 @@ class Page {
 		//$db = new db();
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($id));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); 
 		if ($result) {
 			$this->id = $result->id;
 			$this->state = $result->state;
