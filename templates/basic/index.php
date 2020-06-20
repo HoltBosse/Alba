@@ -8,12 +8,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title><?php echo CMS::Instance()->page->title;?> | <?php echo Config::$sitename; ?></title>
-	<?php 
-	//echo CMS::Instance()->page->get_page_option_value("og_title");
-	$og_title = CMS::Instance()->page->get_page_option_value("og_title") ? CMS::Instance()->page->get_page_option_value("og_title") : CMS::Instance()->page->title; 
-	?>
-	<meta property="og:title" content="<?php echo $og_title; ?>" />
+	<title><?php echo $this->page->title;?> | <?php echo Config::$sitename; ?></title>
+	<?php if (Configuration::get_configuration_value ('general_options', 'og_enabled')):?>
+		<?php 
+		$og_title = $this->page->get_page_option_value("og_title") ? $this->page->get_page_option_value("og_title") : $this->page->title; 
+		?>
+		<meta property="og:title" content="<?php echo $og_title; ?>" />
+	<?php endif; ?>
 	<style>
 		.menu_items_by_tag_wrap {
 			display: flex;
