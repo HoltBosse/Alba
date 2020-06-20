@@ -2,6 +2,8 @@
 
 <?php
 
+$view = CMS::Instance()->getvar('view','STRING');
+
 // handle reset request
 
 $resetemail = CMS::Instance()->getvar('resetemail','EMAIL');
@@ -31,8 +33,43 @@ if ($resetemail) {
 	}
 	// either sent or not, show same message
 	CMS::Instance()->queue_message('If your email was associated with a user, you should receive a message with further instructions shortly.','success',Config::$uripath . '/admin');
-	
 }
+
+$resetkey = CMS::Instance()->getvar('resetkey','RAW'); 
+if ($resetkey) {
+	$view = "newpassword";
+	// check if passwords sent
+	$password1 = CMS::Instance()->getvar('newpassword1','RAW'); 
+	$password2 = CMS::Instance()->getvar('newpassword2','RAW'); 
+	if ($password1 && $password2) {
+		if ($password1 != $password2) {
+			CMS::Instance()->queue_message('Passwords did not match.','danger', Config::$uripath . '/admin?resetkey=' . $resetkey);	
+		}
+		else {
+			// check resetkey matches a valid and current resetkey in user table
+			$reset_user = new User();
+			$reset_user_exists = $reset_user->get_user_by_reset_key ($resetkey);
+			if ($reset_user_exists) {
+				// remove resetkey from user, update password and redirect to admin login
+				if (!$reset_user->remove_reset_key()) {
+					CMS::Instance()->queue_message('Error removing reset key.', 'error', Config::$uripath."/admin");
+				}
+				if ($reset_user->update_password ($password1)) {
+					CMS::Instance()->queue_message('Password changed for ' . $reset_user->username,'success', Config::$uripath . '/admin');	
+				}
+				else {
+					CMS::Instance()->queue_message('Unable to reset password. Please contact the system administrator.','danger', Config::$uripath . '/admin?resetkey=' . $resetkey);		
+				}
+			}
+			else {
+				// no matching user for resetkey found or resetkey is outdated
+				CMS::Instance()->queue_message('Invalid reset key or reset key is too old.','danger', Config::$uripath . '/admin?resetkey=' . $resetkey);	
+			}
+		}
+	}
+	// just show newpassword view, no passwords sent for key
+}
+
 
 // end of reset handling
 
@@ -47,7 +84,7 @@ if ($protocol=="http") {
 	$protocalwarning = "<h5 class='warning'>This URL is not secured by SSL, consider enabling this before submitting database/user credentials.</h5>";
 }
 
-$view = CMS::Instance()->getvar('view','STRING');
+
 
 ?>
 
@@ -144,6 +181,36 @@ $view = CMS::Instance()->getvar('view','STRING');
 					</div>
 
 					<button class="button is-primary" type="submit">Request Reset</button>
+
+					<p class="help"><a href='<?php echo Config::$uripath;?>/admin'>Login</a></p>
+
+				</form>
+			<?php elseif ($view=='newpassword'):?>
+				<form class='' submit='<?php echo Config::$uripath . '/admin?view=newpassword>resetkey=' . $resetkey?>' action='' method="POST">
+					<h1 class='title is-1'>Enter New Password</h1>
+
+					<div class='field'>
+						<label class="label" for='email'>New Password</label>
+						<div class="control has-icons-left">
+							<input class='input' autocapitalize="none" type="password" name="newpassword1" required>
+							<span class="icon is-small is-left">
+								<i class="fas fa-unlock"></i>
+							</span>
+						</div>
+						
+					</div>
+					<div class='field'>
+						<label class="label" for='email'>New Password</label>
+						<div class="control has-icons-left">
+							<input class='input' autocapitalize="none" type="password" name="newpassword2" required>
+							<span class="icon is-small is-left">
+								<i class="fas fa-unlock"></i>
+							</span>
+						</div>
+						<p class="help">Enter the same password twice.</p>
+					</div>
+
+					<button class="button is-primary" type="submit">Change Password</button>
 
 					<p class="help"><a href='<?php echo Config::$uripath;?>/admin'>Login</a></p>
 

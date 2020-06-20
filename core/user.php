@@ -45,6 +45,17 @@ class User {
 		return $result;
 	}
 
+	public function update_password ($new_password) {
+		$hash = password_hash ($new_password, PASSWORD_DEFAULT);
+		$query = "update users set password=? where id=?";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$ok = $stmt->execute(array($hash, $this->id));
+		if (!$ok) {
+			return false;
+		}
+		return true;
+	}
+
 	public function is_member_of ($group_value) {
 		$query = "select id from groups where value=? and id in (select group_id from user_groups where user_id=?)";
 		$stmt = CMS::Instance()->pdo->prepare($query);
@@ -155,6 +166,32 @@ class User {
 			// should not get here
 		}
 		return $key;
+	}
+
+	public function remove_reset_key() {
+		$query = "update users set reset_key=null, reset_key_expires=null where id=?";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$ok = $stmt->execute(array($this->id));
+		if (!$ok) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+	public function get_user_by_reset_key ($key) {
+		// get used for reset key - only returns anything if reset key has not expired
+		$query = "select * from users where reset_key=? and reset_key_expires>NOW() LIMIT 1";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($key));
+		$result = $stmt->fetch();
+		if ($result) {
+			return $this->load_from_id($result->id);
+		}
+		else {
+			return false;
+		}
 	}
 
 	public function save() {
