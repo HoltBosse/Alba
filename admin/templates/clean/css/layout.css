@@ -277,3 +277,7 @@ img.image_selector_thumb{object-fit:contain; width:300px;}
 	bottom:0;
 	left:0;
 }
+
+label.checkbox {
+    font-weight: bold;
+}

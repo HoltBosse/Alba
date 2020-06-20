@@ -38,6 +38,16 @@
 			"default":0
 		},
 		{
+			"name":"og_enabled",
+			"id":"og_enabled",
+			"type":"Checkbox",
+			"label":"Use OpenGraph",
+			"required":false,
+			"description":"Make OpenGraph [social media title/image/description] page settings available in back-end and render in front-end template.",
+			"filter":"INT",
+			"default":0
+		},
+		{
 			"name": "admin_logo",
 			"id": "admin_logo",
 			"type": "Image",
