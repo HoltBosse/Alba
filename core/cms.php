@@ -412,14 +412,15 @@ final class CMS {
 
 	public function render() {
 
-		$template = "basic";
-		// TODO template picking
-
 		// override debug if chosen
 		if (Configuration::get_configuration_value('general_options','debug', $this->pdo)) {
 			Config::$debug = true;
 		} 
-		
+
+		// determine front-end template
+		$default_template = Template::get_default_template();
+		$template = $default_template->folder;
+
 		//$this->content = include_once(CMSPATH . DS . 'templates' . DS . $template . DS . 'index.php');
 
 		//$this->include_once_content (CMSPATH .'/templates/' . $template . '/index.php');
@@ -531,11 +532,11 @@ final class CMS {
 				}
 
 				$this->page = new Page();
-				$this->page->load_from_alias($page->alias);
+				$this->page->load_from_alias($page->alias); // also loads correct template obj into page obj
 				
 				// front end buffering for plugin functionality
 				ob_start();
-				include_once (CURPATH . '/templates/' . $template . "/index.php");
+				include_once (CURPATH . '/templates/' . $this->page->template->folder . "/index.php");
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean();

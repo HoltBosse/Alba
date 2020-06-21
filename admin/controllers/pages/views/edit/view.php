@@ -184,8 +184,9 @@ div.position_tag_wrap.active {
 		<div class="control has-icons-left has-icons-right">
 			<div class="select">
 				<select name="template">
+					<option <?php if ($page->template_id==0) echo "selected"; ?> value='0'>Default (<?php echo $default_template->title; ?>)</option>
 					<?php foreach ($all_templates as $a_template):?>
-						<option <?php if ($a_template->id = $default_template) {echo "selected";}?> value="<?php echo $a_template->id;?>" ><?php echo $a_template->title;?></option>
+						<option <?php if ($a_template->id == $page->template_id) {echo "selected";}?> value="<?php echo $a_template->id;?>" ><?php echo $a_template->title;?></option>
 					<?php endforeach; ?>
 				</select>
 				<span class="icon is-small is-left">

@@ -12,8 +12,8 @@ $all_templates = Template::get_all_templates();
 $all_content_types = Content::get_all_content_types();
 
 // todo: get default template as set by user instead of template 1
-$default_template = 1;
-$template = new Template(1);
+$default_template = Template::get_default_template();
+$template = $default_template;
 
 // determine if editing existing page or new page
 
@@ -31,6 +31,7 @@ if (array_key_exists(2, CMS::Instance()->uri_segments)) {
 	if ($uri_id>0) {
 		// existing page - override view and content based on uri parameters if required
 		if (!$page->load_from_id($uri_id)) {
+			// page load from id also loads correct template for page
 			CMS::Instance()->queue_message('Failed to load Page id: ' . $uri_id, 'danger',Config::$uripath.'/admin/pages');
 			exit(0);
 		}
@@ -48,8 +49,12 @@ if (array_key_exists(2, CMS::Instance()->uri_segments)) {
 		} */
 	}
 	else {
+		// NEW page
 		// set CMS property edit_page_id for template layout.php file to access
 		CMS::Instance()->edit_page_id = 0;
+		// set page template to default
+		$page->template_id = 0;
+		$page->template = $default_template;
 	}
 
 	// override content_type and view based on uri params
@@ -59,6 +64,7 @@ if (array_key_exists(2, CMS::Instance()->uri_segments)) {
 			$page->view = CMS::Instance()->uri_segments[4];
 		}
 	}
+
 	
 }
 else {
@@ -67,8 +73,7 @@ else {
 }
 
 
-
-$layout_path = CMSPATH . '/templates/' . $template->folder . "/layout.php";
+$layout_path = CMSPATH . '/templates/' . $page->template->folder . "/layout.php";
 if (!file_exists($layout_path)) {
-	CMS::Instance()->queue_message('Failed to locate layout for template: ' . $template->title, 'danger',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Failed to locate layout for template: ' . $page->template->title, 'danger',Config::$uripath.'/admin/pages');
 }
