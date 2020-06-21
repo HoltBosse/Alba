@@ -11,6 +11,9 @@ class Template {
 	public $positions; // array of tuples - position alias, position title
 
 	public function __construct($id=1) {
+		if ($id===0) {
+			$id = $this->get_default_template()->id;
+		}
 		$stmt = CMS::Instance()->pdo->prepare("select * from templates where id=?");
 		$stmt->execute(array($id));
 		$template = $stmt->fetch();
@@ -32,7 +35,7 @@ class Template {
 		}
 		return "";
 	}
-	
+
 	// $pdo->prepare($sql)->execute([$name, $id]);
 	static public function get_all_templates() {
 		//echo "<p>Getting all users...</p>";
@@ -42,8 +45,13 @@ class Template {
 
 	static public function get_default_template() {
 		//echo "<p>Getting all users...</p>";
-		$result = CMS::Instance()->pdo->query("select * from templates where is_default=1")->fetch();
-		return $result;
+		$result = CMS::Instance()->pdo->query("select id from templates where is_default=1")->fetch();
+		if ($result) {
+			return new Template($result->id);
+		}
+		else {
+			CMS::show_error('Failed to determine default template');
+		}
 	}
 
 	public function output_widget_admin($position, $page_id) {

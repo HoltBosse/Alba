@@ -24,5 +24,7 @@ function get_template_title($page_template_id, $all_templates) {
 			return $template->title;
 		}
 	}
-	return "Error - Unknown Template";
+	$default_template = Template::get_default_template();
+	return "Default (" . $default_template->title . ")";
+	//return "Error - Unknown Template";
 }
