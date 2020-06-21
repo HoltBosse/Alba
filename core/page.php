@@ -7,6 +7,7 @@ class Page {
 	public $state;
 	public $title;
 	public $alias;
+	public $template_id;
 	public $template;
 	public $parent;
 	public $content_type;
@@ -22,7 +23,8 @@ class Page {
 		$this->state = 1;
 		$this->title = "";
 		$this->alias = "";
-		$this->template = 1;
+		$this->template_id = 1;
+		$this->template = null;
 		$this->parent = false;
 		$this->updated = date('Y-m-d H:i:s');
 		$this->content_type = null;
@@ -50,7 +52,7 @@ class Page {
 	}
 
 	public function get_page_option_value($option_name) {
-		$field = $this->page_options_form->get_field_by_name('og_title');
+		$field = $this->page_options_form->get_field_by_name($option_name);
 		if ($field) {
 			return $field->default;
 		}
@@ -130,7 +132,7 @@ class Page {
 		if (!$this->state) {
 			$this->state = 1;
 		}
-		$this->template = CMS::getvar('template','NUM');
+		$this->template_id = CMS::getvar('template','NUM');
 		$this->alias = CMS::getvar('alias','TEXT');
 		if (!$this->alias) {
 			$this->alias = CMS::stringURLSafe($this->title);
@@ -166,7 +168,8 @@ class Page {
 			$this->state = $result->state;
 			$this->title = $result->title;
 			$this->alias = $result->alias;
-			$this->template = $result->template;
+			$this->template_id = $result->template;
+			$this->template = new Template($this->template_id);
 			$this->parent = $result->parent;
 			$this->updated = $result->updated;
 			$this->content_type = $result->content_type;
@@ -193,7 +196,8 @@ class Page {
 			$this->state = $result->state;
 			$this->title = $result->title;
 			$this->alias = $result->alias;
-			$this->template = $result->template;
+			$this->template_id = $result->template;
+			$this->template = new Template($this->template_id);
 			$this->parent = $result->parent;
 			$this->updated = $result->updated;
 			$this->content_type = $result->content_type;
@@ -221,7 +225,7 @@ class Page {
 				$this->content_type,
 				is_numeric($this->view) ? $this->view : NULL,
 				$this->parent,
-				$this->template,
+				$this->template_id,
 				$this->page_options,
 				$this->view_configuration,
 				$this->id
@@ -250,7 +254,7 @@ class Page {
 					$this->content_type,
 					is_numeric($this->view) ? $this->view : NULL,
 					$this->parent,
-					$this->template,
+					$this->template_id,
 					$this->page_options,
 					$this->view_configuration
 				));	
