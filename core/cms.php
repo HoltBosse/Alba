@@ -27,7 +27,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	public $version = "0.17 (beta) - new Page options";
+	public $version = "0.18 (beta) - default template";
 
 	/* protected function __construct() {}
     protected function __clone() {}
