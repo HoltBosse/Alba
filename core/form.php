@@ -4,10 +4,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Form {
 	public $location; // relative to CMS path for json config
 	public $fields;
+	public $repeatable;
 
-	function __construct($path=CMSPATH . "/testform.json") {
+	function __construct($path = CMSPATH . "/testform.json", $repeatable=true) {
 		$this->fields = array();
 		$this->location = "";
+		$this->repeatable = $repeatable;
 		$this->load_json($path);
 	}
 
@@ -33,6 +35,9 @@ class Form {
 				$class = "Field_" . $field_config->type;
 				$thisfield = new $class();
 				$thisfield->load_from_config($field_config);
+				if ($this->repeatable) {
+					$thisfield->in_repeatable_form = true;
+				}
 				$this->fields[] = $thisfield;
 			}
 		}
@@ -98,14 +103,19 @@ class Form {
 	}
 
 	public function display_front_end() {
-		// loop through fields and call display();
-		//CMS::pprint_r ($this);
 		
+		// first make sure array added to name if required
+		$aftername='';
+		if ($this->repeatable) {
+			$aftername="[]";
+		}
+
+		// loop through fields and call display();
 		foreach ($this->fields as $field) {
 			echo "<div class='form_field field'>";
 			$field->display();
 			echo "</div>";
 		}
-		echo "<input type='hidden' value='1' name='form_" . $this->id . "'>";
+		echo "<input type='hidden' value='1' name='form_" . $this->id . "{$aftername}'>";
 	}
 }

@@ -9,6 +9,7 @@ class Field_Text extends Field {
 		$this->select_options=[];
 		$this->default = $default_content;
 		$this->content_type="";
+		//$this->in_repeatable_form=true;
 	}
 
 	public function display() {
@@ -31,7 +32,7 @@ class Field_Text extends Field {
 						$this->default = "";
 					}
 				}
-				echo "<input type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' name='{$this->name}'>";
+				echo "<input type='{$this->input_type}' value='{$this->default}' {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
