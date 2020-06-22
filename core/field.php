@@ -11,10 +11,21 @@ class Field {
 	public $default;
 	public $filter;
 	public $type;
+	public $in_repeatable_form;
 
 	public function display() {
 		echo "<label class='label'>Field Label</label>";
 		echo "<p>Hello, I am a field!</p>";
+	}
+
+	public function get_rendered_name() {
+		// output name as array if in repeatable form
+		$rendered_name = ' name="' . $this->name;
+		if ($this->in_repeatable_form) {
+			$rendered_name .= "[]";
+		}
+		$rendered_name .=  '" ';
+		return $rendered_name;
 	}
 
 	public function designer_display() {

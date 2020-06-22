@@ -2,6 +2,15 @@
 	"id":"testform",
 	"fields":[
 		{
+			"name":"repeater",
+			"id":"repeater",
+			"type":"Repeatable",
+			"label":"Testing Repeatable Form",
+			"required":true,
+			"form_path":"/admin/forms/general_options.json",
+			"description":"Testing repeatable form."
+		},
+		{
 			"name":"tree",
 			"id":"tree",
 			"type":"Tree",
