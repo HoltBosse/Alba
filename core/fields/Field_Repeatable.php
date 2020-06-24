@@ -32,11 +32,25 @@ class Field_Repeatable extends Field {
 			echo "<div class='repeatable'>";
 				$this->form->display_front_end();
 			echo "</div>";
+			// TESTING show 2
+			echo "<div class='repeatable'>";
+				$this->form->display_front_end();
+			echo "</div>";
 
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
 			}
 		echo "</div>";
+	}
+
+	public function set_from_submit() {
+		$value = CMS::getvar($this->name, $this->filter);
+		if (is_string($value)||is_numeric($value)) {
+			$this->default = $value;
+		}
+		if (is_array($value)) {
+			$this->default = json_encode($value);
+		}
 	}
 
 
