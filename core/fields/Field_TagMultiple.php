@@ -49,36 +49,15 @@ class Field_TagMultiple extends Field {
 			echo "<p class='help'>" . $this->description . "</p>";
 		}
 		// Slimselect Multiple library 
-		echo "<script>new SlimSelect({ select: '#{$this->id}' })</script>";
+		if ($this->in_repeatable_form===null) {
+			// cannot inject script element inside template literal
+			// TODO: figure out way of allowing multiselects with slim
+			// inside repeatable form - call js elsewhere/dynamically?
+			echo "<script>new SlimSelect({ select: '#{$this->id}' });</script>";
+		}
 	}
 
 
-	public function inject_designer_javascript() {
-		?>
-		<script>
-			window.Field_TagSingle = {};
-			// template is what gets injected when the field 'insert new' button gets clicked
-			window.Field_TagSingle.designer_template = `
-			<div class="field">
-				<h2 class='heading title'>Text Field</h2>	
-
-				<label class="label">Label</label>
-				<div class="control has-icons-left has-icons-right">
-					<input required name="label" class="input iss-success" type="label" placeholder="Label" value="">
-				</div>
-
-				<label class="label">Required</label>
-				<div class="control has-icons-left has-icons-right">
-					<input name="required" class="checkbox iss-success" type="checkbox"  value="">
-				</div>
-			</div>`;
-		</script>
-		<?php 
-	}
-
-	public function designer_display() {
-
-	}
 
 	public function load_from_config($config) {
 		$this->name = $config->name ?? 'error!!!';

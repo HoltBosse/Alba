@@ -1,6 +1,16 @@
 {
 	"id":"testform",
 	"fields":[
+		
+		{
+			"name":"testtags",
+			"id":"testtags",
+			"type":"TagMultiple",
+			"label":"Multi Tags",
+			"required":false,
+			"description":"Multitag Test",
+			"filter":"ARRAYOFINT"
+		},
 		{
 			"name":"repeater",
 			"id":"repeater",

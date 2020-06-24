@@ -22,11 +22,13 @@ class Field {
 		// output name as array if in repeatable form
 		// multiple makes it an array of arrays :D -> [][]
 		$rendered_name = ' name="' . $this->name;
-		if ($this->in_repeatable_form) {
-			$rendered_name .= "[]";
-		}
-		if ($multiple) {
-			$rendered_name .= "[]";
+		if ($this->in_repeatable_form!==null || $multiple) {
+			if ($this->in_repeatable_form!==null && $multiple) {
+				$rendered_name .= "[{{replace_with_index}}][]"; // replace string with index in js when repeatable form + is clicked
+			}
+			else {
+				$rendered_name .= "[]";
+			}
 		}
 		$rendered_name .=  '" ';
 		return $rendered_name;
