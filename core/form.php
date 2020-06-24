@@ -85,7 +85,28 @@ class Form {
 		foreach ($this->fields as $field) {
 			$pair = new stdClass();
 			$pair->name = $field->name;
-			$pair->value = $field->default;
+			if ($field->type=="Repeatable") {
+				// loop through each repeatable form and each field inside each form
+				// creating tuples for each
+				$sub_form_value_array=[];
+				foreach ($field->forms as $sub_form) {
+					$sub_pair = new stdClass();
+					$sub_pair->name = $sub_form->id;
+					$sub_values = [];
+					foreach ($sub_form->fields as $sub_form_field) {
+						$sub_field_pair = new stdClass();
+						$sub_field_pair->name = $sub_form_field->name;
+						$sub_field_pair->value = $sub_form_field->default;
+						$sub_values[] = $sub_field_pair;
+					}
+					$sub_pair->value = $sub_values;
+					$sub_form_value_array[] = $sub_pair;
+				}
+				$pair->value = $sub_form_value_array;
+			}
+			else {
+				$pair->value = $field->default;
+			}
 			$name_value_pairs[] = $pair;
 		}
 		return json_encode ($name_value_pairs);
