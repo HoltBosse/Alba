@@ -9,7 +9,6 @@ class Field_Text extends Field {
 		$this->select_options=[];
 		$this->default = $default_content;
 		$this->content_type="";
-		//$this->in_repeatable_form=true;
 	}
 
 	public function display() {

@@ -10,7 +10,7 @@ class Field_Checkbox extends Field {
 				$required="";
 				if ($this->required) {$required=" required ";}
 				if ($this->default) {$checked=" checked=checked ";} // 0 value stored for unchecked
-				echo "<input $checked value='1' type='checkbox' id='{$this->id}' name='{$this->name}'>";
+				echo "<input $checked value='1' type='checkbox' id='{$this->id}' {$this->get_rendered_name()}>";
 				echo "&nbsp;" . $this->label;
 			echo "</label>";
 			if ($this->description) {

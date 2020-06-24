@@ -16,6 +16,14 @@
 			"label":"Txt Test 2",
 			"required":false,
 			"description":"Repeatable text fields 2."
+		},
+		{
+			"name":"testrepeattags",
+			"id":"testrepeattags",
+			"type":"TagMultiple",
+			"label":"Multi Tags Repeatable",
+			"required":false,
+			"description":"Hope this works"
 		}
 	]
 }

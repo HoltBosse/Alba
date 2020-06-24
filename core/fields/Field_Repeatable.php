@@ -46,11 +46,13 @@ class Field_Repeatable extends Field {
 
 		var add_repeater_<?php echo $this->form->id;?> = document.getElementById('add_repeater_<?php echo $this->form->id;?>');
 		add_repeater_<?php echo $this->form->id;?>.addEventListener('click',function(e){
-			var template_var = e.target.dataset.repeatable_template_var;
-			//alert(template_var);
-			var markup = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').innerHTML;
-			markup = markup + window['repeatable_form_template_<?php echo $this->form->id;?>'];
-			document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').innerHTML = markup;
+			// create new document fragment from template and add to repeater container
+			var markup = window['repeatable_form_template_<?php echo $this->form->id;?>'];
+			var repeat_count = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').querySelectorAll('div.repeatable').length;
+			markup = markup.replace('{{replace_with_index}}', repeat_count.toString());
+			var new_node = document.createRange().createContextualFragment(markup);
+			var this_repeater = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>');
+			this_repeater.appendChild(new_node);
 		});
 		</script>
 		<?php
