@@ -61,6 +61,18 @@ class Field {
 		}
 	}
 
+	public function set_from_submit_repeatable($index=0) {
+		$raw_value_array = CMS::getvar($this->name, "ARRAYRAW"); // get raw array
+		$raw_value = $raw_value_array[$index]; // get nth entry in raw array
+		$value = Input::filter($raw_value, $this->filter); // filter raw value appropriately
+		if (is_string($value)||is_numeric($value)) {
+			$this->default = $value;
+		}
+		if (is_array($value)) {
+			$this->default = json_encode($value);
+		}
+	}
+
 	public function get_friendly_value() {
 		// return friendly (text) version of data represented by default/current value
 		// ostensibly used by 'list' item option in content listings for user driven columns

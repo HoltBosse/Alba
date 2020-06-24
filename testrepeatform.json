@@ -6,7 +6,7 @@
 			"id":"txt1",
 			"type":"Text",
 			"label":"Txt Test 1",
-			"required":false,
+			"required":true,
 			"description":"Repeatable text fields 1."
 		},
 		{

@@ -22,13 +22,13 @@ class Field_Repeatable extends Field {
 			echo $this->name;
 			echo "</label>";
 			$this->form = new Form(CMSPATH . $this->form_path, true); // second parameter is boolean for repeatable or not
-			//CMS::pprint_r ($this->form);
+
 			$forms_array = json_decode($this->default);
 			$repeat_count = sizeof($forms_array);
 			for ($i=0; $i<$n; $i++) {
 				// show repeated forms
 			}
-			// output empty repeatable input markup
+			// output at least one empty repeatable input markup
 			echo "<div class='repeatable'>";
 				$this->form->display_front_end();
 			echo "</div>";
@@ -44,13 +44,20 @@ class Field_Repeatable extends Field {
 	}
 
 	public function set_from_submit() {
-		$value = CMS::getvar($this->name, $this->filter);
-		if (is_string($value)||is_numeric($value)) {
-			$this->default = $value;
+		// create base repeatable form
+		$forms=[];
+		$repeatable_form = new Form(CMSPATH . $this->form_path);
+		$repeat_count = sizeof (CMS::getvar('form_' . $repeatable_form->id, 'ARRAYRAW'));
+
+		for ($n=0; $n<$repeat_count; $n++) {
+			$repeatable_form = new Form(CMSPATH . $this->form_path);
+			foreach ($repeatable_form->fields as $field) {
+				$field->set_from_submit_repeatable($n);
+			}
+			$forms[] = $repeatable_form;
 		}
-		if (is_array($value)) {
-			$this->default = json_encode($value);
-		}
+		$this->forms = $forms;
+		
 	}
 
 
@@ -67,9 +74,13 @@ class Field_Repeatable extends Field {
 	}
 
 	public function validate() {
-		if ($this->is_missing()) {
-			return false;
+		// assume $this->forms has been set by set_from_submit
+		$all_valid=true;
+		foreach ($this->forms as $subform) {
+			if (!$subform->validate()) {
+				$all_valid=false;
+			}
 		}
-		return true;
+		return $all_valid;
 	}
 }
