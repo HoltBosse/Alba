@@ -1,0 +1,21 @@
+{
+	"id":"testrepeatform",
+	"fields":[
+		{
+			"name":"txt1",
+			"id":"txt1",
+			"type":"Text",
+			"label":"Txt Test 1",
+			"required":false,
+			"description":"Repeatable text fields 1."
+		},
+		{
+			"name":"txt2",
+			"id":"txt2",
+			"type":"Text",
+			"label":"Txt Test 2",
+			"required":false,
+			"description":"Repeatable text fields 2."
+		}
+	]
+}

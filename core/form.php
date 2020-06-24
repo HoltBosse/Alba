@@ -6,7 +6,7 @@ class Form {
 	public $fields;
 	public $repeatable;
 
-	function __construct($path = CMSPATH . "/testform.json", $repeatable=true) {
+	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
 		$this->fields = array();
 		$this->location = "";
 		$this->repeatable = $repeatable;
