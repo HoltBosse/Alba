@@ -30,7 +30,7 @@ class Field_TagMultiple extends Field {
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";
-					echo "<select class='is-multiple' multiple {$required} id='{$this->id}' name='{$this->name}[]'>";
+					echo "<select class='is-multiple' multiple {$required} id='{$this->id}' {$this->get_rendered_name(true)}>";
 						if ($this->required) {
 							echo "<option value='' >{$this->label}</option>";
 						}

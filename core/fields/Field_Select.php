@@ -25,7 +25,7 @@ class Field_Select extends Field {
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";
-					echo "<select {$required} id='{$this->id}' name='{$this->name}'>";
+					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 						if ($this->required) {
 							echo "<option value='' >{$this->label}</option>";
 						}

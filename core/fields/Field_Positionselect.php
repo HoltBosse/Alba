@@ -17,7 +17,7 @@ class Field_Positionselect extends Field {
 		$required="";
 		if ($this->required) {$required=" required ";}
 		echo "<div class='select'>";
-			echo "<select {$required} id='{$this->id}' name='{$this->name}'>";
+			echo "<select {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 				if ($this->required) {
 					echo "<option value='' >{$this->label}: (required)</option>";
 				}
