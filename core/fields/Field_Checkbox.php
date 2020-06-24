@@ -6,7 +6,7 @@ class Field_Checkbox extends Field {
 	public function display() {
 		echo "<div class='field'>";
 			echo "<label for='{$this->id}' class='checkbox'>";
-				echo "<input type='hidden' value='0' name='{$this->name}'>"; // ensure submitted value
+				echo "<input type='hidden' value='0' {$this->get_rendered_name()}>"; // ensure submitted value
 				$required="";
 				if ($this->required) {$required=" required ";}
 				if ($this->default) {$checked=" checked=checked ";} // 0 value stored for unchecked

@@ -8,6 +8,7 @@ class Field_Repeatable extends Field {
 	public $form_path;
 
 	public function display() {
+		$this->form = new Form(CMSPATH . $this->form_path, true); // second parameter is boolean for repeatable or not
 		?>
 		<style>
 		.repeatable {
@@ -16,31 +17,44 @@ class Field_Repeatable extends Field {
 			padding:1em;
 		}
 		</style>
+
+		<script>
+		window.repeatable_form_template_<?php echo $this->form->id;?> = `
+		<div class='repeatable'><button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
+		<?php $this->form->display_front_end(); ?>
+		</div>
+		`;
+		</script>
+
 		<?php
 		echo "<div class='field'>";
 			echo "<label for='{$this->id}' class='label'>";
 			echo $this->name;
 			echo "</label>";
-			$this->form = new Form(CMSPATH . $this->form_path, true); // second parameter is boolean for repeatable or not
-
-			$forms_array = json_decode($this->default);
-			$repeat_count = sizeof($forms_array);
-			for ($i=0; $i<$n; $i++) {
-				// show repeated forms
-			}
-			// output at least one empty repeatable input markup
-			echo "<div class='repeatable'>";
-				$this->form->display_front_end();
+			
+			echo "<div class='repeated_forms_container' id='repeated_forms_container_{$this->form->id}'>";
 			echo "</div>";
-			// TESTING show 2
-			echo "<div class='repeatable'>";
-				$this->form->display_front_end();
-			echo "</div>";
+			
+			echo "<button type='button' data-repeatable_template_var='repeatable_form_template_{$this->form->id}' id='add_repeater_{$this->form->id}' class='add_new_repeatable button btn is-primary'>+</button>";
 
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
 			}
 		echo "</div>";
+		?>
+		<script>
+
+		var add_repeater_<?php echo $this->form->id;?> = document.getElementById('add_repeater_<?php echo $this->form->id;?>');
+		add_repeater_<?php echo $this->form->id;?>.addEventListener('click',function(e){
+			var template_var = e.target.dataset.repeatable_template_var;
+			//alert(template_var);
+			var markup = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').innerHTML;
+			markup = markup + window['repeatable_form_template_<?php echo $this->form->id;?>'];
+			document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').innerHTML = markup;
+		});
+		</script>
+		<?php
+
 	}
 
 	public function set_from_submit() {

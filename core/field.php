@@ -18,10 +18,14 @@ class Field {
 		echo "<p>Hello, I am a field!</p>";
 	}
 
-	public function get_rendered_name() {
+	public function get_rendered_name($multiple=false) {
 		// output name as array if in repeatable form
+		// multiple makes it an array of arrays :D -> [][]
 		$rendered_name = ' name="' . $this->name;
 		if ($this->in_repeatable_form) {
+			$rendered_name .= "[]";
+		}
+		if ($multiple) {
 			$rendered_name .= "[]";
 		}
 		$rendered_name .=  '" ';

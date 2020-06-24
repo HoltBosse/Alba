@@ -56,7 +56,7 @@ class Field_Tree extends Field {
 			$required="";
 			$decoded_default = html_entity_decode ($this->default);
 			if ($this->required) {$required=" required ";}
-			echo "<input type='hidden' value='{$decoded_default}' class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' name='{$this->name}'>";	
+			echo "<input type='hidden' value='{$decoded_default}' class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";	
 		echo "</div>";
 		?>
 		<script>

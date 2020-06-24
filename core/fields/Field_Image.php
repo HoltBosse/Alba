@@ -40,7 +40,7 @@ class Field_Image extends Field {
 		
 		
 		
-		echo "<input type='hidden' value='{$this->default}' {$required} id='{$this->id}' name='{$this->name}'>";
+		echo "<input type='hidden' value='{$this->default}' {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 		if ($this->description) {
 			echo "<p class='help'>" . $this->description . "</p>";
 		}
