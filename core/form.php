@@ -4,10 +4,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Form {
 	public $location; // relative to CMS path for json config
 	public $fields;
+	public $repeatable;
 
-	function __construct($path=CMSPATH . "/testform.json") {
+	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
 		$this->fields = array();
 		$this->location = "";
+		$this->repeatable = $repeatable;
 		$this->load_json($path);
 	}
 
@@ -33,6 +35,9 @@ class Form {
 				$class = "Field_" . $field_config->type;
 				$thisfield = new $class();
 				$thisfield->load_from_config($field_config);
+				if ($this->repeatable) {
+					$thisfield->in_repeatable_form = true;
+				}
 				$this->fields[] = $thisfield;
 			}
 		}
@@ -80,7 +85,28 @@ class Form {
 		foreach ($this->fields as $field) {
 			$pair = new stdClass();
 			$pair->name = $field->name;
-			$pair->value = $field->default;
+			if ($field->type=="Repeatable") {
+				// loop through each repeatable form and each field inside each form
+				// creating tuples for each
+				$sub_form_value_array=[];
+				foreach ($field->forms as $sub_form) {
+					$sub_pair = new stdClass();
+					$sub_pair->name = $sub_form->id;
+					$sub_values = [];
+					foreach ($sub_form->fields as $sub_form_field) {
+						$sub_field_pair = new stdClass();
+						$sub_field_pair->name = $sub_form_field->name;
+						$sub_field_pair->value = $sub_form_field->default;
+						$sub_values[] = $sub_field_pair;
+					}
+					$sub_pair->value = $sub_values;
+					$sub_form_value_array[] = $sub_pair;
+				}
+				$pair->value = $sub_form_value_array;
+			}
+			else {
+				$pair->value = $field->default;
+			}
 			$name_value_pairs[] = $pair;
 		}
 		return json_encode ($name_value_pairs);
@@ -98,14 +124,19 @@ class Form {
 	}
 
 	public function display_front_end() {
-		// loop through fields and call display();
-		//CMS::pprint_r ($this);
 		
+		// first make sure array added to name if required
+		$aftername='';
+		if ($this->repeatable) {
+			$aftername="[]";
+		}
+
+		// loop through fields and call display();
 		foreach ($this->fields as $field) {
 			echo "<div class='form_field field'>";
 			$field->display();
 			echo "</div>";
 		}
-		echo "<input type='hidden' value='1' name='form_" . $this->id . "'>";
+		echo "<input type='hidden' value='1' name='form_" . $this->id . "{$aftername}'>";
 	}
 }

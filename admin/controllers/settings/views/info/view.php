@@ -33,6 +33,14 @@ if ($allow_fopen) {
 else {
 	show_message ('PHP fopen Allowed','fopen is <em>not</em> available. This is required for automatic update downloads.','is-warning');
 }
+
+if ($gd_available) {
+	show_message ('GD Graphics Library Available','GD is available. This is required for image manipulation.','is-success');
+}
+else {
+	show_message ('GD Graphics Library Available','GD is <em>not</em> available. This is required for image manipulation.','is-warning');
+}
+
 ?>
 
 <hr>

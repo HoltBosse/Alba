@@ -11,10 +11,27 @@ class Field {
 	public $default;
 	public $filter;
 	public $type;
+	public $in_repeatable_form;
 
 	public function display() {
 		echo "<label class='label'>Field Label</label>";
 		echo "<p>Hello, I am a field!</p>";
+	}
+
+	public function get_rendered_name($multiple=false) {
+		// output name as array if in repeatable form
+		// multiple makes it an array of arrays :D -> [][]
+		$rendered_name = ' name="' . $this->name;
+		if ($this->in_repeatable_form!==null || $multiple) {
+			if ($this->in_repeatable_form!==null && $multiple) {
+				$rendered_name .= "[{{replace_with_index}}][]"; // replace string with index in js when repeatable form + is clicked
+			}
+			else {
+				$rendered_name .= "[]";
+			}
+		}
+		$rendered_name .=  '" ';
+		return $rendered_name;
 	}
 
 	public function designer_display() {
@@ -47,6 +64,25 @@ class Field {
 		}
 		if (is_array($value)) {
 			$this->default = json_encode($value);
+		}
+	}
+
+	public function set_from_submit_repeatable($index=0) {
+		// index = index of repeated form inside repeatable
+		
+		$raw_value_array = CMS::getvar($this->name, "ARRAYRAW"); // get raw array
+		$raw_value = $raw_value_array[$index]; // get nth entry in raw array
+		$value = Input::filter($raw_value, $this->filter); // filter raw value appropriately according to field filter in json
+
+		if (is_string($value)||is_numeric($value)) {
+			$this->default = $value;
+		}
+		elseif (is_array($value)) {
+			$this->default = json_encode($value);
+		}
+		else {
+			// should never get here, can't hurt to catch
+			CMS::show_error('Unknown value type submitted');
 		}
 	}
 

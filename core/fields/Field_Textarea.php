@@ -31,7 +31,7 @@ class Field_Textarea extends Field {
 						$this->default = "";
 					}
 				}
-				echo "<textarea type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' name='{$this->name}'>";
+				echo "<textarea type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
 				echo $this->default;
 				echo "</textarea>";
 			echo "</div>";

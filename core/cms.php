@@ -27,7 +27,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	public $version = "0.18 (beta) - default template";
+	public $version = "0.19 (beta) - repeatable field";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -51,6 +51,7 @@ final class CMS {
 	}
 
 	static public function getvar($val, $filter="RAW") {
+		//return Input::getvar($val, $filter);
 		if (isset($_GET[$val])) {
 			$foo = $_GET[$val];
 		}
@@ -67,7 +68,7 @@ final class CMS {
 		}
 		elseif ($filter=="ALIAS") {
 			$temp = filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-			return CMS::stringURLSafe($temp);
+			return Input::stringURLSafe($temp);
 		}
 		elseif ($filter=="USERNAME"||$filter=="TEXT"||$filter=="STRING") {
 			return filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
@@ -75,7 +76,14 @@ final class CMS {
 		elseif ($filter=="EMAIL") {
 			return filter_var($foo, FILTER_VALIDATE_EMAIL);
 		}
-		elseif ($filter=="ARRAYTOJSON") {
+		elseif ($filter=="ARRAYRAW") {
+			if (!is_array($foo)) {
+				CMS::Instance()->queue_message('ARRAYRAW cannot return a non-array','danger',Config::$uripath . '/admin');
+				return false;
+			}
+			return $foo;
+		}
+		elseif ($filter=="ARRAYTOJSON"||$filter=="ARRAY") {
 			if (!is_array($foo)) {
 				CMS::Instance()->queue_message('Cannot convert non-array to json in ARRAYTOJSON','danger',Config::$uripath . '/admin');
 				//echo "<h5>Variable is not array, cannot perform ARRAYTOJSON filter</h5>";
@@ -84,7 +92,8 @@ final class CMS {
 			$json = json_encode($foo);
 			return $json;
 		}
-		elseif ($filter=="ARRAYOFINT") {
+		elseif ($filter=="ARRAYOFINT"||$filter=="ARRAYNUM") {
+			
 			if (is_array($foo)) {
 				$ok = true;
 				foreach ($foo as $bar) {
@@ -144,19 +153,7 @@ final class CMS {
 		}
 	}
 
-	static public function stringURLSafe($string)
-    {
-        //remove any '-' from the string they will be used as concatonater
-        $str = str_replace('-', ' ', $string);
-		$str = str_replace('_', ' ', $string);
-		
-        // remove any duplicate whitespace, and ensure all characters are alphanumeric
-        $str = preg_replace(array('/\s+/','/[^A-Za-z0-9\-]/'), array('-',''), $str);
-
-        // lowercase and trim
-        $str = trim(strtolower($str));
-        return $str;
-	}
+	
 	
 	public function render_widgets($position) {
 		//echo "<h5>{$position}</h5>";
