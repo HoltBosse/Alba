@@ -26,11 +26,20 @@ class Field_TagMultiple extends Field {
 			$tags = Tag::get_all_tags ();
 		}
 		if ($this->required) {$required=" required ";}
+		// if id needs to be unique for scripting purposes, make sure replacement text inserted
+		// this will be replaced during repeatable template literal js injection when adding new
+		// repeatable form item
+		if ($this->in_repeatable_form===null) {
+			$repeatable_id_suffix='';
+		}
+		else {
+			$repeatable_id_suffix='{{repeatable_id_suffix}}';
+		}
 		echo "<div class='field'>";
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";
-					echo "<select class='is-multiple' multiple {$required} id='{$this->id}' name='{$this->name}[]'>";
+					echo "<select class='is-multiple' multiple {$required} id='{$this->id}{$repeatable_id_suffix}' {$this->get_rendered_name(true)}>";
 						if ($this->required) {
 							echo "<option value='' >{$this->label}</option>";
 						}
@@ -49,36 +58,16 @@ class Field_TagMultiple extends Field {
 			echo "<p class='help'>" . $this->description . "</p>";
 		}
 		// Slimselect Multiple library 
-		echo "<script>new SlimSelect({ select: '#{$this->id}' })</script>";
+		if ($this->in_repeatable_form===null) {
+			echo "<script>new SlimSelect({ select: '#{$this->id}' });</script>"; 
+		}
+		else {
+			// also inject id_suffix to be replace at injection time
+			echo "<script>new SlimSelect({ select: '#{$this->id}{$repeatable_id_suffix}' });</script>"; 
+		}
 	}
 
 
-	public function inject_designer_javascript() {
-		?>
-		<script>
-			window.Field_TagSingle = {};
-			// template is what gets injected when the field 'insert new' button gets clicked
-			window.Field_TagSingle.designer_template = `
-			<div class="field">
-				<h2 class='heading title'>Text Field</h2>	
-
-				<label class="label">Label</label>
-				<div class="control has-icons-left has-icons-right">
-					<input required name="label" class="input iss-success" type="label" placeholder="Label" value="">
-				</div>
-
-				<label class="label">Required</label>
-				<div class="control has-icons-left has-icons-right">
-					<input name="required" class="checkbox iss-success" type="checkbox"  value="">
-				</div>
-			</div>`;
-		</script>
-		<?php 
-	}
-
-	public function designer_display() {
-
-	}
 
 	public function load_from_config($config) {
 		$this->name = $config->name ?? 'error!!!';
@@ -86,7 +75,7 @@ class Field_TagMultiple extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
+		$this->filter = $config->filter ?? 'ARRAYOFINT';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->select_options = $config->select_options ?? [];
 		$this->default = json_decode($config->default) ?? "";

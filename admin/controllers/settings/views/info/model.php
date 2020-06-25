@@ -6,3 +6,4 @@ defined('CMSPATH') or die; // prevent unauthorized access
 $segments = CMS::Instance()->uri_segments;
 $native_zip = class_exists('ZipArchive',false);
 $allow_fopen = ini_get('allow_url_fopen');
+$gd_available = function_exists ('imagecreatefromjpeg');

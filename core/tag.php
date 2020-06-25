@@ -109,7 +109,10 @@ class Tag {
 			$query = "insert into tags (state,public,title,alias,note,filter,description,image) values(?,?,?,?,?,?,?,?)";
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			if (!$this->alias) {
-				$this->alias = CMS::stringURLSafe($this->title);
+				$this->alias = Input::stringURLSafe($this->title);
+			}
+			if (!$this->image) {
+				$this->image=null;
 			}
 			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image);
 			$result = $stmt->execute( $params );

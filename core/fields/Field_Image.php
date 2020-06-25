@@ -18,8 +18,17 @@ class Field_Image extends Field {
 
 		$required="";
 		if ($this->required) {$required=" required ";}
-		?>
-		<?php 
+		// if id needs to be unique for scripting purposes, make sure replacement text inserted
+		// this will be replaced during repeatable template literal js injection when adding new
+		// repeatable form item
+		if ($this->in_repeatable_form===null) {
+			$repeatable_id_suffix='';
+		}
+		else {
+			$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
+			$this->id = $this->id . $repeatable_id_suffix;
+		}
+
 		echo "<hr class='image_field_hr image_field_top'>";
 
 		echo "<label class='label'>" . $this->label . "</label>";
@@ -40,7 +49,7 @@ class Field_Image extends Field {
 		
 		
 		
-		echo "<input type='hidden' value='{$this->default}' {$required} id='{$this->id}' name='{$this->name}'>";
+		echo "<input type='hidden' value='{$this->default}' {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 		if ($this->description) {
 			echo "<p class='help'>" . $this->description . "</p>";
 		}
@@ -128,6 +137,10 @@ class Field_Image extends Field {
 		});
 		</script>
 		<?php
+		if ($this->in_repeatable_form===null) {
+			//echo "</script>"; // no need anymore
+		}
+		
 	}
 
 
