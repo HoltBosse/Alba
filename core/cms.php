@@ -27,7 +27,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	public $version = "0.18 (beta) - default template";
+	public $version = "0.19 (beta) - repeatable field";
 
 	/* protected function __construct() {}
     protected function __clone() {}
