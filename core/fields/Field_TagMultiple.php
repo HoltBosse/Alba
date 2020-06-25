@@ -75,7 +75,7 @@ class Field_TagMultiple extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
+		$this->filter = $config->filter ?? 'ARRAYOFINT';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->select_options = $config->select_options ?? [];
 		$this->default = json_decode($config->default) ?? "";

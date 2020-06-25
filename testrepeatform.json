@@ -31,7 +31,8 @@
 			"type":"TagMultiple",
 			"label":"Multi Tags Repeatable",
 			"required":false,
-			"description":"Hope this works"
+			"description":"Hope this works",
+			"filter":"ARRAYNUM"
 		}
 	]
 }

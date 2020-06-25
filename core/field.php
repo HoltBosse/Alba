@@ -68,14 +68,21 @@ class Field {
 	}
 
 	public function set_from_submit_repeatable($index=0) {
+		// index = index of repeated form inside repeatable
+		
 		$raw_value_array = CMS::getvar($this->name, "ARRAYRAW"); // get raw array
 		$raw_value = $raw_value_array[$index]; // get nth entry in raw array
-		$value = Input::filter($raw_value, $this->filter); // filter raw value appropriately
+		$value = Input::filter($raw_value, $this->filter); // filter raw value appropriately according to field filter in json
+
 		if (is_string($value)||is_numeric($value)) {
 			$this->default = $value;
 		}
-		if (is_array($value)) {
+		elseif (is_array($value)) {
 			$this->default = json_encode($value);
+		}
+		else {
+			// should never get here, can't hurt to catch
+			CMS::show_error('Unknown value type submitted');
 		}
 	}
 
