@@ -62,7 +62,7 @@ class Input {
 			$json = json_encode($foo);
 			return $json;
 		}
-		elseif ($filter=="ARRAYOFINT") {
+		elseif ($filter=="ARRAYOFINT"||$filter=="ARRAYNUM") {
 			if (is_array($foo)) {
 				$ok = true;
 				foreach ($foo as $bar) {

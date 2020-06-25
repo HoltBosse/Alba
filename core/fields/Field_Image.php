@@ -25,7 +25,8 @@ class Field_Image extends Field {
 			$repeatable_id_suffix='';
 		}
 		else {
-			$repeatable_id_suffix='{{repeatable_id_suffix}}';
+			$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
+			$this->id = $this->id . $repeatable_id_suffix;
 		}
 
 		echo "<hr class='image_field_hr image_field_top'>";
