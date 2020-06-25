@@ -134,16 +134,12 @@ class Field_Image extends Field {
 				});
 			});
 		});
+		</script>
 		<?php
 		if ($this->in_repeatable_form===null) {
-			echo "</script>";
+			//echo "</script>"; // no need anymore
 		}
-		else {
-			// escape close script to prevent premature closing
-			// when injecting script tag inside template literal
-			// also inject id_suffix to be replace at injection time
-			echo "<\/script>"; 
-		}
+		
 	}
 
 
