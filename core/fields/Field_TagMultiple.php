@@ -26,11 +26,20 @@ class Field_TagMultiple extends Field {
 			$tags = Tag::get_all_tags ();
 		}
 		if ($this->required) {$required=" required ";}
+		// if id needs to be unique for scripting purposes, make sure replacement text inserted
+		// this will be replaced during repeatable template literal js injection when adding new
+		// repeatable form item
+		if ($this->in_repeatable_form===null) {
+			$repeatable_id_suffix='';
+		}
+		else {
+			$repeatable_id_suffix='{{repeatable_id_suffix}}';
+		}
 		echo "<div class='field'>";
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";
-					echo "<select class='is-multiple' multiple {$required} id='{$this->id}' {$this->get_rendered_name(true)}>";
+					echo "<select class='is-multiple' multiple {$required} id='{$this->id}{$repeatable_id_suffix}' {$this->get_rendered_name(true)}>";
 						if ($this->required) {
 							echo "<option value='' >{$this->label}</option>";
 						}
@@ -50,10 +59,13 @@ class Field_TagMultiple extends Field {
 		}
 		// Slimselect Multiple library 
 		if ($this->in_repeatable_form===null) {
-			// cannot inject script element inside template literal
-			// TODO: figure out way of allowing multiselects with slim
-			// inside repeatable form - call js elsewhere/dynamically?
-			echo "<script>new SlimSelect({ select: '#{$this->id}' });</script>";
+			echo "<script>new SlimSelect({ select: '#{$this->id}' });</script>"; 
+		}
+		else {
+			// escape close script to prevent premature closing
+			// when injecting script tag inside template literal
+			// also inject id_suffix to be replace at injection time
+			echo "<script>new SlimSelect({ select: '#{$this->id}{$repeatable_id_suffix}' });<\/script>"; 
 		}
 	}
 

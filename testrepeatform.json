@@ -2,6 +2,14 @@
 	"id":"testrepeatform",
 	"fields":[
 		{
+			"name":"qqq",
+			"id":"qqq",
+			"type":"Image",
+			"label":"QQQ",
+			"required":false,
+			"description":"Repeatable QQQ ."
+		},
+		{
 			"name":"txt1",
 			"id":"txt1",
 			"type":"Text",

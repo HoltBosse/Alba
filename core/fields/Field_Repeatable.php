@@ -19,9 +19,21 @@ class Field_Repeatable extends Field {
 		</style>
 
 		<script>
+		// generate template literal for form markup to be used on adding repeatable form
 		window.repeatable_form_template_<?php echo $this->form->id;?> = `
 		<div class='repeatable'><button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
-		<?php $this->form->display_front_end(); ?>
+		<?php
+		// render form
+			ob_start(); // start new output buffer to escape any backticks / string literals inside form display - image field has LOTS
+			$this->form->display_front_end(); 
+			$form_markup = ob_get_contents();
+			ob_end_clean(); // end temp buffering without outputting any of the form
+			// escape backticks
+			$form_markup = str_replace('`','\\`',$form_markup);
+			// escape string literal variables
+			$form_markup = str_replace('${','{{',$form_markup);
+			echo $form_markup;
+		?>
 		</div>
 		`;
 		</script>
@@ -29,7 +41,7 @@ class Field_Repeatable extends Field {
 		<?php
 		echo "<div class='field'>";
 			echo "<label for='{$this->id}' class='label'>";
-			echo $this->name;
+			echo $this->label;
 			echo "</label>";
 			
 			echo "<div class='repeated_forms_container' id='repeated_forms_container_{$this->form->id}'>";
@@ -49,7 +61,12 @@ class Field_Repeatable extends Field {
 			// create new document fragment from template and add to repeater container
 			var markup = window['repeatable_form_template_<?php echo $this->form->id;?>'];
 			var repeat_count = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').querySelectorAll('div.repeatable').length;
+			// insert index if required
 			markup = markup.replace('{{replace_with_index}}', repeat_count.toString());
+			// insert unique id if required (image / slimselect js need unique ids for script)
+			var unique_id_suffix = '_' + Math.random().toString(36).substr(2, 9);
+			markup = markup.replace(/{{repeatable_id_suffix}}/g, unique_id_suffix);
+			// create and insert node with markup
 			var new_node = document.createRange().createContextualFragment(markup);
 			var this_repeater = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>');
 			this_repeater.appendChild(new_node);
