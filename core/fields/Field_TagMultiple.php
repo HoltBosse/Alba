@@ -62,10 +62,8 @@ class Field_TagMultiple extends Field {
 			echo "<script>new SlimSelect({ select: '#{$this->id}' });</script>"; 
 		}
 		else {
-			// escape close script to prevent premature closing
-			// when injecting script tag inside template literal
 			// also inject id_suffix to be replace at injection time
-			echo "<script>new SlimSelect({ select: '#{$this->id}{$repeatable_id_suffix}' });<\/script>"; 
+			echo "<script>new SlimSelect({ select: '#{$this->id}{$repeatable_id_suffix}' });</script>"; 
 		}
 	}
 

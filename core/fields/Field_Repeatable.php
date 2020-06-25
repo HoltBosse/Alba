@@ -19,23 +19,21 @@ class Field_Repeatable extends Field {
 		</style>
 
 		<script>
-		// generate template literal for form markup to be used on adding repeatable form
-		window.repeatable_form_template_<?php echo $this->form->id;?> = `
-		<div class='repeatable'><button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
 		<?php
-		// render form
+			// generate template for form repeatable and store in JS variable
+			// render form
+			$repeatable_template = new stdClass();
+			$repeatable_template->markup="";
 			ob_start(); // start new output buffer to escape any backticks / string literals inside form display - image field has LOTS
+			?>
+			<div class='repeatable'><button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
+			<?php
 			$this->form->display_front_end(); 
-			$form_markup = ob_get_contents();
-			ob_end_clean(); // end temp buffering without outputting any of the form
-			// escape backticks
-			$form_markup = str_replace('`','\\`',$form_markup);
-			// escape string literal variables
-			$form_markup = str_replace('${','{{',$form_markup);
-			echo $form_markup;
+			echo "</div>";
+			$repeatable_template->markup = ob_get_contents();
+			ob_end_clean(); // end temp buffering without outputting any of the form to browser / existing buffer
 		?>
-		</div>
-		`;
+		window.repeatable_form_template_<?php echo $this->form->id;?> = <?php echo json_encode($repeatable_template); ?>;
 		</script>
 
 		<?php
@@ -59,7 +57,7 @@ class Field_Repeatable extends Field {
 		var add_repeater_<?php echo $this->form->id;?> = document.getElementById('add_repeater_<?php echo $this->form->id;?>');
 		add_repeater_<?php echo $this->form->id;?>.addEventListener('click',function(e){
 			// create new document fragment from template and add to repeater container
-			var markup = window['repeatable_form_template_<?php echo $this->form->id;?>'];
+			var markup = window['repeatable_form_template_<?php echo $this->form->id;?>'].markup;
 			var repeat_count = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').querySelectorAll('div.repeatable').length;
 			// insert index if required
 			markup = markup.replace('{{replace_with_index}}', repeat_count.toString());
