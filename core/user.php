@@ -70,7 +70,7 @@ class User {
 	}
 
 	public function load_from_post() {
-		$this->username = CMS::getvar('username','USERNAME');
+		$this->username = Input::getvar('username','USERNAME');
 		if (isset($_POST['password'])) {
 			if ($_POST['password']) {
 				$this->password = password_hash ($_POST['password'], PASSWORD_DEFAULT); 
@@ -82,14 +82,14 @@ class User {
 		else {
 			$this->password = null;
 		}
-		$this->email = CMS::getvar('email','EMAIL');
+		$this->email = Input::getvar('email','EMAIL');
 		if (!$this->email) {
 			CMS::queue_message('Invalid email','warning');
 			return false;
 		}
 		$this->registered = date('Y-m-d H:i:s');
-		$this->id = CMS::getvar('id','INT');
-		$this->groups = CMS::getvar('groups','ARRAYOFINT');
+		$this->id = Input::getvar('id','INT');
+		$this->groups = Input::getvar('groups','ARRAYOFINT');
 		return true;
 	}
 

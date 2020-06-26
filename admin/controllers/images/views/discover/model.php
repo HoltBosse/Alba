@@ -12,9 +12,9 @@ $all_image_files = array_values($all_image_files); // re-index array from 0 if .
 
 // first check to see if files have been submitted for processing from form
 
-$titles_array = CMS::getvar('title','ARRAYOFSTRING');
-$alts_array = CMS::getvar('alt','ARRAYOFSTRING');
-$web_friendly_array = CMS::getvar('web_friendly','ARRAYOFINT');
+$titles_array = Input::getvar('title','ARRAYOFSTRING');
+$alts_array = Input::getvar('alt','ARRAYOFSTRING');
+$web_friendly_array = Input::getvar('web_friendly','ARRAYOFINT');
 
 
 function make_thumb($src, $dest, $desired_width, $file) {

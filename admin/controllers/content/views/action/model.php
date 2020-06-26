@@ -11,7 +11,7 @@ if (!$action) {
 
 
 if ($action=='toggle') {
-	$id = CMS::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -27,7 +27,7 @@ if ($action=='toggle') {
 }
 
 if ($action=='publish') {
-	$id = CMS::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -44,7 +44,7 @@ if ($action=='publish') {
 }
 
 if ($action=='unpublish') {
-	$id = CMS::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -61,7 +61,7 @@ if ($action=='unpublish') {
 }
 
 if ($action=='delete') {
-	$id = CMS::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
