@@ -40,7 +40,7 @@ class Field_ContentTypeselector extends Field {
 
 	public function set_from_submit() {
 		// override default field function
-		$value = CMS::getvar($this->name, $this->filter);
+		$value = Input::getvar($this->name, $this->filter);
 		if ($value||is_numeric($value)) {
 			$this->default = $value;
 		}

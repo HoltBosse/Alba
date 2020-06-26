@@ -7,12 +7,12 @@ ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JS
 
 // TODO: Has this moved to /admin/images/api ???????
 
-$action = CMS::getvar('action','STRING');
+$action = Input::getvar('action','STRING');
 
 if ($action=='tag_media') {
-	$image_ids_string = CMS::getvar('id_list','STRING');
+	$image_ids_string = Input::getvar('id_list','STRING');
 	$image_ids = explode(",", $image_ids_string);
-	$tag_id = CMS::getvar('tag_id',"INT");
+	$tag_id = Input::getvar('tag_id',"INT");
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
@@ -43,7 +43,7 @@ if ($action=='tag_media') {
 }
 
 if ($action=='cleartags_media') {
-	$image_ids_string = CMS::getvar('id_list','STRING');
+	$image_ids_string = Input::getvar('id_list','STRING');
 	$image_ids = explode(",", $image_ids_string);
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
@@ -64,7 +64,7 @@ if ($action=='cleartags_media') {
 }
 
 if ($action=='delete_media') {
-	$image_ids_string = CMS::getvar('id_list','STRING');
+	$image_ids_string = Input::getvar('id_list','STRING');
 	$image_ids = explode(",", $image_ids_string);
 	$image_ids_tagged=[];
 	$image_ids_failed=[];

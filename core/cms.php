@@ -50,110 +50,6 @@ final class CMS {
 		file_put_contents(CMSPATH . '/cmslog.txt', "\r\n" . date('Y-m-d H:i:s') . " - " . $msg, FILE_APPEND | LOCK_EX);
 	}
 
-	static public function getvar($val, $filter="RAW") {
-		//return Input::getvar($val, $filter);
-		if (isset($_GET[$val])) {
-			$foo = $_GET[$val];
-		}
-		elseif (isset($_POST[$val])) {
-			$foo = $_POST[$val];
-		}
-		else {
-			/* echo "<code>Var " . $val . " not found</code>";
-			exit(0); */
-			return NULL;
-		}
-		if ($filter=="RAW") {
-			return $foo;
-		}
-		elseif ($filter=="ALIAS") {
-			$temp = filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-			return Input::stringURLSafe($temp);
-		}
-		elseif ($filter=="USERNAME"||$filter=="TEXT"||$filter=="STRING") {
-			return filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-		}
-		elseif ($filter=="EMAIL") {
-			return filter_var($foo, FILTER_VALIDATE_EMAIL);
-		}
-		elseif ($filter=="ARRAYRAW") {
-			if (!is_array($foo)) {
-				CMS::Instance()->queue_message('ARRAYRAW cannot return a non-array','danger',Config::$uripath . '/admin');
-				return false;
-			}
-			return $foo;
-		}
-		elseif ($filter=="ARRAYTOJSON"||$filter=="ARRAY") {
-			if (!is_array($foo)) {
-				CMS::Instance()->queue_message('Cannot convert non-array to json in ARRAYTOJSON','danger',Config::$uripath . '/admin');
-				//echo "<h5>Variable is not array, cannot perform ARRAYTOJSON filter</h5>";
-				return false;
-			}
-			$json = json_encode($foo);
-			return $json;
-		}
-		elseif ($filter=="ARRAYOFINT"||$filter=="ARRAYNUM") {
-			
-			if (is_array($foo)) {
-				$ok = true;
-				foreach ($foo as $bar) {
-					if ($bar===0||is_numeric($bar)) {
-						// this one is fine
-					}
-					else {
-						$ok = false;
-					}
-				}
-				if ($ok) {
-					return $foo;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
-				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::$uripath . '/admin');
-				return false;
-			}
-		}
-		elseif ($filter=="ARRAYOFSTRING") {
-			if (is_array($foo)) {
-				$ok = true;
-				foreach ($foo as $bar) {
-					if (is_string($bar)) {
-						// this one is fine
-					}
-					else {
-						$ok = false;
-					}
-				}
-				if ($ok) {
-					return $foo;
-				}
-				else {
-					return false;
-				}
-			}
-			else {
-				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::$uripath . '/admin');
-				return false;
-			}
-		}
-		elseif ($filter=="NUM"||$filter=="INT"||$filter=="NUMBER"||$filter=="NUMERIC") {
-			if ($foo===0) {
-				return 0;
-			}
-			else {
-				return filter_var($foo, FILTER_SANITIZE_NUMBER_INT);
-			}
-		}
-		else {
-			//return $foo;
-			return false;
-		}
-	}
-
-	
 	
 	public function render_widgets($position) {
 		//echo "<h5>{$position}</h5>";
@@ -426,8 +322,8 @@ final class CMS {
 		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::$frontendlogin) ) {
 			// check for login attempt
 			//$username = $this->getvar('username','USERNAME'); // using email, username is now display name
-			$email = $this->getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
-			$password = $this->getvar('password','RAW');
+			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
+			$password = Input::getvar('password','RAW');
 			$login_user = new User();
 			$redirect_path = Config::$uripath;
 			if (ADMINPATH) {

@@ -63,7 +63,7 @@ class Form {
 
 	public function is_submitted() {
 		if ($this->id) {
-			$form_name = CMS::getvar("form_" . $this->id, "TEXT");
+			$form_name = Input::getvar("form_" . $this->id, "TEXT");
 			if ($form_name) {
 				return true;
 			}

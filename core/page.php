@@ -127,22 +127,22 @@ class Page {
 	}
 
 	public function load_from_post() {
-		$this->title = CMS::getvar('title','TEXT');
-		$this->state = CMS::getvar('state','NUM');
+		$this->title = Input::getvar('title','TEXT');
+		$this->state = Input::getvar('state','NUM');
 		if (!$this->state) {
 			$this->state = 1;
 		}
-		$this->template_id = CMS::getvar('template','NUM');
-		$this->alias = CMS::getvar('alias','TEXT');
+		$this->template_id = Input::getvar('template','NUM');
+		$this->alias = Input::getvar('alias','TEXT');
 		if (!$this->alias) {
 			$this->alias = CMS::stringURLSafe($this->title);
 		}
-		$this->parent = CMS::getvar('parent','NUM');
-		$this->content_type = CMS::getvar('content_type','NUM');
-		$this->view = CMS::getvar('content_type_controller_view','NUM');
+		$this->parent = Input::getvar('parent','NUM');
+		$this->content_type = Input::getvar('content_type','NUM');
+		$this->view = Input::getvar('content_type_controller_view','NUM');
 
 		// OLD: view_options now handles by options_form.json in view
-		$this->view_configuration = CMS::getvar('view_options','ARRAYTOJSON');
+		$this->view_configuration = Input::getvar('view_options','ARRAYTOJSON');
 		// TODO: load from options_form
 		// e.g. $options_form = new Form(form location);
 		// $options_form->set_from_submit();
@@ -150,7 +150,7 @@ class Page {
 		// jsonify
 		// save as $this->view_configuration
 		
-		$this->id = CMS::getvar('id','NUM');
+		$this->id = Input::getvar('id','NUM');
 
 		$this->page_options_form->set_from_submit();
 

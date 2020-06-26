@@ -19,12 +19,10 @@ class Input {
 
 	public static function getvar ($input, $filter='RAW') {
 		if (isset($_GET[$input])) {
-			$foo = $_GET[$input];
-			return Input::filter($input, $filter);
+			return Input::filter($_GET[$input], $filter);
 		}
 		elseif (isset($_POST[$input])) {
-			$foo = $_POST[$input];
-			return Input::filter($input, $filter);
+			return Input::filter($_POST[$input], $filter);
 		}
 		else {
 			return NULL;

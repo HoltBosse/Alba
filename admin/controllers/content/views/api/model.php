@@ -4,12 +4,12 @@ ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JS
 
 // TODO: endure logged in user is allowed to actually perform these tasks!
 
-$action = CMS::getvar('action','STRING');
+$action = Input::getvar('action','STRING');
 
 if ($action=='insert') {
-	$source_id = CMS::getvar('sourceid','INT');
-	$dest_id = CMS::getvar('destid','INT');
-	$insert_position = CMS::getvar('insert_position','STRING');
+	$source_id = Input::getvar('sourceid','INT');
+	$dest_id = Input::getvar('destid','INT');
+	$insert_position = Input::getvar('insert_position','STRING');
 	
 	// source ordering
 	$query = "select ordering from content where id=?";

@@ -44,7 +44,7 @@ class Field {
 	}
 
 	public function is_missing() {
-		$value = CMS::getvar($this->name, $this->filter);
+		$value = Input::getvar($this->name, $this->filter);
 		if ($value===false && $this->required) {
 			return true;
 		}
@@ -58,7 +58,7 @@ class Field {
 	}
 
 	public function set_from_submit() {
-		$value = CMS::getvar($this->name, $this->filter);
+		$value = Input::getvar($this->name, $this->filter);
 		if (is_string($value)||is_numeric($value)) {
 			$this->default = $value;
 		}
@@ -70,7 +70,7 @@ class Field {
 	public function set_from_submit_repeatable($index=0) {
 		// index = index of repeated form inside repeatable
 		
-		$raw_value_array = CMS::getvar($this->name, "ARRAYRAW"); // get raw array
+		$raw_value_array = Input::getvar($this->name, "ARRAYRAW"); // get raw array
 		$raw_value = $raw_value_array[$index]; // get nth entry in raw array
 		$value = Input::filter($raw_value, $this->filter); // filter raw value appropriately according to field filter in json
 

@@ -2,7 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
-$order_by = CMS::getvar('order_by','STRING');
+$order_by = Input::getvar('order_by','STRING');
 
 $content_type_filter = null;
 if (sizeof($segments)==3) {

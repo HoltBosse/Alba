@@ -78,7 +78,7 @@ class Field_Repeatable extends Field {
 		// create base repeatable form
 		$forms=[];
 		$repeatable_form = new Form(CMSPATH . $this->form_path);
-		$repeat_count = sizeof (CMS::getvar('form_' . $repeatable_form->id, 'ARRAYRAW'));
+		$repeat_count = sizeof (Input::getvar('form_' . $repeatable_form->id, 'ARRAYRAW'));
 		// loop over this submitted repeatable and make sub-form for each element
 		for ($n=0; $n<$repeat_count; $n++) {
 			$repeatable_form = new Form(CMSPATH . $this->form_path);

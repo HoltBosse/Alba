@@ -6,7 +6,7 @@ if (!$action) {
 	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
 }
 
-$id = CMS::getvar('id','ARRAYOFINT');
+$id = Input::getvar('id','ARRAYOFINT');
 if (!$id) {
 	CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 }
