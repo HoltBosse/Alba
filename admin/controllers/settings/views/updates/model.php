@@ -5,7 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
 
-$submitted = CMS::Instance()->getvar('update_please');
+$submitted = Input::getvar('update_please');
 
 $latest = new stdClass();
 $latest->version = null;

@@ -11,7 +11,7 @@ $user_options_config = new Configuration($user_options_form);
 // load from db
 $user_options_config->load_from_db();
 
-$submitted = CMS::Instance()->getvar('form_user_options');
+$submitted = Input::getvar('form_user_options');
 
 if ($submitted) {
 	// update form with submitted values

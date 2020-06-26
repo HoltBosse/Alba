@@ -11,7 +11,7 @@ $general_options_config = new Configuration($general_options_form);
 // load from db
 $general_options_config->load_from_db();
 
-$submitted = CMS::Instance()->getvar('form_general_options');
+$submitted = Input::getvar('form_general_options');
 
 if ($submitted) {
 	// update form with submitted values
