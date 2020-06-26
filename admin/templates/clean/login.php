@@ -2,11 +2,11 @@
 
 <?php
 
-$view = CMS::Instance()->getvar('view','STRING');
+$view = Input::getvar('view','STRING');
 
 // handle reset request
 
-$resetemail = CMS::Instance()->getvar('resetemail','EMAIL');
+$resetemail = Input::getvar('resetemail','EMAIL');
 if ($resetemail) {
 	$reset_user = new User();
 	$reset_user->load_from_email($resetemail);
@@ -35,12 +35,12 @@ if ($resetemail) {
 	CMS::Instance()->queue_message('If your email was associated with a user, you should receive a message with further instructions shortly.','success',Config::$uripath . '/admin');
 }
 
-$resetkey = CMS::Instance()->getvar('resetkey','RAW'); 
+$resetkey = Input::getvar('resetkey','RAW'); 
 if ($resetkey) {
 	$view = "newpassword";
 	// check if passwords sent
-	$password1 = CMS::Instance()->getvar('newpassword1','RAW'); 
-	$password2 = CMS::Instance()->getvar('newpassword2','RAW'); 
+	$password1 = Input::getvar('newpassword1','RAW'); 
+	$password2 = Input::getvar('newpassword2','RAW'); 
 	if ($password1 && $password2) {
 		if ($password1 != $password2) {
 			CMS::Instance()->queue_message('Passwords did not match.','danger', Config::$uripath . '/admin?resetkey=' . $resetkey);	
