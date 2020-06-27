@@ -80,7 +80,7 @@ final class CMS {
 		echo "<div style='height:100vh; width:100%; display:flex; align-items:center; justify-content:center;'>";
 		echo "<h1>{$text}</h1>";
 		echo "</div>";
-		exit(0);
+		die();
 	}
 
 	private function __construct() {
@@ -233,6 +233,9 @@ final class CMS {
 
 
 	public function get_controller() {
+		// returns name/location of controller (if any)
+		// if controller found, it is set in $this->page->controller object
+		// called by render_controller function
 		if (ADMINPATH) {
 			// works different here boys and girls
 			// controller name is first part of segment
@@ -250,23 +253,12 @@ final class CMS {
 			// look for deepest matching alias - once found, that page is our controller
 			// if final matching alias is empty, show home
 
-			// check for core controllers - eg. image
-			if (sizeof ($this->uri_segments)>0) {
-				if ($this->uri_segments[0]=='image') {
-					$this->core_controller = true;
-					return 'image';
-				}
-			}
-
-			/* // FOR NOW JUST DO HOME PAGE
-			CMS::Instance()->page = new Page();
-			CMS::Instance()->page->load_from_alias('home'); */
-
 			if (property_exists (CMS::Instance()->page,'controller')) {
 				// already have controller - should never happen? // todo- check
 				return CMS::Instance()->page->controller;
 			}
 			else {
+				// get controller for current page
 				$query = "select controller_location from content_types where id=?";
 				$stmt = CMS::Instance()->pdo->prepare($query);
 				$stmt->execute(array($this->page->content_type));
@@ -284,18 +276,16 @@ final class CMS {
 	}
 
 	public function render_controller() {
+		// called by template index.php to display main content
+
 		// determine controller (if any)
 		$controller = $this->get_controller();
 		if ($controller) {
-			// adjust controller path if core controller detected in get_controller function
-			/* $core_controller_path = "";
-			if ($this->core_controller) {
-				$core_controller_path = "/core";
-			} */
-			//include_once (CURPATH . $core_controller_path . "/controllers/" . $controller . "/controller.php");
 			include_once (CURPATH . "/controllers/" . $controller . "/controller.php");
 		}
 		else {
+			// no controller - pages don't require one, just means that
+			// only widgets will be rendered on page
 			if (Config::$debug) {
 				echo "<h5>No controller found for URL. (normal!)</h5>";
 			}
@@ -304,6 +294,25 @@ final class CMS {
 
 
 	public function render() {
+		// main entry point for CMS after object is instantiated
+
+		// first check for core controllers
+		// these are special controllers that bypass template rendering
+		// used for image API, but user core controllers can also
+		// be created to serve up other headless data
+		if ($this->uri_segments[0]=='image') {
+			include_once (CMSPATH .  "/core/controllers/image/controller.php");
+			exit(); // shouldn't be needed, controller should exit
+		}
+		// check for user core controllers
+		if (property_exists(Config::$user_core_controllers)) {
+			if (Config::$user_core_controllers) {
+				if (in_array($this->uri_segments[0], Config::$user_core_controllers)) {
+					include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controllers.php");
+					exit(); // shouldn't be needed, controller should exit
+				}
+			}
+		}
 
 		// override debug if chosen
 		if (Configuration::get_configuration_value('general_options','debug', $this->pdo)) {
@@ -321,7 +330,6 @@ final class CMS {
 	
 		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::$frontendlogin) ) {
 			// check for login attempt
-			//$username = $this->getvar('username','USERNAME'); // using email, username is now display name
 			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
 			$password = Input::getvar('password','RAW');
 			$login_user = new User();
@@ -334,15 +342,12 @@ final class CMS {
 				$this->queue_message('Invalid email','danger', $redirect_path);
 			}
 			if ($email && $password) {
-				//if ($login_user->load_from_username($username)) {
 				if ($login_user->load_from_email($email)) {
 					// user exists, check password
 					if ($login_user->check_password($password)) {
 						// logged in!
-						//s::set('user_id',$login_user->id);
 						$_SESSION['user_id'] = $login_user->id;
 						$this->queue_message('Welcome ' . $login_user->username, 'success', $redirect_path);
-						//echo "<p>welcome {$login_user->username}</p>";
 					}
 					else {
 						$this->queue_message('Incorrect email or password','danger', $redirect_path);
@@ -357,8 +362,6 @@ final class CMS {
 				$template="clean";
 			}
 			include_once (CURPATH . '/templates/' . $template . "/login.php");
-			//$this->pprint_r ($login_user);
-			//$this->showinfo();
 		}
 
 		else {
@@ -372,10 +375,9 @@ final class CMS {
 				echo $this->page_contents; // output
 			}
 			else {
-				
 				// recurse through page tree from root matching segment by segment
 				// at first segment not matching alias, use last page found as controller
-				// passing remaining unmatched segments as 
+				// passing remaining unmatched segments as segments array
 				$alias = false; // default 
 				$page = false;
 				
@@ -386,20 +388,6 @@ final class CMS {
 					$page = $this->pdo->query($query)->fetch();
 				}
 				else {
-					// check for core controllers
-					if ($this->uri_segments[0]=='image') {
-						include_once (CMSPATH .  "/core/controllers/image/controller.php");
-						exit(); // shouldn't be needed, controller should exit
-					}
-					// check for user core controllers
-					if (property_exists(Config::$user_core_controllers)) {
-						if (Config::$user_core_controllers) {
-							if (in_array($this->uri_segments[0], Config::$user_core_controllers)) {
-								include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controllers.php");
-								exit(); // shouldn't be needed, controller should exit
-							}
-						}
-					}
 					$parent = -1; // start with root
 					while ($this->uri_segments) {
 						$query = "select * from pages where parent=? and alias=? and state > 0";
@@ -423,8 +411,9 @@ final class CMS {
 					}
 				}
 				if (!$alias) {
-					// 404
-					echo "<h1>404!</h1>";
+					http_response_code(404);
+					//include('my_404.php'); // provide your own HTML for the error page
+					echo "<h1>404 - This is not the page you are looking for</h1>";
 					exit(0);
 				}
 				if (Config::$debug) {
@@ -455,13 +444,7 @@ final class CMS {
 
 spl_autoload_register(function($class_name) 
 {
-	if ($class_name=="CMS") {
-		echo "<h1>wtf - cms class should not be required before its loaded itself below!</h1>";
-		exit (0);
-		//return false;
-	}
-
-	// get path to class file
+	// get path to potential class file
 	$is_field_class = strpos($class_name, "Field_");
 	$is_widget_class = strpos($class_name, "Widget_");
 	$is_user_class = strpos($class_name, "User_");
@@ -479,14 +462,8 @@ spl_autoload_register(function($class_name)
 	else {
 		$path = CMSPATH . "/core/" . strtolower($class_name) . ".php";
 	}
-	
-	
-
-	
-	//echo "<h1>autoload path: " . $path . "</h1>";
 	if (!file_exists($path)) {
-		CMS::Instance()->queue_message('Failed to autoload class: ' . $class_name , 'danger',Config::$uripath . "/admin");
-		exit(0);
+		CMS::Instance()->show_error('Failed to autoload class: ' . $class_name);
 	}
     require_once $path;
 });
