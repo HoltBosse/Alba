@@ -27,7 +27,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	public $version = "0.19 (beta) - repeatable field";
+	public $version = "0.195 (beta) - added custom core controllers";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -390,6 +390,15 @@ final class CMS {
 					if ($this->uri_segments[0]=='image') {
 						include_once (CMSPATH .  "/core/controllers/image/controller.php");
 						exit(); // shouldn't be needed, controller should exit
+					}
+					// check for user core controllers
+					if (property_exists(Config::$user_core_controllers)) {
+						if (Config::$user_core_controllers) {
+							if (in_array($this->uri_segments[0], Config::$user_core_controllers)) {
+								include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controllers.php");
+								exit(); // shouldn't be needed, controller should exit
+							}
+						}
 					}
 					$parent = -1; // start with root
 					while ($this->uri_segments) {
