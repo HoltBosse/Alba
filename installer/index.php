@@ -121,6 +121,7 @@ if (!$pdo) {
 		$template = 'basic';
 		$frontendlogin = false;
 		$debug = false;
+		$user_core_controllers = NULL;
 		$pdo = get_pdo ($dbhost,$dbname, $dbuser, $dbpass, $dbchar);
 		if ($pdo) {
 			// credentials worked, save config
@@ -136,6 +137,7 @@ if (!$pdo) {
 				'frontendlogin' => $frontendlogin,
 				'domain' => 'auto',
 				'debug' => $debug,
+				'user_core_controllers'=>$user_core_controllers,
 				'session_length' => 15,
 			);
 			change_config_file_settings ($config_path, $newSettings);	
