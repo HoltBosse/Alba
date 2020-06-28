@@ -50,6 +50,20 @@ final class CMS {
 		file_put_contents(CMSPATH . '/cmslog.txt', "\r\n" . date('Y-m-d H:i:s') . " - " . $msg, FILE_APPEND | LOCK_EX);
 	}
 
+	public function render_head() {
+		// called by template
+		// injects page title, opengraph, analytics js etc...
+		?>
+		<title><?php echo $this->page->title;?> | <?php echo Config::$sitename; ?></title>
+		<?php if (Configuration::get_configuration_value ('general_options', 'og_enabled')):?>
+			<?php 
+			$og_title = $this->page->get_page_option_value("og_title") ? $this->page->get_page_option_value("og_title") : $this->page->title; 
+			?>
+			<meta property="og:title" content="<?php echo $og_title; ?>" />
+		<?php endif; ?>
+	<?php
+	}
+
 	
 	public function render_widgets($position) {
 		//echo "<h5>{$position}</h5>";
