@@ -61,7 +61,7 @@ class Content {
 		$this->note = $required_details_form->get_field_by_name('note')->default;
 		$this->alias = $required_details_form->get_field_by_name('alias')->default;
 		if (!$this->alias) {
-			$this->alias = CMS::stringURLSafe($this->title);
+			$this->alias = Input::stringURLSafe($this->title);
 		}
 		$this->start = $required_details_form->get_field_by_name('start')->default;
 		$this->end = $required_details_form->get_field_by_name('end')->default;
