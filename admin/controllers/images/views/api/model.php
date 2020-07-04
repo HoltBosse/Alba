@@ -9,6 +9,7 @@ ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JS
 
 $action = Input::getvar('action','STRING');
 
+
 if ($action=='tag_media') {
 	$image_ids_string = Input::getvar('id_list','STRING');
 	$image_ids = explode(",", $image_ids_string);
@@ -173,10 +174,22 @@ if ($action=='delete') {
 }
 
 if ($action=='list_images') {
-	// todo: pagination
-	$query = "select * from media";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$stmt->execute(array());
+	// todo: pagination / search
+	$searchtext = Input::getvar('searchtext','STRING');
+	if ($searchtext=='null') {
+		$searchtext=null;
+	}
+	if ($searchtext) {
+		$query = "select * from media where title like ? or alt like ?";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array("%$searchtext%","%$searchtext%"));
+	}
+	else {
+		$query = "select * from media";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array());
+	}
+		
 	$list = $stmt->fetchAll();
 	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).'}';
 	exit(0);
