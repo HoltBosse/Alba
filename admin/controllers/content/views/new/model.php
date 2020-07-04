@@ -9,7 +9,7 @@ $new_content_type_form = new Form(ADMINPATH . "/controllers/content/views/new/ne
 
 function make_alias($string) {
 	$string = filter_var($string, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-	$string = CMS::Instance()->stringURLSafe($string);
+	$string = Input::stringURLSafe($string);
 	return $string;
 }
 

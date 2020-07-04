@@ -135,7 +135,7 @@ class Page {
 		$this->template_id = Input::getvar('template','NUM');
 		$this->alias = Input::getvar('alias','TEXT');
 		if (!$this->alias) {
-			$this->alias = CMS::stringURLSafe($this->title);
+			$this->alias = Input::stringURLSafe($this->title);
 		}
 		$this->parent = Input::getvar('parent','NUM');
 		$this->content_type = Input::getvar('content_type','NUM');
