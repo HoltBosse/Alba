@@ -58,8 +58,15 @@ final class CMS {
 		<?php if (Configuration::get_configuration_value ('general_options', 'og_enabled')):?>
 			<?php 
 			$og_title = $this->page->get_page_option_value("og_title") ? $this->page->get_page_option_value("og_title") : $this->page->title; 
+			$og_image = $this->page->get_page_option_value("og_image") ? $this->page->get_page_option_value("og_image") : null; 
 			?>
 			<meta property="og:title" content="<?php echo $og_title; ?>" />
+			<?php if ($og_image):?>
+				<?php $og_image_dimensions = CMS::Instance()->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
+				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::$uripath . "/image/" . $og_image ; ?>" />
+				<meta property="og:image:width" content="<?php echo $og_image_dimensions->width ; ?>" />
+				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
+			<?php endif; ?>
 		<?php endif; ?>
 	<?php
 	}
@@ -105,6 +112,13 @@ final class CMS {
 		}
 		else {
 			$this->domain = Config::$domain;
+		}
+		// protocol
+		if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&$_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+			$this->protocol = 'https://';
+		}
+		else {
+			$this->protocol = 'http://';
 		}
 
 		// routing and session checking
