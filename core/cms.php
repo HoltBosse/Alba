@@ -333,7 +333,8 @@ final class CMS {
 			exit(); // shouldn't be needed, controller should exit
 		}
 		// check for user core controllers
-		if (property_exists(Config::$user_core_controllers)) {
+		if (property_exists("Config",'user_core_controllers')) {
+			echo "<h1>hello</h1>";
 			if (Config::$user_core_controllers) {
 				if (in_array($this->uri_segments[0], Config::$user_core_controllers)) {
 					include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controllers.php");
