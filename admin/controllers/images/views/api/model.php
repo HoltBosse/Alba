@@ -195,6 +195,23 @@ if ($action=='list_images') {
 	exit(0);
 }
 
+if ($action=='rename_image') {
+	$title = Input::getvar('title','STRING');
+	$alt = Input::getvar('alt','STRING');
+	$image_id = Input::getvar('image_id','NUM');
+	$query = "update media set title=?, alt=? where id=?";
+	$stmt = CMS::Instance()->pdo->prepare($query);
+	$result = $stmt->execute(array($title, $alt, $image_id));
+	if ($result) {
+		echo '{"success":1,"msg":"Image renamed"}';
+		exit(0);
+	}
+	else {
+		echo '{"success":0,"msg":"Problem renaming image"}';
+		exit(0);
+	}
+}
+
 echo '{"success":0,"msg":"Unknown operation requested"}';
 exit(0);
 

@@ -1,12 +1,13 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 ?>
-<h1 class='title'>
+<h1 class='title sticky'>
 	All Images
 
 	<!-- tag operation toolbar -->
 	<div id="tag_operations" class="pull-right buttons has-addons">
 		<button type="button" onclick='clear_selection()' class='button is-primary' >Select None</button>
+		<button type="button" onclick='rename_image()' class='button is-info' >Edit</button>
 		<button type="button" onclick='clear_tags()' class='button is-warning' >Clear Tags</button>
 		<button type="button" onclick='delete_items()' class='button is-danger' >Delete</button>
 	</div>
@@ -29,6 +30,32 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</div>
 	</div>
 	<?php endforeach; ?>
+</div>
+
+<div id='rename_image_modal' class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content">
+    <form class='form'>
+		<input type='hidden' value='' id='rename_image_id' name='rename_image_id'/>
+		<div class='field'>
+			<label class='label'  for='rename_title'>Title</label>
+			<div class='control'>
+				<input placeholder='Title Text' class='input' name='rename_title' id='rename_title' type='text' required/>
+			</div>
+		</div>
+		<div class='field'>
+			<label class='label' for='rename_alt'>Alt Text</label>
+			<div class='control'>
+				<input placeholder='Alt Text' class='input' name='rename_alt' id='rename_alt' type='text' required/>
+			</div>
+		</div>
+		<div class='field'>
+			<button id='update_image_values_trigger' onclick="rename_image_action();" type='button' class='btn button is-success'>Update</button>
+			<button id='close_image_modal' onclick='this.closest(".modal").classList.remove("is-active");' type='button' class='btn button is-danger'>Cancel</button>
+		</div>
+	</form>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
 </div>
 
 <style>
@@ -137,7 +164,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<img title="<?php echo $image->title;?>" alt="<?php echo $image->alt;?>" src="<?php echo Config::$uripath . '/image/' . $image->id;?>/thumb">
 			<div class='image_info_wrap'>
 				<div class='image_info'>
-					<span class='bigger'><?php echo $image->title; ?></span><br><?php echo $image->alt; ?><br>
+					<span class='bigger imgtitle'><?php echo $image->title; ?></span><br><span class='imgalt'><?php echo $image->alt; ?></span><br>
 					<?php echo $image->width . "x" . $image->height; ?> / <?php echo $image->mimetype; ?> 
 				</div>
 			</div>
@@ -172,6 +199,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			e.target.classList.toggle('active');
 		});
 	});
+
+	// close modal handler
+	document.querySelector('.modal-close').addEventListener('click',function(e){
+		e.target.closest('.modal').classList.remove('is-active');
+	});
+
 
 	// top tag click handlers - filter and add
 	document.getElementById('top_tags').addEventListener('click',function(e){
@@ -262,7 +295,50 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		return thisarray;
 	}
 
-	
+	function rename_image() {
+		selected = get_selected();
+		if (selected.length<1) {
+			alert('Select an image');
+		}
+		else if (selected.length>1) {
+			alert('Select a single image');
+		}
+		else {
+			// get vars
+			var title = selected[0].querySelector('img').title;
+			var alt = selected[0].querySelector('img').alt;
+			var image_id = selected[0].dataset.id;
+			// show modal
+			var modal = document.getElementById('rename_image_modal');
+			modal.querySelector('#rename_title').value = title;
+			modal.querySelector('#rename_alt').value = alt;
+			modal.querySelector('#rename_image_id').value = image_id;
+			modal.classList.add('is-active');
+		}
+	}
+
+	function rename_image_action() {
+		// called by onclick of update button in modal
+		selected = get_selected();
+		// get vars
+		var modal = document.getElementById('rename_image_modal');
+		var title = modal.querySelector('#rename_title').value;
+		var alt = modal.querySelector('#rename_alt').value ;
+		var image_id = modal.querySelector('#rename_image_id').value;
+		// update image in view
+		selected[0].querySelector('img').title = title;
+		selected[0].querySelector('img').alt = alt;
+		selected[0].querySelector('span.imgtitle').innerText = title;
+		selected[0].querySelector('span.imgalt').innerText = alt;
+		// hide modal early
+		modal.classList.remove('is-active');
+		// save data
+		api_data = {"action":"rename_image","title":title,"alt":alt,"image_id":image_id};
+		postAjax('<?php echo Config::$uripath;?>/admin/images/api', api_data, function(data){
+			response = JSON.parse(data);
+			console.log(response); // todo: handle errors
+		});
+	}
 
 	function clear_selection() {
 		selected = get_selected();
