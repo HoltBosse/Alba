@@ -281,3 +281,21 @@ img.image_selector_thumb{object-fit:contain; width:300px;}
 label.checkbox {
     font-weight: bold;
 }
+
+h1.title.sticky {
+	position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+    padding-bottom: 0.5em;
+	padding-top: 0.5em;
+}
+
+.modal-background {
+	background:rgba(0,0,0,0.8);
+}
+.modal-content form {
+	padding:1rem;
+	background:white;
+	border-radius:0.5rem;
+}
