@@ -27,6 +27,9 @@ else {
 // prep forms
 $required_details_form = new Form(ADMINPATH . '/controllers/content/views/edit/required_fields_form.json');
 $content_form = new Form (CMSPATH . '/controllers/' . $content->content_location . "/custom_fields.json");
+// set content_type for tag field based on content type of new/editing content
+$tags_field = $required_details_form->get_field_by_name('tags');
+$tags_field->content_type = $content->content_type;
 
 // check if submitted or show defaults/data from db
 if ($required_details_form->is_submitted()) {
@@ -36,7 +39,6 @@ if ($required_details_form->is_submitted()) {
 	// update forms with submitted values
 	$required_details_form->set_from_submit();
 	$content_form->set_from_submit();
-
 
 	// validate
 	if ($required_details_form->validate() && $content_form->validate()) {
@@ -57,6 +59,13 @@ else {
 		$required_details_form->get_field_by_name('note')->default = $content->note;
 		$required_details_form->get_field_by_name('start')->default = $content->start;
 		$required_details_form->get_field_by_name('end')->default = $content->end;
+		// load tags
+		$tag_id_array=[]; // $content->tags is array of tag objects returned from Tag::get_tags_for_content function
+		foreach ($content->tags as $t) {
+			$tag_id_array[] = $t->id;
+		}
+		// TagMultiple field expects a json array of integers
+		$required_details_form->get_field_by_name('tags')->default = json_encode($tag_id_array); 
 	}
 	// set content form TODO
 	foreach ($content_form->fields as $content_field) {

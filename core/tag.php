@@ -31,11 +31,23 @@ class Tag {
 
 	}
 
-	public static function get_tags_for_content($content_id) {
-		$query = "select * from tags where id in (select tag_id from tagged where content_id=?)";
+	public static function get_tags_for_content($content_id, $content_type_id=-1) {
+		// default to media/image content type
+		$query = "select * from tags where id in (select tag_id from tagged where content_id=? and content_type_id=?)";
 		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($content_id));
+		$stmt->execute(array($content_id, $content_type_id));
 		return $stmt->fetchAll();
+	}
+
+	public static function set_tags_for_content($content_id, $tag_array, $content_type_id) {
+		$query = "delete from tagged where content_id=? and content_type_id=?";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($content_id,$content_type_id));
+		foreach ($tag_array as $tag_id) {
+			$query = "insert into tagged (tag_id, content_id, content_type_id) values (?,?,?)";
+			$stmt = CMS::Instance()->pdo->prepare($query);
+			$stmt->execute(array($tag_id, $content_id, $content_type_id));
+		}
 	}
 
 	public static function get_all_tags() {

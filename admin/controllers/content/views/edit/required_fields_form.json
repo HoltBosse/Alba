@@ -20,6 +20,14 @@
 			"description":""
 		},
 		{
+			"label":"Tags",
+			"name":"tags",
+			"id":"tags",
+			"type":"TagMultiple",
+			"required":false,
+			"filter":"ARRAYOFINT"
+		},
+		{
 			"label":"Note",
 			"name":"note",
 			"id":"note",
