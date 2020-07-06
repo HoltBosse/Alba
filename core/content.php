@@ -10,6 +10,7 @@ class Content {
 	public $configuration;
 	public $updated;
 	public $content_type;
+	public $tags;
 
 	public function __construct($content_type=0) {
 		$this->id = false;
@@ -18,6 +19,7 @@ class Content {
 		$this->state = 1;
 		$this->updated = date('Y-m-d H:i:s');
 		$this->content_type = $content_type;
+		$this->tags = [];
 		if ($content_type) {
 			$this->content_location = $this->get_content_location($this->content_type);
 		}
@@ -49,6 +51,7 @@ class Content {
 		$this->content_type = $info->content_type;
 		$this->content_location = $this->get_content_location($this->content_type);
 		$this->created_by = $info->created_by;
+		$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
 	}
 
 	public function save($required_details_form, $content_form, $return_url='') {
@@ -66,7 +69,7 @@ class Content {
 		$this->start = $required_details_form->get_field_by_name('start')->default;
 		$this->end = $required_details_form->get_field_by_name('end')->default;
 		$this->updated_by = CMS::Instance()->user->id;
-		
+		$this->tags = $required_details_form->get_field_by_name('tags')->default; 
 
 		if ($this->id) {
 			// update
@@ -113,6 +116,10 @@ class Content {
 			// TODO: specific message for new/edit etc
 			CMS::Instance()->queue_message('Failed to save content','danger', $_SERVER['HTTP_REFERER']);
 		}
+
+		// set tags
+		Tag::set_tags_for_content($this->id, json_decode($this->tags), $this->content_type);
+
 		// now save fields
 		/* CMS::pprint_r ($this);
 		CMS::pprint_r ($content_form); */
