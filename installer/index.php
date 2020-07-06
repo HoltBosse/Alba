@@ -211,7 +211,7 @@ if ($pdo) {
 	$query .= "values (1,'Single Article','single');";
 	$pdo->exec($query);
 	$query .= "insert into content_views (content_type_id, title, location) ";
-	$query .= "values (2,'Single Article','blog');";
+	$query .= "values (1,'Single Article','blog');";
 	$pdo->exec($query);
 
 
