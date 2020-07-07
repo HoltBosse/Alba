@@ -77,7 +77,7 @@ class Field_Rich extends Field {
 					document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML = raw;
 				});
 				// remove styles on paste
-				document.querySelector('#editor_for_<?php echo $this->id;?>').addEventListener("paste", function(e) {
+				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener("paste", function(e) {
 					console.log('cleaning paste');
 					e.preventDefault();
 					var text = e.clipboardData.getData("text/plain");
