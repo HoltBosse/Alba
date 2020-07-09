@@ -28,7 +28,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	public $version = "0.196 (beta) - search in image field";
+	public $version = "0.197 (beta)";
 
 	/* protected function __construct() {}
     protected function __clone() {}
