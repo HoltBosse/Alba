@@ -110,7 +110,7 @@ class Field_Rich extends Field {
 						editor_button = e.target;
 					}
 					command = editor_button.dataset.command;
-					console.log(command);
+					console.log('Command: ',command);
 
 					if (editor_button.classList.contains('toggle_editor_raw')) {
 						control = editor_button.closest('.control');
@@ -128,12 +128,12 @@ class Field_Rich extends Field {
 						document.execCommand('formatBlock', false, command);
 					}
 					
-					if (command == 'createlink' || command == 'insertimage') {
+					else if (command == 'createlink' || command == 'insertimage') {
 						url = prompt('Enter the link here: ','https:\/\/');
 						document.execCommand(command, false, url);
 					}
 
-					if (command=='floatleft') {
+					else if (command=='floatleft') {
 						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
 						if (active_image!==null) {
 							active_image.classList.add('pull-left');
@@ -144,7 +144,7 @@ class Field_Rich extends Field {
 						}
 					}
 
-					if (command=='floatright') {
+					else if (command=='floatright') {
 						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
 						if (active_image!==null) {
 							active_image.classList.add('pull-right');
@@ -155,7 +155,7 @@ class Field_Rich extends Field {
 						}
 					}
 
-					if (command=='floatclear') {
+					else if (command=='floatclear') {
 						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
 						if (active_image!==null) {
 							active_image.classList.remove('pull-left','pull-right');
@@ -166,7 +166,7 @@ class Field_Rich extends Field {
 						}
 					}
 					
-					if (command == 'img') {
+					else if (command == 'img') {
 						//alert('choose image');
 						// launch image selector
 						var media_selector = document.createElement('div');
