@@ -185,7 +185,7 @@ table.dragging .before_after_wrap {
 					<?php endforeach; ?>
 				<?php endif; ?>
 
-				<th>Type</th><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
+				<th>Tags</th><?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -223,8 +223,19 @@ table.dragging .before_after_wrap {
 								?></td>
 						<?php endforeach; ?>
 					<?php endif; ?>
-
-					<td><?php echo Content::get_content_type_title($content_item->content_type); ?></td>
+					
+					<td><?php 
+					$tags = Tag::get_tags_for_content($content_item->id, $content_item->content_type);
+					echo '<div class="tags are-small are-light">';
+					foreach ($tags as $tag) {
+						echo '<span class="tag is-info is-light">' . $tag->title . '</span>';
+					}
+					echo '</div>';
+					?>
+					</td>
+					<?php if (!$content_type_filter):?>
+						<td><?php echo Content::get_content_type_title($content_item->content_type); ?></td>
+					<?php endif; ?>
 					<td class='unimportant'><?php echo $content_item->start; ?></td>
 					<td class='unimportant'><?php echo $content_item->end; ?></td>
 					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
