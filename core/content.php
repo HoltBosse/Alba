@@ -54,6 +54,21 @@ class Content {
 		$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
 	}
 
+	public function load_from_alias($alias) {
+		$info = CMS::Instance()->pdo->query('select * from content where alias="' . $alias. '"')->fetch();
+		$this->id = $info->id;
+		$this->title = $info->title;
+		$this->state = $info->state;
+		$this->note = $info->note;
+		$this->alias = $info->alias;
+		$this->start = $info->start;
+		$this->end = $info->end;
+		$this->content_type = $info->content_type;
+		$this->content_location = $this->get_content_location($this->content_type);
+		$this->created_by = $info->created_by;
+		$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
+	}
+
 	public function save($required_details_form, $content_form, $return_url='') {
 		// return url will be used as passed, if left blank will use referral
 		// unless in ADMIN section, in which case admin content all page will be used
@@ -214,6 +229,8 @@ class Content {
 		return $result->controller_location;
 	}
 
+	
+
 	public static function get_content_count($content_type_id) {
 		$stmt = CMS::Instance()->pdo->prepare("select count(*) as c from content where content_type=?");
 		$stmt->execute(array($content_type_id));
@@ -252,11 +269,11 @@ class Content {
 		}
 	}
 	
-	public static function get_all_content($order_by="id", $type_filter=false, $id=null) {
-		//echo "<p>Getting all users...</p>";
-		//$db = new db();
-		//$db = CMS::$pdo;
-		//$result = $db->pdo->query("select * from users")->fetchAll();
+	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null) {
+		// order by id by default
+		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
+		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
+
 		$list_fields = [];
 
 		if ($type_filter) {
@@ -264,7 +281,7 @@ class Content {
 			$location = Content::get_content_location($type_filter);
 			//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-			if ($id !== null) {
+			if ($id !== null || $tag !== null) {
 				// get all fields
 				foreach ($custom_fields->fields as $custom_field) {
 					$list_fields[] = $custom_field->name;
@@ -305,6 +322,15 @@ class Content {
 		
 		if ($type_filter && is_numeric($type_filter)) {
 			$where .= " and c.content_type={$type_filter} ";
+		}
+
+		if ($tag) {
+			if (is_numeric($tag)) {
+				$where .= " and c.id in (select content_id from tagged where tag_id={$tag} and content_type_id=c.content_type) ";
+			}
+			else {
+				CMS::show_error('Content Blog Error - Numerical tag id expected');
+			}
 		}
 
 		if ($id !== null) {

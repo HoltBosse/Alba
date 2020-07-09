@@ -19,7 +19,8 @@ final class CMS {
 	public $domain;
 	public $pdo;
 	public $user;
-	public $uri_segments;
+	public $uri_segments; // remaining segments of uri after controller found
+	public $uri_path_segments; // uri path of found controller/page
 	public $markup; // TODO: rendered html for current content item/page
 	public $messages ;
 	public $page_contents;
@@ -53,6 +54,7 @@ final class CMS {
 	public function render_head() {
 		// called by template
 		// injects page title, opengraph, analytics js etc...
+		ob_start();
 		?>
 		<title><?php echo $this->page->title;?> | <?php echo Config::$sitename; ?></title>
 		<?php if (Configuration::get_configuration_value ('general_options', 'og_enabled')):?>
@@ -68,7 +70,10 @@ final class CMS {
 				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
 			<?php endif; ?>
 		<?php endif; ?>
-	<?php
+		<?php 
+		$cms_head = ob_get_contents();
+		ob_end_clean();
+		return $cms_head;
 	}
 
 	
@@ -417,6 +422,7 @@ final class CMS {
 				}
 				else {
 					$parent = -1; // start with root
+					$this->uri_path_segments = [];
 					while ($this->uri_segments) {
 						$query = "select * from pages where parent=? and alias=? and state > 0";
 						$stmt = $this->pdo->prepare($query);
@@ -425,8 +431,8 @@ final class CMS {
 						if ($result) {
 							// found possible alias, will check for deeper match on next loop - if any
 							$alias = $result->alias;
-							// remove from segments
-							array_shift ($this->uri_segments);
+							// remove from segments and push onto uri_path_segments
+							$this->uri_path_segments[] = array_shift ($this->uri_segments);
 							// and change parent to search for next possible alias match to page found
 							$parent = $result->id;
 							// set cms page
@@ -461,6 +467,9 @@ final class CMS {
 				ob_end_clean();
 				// perform content filtering / plugins on CMS::page_contents;
 				include_once (CMSPATH .'/plugins/plugins.php');
+				// render CMS header - can incorporate changes to page title/og/metatags from content controllers
+				$cms_head = $this->render_head();
+				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				// output final content
 				echo $this->page_contents;
 			}	
