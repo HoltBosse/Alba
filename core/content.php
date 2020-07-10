@@ -11,6 +11,7 @@ class Content {
 	public $updated;
 	public $content_type;
 	public $tags;
+	public $alias;
 
 	public function __construct($content_type=0) {
 		$this->id = false;
@@ -24,6 +25,50 @@ class Content {
 			$this->content_location = $this->get_content_location($this->content_type);
 		}
 		$this->created_by = CMS::Instance()->user->id;
+		$this->alias="";
+	}
+
+	private function make_alias_unique() {
+		$is_unique = false;
+		while (!$is_unique) {
+			// make alias unique for specific content type - it's fine to have same alias for multiple contents of different types
+			$query = "select * from content where alias=? and content_type=?";
+			$stmt = CMS::Instance()->pdo->prepare($query);
+			$stmt->execute(array($this->alias, $this->content_type));
+			$results = $stmt->fetchAll(); 
+			// if this is an existing content item, make sure we don't count itself as a clashing alias
+			$self_clash = false;
+			if ($this->id) {
+				foreach ($results as $potential_clash) {
+					if ($potential_clash->id==$this->id) {
+						$self_clash=true;
+						break;
+					}
+				}
+			}
+			if ( (sizeof($results) > 0 && !$self_clash) || ((sizeof($results) > 1 && $self_clash )) ) {
+				// if clash isn't with just itself
+				if ($this->id) {
+					// add id to alias to make unique for existing content item
+					$this->alias = $this->alias . "_" . $this->id;
+					CMS::Instance()->queue_message('Added content id as suffix to "URL Friendly" field to ensure uniqueness.','warning');
+				}
+				else {
+					// really awful ugly way of making a somewhat unique alias for new content item
+					// if you have 9000 aliases identical except for this random
+					// suffix, this will loop infinitely, and even before then 
+					// will slow down as it approaches this point waiting to find
+					// a unique suffix
+					// I leave this is a relatively easily solved gift to future me
+					$fourRandomDigit = mt_rand(1000,9999);
+					$this->alias = $this->alias . "_" . $fourRandomDigit;
+					CMS::Instance()->queue_message('Added random suffix to "URL Friendly" field to ensure uniqueness.','warning');
+				}
+			}
+			else {
+				$is_unique=true;
+			}
+		}
 	}
 
 	public function get_field($field_name) {
@@ -85,6 +130,9 @@ class Content {
 		$this->end = $required_details_form->get_field_by_name('end')->default;
 		$this->updated_by = CMS::Instance()->user->id;
 		$this->tags = $required_details_form->get_field_by_name('tags')->default; 
+
+		// ensure alias is unique for content_type - will use id for existing content, random 4 digit number otherwise
+		$this->make_alias_unique();
 
 		if ($this->id) {
 			// update

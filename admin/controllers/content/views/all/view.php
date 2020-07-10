@@ -210,7 +210,10 @@ table.dragging .before_after_wrap {
 							} ?>
 						</button>
 					</td>
-					<td><a href="<?php echo Config::$uripath; ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a></td>
+					<td>
+						<a href="<?php echo Config::$uripath; ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
+						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
+					</td>
 
 					<?php if ($content_list_fields):?>
 						<?php foreach ($content_list_fields as $content_list_field):?>
