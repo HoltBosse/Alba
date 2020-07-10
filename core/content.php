@@ -159,7 +159,7 @@ class Content {
 		}
 
 		if (!$return_url) {
-			if (defined(ADMINPATH)) {
+			if (ADMINPATH) {
 				$return_url = Config::$uripath . '/admin/content/all/' . $this->content_type;
 			}
 			else {
