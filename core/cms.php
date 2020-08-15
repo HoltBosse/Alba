@@ -28,7 +28,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	private $actions = [];
+	private $hooks = [];
 	public $version = "0.197 (beta)";
 
 	/* protected function __construct() {}
@@ -47,21 +47,21 @@ final class CMS {
 		return self::$instance;
 	}
 
-	public function add_action($action_label, $function_name, $priority=1, $arg_count=0) {
-		// shamelessly borrowed from wordpress API
-		if (is_array($this->actions[$action_label])) {
-			$this->actions[$action_label][] = $function_name;
+	public function add_action($hook_label, $function_name, $priority=1, $arg_count=0) {
+		// shamelessly borrowed idea from wordpress API
+		if (!is_object($this->hooks[$hook_label])) {
+			// hook not already registered, make new hook
+			$this->hooks[$hook_label] = new Hook ($hook_label, $arg_count);
 		}
-		else {
-			$this->show_error('Action ' . $action_label . ' does not exist');
-		}
+		// add action to hook
+		$this->hooks[$hook_label]->actions[] = $function_name;
 	}
 
-	private function do_actions($action_label) {
-		if (is_array($this->actions[$action_label])) {
-			foreach ($this->actions[$action_label] as $action) {
-				echo "<h1>Doing action: $action</h1>";
-				$action();
+	private function execute_hook_actions($hook_label, $args=[]) {
+		if (is_object($this->hooks[$hook_label])) {
+			foreach ($this->hooks[$hook_label]->actions as $action) {
+				//echo "<h1>Doing action: $action</h1>";
+				$action($args);
 			}
 		}
 	}
@@ -183,12 +183,13 @@ final class CMS {
 
 		// END DB SETUP
 
-		// SET UP ACTIONS
+		// SET UP HOOKS
 
-		$this->actions['test_action'] = [];
-		$this->actions['authenticate_user'] = [];
+		$this->hooks['test_hook'] = new Hook('test_hook',0); // 0 is arg count - will default to 0 if ommited
+		$this->hooks['test_hook'] = new Hook('test_hook',0); // 0 is arg count - will default to 0 if ommited
+		//$this->actions['authenticate_user'] = [];
 
-		// END ACTIONS
+		// END HOOKS
 
 		$this->user = new User(); // defaults to guest
 
@@ -502,8 +503,8 @@ final class CMS {
 				// output final content
 				echo $this->page_contents;
 			}	
-			// test action test_action :)
-			$this->do_actions('test_action');
+			// test action test_hook :)
+			$this->execute_hook_actions('test_hook',["var1"]);
 		}
 	}
 }
