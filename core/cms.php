@@ -28,6 +28,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
+	private $actions = [];
 	public $version = "0.197 (beta)";
 
 	/* protected function __construct() {}
@@ -44,6 +45,25 @@ final class CMS {
 			self::$instance = new CMS();
 		}
 		return self::$instance;
+	}
+
+	public function add_action($action_label, $function_name, $priority=1, $arg_count=0) {
+		// shamelessly borrowed from wordpress API
+		if (is_array($this->actions[$action_label])) {
+			$this->actions[$action_label][] = $function_name;
+		}
+		else {
+			$this->show_error('Action ' . $action_label . ' does not exist');
+		}
+	}
+
+	private function do_actions($action_label) {
+		if (is_array($this->actions[$action_label])) {
+			foreach ($this->actions[$action_label] as $action) {
+				echo "<h1>Doing action: $action</h1>";
+				$action();
+			}
+		}
 	}
 
 
@@ -162,6 +182,13 @@ final class CMS {
 		}
 
 		// END DB SETUP
+
+		// SET UP ACTIONS
+
+		$this->actions['test_action'] = [];
+		$this->actions['authenticate_user'] = [];
+
+		// END ACTIONS
 
 		$this->user = new User(); // defaults to guest
 
@@ -405,6 +432,8 @@ final class CMS {
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean(); // clear and stop buffering
+				// perform content filtering / plugins on CMS::page_contents;
+				include_once (CMSPATH .'/plugins/plugins.php');
 				echo $this->page_contents; // output
 			}
 			else {
@@ -473,6 +502,8 @@ final class CMS {
 				// output final content
 				echo $this->page_contents;
 			}	
+			// test action test_action :)
+			$this->do_actions('test_action');
 		}
 	}
 }
