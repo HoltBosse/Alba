@@ -28,7 +28,7 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	private $hooks = [];
+	public $hooks = [];
 	public $version = "0.197 (beta)";
 
 	/* protected function __construct() {}
@@ -47,34 +47,22 @@ final class CMS {
 		return self::$instance;
 	}
 
+	
 	public function add_action ($hook_label, $function_name, $priority=1, $arg_count=0) {
 		// shamelessly borrowed idea from wordpress API
-		if (!is_object($this->hooks[$hook_label])) {
+		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
+		// first instance of hook being registered controls argument count
+		if (!isset($this->hooks[$hook_label])) {
 			// hook not already registered, make new hook
 			$this->hooks[$hook_label] = new Hook ($hook_label, $arg_count);
 		}
 		// add action to hook
-		$this->hooks[$hook_label]->actions[] = $function_name;
+		$action = new stdClass();
+		$action->priority = $priority;
+		$action->function_name = $function_name;
+		$this->hooks[$hook_label]->actions[] = $action;
 	}
-
-	private function execute_hook_actions ($hook_label, $args=null) {
-		if (is_object($this->hooks[$hook_label])) {
-			foreach ($this->hooks[$hook_label]->actions as $action) {
-				//echo "<h1>Doing action: $action</h1>";
-				$action($args);
-			}
-		}
-	}
-
-	private function execute_hook_filters ($hook_label, $data, $args=null) {
-		if (is_object($this->hooks[$hook_label])) {
-			foreach ($this->hooks[$hook_label]->actions as $action) {
-				//echo "<h1>Doing action: $action</h1>";
-				$data = $action($data, $args);
-			}
-		}
-		return $data;
-	}
+	
 
 
 	public static function log($msg) {
@@ -193,16 +181,9 @@ final class CMS {
 
 		// END DB SETUP
 
-		// SET UP HOOKS
-
-		$this->hooks['test_hook'] = new Hook('test_hook',0); // 0 is arg count - will default to 0 if ommited
-		$this->hooks['content_ready'] = new Hook('content_ready',0); // 0 is arg count - will default to 0 if ommited
-
+		// Load plugins
+		// TODO autoload all plugins in folder - plugins.php is similar to functions.php in WP
 		include_once (CMSPATH .'/plugins/plugins.php');
-
-		//$this->actions['authenticate_user'] = [];
-
-		// END HOOKS
 
 		$this->user = new User(); // defaults to guest
 
@@ -443,12 +424,12 @@ final class CMS {
 				ob_start();
 				$template = "clean";
 				include_once (CURPATH . '/templates/' . $template . "/index.php");
-				$this->execute_hook_actions('test_hook',"test variable");
+				Hook::execute_hook_actions('test_hook',"test variable");
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean(); // clear and stop buffering
 				// perform content filtering / plugins on CMS::page_contents;
-				$this->page_contents = $this->execute_hook_filters('content_ready', $this->page_contents);
+				$this->page_contents = Hook::execute_hook_filters('content_ready', $this->page_contents);
 				echo $this->page_contents; // output
 			}
 			else {
@@ -510,7 +491,7 @@ final class CMS {
 				$this->page_contents = ob_get_contents();
 				ob_end_clean();
 				// perform content filtering / plugins on CMS::page_contents;
-				$this->page_contents = $this->execute_hook_filters('content_ready', $this->page_contents);
+				$this->page_contents = Hook::execute_hook_filters('content_ready', $this->page_contents);
 				// render CMS header - can incorporate changes to page title/og/metatags from content controllers
 				$cms_head = $this->render_head();
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
