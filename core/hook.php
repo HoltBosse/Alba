@@ -11,5 +11,25 @@ class Hook {
 		$this->label = false;
 		$this->actions = [];
 		$this->arg_count = $arg_count;
-    }
+	}
+	
+	static public function execute_hook_actions ($hook_label, $args=null) {
+		if (isset(CMS::Instance()->hooks[$hook_label])) {
+			foreach (CMS::Instance()->hooks[$hook_label]->actions as $action) {
+				$function_name = $action->function_name;
+				$function_name($args);
+			}
+		}
+	}
+
+	static public function execute_hook_filters ($hook_label, $data, $args=null) {
+		// same as action, but performs work on data and returns data
+		if (isset(CMS::Instance()->hooks[$hook_label])) {
+			foreach (CMS::Instance()->hooks[$hook_label]->actions as $action) {
+				$function_name = $action->function_name;
+				$data = $function_name($data, $args);
+			}
+		}
+		return $data;
+	}
 }
