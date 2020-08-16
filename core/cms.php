@@ -47,7 +47,7 @@ final class CMS {
 		return self::$instance;
 	}
 
-	public function add_action($hook_label, $function_name, $priority=1, $arg_count=0) {
+	public function add_action ($hook_label, $function_name, $priority=1, $arg_count=0) {
 		// shamelessly borrowed idea from wordpress API
 		if (!is_object($this->hooks[$hook_label])) {
 			// hook not already registered, make new hook
@@ -57,13 +57,23 @@ final class CMS {
 		$this->hooks[$hook_label]->actions[] = $function_name;
 	}
 
-	private function execute_hook_actions($hook_label, $args=[]) {
+	private function execute_hook_actions ($hook_label, $args=null) {
 		if (is_object($this->hooks[$hook_label])) {
 			foreach ($this->hooks[$hook_label]->actions as $action) {
 				//echo "<h1>Doing action: $action</h1>";
 				$action($args);
 			}
 		}
+	}
+
+	private function execute_hook_filters ($hook_label, $data, $args=null) {
+		if (is_object($this->hooks[$hook_label])) {
+			foreach ($this->hooks[$hook_label]->actions as $action) {
+				//echo "<h1>Doing action: $action</h1>";
+				$data = $action($data, $args);
+			}
+		}
+		return $data;
 	}
 
 
@@ -186,7 +196,10 @@ final class CMS {
 		// SET UP HOOKS
 
 		$this->hooks['test_hook'] = new Hook('test_hook',0); // 0 is arg count - will default to 0 if ommited
-		$this->hooks['test_hook'] = new Hook('test_hook',0); // 0 is arg count - will default to 0 if ommited
+		$this->hooks['content_ready'] = new Hook('content_ready',0); // 0 is arg count - will default to 0 if ommited
+
+		include_once (CMSPATH .'/plugins/plugins.php');
+
 		//$this->actions['authenticate_user'] = [];
 
 		// END HOOKS
@@ -361,7 +374,7 @@ final class CMS {
 		// these are special controllers that bypass template rendering
 		// used for image API, but user core controllers can also
 		// be created to serve up other headless data
-		if ($this->uri_segments[0]=='image') {
+		if ($this->uri_segments && $this->uri_segments[0]=='image') {
 			include_once (CMSPATH .  "/core/controllers/image/controller.php");
 			exit(); // shouldn't be needed, controller should exit
 		}
@@ -430,11 +443,12 @@ final class CMS {
 				ob_start();
 				$template = "clean";
 				include_once (CURPATH . '/templates/' . $template . "/index.php");
+				$this->execute_hook_actions('test_hook',"test variable");
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean(); // clear and stop buffering
 				// perform content filtering / plugins on CMS::page_contents;
-				include_once (CMSPATH .'/plugins/plugins.php');
+				$this->page_contents = $this->execute_hook_filters('content_ready', $this->page_contents);
 				echo $this->page_contents; // output
 			}
 			else {
@@ -496,15 +510,14 @@ final class CMS {
 				$this->page_contents = ob_get_contents();
 				ob_end_clean();
 				// perform content filtering / plugins on CMS::page_contents;
-				include_once (CMSPATH .'/plugins/plugins.php');
+				$this->page_contents = $this->execute_hook_filters('content_ready', $this->page_contents);
 				// render CMS header - can incorporate changes to page title/og/metatags from content controllers
 				$cms_head = $this->render_head();
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				// output final content
 				echo $this->page_contents;
 			}	
-			// test action test_hook :)
-			$this->execute_hook_actions('test_hook',["var1"]);
+			
 		}
 	}
 }
