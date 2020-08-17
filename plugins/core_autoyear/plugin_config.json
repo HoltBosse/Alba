@@ -8,8 +8,10 @@
 			"name":"testoption",
 			"id":"testoption",
 			"type":"Text",
-			"label":"Test Option",
-			"required":false
+            "label":"Choose date format string",
+            "default":"Y",
+            "required":false,
+            "description":"Default string of Y will product four digit year number"
 		}
 	]
 }

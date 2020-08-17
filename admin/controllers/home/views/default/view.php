@@ -34,4 +34,5 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	?>
 	<button class='submit button is-success' type='submit'>Submit</button> 
 	</form>
+	<p>The current year is {YEAR}</p>
 </section>
