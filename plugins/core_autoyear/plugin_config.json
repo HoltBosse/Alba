@@ -1,0 +1,15 @@
+{
+	"title":"Auto Year",
+	"location":"core_autoyear",
+	"id":"auto_year_options",
+	"description":"Replaces anything matching {YEAR} in CMS output with current year.",
+	"fields":[
+		{
+			"name":"testoption",
+			"id":"testoption",
+			"type":"Text",
+			"label":"Test Option",
+			"required":false
+		}
+	]
+}

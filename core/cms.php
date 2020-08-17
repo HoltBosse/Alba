@@ -29,7 +29,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
-	public $version = "0.197 (beta)";
+	public $version = "0.2";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -180,9 +180,17 @@ final class CMS {
 
 		// END DB SETUP
 
+		echo "<h1>why am i shown twice</h1>";
+
 		// Load plugins
 		// TODO autoload all plugins in folder - plugins.php is similar to functions.php in WP
-		include_once (CMSPATH .'/plugins/plugins.php');
+		//include_once (CMSPATH .'/plugins/plugins.php');
+		/* $this->enabled_plugins = $this->pdo->query('select * from plugins where state>-1')->fetchAll();
+		$this->pprint_r ($this->enabled_plugins);
+		foreach ($this->enabled_plugins as $plugin_info) {
+			$plugin_class_name = "Plugin_" . $plugin->location;
+			$a_plugin = new $plugin_class_name($plugin_info);
+		} */
 
 		$this->user = new User(); // defaults to guest
 
@@ -510,6 +518,7 @@ spl_autoload_register(function($class_name)
 	$is_field_class = strpos($class_name, "Field_");
 	$is_widget_class = strpos($class_name, "Widget_");
 	$is_user_class = strpos($class_name, "User_");
+	$is_plugin_class = strpos($class_name, "Plugin_");
 
 	if ($is_field_class===0) {
 		$path = CMSPATH . "/core/fields/" . $class_name . ".php";
@@ -520,6 +529,10 @@ spl_autoload_register(function($class_name)
 	}
 	elseif ($is_user_class===0) {
 		$path = CMSPATH . "/user_classes/" . $class_name . ".php";
+	}
+	elseif ($is_plugin_class===0) {
+		$plugin_class_location = str_replace('Plugin_','',$class_name);
+		$path = CMSPATH . "/plugins/" . $plugin_class_location . "/plugin_class.php";
 	}
 	else {
 		$path = CMSPATH . "/core/" . strtolower($class_name) . ".php";

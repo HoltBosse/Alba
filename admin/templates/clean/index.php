@@ -121,6 +121,18 @@ require_once (CMSPATH . "/core/cms.php");
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/widgets/show/">All Widgets</a>
 							</div>
 						</div>
+
+						<div class="navbar-item has-dropdown is-hoverable">
+							<a class="navbar-link">Plugins</a>
+							<div class="navbar-dropdown">
+								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/plugins/show/">All Plugins</a>
+								<hr class="dropdown-divider">
+								<?php foreach (Plugin::get_all_plugins() as $plugin):?>
+								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/plugins/show/<?php echo $plugin->id; ?>"><?php echo $plugin->title; ?></a>
+								<?php endforeach; ?>
+							</div>
+						</div>
+
 						<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/tags">Tags</a>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Media</a>
