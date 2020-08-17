@@ -48,18 +48,18 @@ final class CMS {
 	}
 
 	
-	public function add_action ($hook_label, $function_name, $priority=10) {
+	public static function add_action ($hook_label, $plugin_object, $priority=10) {
 		// shamelessly borrowed idea from wordpress API
 		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
-		if (!isset($this->hooks[$hook_label])) {
+		if (!isset($GLOBALS['hooks'][$hook_label])) {
 			// hook not already registered, make new hook
-			$this->hooks[$hook_label] = new Hook ($hook_label);
+			$GLOBALS['hooks'][$hook_label] = new Hook ($hook_label);
 		}
 		// add action to hook
 		$action = new stdClass();
 		$action->priority = $priority;
-		$action->function_name = $function_name;
-		$this->hooks[$hook_label]->actions[] = $action;
+		$action->plugin_object = $plugin_object;
+		$GLOBALS['hooks'][$hook_label]->actions[] = $action;
 	}
 	
 
@@ -81,7 +81,7 @@ final class CMS {
 			?>
 			<meta property="og:title" content="<?php echo $og_title; ?>" />
 			<?php if ($og_image):?>
-				<?php $og_image_dimensions = CMS::Instance()->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
+				<?php $og_image_dimensions = $this->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
 				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::$uripath . "/image/" . $og_image ; ?>" />
 				<meta property="og:image:width" content="<?php echo $og_image_dimensions->width ; ?>" />
 				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
@@ -180,17 +180,15 @@ final class CMS {
 
 		// END DB SETUP
 
-		echo "<h1>why am i shown twice</h1>";
-
+		
 		// Load plugins
-		// TODO autoload all plugins in folder - plugins.php is similar to functions.php in WP
-		//include_once (CMSPATH .'/plugins/plugins.php');
-		/* $this->enabled_plugins = $this->pdo->query('select * from plugins where state>-1')->fetchAll();
-		$this->pprint_r ($this->enabled_plugins);
+		$GLOBALS['hooks'] = []; // reset hooks array
+		$this->enabled_plugins = $this->pdo->query('select * from plugins where state>-1')->fetchAll();
 		foreach ($this->enabled_plugins as $plugin_info) {
-			$plugin_class_name = "Plugin_" . $plugin->location;
+			$plugin_class_name = "Plugin_" . $plugin_info->location;
 			$a_plugin = new $plugin_class_name($plugin_info);
-		} */
+		}
+		// all hooks available in $GLOBALS['hooks']
 
 		$this->user = new User(); // defaults to guest
 
@@ -210,7 +208,24 @@ final class CMS {
 			//if (s::get('user_id')) {
 			if ($session_user_id) {
 				//$this->user->load_from_id(s::get('user_id'));
-				$this->user->load_from_id($session_user_id);
+				//$this->user->load_from_id($session_user_id); // cant use user class as it requires CMS - will call constructor twice!
+				// code below is almost same as 'load_from_id' in user class
+				$query = "select * from users where id=?";
+				$stmt = $this->pdo->prepare($query);
+				$stmt->execute(array($session_user_id));
+				$result = $stmt->fetch();
+				if ($result) {
+					$this->user->username = $result->username;
+					$this->user->password = $result->password;
+					$this->user->created = $result->created;
+					$this->user->email = $result->email;
+					$this->user->id = $result->id;
+					// get groups
+					$query = "select * from groups where id in (select group_id from user_groups where user_id=?)";
+					$stmt = $this->pdo->prepare($query);
+					$stmt->execute(array($session_user_id));
+					$this->user->groups = $stmt->fetchAll();
+				}
 			}
 			// check if session too old
 			$now = time();
@@ -219,7 +234,7 @@ final class CMS {
 				session_destroy();
 				session_start();
 				if ($session_user_id) {
-					CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
+					$this->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
 				}
 			}
 			$session_time = Configuration::get_configuration_value('general_options','session_time', $this->pdo);
@@ -315,14 +330,14 @@ final class CMS {
 			// look for deepest matching alias - once found, that page is our controller
 			// if final matching alias is empty, show home
 
-			if (property_exists (CMS::Instance()->page,'controller')) {
+			if (property_exists ($this->page,'controller')) {
 				// already have controller - should never happen? // todo- check
-				return CMS::Instance()->page->controller;
+				return $this->page->controller;
 			}
 			else {
 				// get controller for current page
 				$query = "select controller_location from content_types where id=?";
-				$stmt = CMS::Instance()->pdo->prepare($query);
+				$stmt = $this->pdo->prepare($query);
 				$stmt->execute(array($this->page->content_type));
 				$result = $stmt->fetch();
 				if ($result) {
@@ -543,5 +558,9 @@ spl_autoload_register(function($class_name)
     require_once $path;
 });
 
+
+
+//CMS::pprint_r (CMS::Instance());
 CMS::Instance()->render();
+
 

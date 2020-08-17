@@ -13,20 +13,22 @@ class Hook {
 	}
 	
 	static public function execute_hook_actions ($hook_label, ...$args) {
-		if (isset(CMS::Instance()->hooks[$hook_label])) {
-			foreach (CMS::Instance()->hooks[$hook_label]->actions as $action) {
-				$function_name = $action->function_name;
-				$function_name($args);
+		if (isset($GLOBALS['hooks'][$hook_label])) {
+			foreach ($GLOBALS['hooks'][$hook_label]->actions as $action) {
+				/* $function_name = $action->function_name;
+				$function_name($args); */
+				$action->plugin_object->execute_action($args);
 			}
 		}
 	}
 
 	static public function execute_hook_filters ($hook_label, $data, ...$args) {
 		// same as action, but performs work on data and returns data
-		if (isset(CMS::Instance()->hooks[$hook_label])) {
-			foreach (CMS::Instance()->hooks[$hook_label]->actions as $action) {
-				$function_name = $action->function_name;
-				$data = $function_name($data, $args);
+		if (isset($GLOBALS['hooks'][$hook_label])) {
+			foreach ($GLOBALS['hooks'][$hook_label]->actions as $action) {
+				//CMS::pprint_r ($action);
+				//$data = $function_name($data, $args);
+				$data = $action->plugin_object->execute_filter($data,$args);
 			}
 		}
 		return $data;

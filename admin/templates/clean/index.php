@@ -128,7 +128,7 @@ require_once (CMSPATH . "/core/cms.php");
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/plugins/show/">All Plugins</a>
 								<hr class="dropdown-divider">
 								<?php foreach (Plugin::get_all_plugins() as $plugin):?>
-								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/plugins/show/<?php echo $plugin->id; ?>"><?php echo $plugin->title; ?></a>
+								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/plugins/edit/<?php echo $plugin->id; ?>"><?php echo $plugin->title; ?></a>
 								<?php endforeach; ?>
 							</div>
 						</div>

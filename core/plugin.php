@@ -10,11 +10,15 @@ class Plugin {
     public $location;
     public $description;
 
-    private function __construct($plugin_info) {
+    public function __construct($plugin_info) {
         // $plugin_info should be object containing select * info from plugins table for this plugin
         $this->state = $plugin_info->state;
         $this->title = $plugin_info->title;
-        $this->options = $plugin_info->options;
+        $this->description = $plugin_info->description;
+        $this->location = $plugin_info->location;
+        $this->id = $plugin_info->id;
+        $this->options = json_decode($plugin_info->options);
+        $this->init();
     }
     
     public static function get_all_plugins() {
@@ -24,8 +28,8 @@ class Plugin {
 
 	public function get_option($option_name) {
 		foreach ($this->options as $option) {
-			if (property_exists($option, $option_name)) {
-				return $option->$option_name;
+            if ($option->name==$option_name) {
+				return $option->value;
 			}
 		}
 		return false;
@@ -33,6 +37,14 @@ class Plugin {
     
     public function init() {
         CMS::show_error('Default plugin init called - should never happen');
+    }
+
+    public function execute_action(...$args) {
+        CMS::show_error('Default plugin execute_action called - should never happen');
+    }
+
+    public function execute_filter($data, ...$args) {
+        CMS::show_error('Default plugin execute_filter called - should never happen');
     }
 
 	public static function get_plugin_title ($id) {
@@ -76,9 +88,9 @@ class Plugin {
 
 		if ($this->id) {
 			// update
-			$query = "update plugins set state=?, options=? where id=?";
+			$query = "update plugins set state=?, title=?, description=?, options=? where id=?";
 			$stmt = CMS::Instance()->pdo->prepare($query);
-			$params = array($this->state, $this->title, $this->note, $options_json, $this->id) ;
+			$params = array($this->state, $this->title, $this->description, $options_json, $this->id) ;
 			$result = $stmt->execute( $params );
 			
 			if ($result) {
