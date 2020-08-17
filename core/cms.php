@@ -183,7 +183,7 @@ final class CMS {
 		
 		// Load plugins
 		$GLOBALS['hooks'] = []; // reset hooks array
-		$this->enabled_plugins = $this->pdo->query('select * from plugins where state>-1')->fetchAll();
+		$this->enabled_plugins = $this->pdo->query('select * from plugins where state>0')->fetchAll();
 		foreach ($this->enabled_plugins as $plugin_info) {
 			$plugin_class_name = "Plugin_" . $plugin_info->location;
 			$a_plugin = new $plugin_class_name($plugin_info);
