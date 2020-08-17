@@ -48,13 +48,12 @@ final class CMS {
 	}
 
 	
-	public function add_action ($hook_label, $function_name, $priority=1, $arg_count=0) {
+	public function add_action ($hook_label, $function_name, $priority=10) {
 		// shamelessly borrowed idea from wordpress API
 		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
-		// first instance of hook being registered controls argument count
 		if (!isset($this->hooks[$hook_label])) {
 			// hook not already registered, make new hook
-			$this->hooks[$hook_label] = new Hook ($hook_label, $arg_count);
+			$this->hooks[$hook_label] = new Hook ($hook_label);
 		}
 		// add action to hook
 		$action = new stdClass();

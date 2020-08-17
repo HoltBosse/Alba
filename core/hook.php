@@ -7,13 +7,12 @@ class Hook {
     public $actions;
     public $arg_count;
 
-	public function __construct($label, $arg_count=0) {
+	public function __construct($label) {
 		$this->label = false;
 		$this->actions = [];
-		$this->arg_count = $arg_count;
 	}
 	
-	static public function execute_hook_actions ($hook_label, $args=null) {
+	static public function execute_hook_actions ($hook_label, ...$args) {
 		if (isset(CMS::Instance()->hooks[$hook_label])) {
 			foreach (CMS::Instance()->hooks[$hook_label]->actions as $action) {
 				$function_name = $action->function_name;
@@ -22,7 +21,7 @@ class Hook {
 		}
 	}
 
-	static public function execute_hook_filters ($hook_label, $data, $args=null) {
+	static public function execute_hook_filters ($hook_label, $data, ...$args) {
 		// same as action, but performs work on data and returns data
 		if (isset(CMS::Instance()->hooks[$hook_label])) {
 			foreach (CMS::Instance()->hooks[$hook_label]->actions as $action) {
