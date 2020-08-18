@@ -7,6 +7,7 @@ class Plugin_core_autoyear extends Plugin {
     }
 
     public function replace_year_placeholder($page_contents, ...$args) {
+        // FILTER
         $override_year = $this->get_option('testoption');
         if ($override_year) {
             return str_replace($override_year, date("Y"), $page_contents);

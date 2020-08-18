@@ -416,6 +416,19 @@ final class CMS {
 			if (ADMINPATH) {
 				$redirect_path = Config::$uripath . '/admin';
 			}
+
+			// authenticate plugins hook
+
+			$this->user = Hook::execute_hook_filters('authenticate_user', $this->user); 
+			
+			if ($this->user->id!==false) {
+				// an authenticate plugin logged the user in!
+				$_SESSION['user_id'] = $this->user->id;
+				$this->queue_message('Welcome ' . $this->user->username, 'success', $redirect_path);
+			}
+
+			// continue with core login attempt
+
 			if ($password && (!$email)) {
 				// badly formatted email submitted and discarded by php filter
 				$this->queue_message('Invalid email','danger', $redirect_path);
