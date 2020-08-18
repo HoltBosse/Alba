@@ -41,7 +41,7 @@ require_once (CMSPATH . "/core/cms.php");
 	Object.prototype.insertAfter = function (newNode) { this.parentNode.insertBefore(newNode, this.nextSibling); }
 </script>
 
-
+		<?php Hook::execute_hook_actions('add_to_head'); ?>
 		</head>
 		<body>
 
@@ -152,7 +152,7 @@ require_once (CMSPATH . "/core/cms.php");
 					<div class="navbar-item">
 						<div class="buttons">
 
-						<a href="<?php echo Config::$uripath;?>/admin/logout.php" class="button is-light">
+						<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo Config::$uripath;?>/admin/logout.php" class="button is-light">
 							Log Out <?php echo CMS::Instance()->user->username; ?>
 						</a>
 						</div>

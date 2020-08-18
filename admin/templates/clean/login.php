@@ -165,7 +165,8 @@ if ($protocol=="http") {
 
 					<?php if (Hook::count_actions_for_hook ('additional_login_options')):?>
 					<hr>
-					<p class='center'>or try logging in with</p>
+					<p class='center'><em>or log in with</em></p>
+					<hr>
 					<?php Hook::execute_hook_actions('additional_login_options'); ?>
 					<?php endif; ?>
 
