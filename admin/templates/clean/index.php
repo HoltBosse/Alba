@@ -176,7 +176,7 @@ require_once (CMSPATH . "/core/cms.php");
 			CMS::showinfo();
 		} ?>
        
-		<?php CMS::pprint_r ($GLOBALS['hooks']);?>
+		
 
       </div>
     </section>
