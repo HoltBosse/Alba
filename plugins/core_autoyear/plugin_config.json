@@ -2,16 +2,19 @@
 	"title":"Auto Year",
 	"location":"core_autoyear",
 	"id":"auto_year_options",
-	"description":"Replaces anything matching {YEAR} in CMS output with current year.",
+    "description":"Replaces anything matching your string of choice in CMS front-end output with current year. Defaults to {YEAR}",
+    "version":"1.0",
+    "author":"Bob Mitchell",
+    "website":"https://bobmitch.com",
 	"fields":[
 		{
 			"name":"testoption",
 			"id":"testoption",
 			"type":"Text",
-            "label":"Choose date format string",
-            "default":"Y",
+            "label":"Text to replace with year",
+            "default":"{YEAR}",
             "required":false,
-            "description":"Default string of Y will product four digit year number"
+            "description":"If left empty, default value of {YEAR} will be used."
 		}
 	]
 }

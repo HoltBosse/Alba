@@ -1,0 +1,32 @@
+{
+	"title":"Google Login",
+	"location":"core_google_login",
+	"id":"auto_year_options",
+    "description":"Allows logging in with google account",
+    "version":"1.0",
+    "author":"Bob Mitchell",
+    "website":"https://bobmitch.com",
+	"fields":[
+        {
+			"label":"Client ID",
+			"name":"client_id",
+			"id":"client_id",
+			"type":"Text",
+			"required":true,
+			"filter":"STRING",
+			"maxlength":255,
+			"description":"From google oAuth credentials page.",
+			"default":""
+		},{
+			"label":"Client Secret",
+			"name":"client_secret",
+			"id":"client_secret",
+			"type":"Text",
+			"required":true,
+			"filter":"STRING",
+			"maxlength":255,
+			"description":"From google oAuth credentials page.",
+			"default":""
+		}
+    ]
+}

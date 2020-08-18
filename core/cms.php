@@ -48,7 +48,7 @@ final class CMS {
 	}
 
 	
-	public static function add_action ($hook_label, $plugin_object, $priority=10) {
+	public static function add_action ($hook_label, $plugin_object, $function_name, $priority=10) {
 		// shamelessly borrowed idea from wordpress API
 		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
 		if (!isset($GLOBALS['hooks'][$hook_label])) {
@@ -59,6 +59,7 @@ final class CMS {
 		$action = new stdClass();
 		$action->priority = $priority;
 		$action->plugin_object = $plugin_object;
+		$action->function_name = $function_name;
 		$GLOBALS['hooks'][$hook_label]->actions[] = $action;
 	}
 	
@@ -234,7 +235,8 @@ final class CMS {
 				session_destroy();
 				session_start();
 				if ($session_user_id) {
-					$this->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
+					// needs to be instance as messages not invoked yet
+					CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
 				}
 			}
 			$session_time = Configuration::get_configuration_value('general_options','session_time', $this->pdo);
@@ -446,12 +448,12 @@ final class CMS {
 				ob_start();
 				$template = "clean";
 				include_once (CURPATH . '/templates/' . $template . "/index.php");
-				Hook::execute_hook_actions('test_hook',"test variable");
+				
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean(); // clear and stop buffering
 				// perform content filtering / plugins on CMS::page_contents;
-				$this->page_contents = Hook::execute_hook_filters('content_ready', $this->page_contents);
+				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
 				echo $this->page_contents; // output
 			}
 			else {
@@ -513,7 +515,7 @@ final class CMS {
 				$this->page_contents = ob_get_contents();
 				ob_end_clean();
 				// perform content filtering / plugins on CMS::page_contents;
-				$this->page_contents = Hook::execute_hook_filters('content_ready', $this->page_contents);
+				$this->page_contents = Hook::execute_hook_filters('content_ready_frontend', $this->page_contents);
 				// render CMS header - can incorporate changes to page title/og/metatags from content controllers
 				$cms_head = $this->render_head();
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);

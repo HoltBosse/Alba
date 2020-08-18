@@ -176,6 +176,8 @@ require_once (CMSPATH . "/core/cms.php");
 			CMS::showinfo();
 		} ?>
        
+		<?php CMS::pprint_r ($GLOBALS['hooks']);?>
+
       </div>
     </section>
 	<script src='<?php echo Config::$uripath;?>/admin/templates/clean/js/script.js'></script>

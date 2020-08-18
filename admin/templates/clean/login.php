@@ -163,6 +163,12 @@ if ($protocol=="http") {
 
 					<p class="help"><a href='?view=resetpassword'>Forgot Password</a></p>
 
+					<?php if (Hook::count_actions_for_hook ('additional_login_options')):?>
+					<hr>
+					<p class='center'>or try logging in with</p>
+					<?php Hook::execute_hook_actions('additional_login_options'); ?>
+					<?php endif; ?>
+
 				</form>
 
 			<?php elseif ($view=='resetpassword'):?>

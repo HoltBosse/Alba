@@ -70,11 +70,8 @@ class Plugin {
 	}
 
 
-	public function save($required_details_form, $plugin_options_form) {
+	public function save($plugin_options_form) {
 		// update this object with submitted and validated form info
-		$this->title = $required_details_form->get_field_by_name('title')->default;
-		$this->state = $required_details_form->get_field_by_name('state')->default;
-		$this->description = $required_details_form->get_field_by_name('description')->default;
 		$this->options = array();
 		foreach ($plugin_options_form->fields as $option) {
 			$obj = new stdClass();
@@ -83,14 +80,13 @@ class Plugin {
 			//$obj->{$option->name} = $option->default;
 			$this->options[] = $obj;
 		}
-
 		$options_json = json_encode($this->options);
 
 		if ($this->id) {
 			// update
-			$query = "update plugins set state=?, title=?, description=?, options=? where id=?";
+			$query = "update plugins set options=? where id=?";
 			$stmt = CMS::Instance()->pdo->prepare($query);
-			$params = array($this->state, $this->title, $this->description, $options_json, $this->id) ;
+			$params = array($options_json, $this->id) ;
 			$result = $stmt->execute( $params );
 			
 			if ($result) {

@@ -10,15 +10,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <hr>
 
 <form method="POST" action="">
-<a href='#' class='toggle_siblings'>show/hide default fields</a>
-<div class='toggle_wrap <?php if (!$new_widget) { echo " hidden ";}?>'>
-	<div class='flex'>
-		<?php $required_details_form->display_front_end(); ?>
-	</div>
-</div>
 
-<hr>
-<h5 class='title'>Plugin Options</h5>
+<h5 class='is-5 title'>Plugin Options</h5>
 
 <?php 
 $plugin_options_form->display_front_end();
@@ -30,7 +23,6 @@ div.flex > * {padding-left:2rem;}
 div.flex > div:first-child {padding-left:0;}
 </style>
 
-<hr>
 <div class='fixed-control-bar'>
 		<button class='button is-primary' type='submit'>Save</button>
 		<button class='button is-warning' type='button' onclick="window.history.back();">Cancel</button>

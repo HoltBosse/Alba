@@ -54,7 +54,7 @@ div.pull-right {
 
 	<table class='table'>
 		<thead>
-			<tr><th>State</th><th>Title</th><th>Description</th>
+			<tr><th>State</th><th>Title</th><th>Description</th><th>Version</th><th>Author</th><th>Website</th>
 		</thead>
 		<tbody>
 		<?php foreach ($all_plugins as $a_plugin):?>
@@ -73,6 +73,9 @@ div.pull-right {
 				</td>
 				<td><a href="<?php echo Config::$uripath; ?>/admin/plugins/edit/<?php echo $a_plugin->id;?>"><?php echo $a_plugin->title; ?></a></td>
 				<td><?php echo $a_plugin->description; ?></td>
+				<td><?php echo $a_plugin->version; ?></td>
+				<td><?php echo $a_plugin->author; ?></td>
+				<td><a href='<?php echo $a_plugin->website; ?>'>link</a></td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>
