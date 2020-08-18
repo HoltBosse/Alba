@@ -15,14 +15,12 @@ else {
 }
 
 // prep forms
-$required_details_form = new Form(CMSPATH . '/plugins/required_fields_form.json');
 $plugin_options_form = new Form(CMSPATH . '/plugins/' . $plugin->location . '/plugin_config.json');
 
 // check if submitted or show defaults/data from db
-if ($required_details_form->is_submitted()) {
+if ($plugin_options_form->is_submitted()) {
 
 	// update forms with submitted values
-	$required_details_form->set_from_submit();
 	$plugin_options_form->set_from_submit();
 
 	/* CMS::pprint_r ($_POST);
@@ -30,9 +28,9 @@ if ($required_details_form->is_submitted()) {
 	exit(0); */
 
 	// validate
-	if ($required_details_form->validate() && $plugin_options_form->validate()) {
+	if ($plugin_options_form->validate()) {
 		// forms are valid, save info
-		$plugin->save($required_details_form, $plugin_options_form);
+		$plugin->save($plugin_options_form);
 	}
 	else {
 		CMS::Instance()->queue_message('Error saving plugin','danger',$_SERVER['REQUEST_URI']);	
@@ -40,11 +38,6 @@ if ($required_details_form->is_submitted()) {
 }
 else {
 	// set defaults if needed
-	
-	$required_details_form->get_field_by_name('state')->default = $plugin->state;
-	$required_details_form->get_field_by_name('title')->default = $plugin->title;
-	$required_details_form->get_field_by_name('description')->default = $plugin->description;
-
 	foreach ($plugin->options as $option) {
 		//echo "$key => $value\n";
 		$field = $plugin_options_form->get_field_by_name($option->name);

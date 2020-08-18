@@ -11,13 +11,23 @@ class Hook {
 		$this->label = false;
 		$this->actions = [];
 	}
+
+	static public function count_actions_for_hook ($hook_label) {
+		if (isset($GLOBALS['hooks'][$hook_label])) {
+			return sizeof($GLOBALS['hooks'][$hook_label]->actions);
+		}
+		return (0);
+	}
+
 	
 	static public function execute_hook_actions ($hook_label, ...$args) {
 		if (isset($GLOBALS['hooks'][$hook_label])) {
 			foreach ($GLOBALS['hooks'][$hook_label]->actions as $action) {
 				/* $function_name = $action->function_name;
 				$function_name($args); */
-				$action->plugin_object->execute_action($args);
+				//$action->plugin_object_function($args);
+				$function_name = $action->function_name;
+				$action->plugin_object->$function_name($args);
 			}
 		}
 	}
@@ -28,7 +38,9 @@ class Hook {
 			foreach ($GLOBALS['hooks'][$hook_label]->actions as $action) {
 				//CMS::pprint_r ($action);
 				//$data = $function_name($data, $args);
-				$data = $action->plugin_object->execute_filter($data,$args);
+				//$data = $action->plugin_object_function($data,$args);
+				$function_name = $action->function_name;
+				$data = $action->plugin_object->$function_name($data, $args);
 			}
 		}
 		return $data;
