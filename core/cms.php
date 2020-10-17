@@ -28,7 +28,8 @@ final class CMS {
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
-	public $version = "0.197 (beta)";
+	public $hooks = [];
+	public $version = "0.2";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -45,6 +46,23 @@ final class CMS {
 		}
 		return self::$instance;
 	}
+
+	
+	public static function add_action ($hook_label, $plugin_object, $function_name, $priority=10) {
+		// shamelessly borrowed idea from wordpress API
+		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
+		if (!isset($GLOBALS['hooks'][$hook_label])) {
+			// hook not already registered, make new hook
+			$GLOBALS['hooks'][$hook_label] = new Hook ($hook_label);
+		}
+		// add action to hook
+		$action = new stdClass();
+		$action->priority = $priority;
+		$action->plugin_object = $plugin_object;
+		$action->function_name = $function_name;
+		$GLOBALS['hooks'][$hook_label]->actions[] = $action;
+	}
+	
 
 
 	public static function log($msg) {
@@ -64,7 +82,7 @@ final class CMS {
 			?>
 			<meta property="og:title" content="<?php echo $og_title; ?>" />
 			<?php if ($og_image):?>
-				<?php $og_image_dimensions = CMS::Instance()->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
+				<?php $og_image_dimensions = $this->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
 				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::$uripath . "/image/" . $og_image ; ?>" />
 				<meta property="og:image:width" content="<?php echo $og_image_dimensions->width ; ?>" />
 				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
@@ -163,6 +181,16 @@ final class CMS {
 
 		// END DB SETUP
 
+		
+		// Load plugins
+		$GLOBALS['hooks'] = []; // reset hooks array
+		$this->enabled_plugins = $this->pdo->query('select * from plugins where state>0')->fetchAll();
+		foreach ($this->enabled_plugins as $plugin_info) {
+			$plugin_class_name = "Plugin_" . $plugin_info->location;
+			$a_plugin = new $plugin_class_name($plugin_info);
+		}
+		// all hooks available in $GLOBALS['hooks']
+
 		$this->user = new User(); // defaults to guest
 
 		// start session if required
@@ -181,7 +209,24 @@ final class CMS {
 			//if (s::get('user_id')) {
 			if ($session_user_id) {
 				//$this->user->load_from_id(s::get('user_id'));
-				$this->user->load_from_id($session_user_id);
+				//$this->user->load_from_id($session_user_id); // cant use user class as it requires CMS - will call constructor twice!
+				// code below is almost same as 'load_from_id' in user class
+				$query = "select * from users where id=?";
+				$stmt = $this->pdo->prepare($query);
+				$stmt->execute(array($session_user_id));
+				$result = $stmt->fetch();
+				if ($result) {
+					$this->user->username = $result->username;
+					$this->user->password = $result->password;
+					$this->user->created = $result->created;
+					$this->user->email = $result->email;
+					$this->user->id = $result->id;
+					// get groups
+					$query = "select * from groups where id in (select group_id from user_groups where user_id=?)";
+					$stmt = $this->pdo->prepare($query);
+					$stmt->execute(array($session_user_id));
+					$this->user->groups = $stmt->fetchAll();
+				}
 			}
 			// check if session too old
 			$now = time();
@@ -190,6 +235,7 @@ final class CMS {
 				session_destroy();
 				session_start();
 				if ($session_user_id) {
+					// needs to be instance as messages not invoked yet
 					CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
 				}
 			}
@@ -286,14 +332,14 @@ final class CMS {
 			// look for deepest matching alias - once found, that page is our controller
 			// if final matching alias is empty, show home
 
-			if (property_exists (CMS::Instance()->page,'controller')) {
+			if (property_exists ($this->page,'controller')) {
 				// already have controller - should never happen? // todo- check
-				return CMS::Instance()->page->controller;
+				return $this->page->controller;
 			}
 			else {
 				// get controller for current page
 				$query = "select controller_location from content_types where id=?";
-				$stmt = CMS::Instance()->pdo->prepare($query);
+				$stmt = $this->pdo->prepare($query);
 				$stmt->execute(array($this->page->content_type));
 				$result = $stmt->fetch();
 				if ($result) {
@@ -333,7 +379,7 @@ final class CMS {
 		// these are special controllers that bypass template rendering
 		// used for image API, but user core controllers can also
 		// be created to serve up other headless data
-		if ($this->uri_segments[0]=='image') {
+		if ($this->uri_segments && $this->uri_segments[0]=='image') {
 			include_once (CMSPATH .  "/core/controllers/image/controller.php");
 			exit(); // shouldn't be needed, controller should exit
 		}
@@ -370,6 +416,19 @@ final class CMS {
 			if (ADMINPATH) {
 				$redirect_path = Config::$uripath . '/admin';
 			}
+
+			// authenticate plugins hook
+
+			$this->user = Hook::execute_hook_filters('authenticate_user', $this->user); 
+			
+			if ($this->user->id!==false) {
+				// an authenticate plugin logged the user in!
+				$_SESSION['user_id'] = $this->user->id;
+				$this->queue_message('Welcome ' . $this->user->username, 'success', $redirect_path);
+			}
+
+			// continue with core login attempt
+
 			if ($password && (!$email)) {
 				// badly formatted email submitted and discarded by php filter
 				$this->queue_message('Invalid email','danger', $redirect_path);
@@ -402,9 +461,12 @@ final class CMS {
 				ob_start();
 				$template = "clean";
 				include_once (CURPATH . '/templates/' . $template . "/index.php");
+				
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean(); // clear and stop buffering
+				// perform content filtering / plugins on CMS::page_contents;
+				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
 				echo $this->page_contents; // output
 			}
 			else {
@@ -466,13 +528,14 @@ final class CMS {
 				$this->page_contents = ob_get_contents();
 				ob_end_clean();
 				// perform content filtering / plugins on CMS::page_contents;
-				include_once (CMSPATH .'/plugins/plugins.php');
+				$this->page_contents = Hook::execute_hook_filters('content_ready_frontend', $this->page_contents);
 				// render CMS header - can incorporate changes to page title/og/metatags from content controllers
 				$cms_head = $this->render_head();
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				// output final content
 				echo $this->page_contents;
 			}	
+			
 		}
 	}
 }
@@ -485,6 +548,7 @@ spl_autoload_register(function($class_name)
 	$is_field_class = strpos($class_name, "Field_");
 	$is_widget_class = strpos($class_name, "Widget_");
 	$is_user_class = strpos($class_name, "User_");
+	$is_plugin_class = strpos($class_name, "Plugin_");
 
 	if ($is_field_class===0) {
 		$path = CMSPATH . "/core/fields/" . $class_name . ".php";
@@ -496,6 +560,10 @@ spl_autoload_register(function($class_name)
 	elseif ($is_user_class===0) {
 		$path = CMSPATH . "/user_classes/" . $class_name . ".php";
 	}
+	elseif ($is_plugin_class===0) {
+		$plugin_class_location = str_replace('Plugin_','',$class_name);
+		$path = CMSPATH . "/plugins/" . $plugin_class_location . "/plugin_class.php";
+	}
 	else {
 		$path = CMSPATH . "/core/" . strtolower($class_name) . ".php";
 	}
@@ -505,5 +573,9 @@ spl_autoload_register(function($class_name)
     require_once $path;
 });
 
+
+
+//CMS::pprint_r (CMS::Instance());
 CMS::Instance()->render();
+
 
