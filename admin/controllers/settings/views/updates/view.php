@@ -48,3 +48,10 @@ if ($page_options_ok) {
 else {
 	show_message ('Pages Table','Missing pages page_options column - FIXED.','is-warning');
 }
+
+if ($plugins_table_ok) {
+	show_message ('Plugins Table','Plugins table OK.','is-success');
+}
+else {
+	show_message ('Plugins Table','Plugins table created.','is-warning');
+}

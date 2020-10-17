@@ -34,6 +34,34 @@ if (!$page_options_ok) {
 	}
 }
 
+$query = "SELECT * 
+FROM information_schema.tables 
+WHERE table_name = 'plugins'
+LIMIT 1;";
+$stmt = CMS::Instance()->pdo->prepare($query);
+$stmt->execute(array());
+$plugins_table_ok = $stmt->fetchAll();
+if (!$plugins_table_ok) {
+	$query = "DROP TABLE IF EXISTS `plugins`;
+	CREATE TABLE `plugins` (
+	  `id` int(11) NOT NULL,
+	  `state` tinyint(4) NOT NULL DEFAULT '0',
+	  `title` varchar(255) NOT NULL,
+	  `location` varchar(255) NOT NULL,
+	  `options` text COMMENT 'options_json',
+	  `description` mediumtext
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	ALTER TABLE `plugins`
+  ADD PRIMARY KEY (`id`);
+  ALTER TABLE `plugins`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
+	$stmt = CMS::Instance()->pdo->prepare($query);
+	$fixed_ok = $stmt->execute();
+	if (!$fixed_ok) {
+		CMS::Instance()->queue_message('Unable to create plugins table.','danger',Config::$uripath."/admin");
+	}
+}
+
 // Perform update if required
 
 if ($submitted) { 

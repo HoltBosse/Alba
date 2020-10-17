@@ -1,0 +1,20 @@
+{
+	"title":"Auto Year",
+	"location":"core_autoyear",
+	"id":"auto_year_options",
+    "description":"Replaces anything matching your string of choice in CMS front-end output with current year. Defaults to {YEAR}",
+    "version":"1.0",
+    "author":"Bob Mitchell",
+    "website":"https://bobmitch.com",
+	"fields":[
+		{
+			"name":"testoption",
+			"id":"testoption",
+			"type":"Text",
+            "label":"Text to replace with year",
+            "default":"{YEAR}",
+            "required":false,
+            "description":"If left empty, default value of {YEAR} will be used."
+		}
+	]
+}

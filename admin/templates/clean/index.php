@@ -41,7 +41,7 @@ require_once (CMSPATH . "/core/cms.php");
 	Object.prototype.insertAfter = function (newNode) { this.parentNode.insertBefore(newNode, this.nextSibling); }
 </script>
 
-
+		<?php Hook::execute_hook_actions('add_to_head'); ?>
 		</head>
 		<body>
 
@@ -121,6 +121,18 @@ require_once (CMSPATH . "/core/cms.php");
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/widgets/show/">All Widgets</a>
 							</div>
 						</div>
+
+						<div class="navbar-item has-dropdown is-hoverable">
+							<a class="navbar-link">Plugins</a>
+							<div class="navbar-dropdown">
+								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/plugins/show/">All Plugins</a>
+								<hr class="dropdown-divider">
+								<?php foreach (Plugin::get_all_plugins() as $plugin):?>
+								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/plugins/edit/<?php echo $plugin->id; ?>"><?php echo $plugin->title; ?></a>
+								<?php endforeach; ?>
+							</div>
+						</div>
+
 						<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/tags">Tags</a>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Media</a>
@@ -140,7 +152,7 @@ require_once (CMSPATH . "/core/cms.php");
 					<div class="navbar-item">
 						<div class="buttons">
 
-						<a href="<?php echo Config::$uripath;?>/admin/logout.php" class="button is-light">
+						<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo Config::$uripath;?>/admin/logout.php" class="button is-light">
 							Log Out <?php echo CMS::Instance()->user->username; ?>
 						</a>
 						</div>
@@ -164,6 +176,8 @@ require_once (CMSPATH . "/core/cms.php");
 			CMS::showinfo();
 		} ?>
        
+		
+
       </div>
     </section>
 	<script src='<?php echo Config::$uripath;?>/admin/templates/clean/js/script.js'></script>
