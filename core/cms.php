@@ -387,7 +387,7 @@ final class CMS {
 		if (property_exists("Config",'user_core_controllers')) {
 			if (Config::$user_core_controllers) {
 				if (in_array($this->uri_segments[0], Config::$user_core_controllers)) {
-					include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controllers.php");
+					include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controller.php");
 					exit(); // shouldn't be needed, controller should exit
 				}
 			}
