@@ -165,6 +165,15 @@ CREATE TABLE `widget_types` (
   `description` mediumtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `plugins`;
+CREATE TABLE `plugins` (
+  `id` int(11) NOT NULL,
+  `state` tinyint(4) NOT NULL DEFAULT '0',
+  `title` varchar(255) NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `options` text COMMENT 'options_json',
+  `description` mediumtext
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `configurations`
   ADD PRIMARY KEY (`name`);
@@ -211,6 +220,8 @@ ALTER TABLE `widgets`
 ALTER TABLE `widget_types`
   ADD PRIMARY KEY (`id`);
 
+ALTER TABLE `plugins`
+  ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `content`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
@@ -243,6 +254,9 @@ ALTER TABLE `widgets`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `widget_types`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `plugins`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 
