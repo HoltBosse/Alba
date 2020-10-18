@@ -64,6 +64,15 @@ final class CMS {
 	}
 	
 
+	public static function get_admin_template() {
+		$template="clean";
+		if (property_exists('Config','admintemplate') && Config::$admintemplate) {
+			if (file_exists(CURPATH . '/templates/' . Config::$admintemplate . "/index.php")) {
+				$template = Config::$admintemplate;
+			}
+		}
+		return $template;
+	}
 
 	public static function log($msg) {
 		file_put_contents(CMSPATH . '/cmslog.txt', "\r\n" . date('Y-m-d H:i:s') . " - " . $msg, FILE_APPEND | LOCK_EX);
@@ -451,7 +460,7 @@ final class CMS {
 			}
 			if (ADMINPATH) {
 				// force switch to admin template login 
-				$template="clean";
+				$template = $this->get_admin_template();
 			}
 			include_once (CURPATH . '/templates/' . $template . "/login.php");
 		}
@@ -459,7 +468,7 @@ final class CMS {
 		else {
 			if (ADMINPATH) {
 				ob_start();
-				$template = "clean";
+				$template = $this->get_admin_template();
 				include_once (CURPATH . '/templates/' . $template . "/index.php");
 				
 				// save page contents to CMS
