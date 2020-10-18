@@ -20,3 +20,5 @@ images/upload/*
 !images/upload/index.html
 # misc testing scripts
 testing/
+# testing admin templates
+admin/templates/testadmintemplate/**
