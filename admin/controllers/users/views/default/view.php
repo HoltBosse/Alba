@@ -41,7 +41,7 @@ div.pull-right {
 
 <form action='' method='post' name='user_action' id='user_action_form'>
 	<h1 class='title is-1'>
-		All Users
+		Users: <?php echo $group_name; ?>
 		<a href='<?php echo Config::$uripath . "/admin/users/edit"?>' class="button is-primary pull-right">
 			<span class="icon is-small">
 				<i class="fas fa-check"></i>
@@ -60,7 +60,7 @@ div.pull-right {
 			<th>Status</th>
 			<th>Name</th>
 			<th>Email</th>
-			<th>Group(s)</th>
+			<?php if (!$group_id):?><th>Group(s)</th><?php endif; ?>
 			<!-- <th>Created</th>
 			<th>ID</th> -->
 		</thead>
@@ -86,9 +86,11 @@ div.pull-right {
 				<td>
 					<?php echo $user->email; ?>
 				</td>
-				<td>
-					<?php echo $user->groups; ?>
-				</td>
+				<?php if (!$group_id):?>
+					<td>
+						<?php echo $user->groups; ?>
+					</td>
+				<?php endif; ?>
 				<!-- <td>
 					<?php echo $user->created; ?>
 				</td>

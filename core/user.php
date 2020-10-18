@@ -45,6 +45,33 @@ class User {
 		return $result;
 	}
 
+	public function get_all_users_in_group($group_id) {
+		//echo "<p>Getting all users...</p>";
+		//$db = new db();
+		//$db = CMS::$pdo;
+		//$result = $db->pdo->query("select * from users")->fetchAll();
+		//$result = CMS::Instance()->pdo->query("select * from users")->fetchAll();
+		$query = "Select u.*, group_concat(g.display) as groups from users u 
+					Left Join user_groups ug on ug.user_id = u.id  
+					Left Join groups g on ug.group_id = g.id 
+					WHERE g.id=? 
+					group by u.id";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$ok = $stmt->execute(array($group_id));
+		$result = $stmt->fetchAll();
+
+		return $result;
+	}
+
+	public static function get_group_name ($group_id) {
+		$query = "select display from groups where id=?";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$ok = $stmt->execute(array($group_id));
+		$result = $stmt->fetch();
+		return $result->display;
+	}
+
+
 	public function update_password ($new_password) {
 		$hash = password_hash ($new_password, PASSWORD_DEFAULT);
 		$query = "update users set password=? where id=?";

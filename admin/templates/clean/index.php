@@ -86,6 +86,11 @@ require_once (CMSPATH . "/core/cms.php");
 							<a class="navbar-link">Users</a>
 							<div class="navbar-dropdown">
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/users">All Users</a>
+								<?php
+								$all_groups = User::get_all_groups();
+								foreach ($all_groups as $group):?>
+									<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/users/<?php echo $group->id;?>"><?php echo $group->display;?></a>
+								<?php endforeach; ?>
 								<hr class="dropdown-divider">
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/users/options">User Options</a>
 							</div>
