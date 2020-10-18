@@ -22,3 +22,6 @@ images/upload/*
 testing/
 # testing admin templates
 admin/templates/testadmintemplate/**
+# ignore custom controllers - note: add future default controllers here!
+controllers/**
+!controllers/basic_aricle/**
