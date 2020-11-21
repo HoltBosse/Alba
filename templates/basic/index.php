@@ -31,7 +31,7 @@
 			line-height:0.9;
 		}
 		.menu_item_wrap p {
-			margin-bottom:0;
+			margin-bottom:0; 
 		}
 		
 		footer {margin:1rem; padding:1rem; background:#eee; border:1px solid black; }
@@ -46,9 +46,13 @@
 		<?php CMS::Instance()->render_widgets('Sidebar');?>
 	</aside>
 
+	<?php CMS::Instance()->render_widgets('Header');?>
+
 	<?php CMS::Instance()->render_widgets('Above Content');?>
 	
 	<?php CMS::Instance()->render_controller(); ?>
+
+	<?php CMS::Instance()->render_widgets('After Content');?>
 	
 	<footer>
 		<?php CMS::Instance()->render_widgets('Footer');?>
