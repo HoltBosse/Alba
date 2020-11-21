@@ -74,6 +74,8 @@ class Form {
 	public function validate() {
 		foreach ($this->fields as $field) {
 			if (!$field->validate()) {
+				$field_info = print_r ($field,true);
+				CMS::Instance()->log('Invalid field: ' . $field_info);
 				return false;
 			}
 		}
