@@ -36,6 +36,9 @@ html {
 #main {
 	margin-top:3rem;
 }
+.navbar-item img {
+    max-height: 3.75rem;
+}
 
 .mm_push_bottom {
 	position:absolute;

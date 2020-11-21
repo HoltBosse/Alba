@@ -54,7 +54,7 @@ require_once (CMSPATH . "/core/cms.php");
 						$logo_src = Config::$uripath . "/image/" . $logo_image_id;
 					}
 					else {
-						$logo_src = Config::$uripath . "/admin/templates/clean/logo/jpg";
+						$logo_src = "https://via.placeholder.com/200x60/000000/FFFFFF?text=SeamlessCMS";
 					}
 					?>
 					<img src="<?php echo $logo_src;?>" >
