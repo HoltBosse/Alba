@@ -12,7 +12,6 @@ class Widget_menu extends Widget {
 	}
 
 	public function render_menu($tree) {
-		
 		if ($tree->parent!==null) {
 			// display all nodes except root
 			$page = new Page();
@@ -23,20 +22,33 @@ class Widget_menu extends Widget {
 				if ($tree->value==CMS::Instance()->page->id) {
 					$classList=" current ";
 				}
-				echo "<li class='{$classList}'><a class='page_id_{$tree->value}' href='{$url}'>" . $page->title . "</a></li>";
+				if ($tree->children) {
+					$classList.=" parent ";
+				}
+				echo "<li class='{$classList}'><a class='page_id_{$tree->value}' href='{$url}'>" . $page->title . "</a>";
+				if ($tree->children) {
+					echo "<ul>";
+					foreach ($tree->children as $child) {
+						$this->render_menu($child);
+					}
+					echo "</ul>";
+				}
+				echo "</li>";
 			}
 			else {
 				// no page found - errant menu item
 				echo "<li class='menu_error'>" . $tree->text . "</li>";
 			}
 		}
-		// traverse children
-		if ($tree->children) {
-			echo "<ul>";
-			foreach ($tree->children as $child) {
-				$this->render_menu($child);
+		else {
+			// render roots children - aka home etc...
+			if ($tree->children) {
+				echo "<ul>";
+				foreach ($tree->children as $child) {
+					$this->render_menu($child);
+				}
+				echo "</ul>";
 			}
-			echo "</ul>";
 		}
 	}
 

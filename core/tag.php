@@ -104,6 +104,12 @@ class Tag {
 				// clear any content types applicable to this tag from tag_content_type
 				$query = "delete from tag_content_type where tag_id=?";
 				$stmt = CMS::Instance()->pdo->prepare($query);
+				if (!$this->alias) {
+					$this->alias = Input::stringURLSafe($this->title);
+				}
+				if (!$this->image) {
+					$this->image=null;
+				}
 				$stmt->execute(array($this->id));
 				// insert new tag content_type relationships if required
 				foreach ($this->contenttypes as $contenttype) {

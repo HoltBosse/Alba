@@ -29,7 +29,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
-	public $version = "0.23";
+	public $version = "0.24";
 
 	/* protected function __construct() {}
     protected function __clone() {}
