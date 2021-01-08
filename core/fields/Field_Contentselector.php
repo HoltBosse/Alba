@@ -15,7 +15,21 @@ class Field_Contentselector extends Field {
 	public function display() {
 		$required="";
 		if ($this->content_type) {
-			$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by id ASC")->fetchAll();
+			if (!is_numeric($this->content_type)) {
+				// content type denoted by content controller location - this is a unique safe folder name
+				// e.g. basic_article
+				$this->content_type = Content::get_content_type_id($this->content_type);
+			}
+			if ($this->content_type && is_numeric($this->content_type)) {
+				$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by id ASC")->fetchAll();
+			}
+		}
+		if (!$options_all_articles) {
+			// content type was not able to be established
+			if (Config::$debug) {
+				echo "<h5>Error determining content type</h5>";
+				return false;
+			}
 		}
 		if ($this->required) {$required=" required ";}
 		echo "<div class='field'>";
