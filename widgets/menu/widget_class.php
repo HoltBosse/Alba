@@ -18,14 +18,43 @@ class Widget_menu extends Widget {
 			$page->load_from_id($tree->value);
 			if ($page->load_from_id($tree->value)) {
 				$url = $page->get_url();
+				$target = '';
+				$is_anchor = true;
 				$classList="";
 				if ($tree->value==CMS::Instance()->page->id) {
-					$classList=" current ";
+					$classList.=" current ";
 				}
 				if ($tree->children) {
 					$classList.=" parent ";
 				}
-				echo "<li class='{$classList}'><a class='page_id_{$tree->value}' href='{$url}'>" . $page->title . "</a>";
+
+				$content_type_title = Content::get_content_type_title($page->content_type);
+
+				if ($content_type_title=="External Link") {
+					$page->view_configuration_object = json_decode($page->view_configuration);
+					$view_config = $page->view_configuration_object;
+					$content_id = Content::get_config_value ($view_config, 'content_id');
+					$content_item = Content::get_all_content(false, $page->content_type, $content_id)[0]; // false 1st param is ordering field
+					//CMS::pprint_r ($content_item);
+					$url = $content_item->f_url;
+					if ($content_item->f_newtab==1) {
+						$target = "_blank";
+						$classList.=" external_link ";
+					}
+				}
+				if ($content_type_title=="Menu Heading") {
+					$classList.=" menu_heading ";
+					$is_anchor = false;
+				}
+
+				
+				echo "<li class='{$classList}'>";
+				if ($is_anchor) {
+					echo "<a target={$target} class='page_id_{$tree->value}' href='{$url}'>" . $page->title . "</a>";
+				}
+				else {
+					echo $page->title;
+				}
 				if ($tree->children) {
 					echo "<ul>";
 					foreach ($tree->children as $child) {

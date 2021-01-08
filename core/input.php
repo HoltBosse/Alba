@@ -44,6 +44,9 @@ class Input {
 		elseif ($filter=="EMAIL") {
 			return filter_var($foo, FILTER_VALIDATE_EMAIL);
 		}
+		elseif ($filter=="URL") {
+			return filter_var($foo, FILTER_VALIDATE_URL);
+		}
 		elseif ($filter=="ARRAYRAW") {
 			if (!is_array($foo)) {
 				CMS::Instance()->queue_message('ARRAYRAW cannot return a non-array','danger',Config::$uripath . '/admin');
