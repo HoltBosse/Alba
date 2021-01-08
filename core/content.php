@@ -251,6 +251,21 @@ class Content {
 		}
 	}
 
+	public static function get_content_type_id($controller_location) {
+		if (!$controller_location) {
+			return false;
+		}
+		$stmt = CMS::Instance()->pdo->prepare("select id from content_types where controller_location=?");
+		$stmt->execute(array($controller_location));
+		$result = $stmt->fetch();
+		if ($result) {
+			return $result->id;
+		}
+		else {
+			return false;
+		}
+	}
+
 	public static function get_config_value ($config, $key) {
 		// $config is array of {name:"",value:""} pairs
 		foreach ($config as $config_pair) {
