@@ -1,0 +1,15 @@
+{
+	"id":"menu_heading_options",
+	"fields":[
+		{
+			"name": "content_id",
+			"id": "content_id",
+			"type": "Contentselector",
+			"label": "Choose Heading",
+			"required": false,
+			"description": "",
+			"filter": "NUMBER",
+			"content_type":"menu-heading"
+		}
+	]
+}

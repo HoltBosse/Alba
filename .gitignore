@@ -24,6 +24,9 @@ testing/
 admin/templates/testadmintemplate/**
 # ignore custom controllers - note: add future default controllers here!
 controllers/**
-!controllers/basic_aricle/**
+!controllers/basic_article/
+!controllers/basic_article/**
+!controllers/external-link/
 !controllers/external-link/**
+!controllers/menu-heading/
 !controllers/menu-heading/**

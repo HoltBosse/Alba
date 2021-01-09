@@ -1,0 +1,15 @@
+{
+	"id":"external-link_options",
+	"fields":[
+		{
+			"name": "content_id",
+			"id": "content_id",
+			"type": "Contentselector",
+			"label": "Choose Link",
+			"required": false,
+			"description": "Edit the external link content item to choose opening in new tab etc...",
+			"filter": "NUMBER",
+			"content_type":"external-link"
+		}
+	]
+}
