@@ -9,7 +9,7 @@
 			"required": false,
 			"description": "",
 			"filter": "NUMBER",
-			"content_type":1
+			"content_type":"simple_article"
 		}
 	]
 }

@@ -25,3 +25,5 @@ admin/templates/testadmintemplate/**
 # ignore custom controllers - note: add future default controllers here!
 controllers/**
 !controllers/basic_aricle/**
+!controllers/external-link/**
+!controllers/menu-heading/**
