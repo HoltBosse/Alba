@@ -22,4 +22,20 @@ class db {
 			}
 		}
 	}	
+
+	public static function exec($query, $paramsarray=[]) {
+		try {
+			$stmt = CMS::Instance()->pdo->prepare($query);
+			$success = $stmt->execute($paramsarray);
+		}
+		catch (\PDOException $e) {
+			if (Config::$debug) {
+				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
+			}
+			else {
+				CMS::show_error("Database query error - turn on debug for more information.");
+			}
+		}
+		return TRUE;
+	}
 }

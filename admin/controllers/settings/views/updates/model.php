@@ -26,12 +26,8 @@ $stmt->execute(array());
 $page_options_ok = $stmt->fetchAll();
 if (!$page_options_ok) {
 	// add column
-	$query = "ALTER TABLE `pages` ADD `page_options` text NOT NULL COMMENT 'seo and og settings'";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$fixed_ok = $stmt->execute();
-	if (!$fixed_ok) {
-		CMS::Instance()->queue_message('Unable to add page_options column in pages table.','danger',Config::$uripath."/admin");
-	}
+	DB::exec("ALTER TABLE `pages` ADD `page_options` text NOT NULL COMMENT 'seo and og settings';");
+	$fixed_ok = true;
 }
 
 $query = "SELECT * 
@@ -42,24 +38,17 @@ $stmt = CMS::Instance()->pdo->prepare($query);
 $stmt->execute(array());
 $plugins_table_ok = $stmt->fetchAll();
 if (!$plugins_table_ok) {
-	$query = "DROP TABLE IF EXISTS `plugins`;
-	CREATE TABLE `plugins` (
+	DB::exec("DROP TABLE IF EXISTS `plugins`;");
+	DB::exec("CREATE TABLE `plugins` (
 	  `id` int(11) NOT NULL,
 	  `state` tinyint(4) NOT NULL DEFAULT '0',
 	  `title` varchar(255) NOT NULL,
 	  `location` varchar(255) NOT NULL,
 	  `options` text COMMENT 'options_json',
 	  `description` mediumtext
-	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-	ALTER TABLE `plugins`
-  ADD PRIMARY KEY (`id`);
-  ALTER TABLE `plugins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$fixed_ok = $stmt->execute();
-	if (!$fixed_ok) {
-		CMS::Instance()->queue_message('Unable to create plugins table.','danger',Config::$uripath."/admin");
-	}
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+	DB::exec("ALTER TABLE `plugins` ADD PRIMARY KEY (`id`);");
+	DB::exec("ALTER TABLE `plugins` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
 }
 
 // Perform update if required
