@@ -17,7 +17,7 @@ class Input {
         return $str;
 	}
 
-	public static function getvar ($input, $filter='RAW') {
+	public static function getvar ($input, $filter='RAW', $default=NULL) {
 		if (isset($_GET[$input])) {
 			return Input::filter($_GET[$input], $filter);
 		}
@@ -25,7 +25,12 @@ class Input {
 			return Input::filter($_POST[$input], $filter);
 		}
 		else {
-			return NULL;
+			if ($default) {
+				return $default
+			}
+			else {
+				return NULL;
+			}
 		}
 	}
 
