@@ -13,10 +13,12 @@ if ($widget_type_id && is_numeric($widget_type_id)) {
 }
 
 if (is_numeric($widget_type_id)) {
-	$all_widgets = CMS::Instance()->pdo->query('select * from widgets where state>=0 and type=' . $widget_type_id)->fetchAll();
+	//$all_widgets = CMS::Instance()->pdo->query('select * from widgets where state>=0 and type=' . $widget_type_id)->fetchAll();
+	$all_widgets = DB::fetchall('select * from widgets where state>=0 and type=?', array($widget_type_id));
 }
 else {
-	$all_widgets = CMS::Instance()->pdo->query('select * from widgets where state>=0')->fetchAll();
+	//$all_widgets = CMS::Instance()->pdo->query('select * from widgets where state>=0')->fetchAll();
+	$all_widgets = DB::fetchall('select * from widgets where state>=0');
 }
 
 $all_widget_types = Widget::get_all_widget_types();

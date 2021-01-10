@@ -21,10 +21,11 @@ else {
 }
 
 // check for new plugins
-$query = "select * from plugins";
+/* $query = "select * from plugins";
 $stmt = CMS::Instance()->pdo->prepare($query);
 $stmt->execute(array());
-$all_plugins = $stmt->fetchAll();
+$all_plugins = $stmt->fetchAll(); */
+$all_plugins = DB::fetchall("select * from plugins");
 $missing_plugins=[];
 foreach (new DirectoryIterator(CMSPATH . '/plugins/') as $f) {
 	if($f->isDot()) continue; // no dot files, shouldn't even happen with PHP defaults

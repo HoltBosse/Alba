@@ -21,10 +21,11 @@ else {
 }
 
 // check for new widget types
-$query = "select * from widget_types";
+/* $query = "select * from widget_types";
 $stmt = CMS::Instance()->pdo->prepare($query);
 $stmt->execute(array());
-$all_widget_types = $stmt->fetchAll();
+$all_widget_types = $stmt->fetchAll(); */
+$all_widget_types = DB::fetchall("select * from widget_types");
 $missing_widgets=[];
 foreach (new DirectoryIterator(CMSPATH . '/widgets/') as $f) {
 	if($f->isDot()) continue; // no dot files, shouldn't even happen with PHP defaults

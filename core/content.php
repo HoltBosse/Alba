@@ -32,10 +32,11 @@ class Content {
 		$is_unique = false;
 		while (!$is_unique) {
 			// make alias unique for specific content type - it's fine to have same alias for multiple contents of different types
-			$query = "select * from content where alias=? and content_type=?";
+			/* $query = "select * from content where alias=? and content_type=?";
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute(array($this->alias, $this->content_type));
-			$results = $stmt->fetchAll(); 
+			$results = $stmt->fetchAll();  */
+			$results = DB::fetchall("select * from content where alias=? and content_type=?", array($this->alias, $this->content_type) );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
 			if ($this->id) {
@@ -232,7 +233,8 @@ class Content {
 		//$db = new db();
 		//$db = CMS::$pdo;
 		//$result = $db->pdo->query("select * from users")->fetchAll();
-		$result = CMS::Instance()->pdo->query("select * from content_types where state > 0 order by id ASC")->fetchAll();
+		//$result = CMS::Instance()->pdo->query("select * from content_types where state > 0 order by id ASC")->fetchAll();
+		$result = DB::fetchall('select * from content_types where state > 0 order by id ASC');
 		return $result;
 	}
 	
@@ -240,9 +242,10 @@ class Content {
 		if (!$content_type) {
 			return false;
 		}
-		$stmt = CMS::Instance()->pdo->prepare("select title from content_types where id=?");
+		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_types where id=?");
 		$stmt->execute(array($content_type));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch("select title from content_types where id=?", array($content_type));
 		if ($result) {
 			return $result->title;
 		}
@@ -280,40 +283,46 @@ class Content {
 		$query = "select * from tags where (filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)) ";
 		$query.= "or (filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)) ";
 		//$query.= "and state>-1";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($content_type_id, $content_type_id));
-		return $stmt->fetchAll();
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($content_type_id, $content_type_id)); */
+		$tags = DB::fetchall($query, array($content_type_id, $content_type_id));
+		//return $stmt->fetchAll();
+		return $tags;
 	}
 
 	public static function get_content_location($content_type_id) {
-		$stmt = CMS::Instance()->pdo->prepare("select controller_location from content_types where id=?");
+		/* $stmt = CMS::Instance()->pdo->prepare("select controller_location from content_types where id=?");
 		$stmt->execute(array($content_type_id));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch("select controller_location from content_types where id=?", array($content_type_id));
 		return $result->controller_location;
 	}
 
 	
 
 	public static function get_content_count($content_type_id) {
-		$stmt = CMS::Instance()->pdo->prepare("select count(*) as c from content where content_type=?");
+		/* $stmt = CMS::Instance()->pdo->prepare("select count(*) as c from content where content_type=?");
 		$stmt->execute(array($content_type_id));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch("select count(*) as c from content where content_type=?", array($content_type_id));
 		return $result->c;
 	}
 
 	public static function get_view_location($view_id) {
-		$stmt = CMS::Instance()->pdo->prepare("select location from content_views where id=?");
+		/* $stmt = CMS::Instance()->pdo->prepare("select location from content_views where id=?");
 		$stmt->execute(array($view_id));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch("select location from content_views where id=?", array($view_id));
 		return $result->location;
 	}
 
 	public static function get_content_type_for_view ($view_id) {
-		$stmt = CMS::Instance()->pdo->prepare("select content_type_id from content_views where id=?");
+		/* $stmt = CMS::Instance()->pdo->prepare("select content_type_id from content_views where id=?");
 		$stmt->execute(array($view_id));
-		$result = $stmt->fetch();
-		echo "trying to get content type for view {$view_id}";
-		exit (0);
+		$result = $stmt->fetch(); */
+		//echo "trying to get content type for view {$view_id}";
+		//exit (0);
+		$result = DB::fetch("select content_type_id from content_views where id=?", array($view_id));
 		return $result->content_type_id;
 	}
 
@@ -321,9 +330,10 @@ class Content {
 		if (!$view_id) {
 			return false;
 		}
-		$stmt = CMS::Instance()->pdo->prepare("select title from content_views where id=?");
+		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_views where id=?");
 		$stmt->execute(array($view_id));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch("select title from content_views where id=?", array($view_id));
 		if ($result) {
 			return $result->title;
 		}
@@ -409,15 +419,18 @@ class Content {
 		}
 
 		if ($order_by=="ordering"||$order_by=="id"||$order_by=="start") {
-			$result = CMS::Instance()->pdo->query($query . " order by " . $order_by . " ASC")->fetchAll();
-			return $result;
+			//$result = CMS::Instance()->pdo->query($query . " order by " . $order_by . " ASC")->fetchAll();
+			$query .= " order by " . $order_by . " ASC";
+			//return $result;
 		}
 		else {
 			//CMS::Instance()->queue_message('Unknown ordering method: ' . $order_by ,'danger', $_SERVER["HTTP_REFERER"]);
-			$result = CMS::Instance()->pdo->query($query . " order by id ASC")->fetchAll();
-			return $result;
+			//$result = CMS::Instance()->pdo->query($query . " order by id ASC")->fetchAll();
+			$query .= " order by id ASC";
+			//return $result;
 		}
-		
+		$result = DB::fetchall($query);
+		return $result;
 	}
 
 }

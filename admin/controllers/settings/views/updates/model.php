@@ -20,10 +20,11 @@ if ($latest_json) {
 // Legacy DB Checks / Fixes
 
 // check page_options column in pages table
-$query = "show columns FROM `pages` LIKE 'page_options'";
+/* $query = "show columns FROM `pages` LIKE 'page_options'";
 $stmt = CMS::Instance()->pdo->prepare($query);
 $stmt->execute(array());
-$page_options_ok = $stmt->fetchAll();
+$page_options_ok = $stmt->fetchAll(); */
+$page_options_ok = DB::fetchall("show columns FROM `pages` LIKE 'page_options'");
 if (!$page_options_ok) {
 	// add column
 	DB::exec("ALTER TABLE `pages` ADD `page_options` text NOT NULL COMMENT 'seo and og settings';");
