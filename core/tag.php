@@ -14,7 +14,8 @@ class Tag {
 	}
 
 	public function load($id) {
-		$info = CMS::Instance()->pdo->query('select * from tags where id=' . $id)->fetch();
+		//$info = CMS::Instance()->pdo->query('select * from tags where id=' . $id)->fetch();
+		$info = DB::fetch('select * from tags where id=?', array($id));
 		$this->id = $info->id;
 		$this->title = $info->title;
 		$this->state = $info->state;
@@ -27,16 +28,19 @@ class Tag {
 		$query = "select content_type_id from tag_content_type where tag_id=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($this->id));
+		//$result = DB::fetchall("select content_type_id from tag_content_type where tag_id=?", array($this->id));
 		$this->contenttypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
 	}
 
 	public static function get_tags_for_content($content_id, $content_type_id=-1) {
 		// default to media/image content type
-		$query = "select * from tags where id in (select tag_id from tagged where content_id=? and content_type_id=?)";
+		/* $query = "select * from tags where id in (select tag_id from tagged where content_id=? and content_type_id=?)";
 		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($content_id, $content_type_id));
-		return $stmt->fetchAll();
+		$stmt->execute(array($content_id, $content_type_id)); */
+		$result = DB::fetchall("select * from tags where id in (select tag_id from tagged where content_id=? and content_type_id=?)", array($content_id, $content_type_id));
+		return $result;
+		//return $stmt->fetchAll();
 	}
 
 	public static function set_tags_for_content($content_id, $tag_array, $content_type_id) {
