@@ -14,10 +14,7 @@ else {
 }
 
 // check for new content types
-$query = "select * from content_types";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$all_content_types = $stmt->fetchAll();
+$all_content_types = DB::fetchall("select * from content_types");
 $missing_content_types=[];
 $missing=[];
 //CMS::pprint_r ($all_content_types);

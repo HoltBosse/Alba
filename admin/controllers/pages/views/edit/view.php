@@ -258,7 +258,7 @@ div.position_tag_wrap.active {
 						<select  id='content_type_controller_view' name='content_type_controller_view'>
 							<option value=''>Choose View:</option>
 							<?php
-							$all_views = CMS::Instance()->pdo->query('select * from content_views where content_type_id=' . $page->content_type)->fetchAll();
+							$all_views = DB::fetchall('select * from content_views where content_type_id=?',array($page->content_type));
 							foreach ($all_views as $view) {
 								$view_selected = "";
 								if ($page->view==$view->id) {
@@ -326,7 +326,7 @@ div.position_tag_wrap.active {
     <section class="modal-card-body">
       <!-- Content ... -->
 	  	<div class=''>
-			<?php $all_published_widgets = CMS::Instance()->pdo->query('select * from widgets where state>=0')->fetchAll();
+			<?php $all_published_widgets = DB::fetchall('select * from widgets where state >= 0');
 			foreach ($all_published_widgets as $widget):?>
 				<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button add_widget_to_override is-outline' type='button'><?php echo $widget->title; ?></button>
 			<?php endforeach; ?>
