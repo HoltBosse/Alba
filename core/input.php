@@ -26,7 +26,7 @@ class Input {
 		}
 		else {
 			if ($default) {
-				return $default
+				return $default;
 			}
 			else {
 				return NULL;
