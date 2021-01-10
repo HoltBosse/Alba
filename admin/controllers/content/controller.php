@@ -75,7 +75,7 @@ if ($missing) { ?>
 									//$view_config = json_decode(file_get_contents($view_config_file));
 									$view_config = JSON::load_obj_from_file($view_config_file);
 									if (!$view_config || !$view_config->title) {
-										echo "<br>Malform edJSON in view_config file for view: " . $view_folder;
+										echo "<br>Malformed JSON in view_config file for view: " . $view_folder;
 									}
 									else {
 										if (!property_exists($view_config,"description")) {
