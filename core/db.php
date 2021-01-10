@@ -38,4 +38,21 @@ class db {
 		}
 		return TRUE;
 	}
+
+	public static function fetchall($query, $paramsarray=[]) {
+		try {
+			$stmt = CMS::Instance()->pdo->prepare($query);
+			$stmt->execute($paramsarray);
+			$result = $stmt->fetchAll();
+		}
+		catch (\PDOException $e) {
+			if (Config::$debug) {
+				CMS::show_error("Error performing query: " . $e->getMessage());
+			}
+			else {
+				CMS::show_error("Database query error - turn on debug for more information.");
+			}
+		}
+		return $result;
+	}
 }
