@@ -23,7 +23,8 @@ class User {
 		if ($username && $email && $password) {
 			$hash = password_hash ($password, PASSWORD_DEFAULT);
 			$query = "INSERT INTO users (username, email, password, state) VALUES (?,?,?,?)";
-			CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
+			//CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
+			DB::exec($query, [$username,$email,$hash,$state]);
 		}
 		else {
 			// TODO:throw
@@ -40,9 +41,9 @@ class User {
 					Left Join user_groups ug on ug.user_id = u.id 
 					Left Join groups g on ug.group_id = g.id 
 					group by u.id";
-		$result = CMS::Instance()->pdo->query($query)->fetchAll();
-
-		return $result;
+		/* $result = CMS::Instance()->pdo->query($query)->fetchAll();
+		return $result; */
+		return DB::fetchall($query);
 	}
 
 	public function get_all_users_in_group($group_id) {
@@ -56,18 +57,19 @@ class User {
 					Left Join groups g on ug.group_id = g.id 
 					WHERE g.id=? 
 					group by u.id";
-		$stmt = CMS::Instance()->pdo->prepare($query);
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$ok = $stmt->execute(array($group_id));
 		$result = $stmt->fetchAll();
-
-		return $result;
+		return $result; */
+		return DB::fetchall($query, array($group_id));
 	}
 
 	public static function get_group_name ($group_id) {
 		$query = "select display from groups where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$ok = $stmt->execute(array($group_id));
-		$result = $stmt->fetch();
+		//$stmt = CMS::Instance()->pdo->prepare($query);
+		//$ok = $stmt->execute(array($group_id));
+		//$result = $stmt->fetch();
+		$result = DB::fetch($query, array($group_id));
 		return $result->display;
 	}
 
@@ -75,19 +77,21 @@ class User {
 	public function update_password ($new_password) {
 		$hash = password_hash ($new_password, PASSWORD_DEFAULT);
 		$query = "update users set password=? where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$ok = $stmt->execute(array($hash, $this->id));
 		if (!$ok) {
 			return false;
-		}
+		} */
+		DB::exec($query, array($hash, $this->id));
 		return true;
 	}
 
 	public function is_member_of ($group_value) {
 		$query = "select id from groups where value=? and id in (select group_id from user_groups where user_id=?)";
-		$stmt = CMS::Instance()->pdo->prepare($query);
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($group_value, $this->id));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch($query, array($group_value, $this->id));
 		if ($result) {
 			if ($result->id) {
 				return true;
@@ -123,9 +127,10 @@ class User {
 	public function load_from_id($id) {
 		$query = "select * from users where id=?";
 		//$db = new db();
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id));
-		$result = $stmt->fetch();
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($id)); */
+		//$result = $stmt->fetch();
+		$result = DB::fetch($query, array($id));
 		if ($result) {
 			$this->username = $result->username;
 			$this->password = $result->password;
@@ -134,9 +139,10 @@ class User {
 			$this->id = $result->id;
 			// get groups
 			$query = "select * from groups where id in (select group_id from user_groups where user_id=?)";
-			$stmt = CMS::Instance()->pdo->prepare($query);
+			/* $stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute(array($id));
-			$this->groups = $stmt->fetchAll();
+			$this->groups = $stmt->fetchAll(); */
+			$this->groups = DB::fetchall($query, array($id));
 			return true;
 		}
 		else {
@@ -146,27 +152,30 @@ class User {
 
 	
 	public static function get_username_by_id($id) {
-		$stmt = CMS::Instance()->pdo->prepare("select username from users where id=?");
+		/* $stmt = CMS::Instance()->pdo->prepare("select username from users where id=?");
 		$stmt->execute(array($id));
-		$result = $stmt->fetch()->username;
-		return $result;
+		$result = $stmt->fetch()->username; */
+		$result = DB::fetch("select username from users where id=?", array($id));
+		return $result->username;
 	}
 
 	public function check_password($password) {
 		$query = "select password from users where id=?";
 		//$db = new db();
-		$stmt = CMS::Instance()->pdo->prepare($query);
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($this->id));
-		$hash = $stmt->fetch();
+		$hash = $stmt->fetch(); */
+		$hash = DB::fetch($query, array($this->id));
 		return password_verify($password, $hash->password);
 	}
 
 	public function load_from_email($email) {
 		//echo "<h5>Loading user object from db with email {$email}</h5>";
 		$query = "select * from users where email=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($email));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch($query, array($email));
 		if ($result) {
 			$this->username = $result->username;
 			$this->password = $result->password;
@@ -186,8 +195,9 @@ class User {
    		$addKey = substr(md5(uniqid(rand(),1)),3,10);
 		$key = $key . $addKey;
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$ok = $stmt->execute(array($key, $this->id));
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
+		$ok = $stmt->execute(array($key, $this->id)); */
+		$ok = DB::exec($query, array($key, $this->id));
 		if (!$ok) {
 			CMS::Instance()->queue_message('Error creating password reset key for ' . $this->username, 'error', Config::$uripath."/admin");
 			// should not get here
@@ -197,8 +207,9 @@ class User {
 
 	public function remove_reset_key() {
 		$query = "update users set reset_key=null, reset_key_expires=null where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$ok = $stmt->execute(array($this->id));
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
+		$ok = $stmt->execute(array($this->id)); */
+		$ok = DB::exec($query, array($this->id)); 
 		if (!$ok) {
 			return false;
 		}
@@ -210,9 +221,10 @@ class User {
 	public function get_user_by_reset_key ($key) {
 		// get used for reset key - only returns anything if reset key has not expired
 		$query = "select * from users where reset_key=? and reset_key_expires>NOW() LIMIT 1";
-		$stmt = CMS::Instance()->pdo->prepare($query);
+		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($key));
-		$result = $stmt->fetch();
+		$result = $stmt->fetch(); */
+		$result = DB::fetch($query, array($key));
 		if ($result) {
 			return $this->load_from_id($result->id);
 		}

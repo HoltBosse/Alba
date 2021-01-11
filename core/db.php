@@ -36,7 +36,7 @@ class db {
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
-		return TRUE;
+		return $success;
 	}
 
 	public static function fetchall($query, $paramsarray=[]) {
