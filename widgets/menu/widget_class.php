@@ -11,6 +11,11 @@ class Widget_menu extends Widget {
 		return $page;
 	}
 
+	public function render_custom_backend() {
+		echo "<h1>hello</h1>";
+	}
+
+
 	public function render_menu($tree) {
 		if ($tree->parent!==null) {
 			// display all nodes except root

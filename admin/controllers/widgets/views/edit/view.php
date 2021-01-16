@@ -25,7 +25,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <?php 
 $widget_options_form->display_front_end();
-
+$widget->render_custom_backend();
 ?>
 <style>
 div.flex {display:flex;}
