@@ -26,7 +26,7 @@ admin/templates/testadmintemplate/**
 controllers/**
 !controllers/basic_article/
 !controllers/basic_article/**
-!controllers/external-link/
-!controllers/external-link/**
-!controllers/menu-heading/
-!controllers/menu-heading/**
+#!controllers/external-link/
+#!controllers/external-link/**
+#!controllers/menu-heading/
+#!controllers/menu-heading/**
