@@ -89,6 +89,11 @@ class Widget {
 		$this->form->load_json(CMSPATH . "/widgets/");
 	}
 
+	public function render_custom_backend() {
+		echo "default widget custom backend";
+		return false;
+	}
+
 	public function load($id) {
 		$info = CMS::Instance()->pdo->query('select * from widgets where id=' . $id)->fetch();
 		$this->id = $info->id;
