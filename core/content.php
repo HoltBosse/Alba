@@ -254,6 +254,22 @@ class Content {
 		}
 	}
 
+	public static function get_content_type_fields($content_type) {
+		if (!$content_type) {
+			return false;
+		}
+		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_types where id=?");
+		$stmt->execute(array($content_type));
+		$result = $stmt->fetch(); */
+		$result = DB::fetch("select * from content_types where id=?", array($content_type));
+		if ($result) {
+			return $result;
+		}
+		else {
+			return false;
+		}
+	}
+
 	public static function get_content_type_id($controller_location) {
 		if (!$controller_location) {
 			return false;
