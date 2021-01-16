@@ -123,6 +123,7 @@ table.dragging .before_after_wrap {
 <h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
 	<?php if ($content_type_filter):?>
 	<a class='is-primary pull-right button btn' href='<?php echo Config::$uripath;?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
+	<span class='unimportant subheading'><?php $content_type_fields = Content::get_content_type_fields($content_type_filter);  echo $content_type_fields->description; ?></span>
 	<?php else: ?>
 		<div class='field pull-right'>
 			<label class='label'>New Content</label>
