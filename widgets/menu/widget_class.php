@@ -11,74 +11,179 @@ class Widget_menu extends Widget {
 		return $page;
 	}
 
+	public function custom_save() {
+		$menu_designer_config_json = Input::getvar('menu_designer_config','STRING');
+		$obj = new stdClass();
+		$obj->name = "menu_designer_config";
+		$obj->value = $menu_designer_config_json;
+		// add to this widget objects already created options array created during save base class function call
+		$this->options[] = $obj;
+	}
+
 	public function render_custom_backend() {
-		echo "<h1>hello</h1>";
+		$all_pages = Page::get_all_pages_by_depth();
+		?>
+		<section class='flex gap' id='menu_designer_wrap'>
+
+			<input type="hidden" type="text" name="menu_designer_config" id="menu_designer_config" value=""/>
+
+			<aside id='menu_designer_page_listing'>
+				<h3 class='is-5 is-heading title'>Add Page(s)</h3><hr>
+				<div class='field box'>
+					<?php foreach ($all_pages as $page):?>
+						<label class='checkbox'>
+							<input type='checkbox' value='<?php echo $page->id;?>'>
+							<?php for ($n=0; $n<$page->depth; $n++) {
+								echo "&nbsp;-&nbsp;";
+							}
+							echo "<span class='page_title'>" . $page->title . "</span>"; ?>
+						</label>
+					<?php endforeach; ?>
+				</div>
+				<button type='button' class='button btn is-success' id='menu_desiger_add_pages'>Add</button>
+			</aside>
+
+			<aside id='menu_designer_misc'>
+				<h3 class='is-5 is-heading title'>Links & Headings</h3><hr>
+				<fieldset class='box'>
+					<legend class='box subtitle is-5'>Heading Text</legend>
+					<div class="field">
+						<label class="label">Heading Text</label>
+						<div class="control">
+							<input id="heading_text" name="heading_text" class="input" type="text"  placeholder="Heading Text">
+						</div>
+					</div>
+					<button type='button' class='button btn is-success' id='menu_desiger_add_heading'>Add Heading</button>
+				</fieldset>
+				<fieldset  class='box'>
+					<legend  class='box subtitle is-5'>Link</legend>
+					<div class="field">
+						<label class="label">Link Text</label>
+						<div class="control">
+							<input id='link_text' name="link_textl" class="input" type="text"  placeholder="Text">
+						</div>
+					</div>
+					<div class="field">
+						<label class="label">URL</label>
+						<div class="control">
+							<input id='link_url' name="link_url" class="input" type="text"  placeholder="URL">
+						</div>
+					</div>
+					<div class='field'>
+						<label class="checkbox">
+							<input id='link_newtab' name='link_newtab' type="checkbox">
+							Open in new tab/window?
+						</label>
+					</div>
+					<button type='button' class='button btn is-success' id='menu_desiger_add_link'>Add Link</button>
+				</fieldset>
+			</aside>
+
+			<aside id='menu_designer_tree_wrap'>
+				<h3 class='is-5 is-heading title'>Final Menu</h3><hr>
+				<div id="menu_designer_tree" class="menu_node" >
+				</div>
+			</aside>
+
+		</section> 
+
+		
+		<?php
+		
+		// inject saved menu config into javscript - or start with default if none loaded
+
+		$menu_designer_config_json = $this->get_option_value('menu_designer_config');
+		//CMS::pprint_r ($menu_designer_config_json);
+		if ($menu_designer_config_json) {
+			echo "<script>";
+			echo "var menu_designer_config = " . html_entity_decode ($menu_designer_config_json) . ";";
+		}
+		else {
+		?>
+		var menu_designer_config = {
+			"title":"root",
+			"id":"root",
+			"type":"root",
+			"children":[],
+			"info":{}
+		}; <?php } ?>
+		</script>
+
+		<script src='<?php echo Config::$uripath;?>/admin/js/menu_widget_admin.js'></script>
+		<?php
 	}
 
 
-	public function render_menu($tree) {
-		if ($tree->parent!==null) {
+	public function render_menu($node) {
+		//CMS::pprint_r ($node);
+		if ($node->type!=='root') {
+			$title = "";
+			$target = '';
+			$is_anchor = true;
+			$classList.="";
+			$is_anchor = true; // set to false for headers or other non-links
+
+			if ($node->children) {
+				$classList.=" parent ";
+			}
+
 			// display all nodes except root
-			$page = new Page();
-			$page->load_from_id($tree->value);
-			if ($page->load_from_id($tree->value)) {
-				$url = $page->get_url();
-				$target = '';
-				$is_anchor = true;
-				$classList="";
-				if ($tree->value==CMS::Instance()->page->id) {
-					$classList.=" current ";
-				}
-				if ($tree->children) {
-					$classList.=" parent ";
-				}
-
-				$content_type_title = Content::get_content_type_title($page->content_type);
-
-				if ($content_type_title=="External Link") {
-					$page->view_configuration_object = json_decode($page->view_configuration);
-					$view_config = $page->view_configuration_object;
-					$content_id = Content::get_config_value ($view_config, 'content_id');
-					$content_item = Content::get_all_content(false, $page->content_type, $content_id)[0]; // false 1st param is ordering field
-					//CMS::pprint_r ($content_item);
-					$url = $content_item->f_url;
-					if ($content_item->f_newtab==1) {
-						$target = "_blank";
-						$classList.=" external_link ";
+			if ($node->type=='page') {
+				$page = new Page();
+				if ($page->load_from_id($node->info->page_id)) {
+					$url = $page->get_url();
+					$classList.=" page ";
+					if ($tree->value==CMS::Instance()->page->id) {
+						$classList.=" current ";
 					}
-				}
-				if ($content_type_title=="Menu Heading") {
-					$classList.=" menu_heading ";
-					$is_anchor = false;
-				}
-
-				
-				echo "<li class='{$classList}'>";
-				if ($is_anchor) {
-					echo "<a target={$target} class='page_id_{$tree->value}' href='{$url}'>" . $page->title . "</a>";
+					if ($tree->children) {
+						$classList.=" parent ";
+					}
+					$title = $page->title;
+					// following can be used to doing clever things with different page types other than basic articles
+					$content_type_title = Content::get_content_type_title($page->content_type);
 				}
 				else {
-					echo $page->title;
+					// error getting page - deleted? (should still show if unpublished - link just will fail)
+					$title = "Error finding " . $node->title;
+					$classList.=" page_error ";
 				}
-				if ($tree->children) {
-					echo "<ul>";
-					foreach ($tree->children as $child) {
-						$this->render_menu($child);
-					}
-					echo "</ul>";
+			}
+			if ($node->type=="link") {
+				$title = $node->title;
+				$url = $node->info->url;
+				if ($node->info->newtab) {
+					$target = "_blank";
+					$classList.=" external_link ";
 				}
-				echo "</li>";
+			}
+			if ($node->type=="heading") {
+				$title = $node->title;
+				$classList.=" menu_heading ";
+				$is_anchor = false;
+			}
+
+				
+			echo "<li class='{$classList}'>";
+			if ($is_anchor) {
+				echo "<a target='{$target}' class='page_id_{$tree->value}' href='{$url}'>" . $title . "</a>";
 			}
 			else {
-				// no page found - errant menu item
-				echo "<li class='menu_error'>" . $tree->text . "</li>";
+				echo $node->title;
+			}
+			if ($node->children) {
+				echo "<ul>";
+				foreach ($node->children as $child) {
+					$this->render_menu($child);
+				}
+				echo "</ul>";
 			}
 		}
 		else {
 			// render roots children - aka home etc...
-			if ($tree->children) {
+			if ($node->children) {
 				echo "<ul>";
-				foreach ($tree->children as $child) {
+				foreach ($node->children as $child) {
 					$this->render_menu($child);
 				}
 				echo "</ul>";
@@ -90,7 +195,10 @@ class Widget_menu extends Widget {
 		//CMS::pprint_r ($this);
 		//echo "<hr>";
 		//CMS::pprint_r ($this->options[0]->value);
-		$this_menu_structure = json_decode(html_entity_decode($this->options[0]->value));
+		//$this_menu_structure = json_decode(html_entity_decode($this->options[0]->value));
+		$this_menu_structure = json_decode(html_entity_decode($this->get_option_value('menu_designer_config')));
+		//CMS::pprint_r ($this->get_option_value('menu_designer_config'));
+		
 		//echo json_last_error_msg();
 		//CMS::pprint_r ($this_menu_structure);
 		//echo "<code>Menu Widget</code>";

@@ -8,7 +8,7 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	// create temp base class widget to get type
 	$temp_widget = new Widget();
 	$temp_widget->load($widget_id);
-	$type_info = Widget::get_widget_type($temp_widget->type);
+	$type_info = Widget::get_widget_type($temp_widget->type_id);
 	// create actual new widget of class determined by type
 	$widget_class_name = "Widget_" . $type_info->location;
 	$widget = new $widget_class_name();
