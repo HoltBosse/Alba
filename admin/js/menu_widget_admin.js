@@ -372,7 +372,7 @@ function render_node(node, level) {
             menu_type_icon = '<i class="fas fa-external-link-alt"></i>';
         }
         if (node.type=='heading') {
-            menu_type_icon = '<i class="far fa-keyboard"></i>';
+            menu_type_icon = '<i class="fas fa-heading"></i>';
         }
         markup=`
         <div class='menu_node depth_${level}' id='${node.id}' draggable=true ondragstart="md_dragstart_handler(event)" ondragleave="md_dragleave_handler(event)" ondragover="md_dragover_handler(event)" ondrop="md_drop_handler(event)">
