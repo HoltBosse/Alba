@@ -39,12 +39,12 @@ class Widget_menu extends Widget {
 							echo "<span class='page_title'>" . $page->title . "</span>"; ?>
 						</label>
 					<?php endforeach; ?>
+					<button type='button' class='button btn is-success' id='menu_desiger_add_pages'>Add</button>
 				</div>
-				<button type='button' class='button btn is-success' id='menu_desiger_add_pages'>Add</button>
 			</aside>
 
 			<aside id='menu_designer_misc'>
-				<h3 class='is-5 is-heading title'>Links & Headings</h3><hr>
+				<h3 class='is-5 is-heading title'>Add Links & Headings</h3><hr>
 				<fieldset class='box'>
 					<legend class='box subtitle is-5'>Heading Text</legend>
 					<div class="field">
@@ -53,7 +53,8 @@ class Widget_menu extends Widget {
 							<input id="heading_text" name="heading_text" class="input" type="text"  placeholder="Heading Text">
 						</div>
 					</div>
-					<button type='button' class='button btn is-success' id='menu_desiger_add_heading'>Add Heading</button>
+					<button type='button' class='button btn is-success noteditonly' id='menu_desiger_add_heading'>Add Heading</button>
+					<button type='button' class='button btn is-warning editonly' id='menu_desiger_edit_heading'>Update Heading</button>
 				</fieldset>
 				<fieldset  class='box'>
 					<legend  class='box subtitle is-5'>Link</legend>
@@ -75,12 +76,16 @@ class Widget_menu extends Widget {
 							Open in new tab/window?
 						</label>
 					</div>
-					<button type='button' class='button btn is-success' id='menu_desiger_add_link'>Add Link</button>
+					<button type='button' class='button btn is-success noteditonly' id='menu_desiger_add_link'>Add Link</button>
+					<button type='button' class='button btn is-warning editonly' id='menu_desiger_edit_link'>Update Link</button>
 				</fieldset>
 			</aside>
 
 			<aside id='menu_designer_tree_wrap'>
-				<h3 class='is-5 is-heading title'>Final Menu</h3><hr>
+				<h3 class='is-5 is-heading title'>Menu Designer</h3>
+				<p>Drag & Drop to re-arrange. Drop to the right hand edge of a menu item to add it as a child.</p>
+				<p><em>Changes here will not be reflected on the front-end until the widget has been saved.</em></p>
+				<hr>
 				<div id="menu_designer_tree" class="menu_node" >
 				</div>
 			</aside>
