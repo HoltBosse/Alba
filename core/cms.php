@@ -88,8 +88,12 @@ final class CMS {
 			<?php 
 			$og_title = $this->page->get_page_option_value("og_title") ? $this->page->get_page_option_value("og_title") : $this->page->title; 
 			$og_image = $this->page->get_page_option_value("og_image") ? $this->page->get_page_option_value("og_image") : null; 
+			$og_keywords = $this->page->get_page_option_value("og_keywords") ? $this->page->get_page_option_value("og_keywords") : null; 
+			$og_description = $this->page->get_page_option_value("og_description") ? $this->page->get_page_option_value("og_description") : null; 
 			?>
 			<meta property="og:title" content="<?php echo $og_title; ?>" />
+			<meta property="og:keywords" content="<?php echo $og_keywords; ?>" />
+			<meta property="og:description" content="<?php echo $og_description; ?>" />
 			<?php if ($og_image):?>
 				<?php $og_image_dimensions = $this->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
 				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::$uripath . "/image/" . $og_image ; ?>" />

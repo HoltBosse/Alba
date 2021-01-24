@@ -41,7 +41,7 @@
 	<nav>
 		<?php CMS::Instance()->render_widgets('Top Nav');?>
 	</nav>
-	
+	<?php //CMS::pprint_r (CMS::Instance()->page);?>
 	<aside id="sidebar">
 		<?php CMS::Instance()->render_widgets('Sidebar');?>
 	</aside>
