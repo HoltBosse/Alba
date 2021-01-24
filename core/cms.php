@@ -94,6 +94,7 @@ final class CMS {
 			<meta property="og:title" content="<?php echo $og_title; ?>" />
 			<meta property="og:keywords" content="<?php echo $og_keywords; ?>" />
 			<meta property="og:description" content="<?php echo $og_description; ?>" />
+			<meta name="description" content="<?php echo $og_description; ?>">
 			<?php if ($og_image):?>
 				<?php $og_image_dimensions = $this->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
 				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::$uripath . "/image/" . $og_image ; ?>" />
