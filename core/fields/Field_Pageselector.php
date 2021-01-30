@@ -5,26 +5,52 @@ class Field_Pageselector extends Field {
 
 	public function display() {
 		$all_pages = Page::get_all_pages_by_depth();
-		/* CMS::pprint_r ($this); */
-		echo "<style>label.checkbox {display:block; margin-bottom:1rem;} label.checkbox input {margin-right:1rem;}</style>";
-		echo "<div class='field'>";
-			foreach ($all_pages as $page) {
-				echo "<label class='checkbox'>";
-					$checked = "";
-					if (in_array($page->id, $this->default)) {
-						$checked = " checked ";
-					}
-					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='{$page->id}'>";
-					for ($n=0; $n<$page->depth; $n++) {
-						echo "&nbsp;-&nbsp;";
-					}
-					echo $page->title;
-				echo "</label>";
-			}
-			if ($this->description) {
-				echo "<p class='help'>" . $this->description . "</p>";
-			}
-		echo "</div>";
+		//CMS::pprint_r ($this);
+		if ($this->multiple) {
+			echo "<style>label.checkbox {display:block; margin-bottom:1rem;} label.checkbox input {margin-right:1rem;}</style>";
+			echo "<div class='field'>";
+				foreach ($all_pages as $page) {
+					echo "<label class='checkbox'>";
+						$checked = "";
+						if (in_array($page->id, $this->default)) {
+							$checked = " checked ";
+						}
+						echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='{$page->id}'>";
+						for ($n=0; $n<$page->depth; $n++) {
+							echo "&nbsp;-&nbsp;";
+						}
+						echo $page->title;
+					echo "</label>";
+				}
+				if ($this->description) {
+					echo "<p class='help'>" . $this->description . "</p>";
+				}
+			echo "</div>";
+		}
+		else {?>
+			<div class='field'>
+				<label class='label' for='<?php echo $this->id;?>'><?php echo $this->label; ?></label>
+				<div class="control">
+    				<div class="select">
+						<select class='select' name='<?php echo $this->name;?>'>
+							<?php foreach ($all_pages as $page):?>
+								<?php 
+								$selected = "";
+								if ($page->id == $this->default) {
+									$selected = " selected ";
+								}
+								for ($n=0; $n<$page->depth; $n++) {
+									$page->title = "&nbsp;-&nbsp;" . $page->title;
+								}
+								?>
+								<option <?php echo $selected;?> value="<?php echo $page->id;?>"><?php echo $page->title;?></option>
+							<?php endforeach;?>
+						</select>
+					</div>
+				</div>
+			</div>
+		<?php
+		}
 	}
 
 	public function set_from_submit() {
@@ -85,6 +111,7 @@ class Field_Pageselector extends Field {
 		$this->minlength = $config->minlength ?? 0;
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
+		$this->multiple = $config->multiple ?? false;
 	}
 
 	public function validate() {
