@@ -3,14 +3,24 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
+	// edit existing widget id is segment 2
 	$widget_id = $segments[2];
-	$widget = new Widget();
+	// create temp base class widget to get type
+	$temp_widget = new Widget();
+	$temp_widget->load($widget_id);
+	$type_info = Widget::get_widget_type($temp_widget->type_id);
+	// create actual new widget of class determined by type
+	$widget_class_name = "Widget_" . $type_info->location;
+	$widget = new $widget_class_name();
 	$widget->load($widget_id);
 	$widget->get_type_object();
 	$new_widget = false;
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
-	$widget = new Widget();
+	// get widget type and create object of correct class
+	$type_info = Widget::get_widget_type($segments[3]);
+	$widget_class_name = "Widget_" . $type_info->location;
+	$widget = new $widget_class_name();
 	$widget->type_id = $segments[3];
 	$new_widget = true;
 	$widget->get_type_object();

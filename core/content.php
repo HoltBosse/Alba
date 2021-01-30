@@ -281,6 +281,7 @@ class Content {
 			return $result->id;
 		}
 		else {
+			//CMS::Instance()->queue_message('Failed to determine content type id for controller_location: ' . $controller_location, "error");
 			return false;
 		}
 	}

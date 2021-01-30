@@ -61,6 +61,17 @@ class Page {
 			return false;
 		}
 	}
+
+	public function set_page_option_value($option_name, $value) {
+		$field = $this->page_options_form->get_field_by_name($option_name);
+		if ($field) {
+			$field->default = $value;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 
 	public static function get_page_depth($id) {
