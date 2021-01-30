@@ -2,6 +2,19 @@
 	"id":"general_options",
 	"fields":[
 		{
+			"name":"site_description",
+			"id":"site_description",
+			"type":"Text",
+			"label":"Site Description",
+			"input_type":"text",
+			"required":false,
+			"description":"Used for SEO purposes.",
+			"maxlength":255,
+			"minlength":0,
+			"filter":"STRING",
+			"default":""
+		},
+		{
 			"name":"ga_key",
 			"id":"ga_key",
 			"type":"Text",

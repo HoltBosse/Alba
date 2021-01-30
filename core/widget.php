@@ -32,10 +32,13 @@ class Widget {
 		$this->type = CMS::Instance()->pdo->query('select * from widget_types where id=' . $this->type_id)->fetch();
 	}
 
-	public function get_option($option_name) {
+	public function get_option_value($option_name) {
 		foreach ($this->options as $option) {
-			if (property_exists($option, $option_name)) {
+			/* if (property_exists($option, $option_name)) {
 				return $option->$option_name;
+			} */
+			if ($option->name==$option_name) {
+				return $option->value;
 			}
 		}
 		return false;
@@ -89,6 +92,10 @@ class Widget {
 		$this->form->load_json(CMSPATH . "/widgets/");
 	}
 
+	public function render_custom_backend() {
+		return false;
+	}
+
 	public function load($id) {
 		$info = CMS::Instance()->pdo->query('select * from widgets where id=' . $id)->fetch();
 		$this->id = $info->id;
@@ -137,6 +144,13 @@ class Widget {
 		$this->position_control = $position_options_form->get_field_by_name('position_control')->default;
 		$this->global_position = $position_options_form->get_field_by_name('global_position')->default;
 		$this->page_list = $position_options_form->get_field_by_name('position_pages')->default;
+
+		if (method_exists($this, 'custom_save')) {
+			// if child of widget class has custom save (for example it doesn't use cms forms)
+			// custom save function is executed here
+			// $this->options array can be added to for simple saving - see menu_widget
+			$this->custom_save();
+		}
 
 		$options_json = json_encode($this->options);
 
