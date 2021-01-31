@@ -32,7 +32,7 @@ class Field_Pageselector extends Field {
 				<label class='label' for='<?php echo $this->id;?>'><?php echo $this->label; ?></label>
 				<div class="control">
     				<div class="select">
-						<select class='select' name='<?php echo $this->name;?>'>
+						<select class='select' <?php echo $this->get_rendered_name(true);?>>
 							<?php foreach ($all_pages as $page):?>
 								<?php 
 								$selected = "";
@@ -111,7 +111,7 @@ class Field_Pageselector extends Field {
 		$this->minlength = $config->minlength ?? 0;
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
-		$this->multiple = $config->multiple ?? false;
+		$this->multiple = $config->multiple ?? true;
 	}
 
 	public function validate() {
