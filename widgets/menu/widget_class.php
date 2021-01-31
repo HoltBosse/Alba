@@ -98,20 +98,24 @@ class Widget_menu extends Widget {
 		// inject saved menu config into javscript - or start with default if none loaded
 
 		$menu_designer_config_json = $this->get_option_value('menu_designer_config');
-		//CMS::pprint_r ($menu_designer_config_json);
-		if ($menu_designer_config_json) {
+
+		if ($menu_designer_config_json!=="{}") {
 			echo "<script>";
+			echo "// got menu config \n";
 			echo "var menu_designer_config = " . html_entity_decode ($menu_designer_config_json) . ";";
 		}
 		else {
 		?>
+		<script>
 		var menu_designer_config = {
 			"title":"root",
 			"id":"root",
 			"type":"root",
 			"children":[],
 			"info":{}
-		}; <?php } ?>
+		}; 
+		</script>
+		<?php } ?>
 		</script>
 
 		<script src='<?php echo Config::$uripath;?>/admin/js/menu_widget_admin.js'></script>

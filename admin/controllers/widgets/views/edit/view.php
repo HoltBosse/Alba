@@ -21,7 +21,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </div>
 
 <hr>
-<h5 class='title'>Main Widget Setup</h5>
+<h5 class='title'>Options</h5>
 
 <?php 
 $widget_options_form->display_front_end();
