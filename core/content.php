@@ -194,8 +194,12 @@ class Content {
 		$error_text="";
 		foreach ($content_form->fields as $field) {
 			// insert field info
-			// TODO: handle arrays
+			// TODO: handle other arrays 
 			/* CMS::pprint_r ($field);  */
+			if ($field->filter=="ARRAYOFINT") {
+				// convert array of int to string
+				$field->default = implode($field->default);
+			}
 			CMS::Instance()->log("Saving: " . $field->default);
 			$query = "insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)";
 			$stmt = CMS::Instance()->pdo->prepare($query);
