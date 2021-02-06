@@ -121,7 +121,7 @@ if (sizeof($segments)==3) {
 				// serve existing file or new thumb if created above
 				serve_file ($image, $newsize_path);
 			}
-			if ($param=="web") {	
+			elseif ($param=="web") {	
 				$original_path = CMSPATH . "/images/processed/" . $image->filename;
 				$newsize_path = CMSPATH . "/images/processed/web_" . $image->filename;
 				if ($image->width > 1920) {
@@ -138,7 +138,9 @@ if (sizeof($segments)==3) {
 					serve_file ($image, $original_path); // exits script
 				}
 				// serve existing file or new thumb if created above
-				
+			}
+			else {
+				serve_file ($image, $original_path); // exits script
 			}
 		}
 		else {
