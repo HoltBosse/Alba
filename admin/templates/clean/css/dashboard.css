@@ -27,6 +27,19 @@ h1 span.subheading {
   gap:2rem;
 }
 
+/* tabs */
+
+.tabs-wrap {
+  margin:1rem 0;
+}
+
+.tab-content.is-active {
+  display:block;
+}
+.tab-content {
+  display:none;
+}
+
 /* menu admin */
 
 #menu_designer_wrap > * {
