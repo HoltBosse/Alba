@@ -46,6 +46,10 @@
 		<?php CMS::Instance()->render_widgets('Sidebar');?>
 	</aside>
 
+	<div id='messages'>
+	<?php CMS::Instance()->display_messages();?>
+	</div>
+
 	<?php CMS::Instance()->render_widgets('Header');?>
 
 	<?php CMS::Instance()->render_widgets('Above Content');?>

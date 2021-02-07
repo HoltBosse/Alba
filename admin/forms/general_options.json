@@ -5,7 +5,7 @@
 			"type":"Tab",
 			"mode":"tabs",
 			"id":"configtabs",
-			"tabs":["Site Options","Server Options","Analytics & SEO"]
+			"tabs":["Site Options","Server Options","Google & SEO"]
 		},
 		{
 			"type":"Tab",
@@ -100,6 +100,36 @@
 			"description":"Make OpenGraph [social media title/image/description] page settings available in back-end and render in front-end template.",
 			"filter":"INT",
 			"default":0
+		},
+		{
+			"type":"HTML",
+			"html":"<hr>"
+		},
+		{
+			"name":"rc_sitekey",
+			"id":"rc_sitekey",
+			"type":"Text",
+			"label":"Google reCAPTCHA Site Key",
+			"input_type":"text",
+			"required":false,
+			"description":"If left blank, reCAPTCHA will not be used on the site. Currently we support the V2 I'm Not A Robot version.",
+			"maxlength":50,
+			"minlength":10,
+			"filter":"STRING",
+			"default":""
+		},
+		{
+			"name":"rc_secretkey",
+			"id":"rc_secretkey",
+			"type":"Text",
+			"label":"Google reCAPTCHA SECRET Key",
+			"input_type":"text",
+			"required":false,
+			"description":"Please keep this safe and never show it on the front-end.",
+			"maxlength":50,
+			"minlength":10,
+			"filter":"STRING",
+			"default":""
 		},
 		{
 			"type":"Tab",

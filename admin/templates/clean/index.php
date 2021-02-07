@@ -41,6 +41,13 @@ require_once (CMSPATH . "/core/cms.php");
 	Object.prototype.insertAfter = function (newNode) { this.parentNode.insertBefore(newNode, this.nextSibling); }
 </script>
 
+		<?php
+		// reCAPTCHA
+		$rc_sitekey = Configuration::get_configuration_value ('general_options', 'rc_sitekey');
+		if ($rc_sitekey):?>
+			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+		<?php endif; ?>
+
 		<?php Hook::execute_hook_actions('add_to_head'); ?>
 		</head>
 		<body>
