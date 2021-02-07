@@ -16,7 +16,7 @@ class Field_Tab extends Field {
 		if (property_exists($this,'mode')) {
 			if ($this->mode=="tabs"):?>
 			<div id="<?php echo $this->id;?>_tabs_wrap" class='tabs-wrap'>
-				<div id="<?php echo $this->id;?>" class="tabs">
+				<div id="<?php echo $this->id;?>" class="tabs is-boxed">
 					<ul>
 						<?php foreach ($this->tabs as $tab): ?>
 							<li><a><?php echo $tab; ?></a></li>

@@ -2,6 +2,20 @@
 	"id":"general_options",
 	"fields":[
 		{
+			"type":"Tab",
+			"mode":"tabs",
+			"id":"configtabs",
+			"tabs":["Site Options","Server Options","Analytics & SEO"]
+		},
+		{
+			"type":"Tab",
+			"mode":"tabscontentstart"
+		},
+		{
+			"type":"Tab",
+			"mode":"tabstart"
+		},
+		{
 			"name":"site_description",
 			"id":"site_description",
 			"type":"Text",
@@ -15,18 +29,24 @@
 			"default":""
 		},
 		{
-			"name":"ga_key",
-			"id":"ga_key",
-			"type":"Text",
-			"label":"Google Analytics Key",
-			"input_type":"text",
-			"required":false,
-			"description":"Google Analytics key - if left blank, analytics will not be loaded.",
-			"maxlength":10,
-			"minlength":10,
-			"filter":"STRING",
-			"default":""
+			"name": "admin_logo",
+			"id": "admin_logo",
+			"type": "Image",
+			"label": "Choose Logo Image",
+			"required": false,
+			"description": "Choose the logo to display in the admin section.",
+			"default":1,
+			"filter": "NUM"
 		},
+		{
+			"type":"Tab",
+			"mode":"tabend"
+		},
+		{
+			"type":"Tab",
+			"mode":"tabstart"
+		},
+		
 		{
 			"name":"session_time",
 			"id":"session_time",
@@ -51,6 +71,27 @@
 			"default":0
 		},
 		{
+			"type":"Tab",
+			"mode":"tabend"
+		},
+		{
+			"type":"Tab",
+			"mode":"tabstart"
+		},
+		{
+			"name":"ga_key",
+			"id":"ga_key",
+			"type":"Text",
+			"label":"Google Analytics Key",
+			"input_type":"text",
+			"required":false,
+			"description":"Google Analytics key - if left blank, analytics will not be loaded.",
+			"maxlength":10,
+			"minlength":10,
+			"filter":"STRING",
+			"default":""
+		},
+		{
 			"name":"og_enabled",
 			"id":"og_enabled",
 			"type":"Checkbox",
@@ -61,14 +102,13 @@
 			"default":0
 		},
 		{
-			"name": "admin_logo",
-			"id": "admin_logo",
-			"type": "Image",
-			"label": "Choose Logo Image",
-			"required": false,
-			"description": "Choose the logo to display in the admin section.",
-			"default":1,
-			"filter": "NUM"
+			"type":"Tab",
+			"mode":"tabend"
+		},
+		{
+			"type":"Tab",
+			"mode":"tabscontentend"
 		}
+	
 	]
 }
