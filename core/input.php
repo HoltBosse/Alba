@@ -17,6 +17,12 @@ class Input {
         return $str;
 	}
 
+	static public function make_alias($string) {
+		$string = filter_var($string, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+		$string = Input::stringURLSafe($string);
+		return $string;
+	}
+
 	public static function getvar ($input, $filter='RAW', $default=NULL) {
 		if (isset($_GET[$input])) {
 			return Input::filter($_GET[$input], $filter);

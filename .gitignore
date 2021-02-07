@@ -30,3 +30,9 @@ controllers/**
 #!controllers/external-link/**
 #!controllers/menu-heading/
 #!controllers/menu-heading/**
+# ignore test/user widgets except default html and menu widgets
+widgets/**
+!widgets/html/
+!widgets/html/**
+!widgets/menu/
+!widgets/menu/**
