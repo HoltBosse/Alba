@@ -30,9 +30,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	
 	<form method="POST" action="">
 	<?php
-	$test_form->display_front_end();
+	//$test_form->display_front_end();
 	?>
-	<button class='submit button is-success' type='submit'>Submit</button> 
+	<!-- <button class='submit button is-success' type='submit'>Submit</button>  -->
 	</form>
-	<p>The current year is {YEAR}</p>
 </section>

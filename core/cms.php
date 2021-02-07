@@ -102,6 +102,14 @@ final class CMS {
 				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
 			<?php endif; ?>
 		<?php endif; ?>
+
+		<?php
+		// reCAPTCHA
+		$rc_sitekey = Configuration::get_configuration_value ('general_options', 'rc_sitekey');
+		if ($rc_sitekey):?>
+			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+		<?php endif; ?>
+
 		<?php 
 		$cms_head = ob_get_contents();
 		ob_end_clean();

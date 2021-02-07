@@ -36,7 +36,7 @@ class Field_Pageselector extends Field {
 							<?php foreach ($all_pages as $page):?>
 								<?php 
 								$selected = "";
-								if ($page->id == $this->default) {
+								if (in_array($page->id, $this->default)) {
 									$selected = " selected ";
 								}
 								for ($n=0; $n<$page->depth; $n++) {
@@ -56,11 +56,11 @@ class Field_Pageselector extends Field {
 	public function set_from_submit() {
 		// override default field function
 		$value = Input::getvar($this->name, $this->filter);
-		if ($value||is_numeric($value)) {
+		if (is_array($value)) {
 			$this->default = $value;
 		}
 		else {
-			$this->default = array();
+			$this->default = array($value);
 		}
 	}
 
