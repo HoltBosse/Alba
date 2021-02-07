@@ -118,7 +118,7 @@ alltabs.forEach(tabs => {
 	tabs.querySelector('li').classList.add('is-active');
 	// set first content active
 	content_wrap.querySelector('.tab-content').classList.add('is-active');
-	console.log(content_wrap);
+	
 	// click event handler for tab headings
 	tabs.querySelectorAll('li').forEach(tab => {
 		tab.addEventListener('click',function(e){

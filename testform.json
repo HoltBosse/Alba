@@ -12,7 +12,6 @@
 			"mode":"tabscontentstart"
 		},
 			{
-				"id":"tab1",
 				"type":"Tab",
 				"mode":"tabstart"
 			},
