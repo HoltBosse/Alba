@@ -63,10 +63,10 @@ else {
 }
 
 if ($allow_fopen) {
-	show_message ('PHP fopen Allowed','fopen is available. This is required for automatic update downloads.','is-success');
+	show_message ('PHP fopen Allowed','fopen is available. This is required for automatic updates and Google reCAPTCHA.','is-success');
 }
 else {
-	show_message ('PHP fopen Allowed','fopen is <em>not</em> available. This is required for automatic update downloads.','is-warning');
+	show_message ('PHP fopen Allowed','fopen is <em>not</em> available. This is required for automatic updates and Google reCAPTCHA.','is-warning');
 }
 
 if ($gd_available) {
