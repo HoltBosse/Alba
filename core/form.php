@@ -135,9 +135,13 @@ class Form {
 
 		// loop through fields and call display();
 		foreach ($this->fields as $field) {
-			echo "<div class='form_field field'>";
+			if (!property_exists($field,'nowrap')) {
+				echo "<div class='form_field field'>";
+			}
 			$field->display();
-			echo "</div>";
+			if (!property_exists($field,'nowrap')) {
+				echo "</div><!-- end field -->";
+			}
 		}
 		echo "<input type='hidden' value='1' name='form_" . $this->id . "{$aftername}'>";
 	}
