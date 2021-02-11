@@ -7,6 +7,7 @@ class User {
 	public $username;
 	public $password;
 	public $email;
+	public $tags;
 
 
 
@@ -17,6 +18,7 @@ class User {
 		$this->username = 'guest';
 		$this->registered = date('Y-m-d H:i:s');
 		$this->id = false;
+		$this->tags = array();
 	}
 
 	public static function create_new ($username, $password, $email, $groups=[], $state=0) {
@@ -36,10 +38,13 @@ class User {
 		//$db = new db();
 		//$db = CMS::$pdo;
 		//$result = $db->pdo->query("select * from users")->fetchAll();
-		//$result = CMS::Instance()->pdo->query("select * from users")->fetchAll();
-		$query = "Select u.*, group_concat(g.display) as groups from users u
+		//$result = CMS::Instance()->pdo->query("select * from users")->fetchAll(); 
+		$query = "Select u.*, group_concat(DISTINCT g.display) as groups, group_concat(t.title) as tags 
+					from users u 
 					Left Join user_groups ug on ug.user_id = u.id 
 					Left Join groups g on ug.group_id = g.id 
+					Left Join tagged tt on tt.content_id = u.id AND content_type_id=-2 
+					Left Join tags t on t.id = tt.tag_id AND t.state > 0 
 					group by u.id";
 		/* $result = CMS::Instance()->pdo->query($query)->fetchAll();
 		return $result; */
@@ -121,6 +126,7 @@ class User {
 		$this->registered = date('Y-m-d H:i:s');
 		$this->id = Input::getvar('id','INT');
 		$this->groups = Input::getvar('groups','ARRAYOFINT');
+		$this->tags = Input::getvar('tags','ARRAYOFINT');
 		return true;
 	}
 
@@ -137,12 +143,21 @@ class User {
 			$this->created = $result->created;
 			$this->email = $result->email;
 			$this->id = $result->id;
+
 			// get groups
 			$query = "select * from groups where id in (select group_id from user_groups where user_id=?)";
 			/* $stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute(array($id));
 			$this->groups = $stmt->fetchAll(); */
 			$this->groups = DB::fetchall($query, array($id));
+
+			// get tags
+			$query = "select tag_id from tagged where content_type_id=-2 and content_id=?";
+			$tag_obj_array = DB::fetchall($query, array($id));
+			foreach ($tag_obj_array as $tag) {
+				$this->tags[] = $tag->tag_id;
+			}
+
 			return true;
 		}
 		else {
@@ -247,6 +262,17 @@ class User {
 				$result = CMS::Instance()->pdo->prepare($query)->execute(array($this->username, $this->password, $this->email, $this->id));
 			}
 			if ($result) {
+				// user tags
+				$query = "delete from tagged where content_id=?";
+				$stmt = CMS::Instance()->pdo->prepare($query);
+				$stmt->execute(array($this->id));
+				foreach ($this->tags as $tag) {
+					$query = "insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)"; // -2 for user!
+					$stmt = CMS::Instance()->pdo->prepare($query);
+					$stmt->execute(array($this->id, $tag));
+				}
+			}
+			if ($result) {
 				// saved ok
 				// UDPATE GROUPS
 				// delete existing
@@ -284,6 +310,14 @@ class User {
 					echo "<code>" . $e->getMessage() . "</code>";
 				}
 				$result = false;
+			}
+			if ($result) {
+				// user tags
+				foreach ($this->tags as $tag) {
+					$query = "insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)"; // -2 for user
+					$stmt = CMS::Instance()->pdo->prepare($query);
+					$stmt->execute(array($new_user_id, $tag));
+				}
 			}
 			if ($result) {
 				// user groups

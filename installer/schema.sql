@@ -94,7 +94,7 @@ DROP TABLE IF EXISTS `tagged`;
 CREATE TABLE `tagged` (
   `tag_id` int(11) NOT NULL,
   `content_id` int(11) NOT NULL,
-  `content_type_id` int(11) NOT NULL COMMENT 'Important: -1 signifies MEDIA'
+  `content_type_id` int(11) NOT NULL COMMENT 'Important: -1 signifies MEDIA, -2 signifies USERS'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tags`;

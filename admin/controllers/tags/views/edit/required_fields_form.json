@@ -43,6 +43,7 @@
 			"description":"",
 			"filter":"ARRAYOFINT",
 			"showmedia":true,
+			"showusers":true,
 			"default":null
 		},
 		{
