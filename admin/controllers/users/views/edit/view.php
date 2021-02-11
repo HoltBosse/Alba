@@ -80,7 +80,31 @@ function in_group ($group_id, $edit_user) {
 		<?php endforeach; ?>
 	</div>
 
-	<div class="control">
+	<h2 class="title">User Tags</h2>
+	<?php
+	$all_user_tags = Tag::get_tags_available_for_content_type(-2); // -2 is user tags
+	
+	echo "<div class='field'>";
+		echo "<label class='label'>Make selection:</label>";
+		echo "<div class='control'>";
+			echo "<div class='select is-multiple'>";
+				echo "<select class='is-multiple' multiple id='usertags' name='tags[]'>";
+
+					foreach ($all_user_tags as $tag) {
+						if ($tag->state>0) {
+							$selected = "";
+							if (in_array($tag->id, $edit_user->tags)) { $selected="selected";}
+							echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
+						}
+					}
+				echo "</select>";
+			echo "</div>";
+		echo "</div>";
+	echo "</div>";
+	echo "<script>new SlimSelect({ select: '#usertags' });</script>"; 
+	?>
+
+	<div class="clear control">
 		<button type="submit" class="button is-primary">Save</button>
 	</div>
 

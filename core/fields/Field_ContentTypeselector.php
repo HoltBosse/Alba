@@ -10,10 +10,13 @@ class Field_ContentTypeselector extends Field {
 		if ($this->label) {
 			echo "<label class='label'>{$this->label}</label>";
 		}
+		echo "<hr>";
 		echo "<div class='field'>";
-			$checked = "";
+		$checked = "";
 			// check for special content types - just media/images (-1) for now, but maybe more
+			// ok we added users here too 
 			if ($this->showmedia) {
+				$checked = "";
 				if (in_array("-1", $this->default)) {
 					$checked = " checked ";
 				}
@@ -22,6 +25,17 @@ class Field_ContentTypeselector extends Field {
 				echo "Media/Images</label>";
 				echo "<hr>";
 			}
+			if ($this->showusers) {
+				$checked = "";
+				if (in_array("-2", $this->default)) {
+					$checked = " checked ";
+				}
+				echo "<label class='checkbox'>";
+					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='-2'>";
+				echo "Users</label>";
+				echo "<hr>";
+			}
+			
 			foreach ($all_contenttypes as $type) {
 				echo "<label class='checkbox'>";
 					$checked = "";
@@ -98,6 +112,7 @@ class Field_ContentTypeselector extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->showmedia = $config->showmedia ?? true;
+		$this->showusers = $config->showusers ?? false;
 	}
 
 	public function validate() {

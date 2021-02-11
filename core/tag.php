@@ -38,9 +38,14 @@ class Tag {
 		/* $query = "select * from tags where id in (select tag_id from tagged where content_id=? and content_type_id=?)";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($content_id, $content_type_id)); */
-		$result = DB::fetchall("select * from tags where id in (select tag_id from tagged where content_id=? and content_type_id=?)", array($content_id, $content_type_id));
+		$result = DB::fetchall("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", array($content_id, $content_type_id));
 		return $result;
 		//return $stmt->fetchAll();
+	}
+
+	public static function get_tags_available_for_content_type ($content_type_id) {
+		$result = DB::fetchall("select * from tags where state>0 and id in (select tag_id from tag_content_type where content_type_id=?)", array($content_type_id));
+		return $result;
 	}
 
 	public static function set_tags_for_content($content_id, $tag_array, $content_type_id) {
@@ -81,6 +86,9 @@ class Tag {
 		$titles = array();
 		if (in_array('-1',$tag->contenttypes)) {
 			$titles[] = "Media";
+		}
+		if (in_array('-2',$tag->contenttypes)) {
+			$titles[] = "Users";
 		}
 		foreach($titles_obj as $t) {
 			$titles[] = $t->title;

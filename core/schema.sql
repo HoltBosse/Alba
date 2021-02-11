@@ -128,7 +128,7 @@ CREATE TABLE `page_widget_overrides` (
 CREATE TABLE `tagged` (
   `tag_id` int(11) NOT NULL,
   `content_id` int(11) NOT NULL,
-  `content_type_id` int(11) NOT NULL COMMENT 'Important: -1 signifies MEDIA'
+  `content_type_id` int(11) NOT NULL COMMENT 'Important: -1 signifies MEDIA, -2 signifies USERS'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------

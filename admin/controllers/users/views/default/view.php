@@ -61,11 +61,12 @@ div.pull-right {
 			<th>Name</th>
 			<th>Email</th>
 			<?php if (!$group_id):?><th>Group(s)</th><?php endif; ?>
+			<th>Tags</th>
 			<!-- <th>Created</th>
 			<th>ID</th> -->
 		</thead>
 		<tbody>
-			<?php foreach($all_users as $user):?>
+			<?php foreach($all_users as $user):?> 
 			<?php if ($user->state<0) {continue;}?>
 			<tr class='user_admin_row'>
 				<td>
@@ -88,9 +89,28 @@ div.pull-right {
 				</td>
 				<?php if (!$group_id):?>
 					<td>
-						<?php echo $user->groups; ?>
+						<?php if ($user->groups):?>
+							<div class="tags">
+								<?php
+								$group_ar = explode(',',$user->groups);
+								foreach($group_ar as $group):?>
+									<span class="tag"><?php echo $group;?></span>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
 					</td>
 				<?php endif; ?>
+				<td>
+					<?php if ($user->tags):?>
+						<div class="tags">
+							<?php
+							$tag_ar = explode(',',$user->tags);
+							foreach($tag_ar as $tag):?>
+								<span class="tag"><?php echo $tag;?></span>
+							<?php endforeach; ?>
+						</div>
+					<?php endif; ?>
+				</td>
 				<!-- <td>
 					<?php echo $user->created; ?>
 				</td>
