@@ -9,7 +9,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php endif; ?>
 <?php if (!$blog_content_item):?>
 	<?php if ($filter_tag):?>
-	<h5>Articles tagged &ldquo;<?php echo $filter_tag->title;?>&rdquo;</h5>
+	<h5>Found <?php echo sizeof($blog_content_items);?> article(s) tagged &ldquo;<?php echo $filter_tag->title;?>&rdquo;</h5>
 	<?php endif; ?>
 	<div class='blog_list_wrap'>
 	<?php foreach ($blog_content_items as $blog):?>
