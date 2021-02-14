@@ -363,7 +363,7 @@ class Content {
 		}
 	}
 	
-	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null) {
+	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null) {
 		// order by id by default
 		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
 		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
@@ -406,7 +406,13 @@ class Content {
 		}
 		
 		$where = " where ";
-		$where .= " c.state >= 0 ";
+		if ($published_only) {
+			$where .= " c.state > 0 ";
+		}
+		else {
+			$where .= " c.state >= 0 ";
+		}
+		
 		if ($list_fields) {
 			foreach ($list_fields as $field) {
 				$where .= " and f_{$field}.content_id=c.id and f_{$field}.name='{$field}' ";
