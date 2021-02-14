@@ -32,10 +32,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			</div>
 			<?php if ($blog->f_og_description || $blog->f_og_image):?>
 				<p class='preview'>
-				<?php if ($blog->f_og_image):?>
-					<img class='thumb square pull-right' src='<?php echo Config::$uripath; ?>/image/<?php echo $blog->f_og_image; ?>/thumb'>
-				<?php endif; ?>
-				<?php echo $blog->f_og_description; ?>
+				<?php if ($blog->f_og_image) {
+					$thumb = $img = new Image($blog->f_og_image);
+					$thumb->render('thumb','thumb square pull-right');
+				}
+				echo $blog->f_og_description; ?>
 				</p>
 			<?php endif; ?>
 			<a class='readmore' href='<?php echo CMS::Instance()->page->get_url() . "/" . $blog->alias;?>'>Read More</a>
