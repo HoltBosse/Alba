@@ -144,6 +144,24 @@ class Field_Rich extends Field {
 						}
 					}
 
+					else if (command=='edit_image_props') {
+						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
+						if (active_image!==null) {
+							let new_alt = window.prompt('Enter ALT text: ',active_image.alt);
+							let new_title = window.prompt('Enter TITLE text: ',active_image.title);
+							if (new_alt) {
+								active_image.alt = new_alt;
+							}
+							if (new_alt) {
+								active_image.title = new_title;
+							}
+							// TODO: force change into textarea containing markup?
+						}
+						else {
+							alert('No image selected');
+						}
+					}
+
 					else if (command=='floatright') {
 						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
 						if (active_image!==null) {
@@ -278,9 +296,10 @@ class Field_Rich extends Field {
 					<a class='editor_button' href="#" data-command='createlink'><i class='fa fa-link'></i></a>
 					<a class='editor_button' href="#" data-command='justifyLeft'><i class='fa fa-align-left'></i></a>
 					<a class='editor_button' href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
-					<a class='editor_button' href='#' data-command='floatleft'>FL</a>
-					<a class='editor_button' href='#' data-command='floatright'>FR</a>
-					<a class='editor_button' href='#' data-command='floatclear'>FC</a>
+					<a class='editor_button image_selected' href='#' data-command='floatleft'>FL</a>
+					<a class='editor_button image_selected' href='#' data-command='floatright'>FR</a>
+					<a class='editor_button image_selected' href='#' data-command='floatclear'>FC</a>
+					<a class='editor_button image_selected' href='#' data-command='edit_image_props'>ALT/TITLE</a>
 					<a class='editor_button toggle_editor_raw' href="#" data-command='none'><i class='fa fa-edit'></i></a>
 				</div>
 				<?php
