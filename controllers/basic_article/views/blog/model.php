@@ -13,7 +13,7 @@ if (CMS::Instance()->uri_segments) {
 		if (sizeof(CMS::Instance()->uri_segments)==2) {
 			$filter_tag = DB::fetch('select * from tags where alias=?',[CMS::Instance()->uri_segments[1]]);
 			if ($filter_tag) {
-				$blog_content_items = Content::get_all_content($order_by="id", 1, null, $filter_tag->id, true); // null is specific content id
+				$blog_content_items = Content::get_all_content($order_by="start", 1, null, $filter_tag->id, true); // null is specific content id
 			}
 			else {
 				CMS::show_error('Tag alias not found');
@@ -29,7 +29,7 @@ if (CMS::Instance()->uri_segments) {
 		$blog_alias = CMS::Instance()->uri_segments[0];
 		$blog = new Content();
 		$blog->load_from_alias($blog_alias);
-		$blog_content_items = Content::get_all_content($order_by="id", 1, $blog->id, null, true); // order, type filter (1=basic article), specific id, tag id, published_only
+		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true); // order, type filter (1=basic article), specific id, tag id, published_only
 		
 		if ($blog_content_items) {
 			$blog_content_item = $blog_content_items[0];
@@ -54,7 +54,7 @@ if (CMS::Instance()->uri_segments) {
 }
 else {
 	// all blog listing
-	$blog_content_items = Content::get_all_content($order_by="start,id", 1, false, $tag_id, true); // order, type filter (1=basic article), specific id, tag id, published_only
+	$blog_content_items = Content::get_all_content($order_by="start", 1, false, $tag_id, true); // order, type filter (1=basic article), specific id, tag id, published_only
 }
 
 
