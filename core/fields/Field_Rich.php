@@ -77,11 +77,33 @@ class Field_Rich extends Field {
 					document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML = raw;
 				});
 				// remove styles on paste
-				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener("paste", function(e) {
-					console.log('cleaning paste');
-					e.preventDefault();
-					var text = e.clipboardData.getData("text/plain");
-					document.execCommand("insertHTML", false, text);
+				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener("paste", function(pasteEvent) {
+					let found_image = false;
+					pasteEvent.preventDefault();
+					//console.log((pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items);
+					let items = (pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items;
+					for (var i = 0; i < items.length; i++) {
+						// Skip content if not image
+						if (items[i].type.indexOf("image") == -1) continue;
+						// Retrieve image on clipboard as blob
+						let blob = items[i].getAsFile();
+						var reader = new FileReader();
+						reader.onload = function(event) {
+							//let pasted_img = new Image;
+							//pasted_img.src = event.target.result;
+							let img_markup = `<img class="pasted rich_image" src="${event.target.result}"/>`;
+							document.execCommand("insertHTML", false, img_markup);
+						};
+    					reader.readAsDataURL(blob);
+						found_image = true;
+					}
+					
+					if (!found_image) {
+						// assume text / rich or otherwise
+						console.log('not image - cleaning paste');
+						let text = pasteEvent.clipboardData.getData("text/plain");
+						document.execCommand("insertHTML", false, text);
+					}
 				});
 				// click event handler for editor - for now used for handling image float changes etc... //rich_image
 				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('click',function(e){
@@ -100,6 +122,7 @@ class Field_Rich extends Field {
 
 
 				// toolbar click - TODO: handle multiple editors per page // DONE?
+
 				document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>').addEventListener('click',function(e){
 					e.preventDefault();
 
