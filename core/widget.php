@@ -22,7 +22,7 @@ class Widget {
 		$query = 'select id,title,type,state 
 		from widgets 
 		where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) 
-		and global_position=? and state>=0';
+		and global_position=? and state>=0 ORDER BY ordering,id ASC';
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($page_id, $page_id, $position));
 		return $stmt->fetchAll();
@@ -103,6 +103,7 @@ class Widget {
 		$this->type_id = $info->type;
 		$this->state = $info->state;
 		$this->note = $info->note;
+		$this->ordering = $info->ordering;
 		$this->options = json_decode($info->options);
 		$this->position_control = $info->position_control;
 		$this->global_position = $info->global_position;
