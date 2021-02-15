@@ -369,7 +369,7 @@ class Field_Rich extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
+		$this->maxlength = $config->maxlength ?? 9999;
 		$this->filter = $config->filter ?? 'RAW';
 		$this->minlength = $config->minlength ?? 0;
 		$this->missingconfig = $config->missingconfig ?? false;
