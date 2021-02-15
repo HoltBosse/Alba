@@ -84,7 +84,7 @@ if (sizeof($segments)==2) {
 	exit(0);
 }
 if (sizeof($segments)==3) {
-	if (is_numeric($segments[1])&&is_string($segments[2])) {
+	if (is_numeric($segments[1])) {
 		$image = get_image ($segments[1]);
 		if ($image) {
 			$original_path = CMSPATH . "/images/processed/" . $image->filename;
