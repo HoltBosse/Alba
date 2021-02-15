@@ -24,27 +24,7 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 }
 
 
-function make_thumbOLD ($src, $dest, $desired_width, $quality=55) {
-	// TODO: move to Image class (sub-file class)
-	/* read the source image */
-	$source_image = imagecreatefromjpeg($src);
-	$width = imagesx($source_image);
-	$height = imagesy($source_image);
-	
-	/* find the "desired height" of this thumbnail, relative to the desired width  */
-	$desired_height = floor($height * ($desired_width / $width));
-	
-	/* create a new, "virtual" image */
-	$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
-	
-	/* copy source image at a resized size */
-	imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
-	
-	/* create the physical thumbnail image to its destination */
-	imagejpeg($virtual_image, $dest, $quality);
-}
-
-function make_thumb ($src, $dest, $desired_width, $file, $quality=55) {
+function make_thumb ($src, $dest, $desired_width, $file, $quality=65) {
 	if ($file->mimetype=='image/jpeg') {
 		$source_image = imagecreatefromjpeg($src);
 	}
@@ -138,6 +118,17 @@ if (sizeof($segments)==3) {
 					serve_file ($image, $original_path); // exits script
 				}
 				// serve existing file or new thumb if created above
+			}
+			elseif (is_numeric($param)) {
+				// passed a width to show
+				$newsize_path = CMSPATH . "/images/processed/" . $param . "w_" . $image->filename;
+				if (!file_exists($newsize_path)) {
+					CMS::log('User passed width generated for image ' . $image->filename);
+					$target_width = $param;
+					make_thumb($original_path, $newsize_path, $target_width, $image, 80); // default to 80 for q
+				}
+				// serve existing file or new thumb if created above
+				serve_file ($image, $newsize_path);
 			}
 			else {
 				serve_file ($image, $original_path); // exits script
