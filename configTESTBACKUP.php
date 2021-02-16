@@ -15,4 +15,5 @@ static $debug = false;
 static $domain = 'auto';
 static $user_core_controllers = NULL;
 static $admintemplate = 'clean';
+static $frontendlogin = false;
 }

@@ -257,9 +257,18 @@ final class CMS {
 				session_unset();
 				session_destroy();
 				session_start();
+				
 				if ($session_user_id) {
 					// needs to be instance as messages not invoked yet
-					CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
+					if (ADMINPATH) {
+						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
+					}
+					elseif (Config::$frontendlogin) {
+						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/');
+					}
+					else {
+						// user login timed out, but we're on front-end so let CMS continue to bootstrap
+					}
 				}
 			}
 			$session_time = Configuration::get_configuration_value('general_options','session_time', $this->pdo);
