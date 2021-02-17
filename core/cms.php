@@ -94,6 +94,8 @@ final class CMS {
 			<meta property="og:title" content="<?php echo $og_title; ?>" />
 			<meta property="og:keywords" content="<?php echo $og_keywords; ?>" />
 			<meta property="og:description" content="<?php echo $og_description; ?>" />
+			<meta property="og:type" content="website" />
+			<meta property="og:url" content="<?php echo  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>" />
 			<meta name="description" content="<?php echo $og_description; ?>">
 			<?php if ($og_image):?>
 				<?php $og_image_dimensions = $this->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
