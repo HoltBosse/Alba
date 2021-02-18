@@ -86,33 +86,45 @@ class Content {
 	}
 
 	public function load($id) {
-		$info = CMS::Instance()->pdo->query('select * from content where id=' . $id)->fetch();
-		$this->id = $info->id;
-		$this->title = $info->title;
-		$this->state = $info->state;
-		$this->note = $info->note;
-		$this->alias = $info->alias;
-		$this->start = $info->start;
-		$this->end = $info->end;
-		$this->content_type = $info->content_type;
-		$this->content_location = $this->get_content_location($this->content_type);
-		$this->created_by = $info->created_by;
-		$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
+		$info = DB::fetch('select * from content where id=?',array($id));
+		if ($info) {
+			$this->id = $info->id;
+			$this->title = $info->title;
+			$this->state = $info->state;
+			$this->note = $info->note;
+			$this->alias = $info->alias;
+			$this->start = $info->start;
+			$this->end = $info->end;
+			$this->content_type = $info->content_type;
+			$this->content_location = $this->get_content_location($this->content_type);
+			$this->created_by = $info->created_by;
+			$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	public function load_from_alias($alias) {
-		$info = CMS::Instance()->pdo->query('select * from content where alias="' . $alias. '"')->fetch();
-		$this->id = $info->id;
-		$this->title = $info->title;
-		$this->state = $info->state;
-		$this->note = $info->note;
-		$this->alias = $info->alias;
-		$this->start = $info->start;
-		$this->end = $info->end;
-		$this->content_type = $info->content_type;
-		$this->content_location = $this->get_content_location($this->content_type);
-		$this->created_by = $info->created_by;
-		$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
+		$info = DB::fetch('select * from content where alias=?',array($alias));
+		if ($info) {
+			$this->id = $info->id;
+			$this->title = $info->title;
+			$this->state = $info->state;
+			$this->note = $info->note;
+			$this->alias = $info->alias;
+			$this->start = $info->start;
+			$this->end = $info->end;
+			$this->content_type = $info->content_type;
+			$this->content_location = $this->get_content_location($this->content_type);
+			$this->created_by = $info->created_by;
+			$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	public function save($required_details_form, $content_form, $return_url='') {

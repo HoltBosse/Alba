@@ -29,7 +29,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
-	public $version = "0.316";
+	public $version = "0.317";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -45,6 +45,14 @@ final class CMS {
 			self::$instance = new CMS();
 		}
 		return self::$instance;
+	}
+
+	public static function raise_404() {
+		ob_end_clean ();
+		http_response_code(404);
+		//include('my_404.php'); // provide your own HTML for the error page
+		CMS::show_error('Page not found');
+		exit(0);
 	}
 
 	
@@ -541,10 +549,7 @@ final class CMS {
 					}
 				}
 				if (!$alias) {
-					http_response_code(404);
-					//include('my_404.php'); // provide your own HTML for the error page
-					echo "<h1>404 - This is not the page you are looking for</h1>";
-					exit(0);
+					raise_404();
 				}
 				if (Config::$debug) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
