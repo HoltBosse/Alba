@@ -28,7 +28,10 @@ if (CMS::Instance()->uri_segments) {
 		// depending on url parameter
 		$blog_alias = CMS::Instance()->uri_segments[0];
 		$blog = new Content();
-		$blog->load_from_alias($blog_alias);
+		$blog_found = $blog->load_from_alias($blog_alias);
+		if (!$blog_found || $blog->state<1) {
+			CMS::raise_404();
+		}
 		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true); // order, type filter (1=basic article), specific id, tag id, published_only
 		
 		if ($blog_content_items) {
