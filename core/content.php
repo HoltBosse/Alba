@@ -375,29 +375,38 @@ class Content {
 		}
 	}
 	
-	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null) {
+	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[]) {
 		// order by id by default
 		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
 		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
-
-		$list_fields = [];
+		// list_fields if empty will default to all or just those in list property of form if not id or tag passed
+		// allows to get just specific custom content fields, such as opengraph data but not markup for fast blogs
 
 		if ($type_filter) {
 			// get list fields from custom_fields.json file
 			$location = Content::get_content_location($type_filter);
 			//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-			if ($id !== null || $tag !== null) {
-				// get all fields
+			if ($list_fields) {
+				// skip - only do fields passed to function
+			}
+			elseif ($id !== null || $tag !== null) {
+				// get all fields if we have specific id or tag
 				foreach ($custom_fields->fields as $custom_field) {
-					$list_fields[] = $custom_field->name;
+					if (!in_array($custom_field->name,$ignore_fields)) {
+						// only add if not in ignored array passed to function
+						$list_fields[] = $custom_field->name;
+					}
 				}
 			}
 			else {
 				// id not passed, just get fields in 'list' property from custom_fields.json
 				if (property_exists($custom_fields,'list')) {
 					foreach ($custom_fields->list as $custom_field_name) {
-						$list_fields[] = $custom_field_name;
+						if (!in_array($custom_field->name,$ignore_fields)) {
+							// only add if not in ignored array passed to function
+							$list_fields[] = $custom_field_name;
+						}
 					}
 				}
 			}
