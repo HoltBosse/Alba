@@ -32,7 +32,7 @@ class Field_Contentselector extends Field {
 			}
 		}
 		if ($this->required) {$required=" required ";}
-		echo "<div class='field'>";
+		echo "<div class='field $required'>";
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";

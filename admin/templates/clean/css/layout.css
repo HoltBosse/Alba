@@ -173,6 +173,11 @@ img.image_selector_thumb{object-fit:contain; width:300px;}
 div.field.hidden {
 	display:none;
 }
+.field.required label::after {
+    opacity:0.5;
+    content: ' (req)';
+    font-size: 0.7em;
+}
 
 /* tree */
 .available_tree_items {
