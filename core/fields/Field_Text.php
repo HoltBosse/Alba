@@ -14,7 +14,7 @@ class Field_Text extends Field {
 	public function display() {
 		if (property_exists($this,'attribute_list')) {
 			$attributes = implode(' ',$this->attribute_list);
-			if (in_array('hidden',$this->attribute_list)) {
+			if (in_array('hidden', $attributes)) {
 				$hidden = "hidden";
 			}
 		}
@@ -31,7 +31,7 @@ class Field_Text extends Field {
 						$this->default = "";
 					}
 				}
-				echo "<input type='{$this->input_type}' value='{$this->default}' {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
+				echo "<input {$this->attribute_list} type='{$this->input_type}' value='{$this->default}' {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
@@ -80,6 +80,7 @@ class Field_Text extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->input_type = $config->input_type ?? 'text';
 		$this->default = $config->default ?? $this->default;
+		$this->attribute_list = $config->attribute_list ?? "";
 	}
 
 	public function validate() {
