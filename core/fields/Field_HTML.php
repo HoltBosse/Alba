@@ -12,19 +12,7 @@ class Field_HTML extends Field {
 	}
 
 	public function display() {
-		if (property_exists($this,'attribute_list')) {
-			$attributes = implode(' ',$this->attribute_list);
-			if (in_array('hidden',$this->attribute_list)) {
-				$hidden = "hidden";
-			}
-		}
-		echo "<div class='field {$hidden}'>";
-			echo $this->html;
-			
-			if ($this->description) {
-				echo "<p class='help'>" . $this->description . "</p>";
-			}
-		echo "</div>";
+		echo $this->html;
 	}
 
 
