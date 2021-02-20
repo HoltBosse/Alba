@@ -110,7 +110,7 @@ require_once (CMSPATH . "/core/cms.php");
 							<a class="navbar-link">Content</a>
 							<div class="navbar-dropdown">
 								<?php foreach (Content::get_all_content_types() as $content_type):?>
-									<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/content/all/<?php echo $content_type->id;?>"><?php echo $content_type->title;?>s</a>
+									<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/content/all/<?php echo $content_type->id;?>"><?php echo $content_type->title;?></a>
 								<?php endforeach; ?>
 								<hr class="dropdown-divider">
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/content/all">All Content</a>
