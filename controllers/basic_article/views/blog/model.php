@@ -32,7 +32,8 @@ if (CMS::Instance()->uri_segments) {
 		if (!$blog_found || $blog->state<1) {
 			CMS::raise_404();
 		}
-		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true); // order, type filter (1=basic article), specific id, tag id, published_only
+		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true); 
+		// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
 		
 		if ($blog_content_items) {
 			$blog_content_item = $blog_content_items[0];
@@ -56,8 +57,10 @@ if (CMS::Instance()->uri_segments) {
 	}
 }
 else {
-	// all blog listing
-	$blog_content_items = Content::get_all_content($order_by="start", 1, false, $tag_id, true); // order, type filter (1=basic article), specific id, tag id, published_only
+	// all blog listing - ignore markup field - not needed for listing view, potentially save lots of data that
+	// won't be shown in view anyway
+	$blog_content_items = Content::get_all_content($order_by="start", 1, false, $tag_id, true, [], ['markup']); 
+	// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
 }
 
 
