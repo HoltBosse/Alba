@@ -22,7 +22,6 @@ class Field_Contentselector extends Field {
 				$this->content_type = Content::get_content_type_id($this->content_type);
 			}
 			if ($this->content_type && is_numeric($this->content_type)) {
-				CMS::pprint_r ($this->tags);
 				if (!$this->tags) {
 					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by id ASC")->fetchAll();
 				}
