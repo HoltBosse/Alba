@@ -13,17 +13,18 @@ class Field_Text extends Field {
 
 	public function display() {
 		$hidden = "";
+		$required="";
+		if ($this->required) {$required=" required ";}
 		if (property_exists($this,'attribute_list')) {
 			$attributes = explode(' ',$this->attribute_list);
 			if (in_array('hidden',$attributes)) {
 				$hidden = "hidden";
 			}
 		}
-		echo "<div class='field {$hidden}'>";
+		echo "<div class='field {$required} {$hidden}'>";
 			echo "<label class='label'>{$this->label}</label>";
 			echo "<div class='control'>";
-				$required="";
-				if ($this->required) {$required=" required ";}
+				
 				if ($this->input_type=='date') {
 					if ($this->default>0) {
 						$this->default = date("Y-m-d", strtotime($this->default));

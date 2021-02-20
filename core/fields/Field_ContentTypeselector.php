@@ -8,7 +8,7 @@ class Field_ContentTypeselector extends Field {
 		/* CMS::pprint_r ($this); */
 		echo "<style>label.checkbox {display:block; margin-bottom:1rem;} label.checkbox input {margin-right:1rem;}</style>";
 		if ($this->label) {
-			echo "<label class='label'>{$this->label}</label>";
+			echo "<label class='label '>{$this->label}</label>";
 		}
 		echo "<hr>";
 		echo "<div class='field'>";

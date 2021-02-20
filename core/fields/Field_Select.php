@@ -21,7 +21,7 @@ class Field_Select extends Field {
 				$hidden = "hidden";
 			}
 		}
-		echo "<div class='field {$hidden}'>";
+		echo "<div class='field {$hidden} {$required}'>";
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";
@@ -89,6 +89,7 @@ class Field_Select extends Field {
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
 		$this->config = $config;
+		$this->empty_string = $config->empty_string ?? '';
 	}
 
 	public function validate() {
