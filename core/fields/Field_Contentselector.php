@@ -40,6 +40,10 @@ class Field_Contentselector extends Field {
 						if ($this->required) {
 							echo "<option value='' >{$this->label}</option>";
 						}
+						elseif ($this->empty_string) {
+							// not required, but we need a 0 value top option to signify nothing
+							echo "<option value='0' >{$this->empty_string}</option>";
+						}
 						foreach ($options_all_articles as $tag) {
 							if ($tag->state==1) {
 								$selected = "";
@@ -96,6 +100,7 @@ class Field_Contentselector extends Field {
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
 		$this->content_type = $config->content_type ?? false;
+		$this->empty_string = $config->empty_string ?? '';
 	}
 
 	public function validate() {
