@@ -10,6 +10,7 @@ class Field_Contentselector extends Field {
 		$this->name = "";
 		$this->select_options=[];
 		$this->content_type=$content_type;
+		$this->tags=[];
 	}
 
 	public function display() {
@@ -21,7 +22,21 @@ class Field_Contentselector extends Field {
 				$this->content_type = Content::get_content_type_id($this->content_type);
 			}
 			if ($this->content_type && is_numeric($this->content_type)) {
-				$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by id ASC")->fetchAll();
+				CMS::pprint_r ($this->tags);
+				if (!$this->tags) {
+					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by id ASC")->fetchAll();
+				}
+				else {
+					$tags_csv = "'".implode("','", $this->tags)."'";
+					$query = "select c.* from content c where c.content_type={$this->content_type} and c.state=1 ";
+					$query .= " and c.id in (";
+						$query .= " select tc.content_id from tagged tc where tc.content_type_id={$this->content_type} and tc.tag_id in (";
+							$query .= "select t.id from tags t where t.state>0 and t.alias in ($tags_csv)";
+						$query .= ")";
+					$query .= ") order by c.title ASC";
+					$stmt = CMS::Instance()->pdo->query($query);
+					$options_all_articles = $stmt->fetchAll();
+				}
 			}
 		}
 		if (!$options_all_articles) {
@@ -32,7 +47,7 @@ class Field_Contentselector extends Field {
 			}
 		}
 		if ($this->required) {$required=" required ";}
-		echo "<div class='field $required'>";
+		echo "<div class='field'>";
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='select'>";
@@ -101,6 +116,7 @@ class Field_Contentselector extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->content_type = $config->content_type ?? false;
 		$this->empty_string = $config->empty_string ?? '';
+		$this->tags = $config->tags ?? [];
 	}
 
 	public function validate() {
