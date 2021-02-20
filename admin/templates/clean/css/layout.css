@@ -170,6 +170,10 @@ img.image_selector_thumb{object-fit:contain; width:300px;}
 .selected_image_wrap img { display:none; }
 .selected_image_wrap.active img { display:inline-block;}
 
+div.field.hidden {
+	display:none;
+}
+
 /* tree */
 .available_tree_items {
 				max-width:25%;
