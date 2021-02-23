@@ -9,6 +9,7 @@ class Field_HTML extends Field {
 		$this->select_options=[];
 		$this->default = $default_content;
 		$this->content_type="";
+		$this->nowrap = true;
 	}
 
 	public function display() {
@@ -31,6 +32,7 @@ class Field_HTML extends Field {
 		$this->input_type = $config->input_type ?? 'text';
 		$this->default = $config->default ?? $this->default;
 		$this->html = $config->html ?? $this->html;
+		$this->nowrap = $config->nowrap ?? true;
 	}
 
 	public function validate() {

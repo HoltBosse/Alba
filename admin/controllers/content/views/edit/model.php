@@ -22,6 +22,10 @@ else {
 	exit(0);
 }
 
+// update CMS instance with this content information
+// this allows custom form fields etc to easily access information such as
+// content id/type
+CMS::Instance()->editing_content = $content;
 
 
 // prep forms
