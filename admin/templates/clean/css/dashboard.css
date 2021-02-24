@@ -56,6 +56,16 @@ fieldset.edit {
 }
 
 
+input:required {
+  border: 1px solid orange;
+}
+input:invalid {
+  border:1px solid red;
+}
+input:required:valid {
+  border: 1px solid green;
+}
+
 .menu_node {
     /* margin: 1rem; */
     /* padding: 1rem; */
