@@ -271,6 +271,7 @@ final class CMS {
 				if ($session_user_id) {
 					// needs to be instance as messages not invoked yet
 					if (ADMINPATH) {
+						$_SESSION['redirect_url'] = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
 					}
 					elseif (Config::$frontendlogin) {
@@ -466,6 +467,10 @@ final class CMS {
 			if ($this->user->id!==false) {
 				// an authenticate plugin logged the user in!
 				$_SESSION['user_id'] = $this->user->id;
+				if (isset($_SESSION['redirect_url'])) {
+					$redirect_path = $_SESSION['redirect_url'];
+					unset($_SESSION['redirect_url']);
+				}
 				$this->queue_message('Welcome ' . $this->user->username, 'success', $redirect_path);
 			}
 
@@ -481,6 +486,10 @@ final class CMS {
 					if ($login_user->check_password($password)) {
 						// logged in!
 						$_SESSION['user_id'] = $login_user->id;
+						if (isset($_SESSION['redirect_url'])) {
+							$redirect_path = $_SESSION['redirect_url'];
+							unset($_SESSION['redirect_url']);
+						}
 						$this->queue_message('Welcome ' . $login_user->username, 'success', $redirect_path);
 					}
 					else {
