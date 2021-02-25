@@ -18,8 +18,14 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	header("Cache-Control: max-age=$seconds_to_cache");
 	// TODO: move to File class
 	header("Content-type: " . $media_obj->mimetype);
-	$fp = fopen($fullpath, 'rb');
-	fpassthru($fp);
+	if (function_exists('virtual')) {
+		virtual($fullpath);
+	}
+	else {
+		$fp = fopen($fullpath, 'rb');
+		fpassthru($fp);
+		fclose($fp);
+	}
 	exit(0);
 }
 

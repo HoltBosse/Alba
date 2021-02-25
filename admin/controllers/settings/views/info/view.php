@@ -76,6 +76,13 @@ else {
 	show_message ('GD Graphics Library Available','GD is <em>not</em> available. This is required for image manipulation.','is-warning');
 }
 
+if ($virtual_available) {
+	show_message ('Virtual Available','virtual is available. This enables fast file-serving in PHP on Apache.','is-success');
+}
+else {
+	show_message ('Virtual Unavailable','virtual is <em>not</em> available. This enables fast file-serving in PHP on Apache.','is-warning');
+}
+
 ?>
 
 <hr>
