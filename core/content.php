@@ -384,6 +384,13 @@ class Content {
 
 		if ($type_filter) {
 			// get list fields from custom_fields.json file
+			if (!is_numeric($type_filter)) {
+				// try and get type id
+				$type_filter = Content::get_content_type_id($type_filter);
+				if (!$type_filter) {
+					CMS::Instance()->show_error('Unable to determine content type');
+				}
+			}
 			$location = Content::get_content_location($type_filter);
 			//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
@@ -395,7 +402,10 @@ class Content {
 				foreach ($custom_fields->fields as $custom_field) {
 					if (!in_array($custom_field->name,$ignore_fields)) {
 						// only add if not in ignored array passed to function
-						$list_fields[] = $custom_field->name;
+						if ($custom_field->type!=="HTML") {
+							// ignore core unsaved fields such as html
+							$list_fields[] = $custom_field->name;
+						}
 					}
 				}
 			}
@@ -403,7 +413,7 @@ class Content {
 				// id not passed, just get fields in 'list' property from custom_fields.json
 				if (property_exists($custom_fields,'list')) {
 					foreach ($custom_fields->list as $custom_field_name) {
-						if (!in_array($custom_field->name,$ignore_fields)) {
+						if (!in_array($custom_field_name,$ignore_fields)) {
 							// only add if not in ignored array passed to function
 							$list_fields[] = $custom_field_name;
 						}

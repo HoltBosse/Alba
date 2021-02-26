@@ -18,6 +18,9 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	header("Cache-Control: max-age=$seconds_to_cache");
 	// TODO: move to File class
 	header("Content-type: " . $media_obj->mimetype);
+	header("Location: " . Config::$uripath . "/images/processed/" . basename($fullpath));
+	exit(0);
+	// legacy file serving - TODO: maybe turn 'hide image url' as config option and use this instead of header location above?
 	if (function_exists('virtual')) {
 		virtual($fullpath);
 	}
