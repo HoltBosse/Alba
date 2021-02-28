@@ -49,6 +49,11 @@ class Input {
 			$temp = filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 			return Input::stringURLSafe($temp);
 		}
+		elseif ($filter=="TEXTAREA") {
+			// replace newlines with placeholder
+			$foo = str_replace("\n","[NEWLINE]",$foo);
+			return filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+		}
 		elseif ($filter=="USERNAME"||$filter=="TEXT"||$filter=="STRING") {
 			return filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		}

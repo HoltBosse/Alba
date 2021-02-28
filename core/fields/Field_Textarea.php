@@ -49,7 +49,7 @@ class Field_Textarea extends Field {
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
 		$this->maxlength = $config->maxlength ?? 999;
-		$this->filter = $config->filter ?? 'RAW';
+		$this->filter = $config->filter ?? 'TEXTAREA';
 		$this->minlength = $config->minlength ?? 0;
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
