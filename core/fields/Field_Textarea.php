@@ -23,14 +23,7 @@ class Field_Textarea extends Field {
 			echo "<div class='control'>";
 				$required="";
 				if ($this->required) {$required=" required ";}
-				if ($this->input_type=='date') {
-					if ($this->default>0) {
-						$this->default = date("Y-m-d", strtotime($this->default));
-					}
-					else {
-						$this->default = "";
-					}
-				}
+				$this->default = str_replace("[NEWLINE]","\n",$this->default);
 				echo "<textarea type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
 				echo $this->default;
 				echo "</textarea>";
