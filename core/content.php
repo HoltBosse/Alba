@@ -375,7 +375,7 @@ class Content {
 		}
 	}
 	
-	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[]) {
+	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null) {
 		// order by id by default
 		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
 		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
@@ -394,6 +394,7 @@ class Content {
 			$location = Content::get_content_location($type_filter);
 			//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			//CMS::pprint_r ($custom_fields); 
 			if ($list_fields) {
 				// skip - only do fields passed to function
 			}
@@ -407,20 +408,24 @@ class Content {
 							$list_fields[] = $custom_field->name;
 						}
 					}
+					else {
+						//echo "ignore {$custom_field->name} , ";
+					}
 				}
 			}
 			else {
+				
 				// id not passed, just get fields in 'list' property from custom_fields.json
 				if (property_exists($custom_fields,'list')) {
 					foreach ($custom_fields->list as $custom_field_name) {
 						if (!in_array($custom_field_name,$ignore_fields)) {
-							// only add if not in ignored array passed to function
+							// only add if not in ignored array passed to funct
 							$list_fields[] = $custom_field_name;
 						}
 					}
 				}
 			}
-		}
+		} 
 		$query = "select";
 		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note ";
 		if ($list_fields) {
@@ -470,8 +475,13 @@ class Content {
 			}
 		}
 
+		if ($filter_field && $filter_val) {
+			// TODO: sanity check on filter field before adding to query
+			$where .= " and f_" . $filter_field . ".content=" . CMS::Instance()->pdo->quote($filter_val);
+		}
+
 		$query = $query . $select . $from . $where;
-		//CMS::pprint_r ($query);
+
 		if (Config::$debug) {
 			CMS::pprint_r ($query);
 		}
@@ -487,7 +497,9 @@ class Content {
 			$query .= " order by id DESC";
 			//return $result;
 		}
+		//CMS::pprint_r ($query);exit(0);
 		$result = DB::fetchall($query);
+		//CMS::pprint_r ($result);exit(0);
 		return $result;
 	}
 
