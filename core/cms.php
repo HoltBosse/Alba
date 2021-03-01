@@ -455,7 +455,7 @@ final class CMS {
 			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
 			$password = Input::getvar('password','RAW');
 			$login_user = new User();
-			$redirect_path = Config::$uripath;
+			$redirect_path = Config::$uripath . "/";
 			if (ADMINPATH) {
 				$redirect_path = Config::$uripath . '/admin';
 			}
