@@ -426,6 +426,12 @@ class Content {
 				}
 			}
 		} 
+
+		// if we passed a filter field via url param, ad this to fields to list as well
+		if ($filter_field !== null) {
+			$list_fields[] = $filter_field;
+		}
+
 		$query = "select";
 		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note ";
 		if ($list_fields) {
