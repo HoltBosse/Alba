@@ -40,7 +40,7 @@ class File {
 	}
 
 	public function is_image() {
-		if ($this->mimetype=="image/jpeg" || $this->mimetype=="image/png") {
+		if ($this->mimetype=="image/jpeg" || $this->mimetype=="image/png" || $this->mimetype=="image/svg+xml") {
 			return true;
 		}
 		else {
