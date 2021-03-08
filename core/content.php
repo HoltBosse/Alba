@@ -493,10 +493,14 @@ class Content {
 			CMS::pprint_r ($query);
 		}
 
-		if ($order_by=="ordering"||$order_by=="id"||$order_by=="start") {
+		// order intelligently
+		if ($order_by=="start") {
 			//$result = CMS::Instance()->pdo->query($query . " order by " . $order_by . " ASC")->fetchAll();
 			$query .= " order by " . $order_by . " DESC";
 			//return $result;
+		}
+		elseif ($order_by=="ordering"||$order_by=="id") {
+			$query .= " order by " . $order_by . " ASC";
 		}
 		else {
 			//CMS::Instance()->queue_message('Unknown ordering method: ' . $order_by ,'danger', $_SERVER["HTTP_REFERER"]);
