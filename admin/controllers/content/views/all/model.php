@@ -9,7 +9,9 @@ if (sizeof($segments)==3) {
 	$content_type_filter = $segments[2];
 }
 
-$all_content = Content::get_all_content($order_by, $content_type_filter);
+$cur_page = Input::getvar('page','INT','1');
+
+$all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page);
 $all_content_types = Content::get_all_content_types();
 
 // handle custom optional listing on content specific 'all' view

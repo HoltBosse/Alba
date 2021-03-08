@@ -254,6 +254,13 @@ table.dragging .before_after_wrap {
 
 </form>
 
+<div class='flex'>
+	<?php if ($cur_page>1):?>
+	<a class='btn button' href='?page=<?php echo $cur_page-1;?>'>Prev Page</a>
+	<?php endif;?>
+	<a class='btn button' href='?page=<?php echo $cur_page+1;?>'>Next Page</a>
+</div>
+
 <script>
 	admin_rows = document.querySelectorAll('.content_admin_row');
 	admin_rows.forEach(row => {
