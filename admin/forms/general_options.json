@@ -46,7 +46,19 @@
 			"type":"Tab",
 			"mode":"tabstart"
 		},
-		
+		{
+			"name":"pagination_size",
+			"id":"pagination_size",
+			"type":"Text",
+			"label":"Pagination Count",
+			"input_type":"number",
+			"required":true,
+			"description":"Maximum number of items returned by default in most content area.",
+			"maxlength":86400,
+			"minlength":0,
+			"filter":"INT",
+			"default":200
+		},
 		{
 			"name":"session_time",
 			"id":"session_time",
