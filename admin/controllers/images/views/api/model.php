@@ -8,7 +8,8 @@ ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JS
 // TODO: remove front-end images api model????
 
 $action = Input::getvar('action','STRING');
-
+$mimetypes = explode(',',Input::getvar('mimetypes'));
+// TODO sanitize mimetypes against whitelist
 
 if ($action=='tag_media') {
 	$image_ids_string = Input::getvar('id_list','STRING');
@@ -175,17 +176,42 @@ if ($action=='delete') {
 
 if ($action=='list_images') {
 	// todo: pagination / search
+	
 	$searchtext = Input::getvar('searchtext','STRING');
 	if ($searchtext=='null') {
 		$searchtext=null;
 	}
 	if ($searchtext) {
 		$query = "select * from media where title like ? or alt like ?";
+		if ($mimetypes) {
+			$query.=" AND mimetype in (";
+			for ($n=0; $n<sizeof($mimetypes); $n++) {
+				if ($n>0) {
+					$query .= ",";
+				}
+				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
+			}
+			$query.=") ";
+		}
+		
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array("%$searchtext%","%$searchtext%"));
 	}
 	else {
 		$query = "select * from media";
+		if ($mimetypes) {
+			$query.=" where id>0 ";
+		}
+		if ($mimetypes) {
+			$query.=" AND mimetype in (";
+			for ($n=0; $n < sizeof($mimetypes); $n++) {
+				if ($n>0) {
+					$query .= ",";
+				}
+				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
+			}
+			$query.=") ";
+		} 
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array());
 	}
