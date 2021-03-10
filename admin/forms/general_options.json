@@ -217,11 +217,12 @@
 			"name":"authenticate",
 			"required":false, 
 			"label":"Authenticate",
-			"default":"yes",
+
+			"default":1,
 			"description":"Set teaser ordering option.",
 			"select_options":[
-				{"text":"Yes","value":"yes"},
-				{"text":"No","value":"no"}
+				{"text":"Yes","value":1},
+				{"text":"No","value":0}
 			]
 		},
 		{
@@ -231,6 +232,7 @@
 			"required":false, 
 			"label":"Encryption Method",
 			"default":"tls",
+			"filter":"TEXT",
 			"description":"TLS is newer and more secure, and works with most email providers. Only change if you're 100% sure.",
 			"select_options":[
 				{"text":"TLS (preferred)","value":"tls"},
