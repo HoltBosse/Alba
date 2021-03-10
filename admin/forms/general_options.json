@@ -5,7 +5,7 @@
 			"type":"Tab",
 			"mode":"tabs",
 			"id":"configtabs",
-			"tabs":["Site Options","Server Options","Google & SEO"]
+			"tabs":["Site Options","Server Options","Google & SEO","Email/SMTP"]
 		},
 		{
 			"type":"Tab",
@@ -130,6 +130,113 @@
 			"minlength":10,
 			"filter":"STRING",
 			"default":""
+		},
+		{
+			"type":"Tab",
+			"mode":"tabend"
+		},
+		{
+			"type":"Tab",
+			"mode":"tabstart"
+		},
+		{
+			"name":"smtp_name",
+			"id":"smtp_name",
+			"type":"Text",
+			"label":"Your Full Name",
+			"input_type":"text",
+			"required":false,
+			"maxlength":50,
+			"minlength":3,
+			"filter":"STRING",
+			"default":""
+		},
+		{
+			"name":"smtp_from",
+			"id":"smtp_from",
+			"type":"Text",
+			"label":"From Email",
+			"input_type":"email",
+			"required":false,
+			"maxlength":50,
+			"minlength":3,
+			"filter":"EMAIL",
+			"default":""
+		},
+		{
+			"name":"smtp_replyto",
+			"id":"smtp_replyto",
+			"type":"Text",
+			"label":"Reply-To Email",
+			"input_type":"email",
+			"required":false,
+			"maxlength":50,
+			"minlength":3,
+			"filter":"EMAIL",
+			"default":""
+		},
+		{
+			"name":"smtp_username",
+			"id":"smtp_username",
+			"type":"Text",
+			"label":"SMTP Username",
+			"input_type":"text",
+			"required":false,
+			"maxlength":50,
+			"minlength":3,
+			"filter":"STRING",
+			"default":""
+		},
+		{
+			"name":"smtp_password",
+			"id":"smtp_password",
+			"type":"Text",
+			"label":"SMTP Password",
+			"input_type":"password",
+			"required":false,
+			"maxlength":150,
+			"minlength":8,
+			"filter":"RAW",
+			"default":""
+		},
+		{
+			"name":"smtp_server",
+			"id":"smtp_server",
+			"type":"Text",
+			"label":"SMTP Server/Host",
+			"input_type":"text",
+			"required":false,
+			"maxlength":150,
+			"minlength":4,
+			"filter":"RAW",
+			"default":""
+		},
+		{
+			"type":"Select",
+			"id":"authenticate",
+			"name":"authenticate",
+			"required":false, 
+			"label":"Authenticate",
+			"default":"yes",
+			"description":"Set teaser ordering option.",
+			"select_options":[
+				{"text":"Yes","value":"yes"},
+				{"text":"No","value":"no"}
+			]
+		},
+		{
+			"type":"Select",
+			"id":"encryption",
+			"name":"encryption",
+			"required":false, 
+			"label":"Encryption Method",
+			"default":"tls",
+			"description":"TLS is newer and more secure, and works with most email providers. Only change if you're 100% sure.",
+			"select_options":[
+				{"text":"TLS (preferred)","value":"tls"},
+				{"text":"SSL","value":"ssl"},
+				{"text":"None","value":"none"}
+			]
 		},
 		{
 			"type":"Tab",

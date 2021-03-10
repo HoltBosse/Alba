@@ -80,7 +80,14 @@ if ($virtual_available) {
 	show_message ('Virtual Available','virtual is available. This enables fast file-serving in PHP on Apache.','is-success');
 }
 else {
-	show_message ('Virtual Unavailable','virtual is <em>not</em> available. This enables fast file-serving in PHP on Apache.','is-warning');
+	show_message ('Virtual Unavailable','virtual is <em>not</em> available. This enables fast file-serving in PHP on Apache, but is not required.','is-warning');
+}
+
+if ($native_zip) {
+	show_message ('PHPMail','PHPMail is available. This is required for core email functionality.','is-success');
+}
+else {
+	show_message ('PHPMail','PHPMail is <em>not</em> available. This is required for core email functionality.','is-warning');
 }
 
 ?>
