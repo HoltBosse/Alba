@@ -29,6 +29,10 @@ class Content {
 	}
 
 	public function get_content_count($content_type) {
+		if (!$content_type) {
+			// return count of all content
+			return DB::fetch('select count(*) as c from content where state>0',array())->c;
+		}
 		if (!is_numeric($content_type)) {
 			// try and get type id
 			$content_type = Content::get_content_type_id($content_type);
