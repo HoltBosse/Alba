@@ -37,7 +37,7 @@ class Configuration {
 		// not in db, get default from form
 		$form_path = CMSPATH . "/admin/forms/" . $form_name . ".json";
 		$form = JSON::load_obj_from_file ($form_path);
-		CMS::pprint_r ($form);
+		//CMS::pprint_r ($form);
 		$default = null; 
 		if (property_exists($form,'fields')) { 
 			foreach ($form->fields as $field) {
