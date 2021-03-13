@@ -28,6 +28,17 @@ class Content {
 		$this->alias="";
 	}
 
+	public function get_content_count($content_type) {
+		if (!is_numeric($content_type)) {
+			// try and get type id
+			$content_type = Content::get_content_type_id($content_type);
+			if (!$content_type) {
+				CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+			}
+		}
+		return DB::fetch('select count(*) as c from content where state>0 and content_type=?',array($content_type))->c;
+	}
+
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
@@ -329,16 +340,6 @@ class Content {
 		$result = $stmt->fetch(); */
 		$result = DB::fetch("select controller_location from content_types where id=?", array($content_type_id));
 		return $result->controller_location;
-	}
-
-	
-
-	public static function get_content_count($content_type_id) {
-		/* $stmt = CMS::Instance()->pdo->prepare("select count(*) as c from content where content_type=?");
-		$stmt->execute(array($content_type_id));
-		$result = $stmt->fetch(); */
-		$result = DB::fetch("select count(*) as c from content where content_type=?", array($content_type_id));
-		return $result->c;
 	}
 
 	public static function get_view_location($view_id) {
