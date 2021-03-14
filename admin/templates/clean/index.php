@@ -163,7 +163,9 @@ require_once (CMSPATH . "/core/cms.php");
 					<div class="navbar-end">
 					<div class="navbar-item">
 						<div class="buttons">
-
+						<a target="_blank" href="<?php echo Config::$uripath;?>/" class="button is-default">
+							Front-End
+						</a>
 						<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo Config::$uripath;?>/admin/logout.php" class="button is-light">
 							Log Out <?php echo CMS::Instance()->user->username; ?>
 						</a>
