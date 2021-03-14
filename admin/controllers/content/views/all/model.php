@@ -9,8 +9,18 @@ if (sizeof($segments)==3) {
 	$content_type_filter = $segments[2];
 }
 
-$all_content = Content::get_all_content($order_by, $content_type_filter);
+if (!$order_by) {
+	$cur_page = Input::getvar('page','INT','1');
+}
+else {
+	// ordering view, DO NOT LIMIT OR PAGINATE
+	$cur_page = null;
+}
+
+$all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page);
 $all_content_types = Content::get_all_content_types();
+$content_count = Content::get_content_count($content_type_filter);
+$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
 
 // handle custom optional listing on content specific 'all' view
 

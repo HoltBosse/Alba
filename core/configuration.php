@@ -18,43 +18,9 @@ class Configuration {
 		}
 
 		if (strpos($setting_name, ' ') !== false) {
+			// setting names should not have spaces I'm guessing?
 			return false;
 		}
-
-		/* $query = 'select configuration->>"$.' . $setting_name . '" as value from configurations where name=?';
-		//CMS::pprint_r ($query);exit(0);
-		
-		$stmt = $pdo->prepare($query);
-		$ok = $stmt->execute(array($form_name));
-		if (!$ok) {
-			CMS::Instance()->queue_message('Problem retrieving configuration value ' . $setting_name . " from " . $form_name,'danger',Config::$uripath . "/admin");
-		}
-		$result = $stmt->fetch();
-		if (!isset($result->value)) {
-			// if no value found in DB for config/form combo, try and get default value from form
-			$form = JSON::load_obj_from_file (CMSPATH . "/admin/forms/" . $form_name . ".json");
-			$default = null; 
-			if (property_exists($form,'fields')) {
-				foreach ($form->fields as $field) {
-					if (property_exists($field,"name")) {
-						if ($field->name==$setting_name) {
-							if (property_exists($field, "default")) {
-								if (Config::$debug) {
-									CMS::log('Default value retrieved from form file for: ' . $setting_name . " from " . $form_name . " [{$field->default}]");
-								}
-								return $field->default;
-							}
-						}
-					}
-				}
-			}
-			if (Config::$debug) {
-				CMS::log('No default value found for: ' . $setting_name . " from " . $form_name);
-			}
-			return $default;
-			//CMS::Instance()->queue_message('Configuration not found for value ' . $setting_name . " from " . $form_name,'danger',Config::$uripath . "/admin");
-		}
-		return ($result->value); */
 
 		// fallback - get complete json and get property in PHP
 
@@ -67,13 +33,28 @@ class Configuration {
 			if (property_exists($config, $setting_name)) {
 				return $config->{$setting_name};
 			}
-			else {
-				return false;
+		}
+		// not in db, get default from form
+		$form_path = CMSPATH . "/admin/forms/" . $form_name . ".json";
+		$form = JSON::load_obj_from_file ($form_path);
+		//CMS::pprint_r ($form);
+		$default = null; 
+		if (property_exists($form,'fields')) { 
+			foreach ($form->fields as $field) {
+				if (property_exists($field,"name")) { 
+					if ($field->name==$setting_name) {
+						if (property_exists($field, "default")) { 
+							if (Config::$debug) {
+								CMS::log('Default value retrieved from form file for: ' . $setting_name . " from " . $form_name . " [{$field->default}]");
+							}
+							return $field->default;
+						}
+					}
+				}
 			}
 		}
-		else {
-			return false;
-		}
+		CMS::log('No default value found for config field: ' . $setting_name);
+		return false; // got here, got nuthin
 	}
 
 	function __construct($form) {
