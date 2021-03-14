@@ -627,7 +627,6 @@ spl_autoload_register(function($class_name)
 
 
 
-//CMS::pprint_r (CMS::Instance());
 CMS::Instance()->render();
 
 

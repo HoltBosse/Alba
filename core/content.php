@@ -28,6 +28,21 @@ class Content {
 		$this->alias="";
 	}
 
+	public function get_content_count($content_type) {
+		if (!$content_type) {
+			// return count of all content
+			return DB::fetch('select count(*) as c from content where state>0',array())->c;
+		}
+		if (!is_numeric($content_type)) {
+			// try and get type id
+			$content_type = Content::get_content_type_id($content_type);
+			if (!$content_type) {
+				CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+			}
+		}
+		return DB::fetch('select count(*) as c from content where state>0 and content_type=?',array($content_type))->c;
+	}
+
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
@@ -331,16 +346,6 @@ class Content {
 		return $result->controller_location;
 	}
 
-	
-
-	public static function get_content_count($content_type_id) {
-		/* $stmt = CMS::Instance()->pdo->prepare("select count(*) as c from content where content_type=?");
-		$stmt->execute(array($content_type_id));
-		$result = $stmt->fetch(); */
-		$result = DB::fetch("select count(*) as c from content where content_type=?", array($content_type_id));
-		return $result->c;
-	}
-
 	public static function get_view_location($view_id) {
 		/* $stmt = CMS::Instance()->pdo->prepare("select location from content_views where id=?");
 		$stmt->execute(array($view_id));
@@ -375,12 +380,13 @@ class Content {
 		}
 	}
 	
-	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null) {
+	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0) {
 		// order by id by default
 		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
 		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
 		// list_fields if empty will default to all or just those in list property of form if not id or tag passed
 		// allows to get just specific custom content fields, such as opengraph data but not markup for fast blogs
+		// $page=0 indicates no pagination. $page=x will use systemwide Configuration::get_configuration_value ('general_options', 'pagination_size')
 
 		if ($type_filter) {
 			// get list fields from custom_fields.json file
@@ -492,16 +498,27 @@ class Content {
 			CMS::pprint_r ($query);
 		}
 
-		if ($order_by=="ordering"||$order_by=="id"||$order_by=="start") {
+		// order intelligently
+		if ($order_by=="start") {
 			//$result = CMS::Instance()->pdo->query($query . " order by " . $order_by . " ASC")->fetchAll();
 			$query .= " order by " . $order_by . " DESC";
 			//return $result;
+		}
+		elseif ($order_by=="ordering"||$order_by=="id") {
+			$query .= " order by " . $order_by . " ASC";
 		}
 		else {
 			//CMS::Instance()->queue_message('Unknown ordering method: ' . $order_by ,'danger', $_SERVER["HTTP_REFERER"]);
 			//$result = CMS::Instance()->pdo->query($query . " order by id ASC")->fetchAll();
 			$query .= " order by id DESC";
 			//return $result;
+		}
+
+		if ($page) {
+			$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
+			if (is_numeric($pagination_size) && is_numeric($page)) {
+				$query .= " LIMIT " . (($page-1)*$pagination_size) . "," . $pagination_size;
+			}
 		}
 		//CMS::pprint_r ($query);exit(0);
 		$result = DB::fetchall($query);
