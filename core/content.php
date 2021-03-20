@@ -251,6 +251,7 @@ class Content {
 			CMS::Instance()->queue_message($error_text,'danger', $return_url);
 		}
 		else {
+			Hook::execute_hook_actions('on_content_save', $this);
 			CMS::Instance()->queue_message('Saved content','success', $return_url);
 		}
 	}
