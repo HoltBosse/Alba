@@ -21,6 +21,7 @@ images/upload/*
 # misc testing scripts
 testing/
 plugins/content_save_test/
+plugins/user_fields/
 # testing admin templates
 admin/templates/testadmintemplate/**
 # ignore custom controllers - note: add future default controllers here!
