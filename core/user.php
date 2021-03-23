@@ -312,6 +312,8 @@ class User {
 				$result = false;
 			}
 			if ($result) {
+				$new_user_id = CMS::Instance()->pdo->lastInsertId();
+				$this->id = $new_user_id;
 				// user tags
 				foreach ($this->tags as $tag) {
 					$query = "insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)"; // -2 for user
@@ -321,7 +323,7 @@ class User {
 			}
 			if ($result) {
 				// user groups
-				$new_user_id = CMS::Instance()->pdo->lastInsertId();
+				
 				foreach ($this->groups as $group) {
 					$query = "insert into user_groups (user_id, group_id) values (?,?)";
 					$stmt = CMS::Instance()->pdo->prepare($query);
