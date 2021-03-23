@@ -179,6 +179,9 @@ div.field.hidden {
     font-size: 0.7em;
 }
 
+.select.is-multiple {
+	width:100%;
+}
 /* tree */
 .available_tree_items {
 				max-width:25%;
