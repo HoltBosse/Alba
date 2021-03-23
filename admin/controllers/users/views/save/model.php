@@ -7,15 +7,23 @@ $user = new User();
 //$all_groups = $user->get_all_groups();
 //$all_users = $user->get_all_users();
 
-$success=$user->load_from_post();
-
-if (!$success) {
+$user_ok = $user->load_from_post();
+if (!$user_ok) {
 	CMS::Instance()->queue_message('Failed to create user object from form data','danger',Config::$uripath.'/admin/users');
 }
-
+$response = Hook::execute_hook_actions('validate_user_fields_form');
+if (!$response) {
+	CMS::Instance()->queue_message('Invalid additional details form','danger',Config::$uripath.'/admin/users');
+}
 $success = $user->save();
 if ($success) {
-	CMS::Instance()->queue_message('User saved','success',Config::$uripath.'/admin/users');
+	$response = Hook::execute_hook_actions('save_user_fields_form'); 
+	if ($response) {
+		CMS::Instance()->queue_message('User saved','success',Config::$uripath.'/admin/users');
+	}
+	else {
+		CMS::Instance()->queue_message('User saved, additional fields did not','warning',Config::$uripath.'/admin/users');
+	}
 }
 else {
 	CMS::Instance()->queue_message('User save failed','danger',Config::$uripath.'/admin/users');

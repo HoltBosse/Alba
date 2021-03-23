@@ -30,6 +30,7 @@ class Hook {
 				$action->plugin_object->$function_name($args);
 			}
 		}
+		return true; // for now assume all good and that plugin(s) will handle execution termination if error happens
 	}
 
 	static public function execute_hook_filters ($hook_label, $data, ...$args) {
