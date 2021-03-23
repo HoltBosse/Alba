@@ -99,7 +99,7 @@ class Widget_menu extends Widget {
 
 		$menu_designer_config_json = $this->get_option_value('menu_designer_config');
 
-		if ($menu_designer_config_json!=="{}") {
+		if ($menu_designer_config_json!=="{}" && $this->get_option_value('menu_designer_config')) {
 			echo "<script>";
 			echo "// got menu config \n";
 			echo "var menu_designer_config = " . html_entity_decode ($menu_designer_config_json) . ";";
