@@ -29,7 +29,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
-	public $version = "0.362";
+	public $version = "0.363";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -568,7 +568,24 @@ final class CMS {
 
 				$this->page = new Page();
 				$this->page->load_from_alias($page->alias); // also loads correct template obj into page obj
-				
+				// check user has access
+				$access_granted_to = json_decode($this->page->get_page_option_value("access"));
+				CMS::pprint_r ($access_granted_to);
+				if ($access_granted_to) {
+					// at least one group set, make sure user is member of group
+					// if none set, means public
+					$has_access = false;
+					foreach ($this->user->groups as $group) {
+						if (in_array($group->id, $access_granted_to)) {
+							$has_access = true;
+							break;
+						}
+					}
+					if (!$has_access) {
+						// send to front-end homepage for now - TODO: make back-end config option
+						$this->queue_message('You do not have access to this page','danger', Config::$uripath . '/');
+					}
+				}
 				// front end buffering for plugin functionality
 				ob_start();
 				include_once (CURPATH . '/templates/' . $this->page->template->folder . "/index.php");

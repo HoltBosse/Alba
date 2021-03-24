@@ -207,10 +207,7 @@ div.position_tag_wrap.active {
 <div id='page_seo_og_options'>
 	<hr>
 	<?php //CMS::pprint_r ($page); ?>
-	<h4 class='title is-4 is-heading'>SEO / Social</h4>
-	<p>If the page content is a collection or has no SEO/Opengraph entries of its own, then these values will be used. It's best to set them here just to be safe.</p>
-	<br>
-	<div class='fields-horizontal'>
+	<div class=''>
 		<?php $page->page_options_form->display_front_end(); ?>
 	</div>
 </div>
