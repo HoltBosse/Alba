@@ -8,7 +8,7 @@ ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JS
 // TODO: remove front-end images api model????
 
 $action = Input::getvar('action','STRING');
-$mimetypes = explode(',',Input::getvar('mimetypes'));
+$mimetypes = array_filter(explode(',',Input::getvar('mimetypes'))); // array_filter ensures empty array if mimetypes is null
 // TODO sanitize mimetypes against whitelist
 
 if ($action=='tag_media') {
