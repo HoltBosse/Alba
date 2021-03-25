@@ -570,7 +570,6 @@ final class CMS {
 				$this->page->load_from_alias($page->alias); // also loads correct template obj into page obj
 				// check user has access
 				$access_granted_to = json_decode($this->page->get_page_option_value("access"));
-				CMS::pprint_r ($access_granted_to);
 				if ($access_granted_to) {
 					// at least one group set, make sure user is member of group
 					// if none set, means public
