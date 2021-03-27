@@ -28,19 +28,36 @@ class Content {
 		$this->alias="";
 	}
 
-	public function get_content_count($content_type) {
-		if (!$content_type) {
-			// return count of all content
-			return DB::fetch('select count(*) as c from content where state>0',array())->c;
-		}
-		if (!is_numeric($content_type)) {
-			// try and get type id
-			$content_type = Content::get_content_type_id($content_type);
+	public function get_content_count($content_type, $search="") {
+		if ($search) {
+			$like = '%' . $search . '%';
 			if (!$content_type) {
-				CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+				// return count of all content
+				return DB::fetch('select count(*) as c from content where (title like ? OR note like ?) and state>0',array($like,$like))->c;
 			}
+			if (!is_numeric($content_type)) {
+				// try and get type id
+				$content_type = Content::get_content_type_id($content_type);
+				if (!$content_type) {
+					CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+				}
+			}
+			return DB::fetch('select count(*) as c from content where (title like ? OR note like ?) and state>0 and content_type=?',array($like,$like,$content_type))->c;
 		}
-		return DB::fetch('select count(*) as c from content where state>0 and content_type=?',array($content_type))->c;
+		else {
+			if (!$content_type) {
+				// return count of all content
+				return DB::fetch('select count(*) as c from content where state>0',array())->c;
+			}
+			if (!is_numeric($content_type)) {
+				// try and get type id
+				$content_type = Content::get_content_type_id($content_type);
+				if (!$content_type) {
+					CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+				}
+			}
+			return DB::fetch('select count(*) as c from content where state>0 and content_type=?',array($content_type))->c;
+		}
 	}
 
 	private function make_alias_unique() {
@@ -381,7 +398,7 @@ class Content {
 		}
 	}
 	
-	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0) {
+	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="") {
 		// order by id by default
 		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
 		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
@@ -461,6 +478,10 @@ class Content {
 		else {
 			$where .= " c.state >= 0 ";
 		}
+
+		if ($search) {
+			$where .= " AND (title like ? or note like ?) "; 
+		}
 		
 		if ($list_fields) {
 			foreach ($list_fields as $field) {
@@ -522,7 +543,13 @@ class Content {
 			}
 		}
 		//CMS::pprint_r ($query);exit(0);
-		$result = DB::fetchall($query);
+		if ($search) {
+			$like = '%'.$search.'%';
+			$result = DB::fetchall($query,array($like,$like)); // title and note
+		}
+		else {
+			$result = DB::fetchall($query);
+		}
 		//CMS::pprint_r ($result);exit(0);
 		return $result;
 	}
