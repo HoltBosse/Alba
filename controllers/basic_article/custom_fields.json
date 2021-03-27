@@ -10,7 +10,7 @@
 			"required":true,
 			"minlength":3,
 			"filter":"RAW",
-			"default":""
+			"default":"<p></p>"
 		},
 		{
 			"name":"custom",
