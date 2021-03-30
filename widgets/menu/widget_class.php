@@ -175,7 +175,7 @@ class Widget_menu extends Widget {
 				
 			echo "<li class='{$classList}'>";
 			if ($is_anchor) {
-				echo "<a target='{$target}' class='page_id_{$tree->value}' href='{$url}'>" . $title . "</a>";
+				echo "<a target='{$target}' class='page_id_{$page->id}' href='{$url}'>" . $title . "</a>";
 			}
 			else {
 				echo $node->title;
