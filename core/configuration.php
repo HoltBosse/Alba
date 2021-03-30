@@ -83,7 +83,13 @@ class Configuration {
 			$this->configuration = json_decode($result->configuration);
 			// update config object form field values for display
 			foreach ($this->form->fields as $field) {
-				$field->default = $this->configuration->{$field->name};
+				if (!$this->configuration->{$field->name}) {
+					// nothing stored in db for field
+					// do nothing - leave field default as default from form json
+				}
+				else {
+					$field->default = $this->configuration->{$field->name};
+				}
 			}
 			return $this;
 		}

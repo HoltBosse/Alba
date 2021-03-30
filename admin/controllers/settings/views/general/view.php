@@ -9,7 +9,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <form method="POST">
 	<?php
-	//CMS::pprint_r ($user_options_form);
+	//CMS::pprint_r ($general_options_form);
 	$general_options_form->display_front_end();
 	?>
 	<br><br>

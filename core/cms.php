@@ -582,7 +582,8 @@ final class CMS {
 					}
 					if (!$has_access) {
 						// send to front-end homepage for now - TODO: make back-end config option
-						$this->queue_message('You do not have access to this page','danger', Config::$uripath . '/');
+						$redirect_uri = Configuration::get_configuration_value ('general_options', 'signin_redirect');
+						$this->queue_message('You do not have access to this page','danger', Config::$uripath . $redirect_uri);
 					}
 				}
 				// front end buffering for plugin functionality
