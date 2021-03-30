@@ -47,6 +47,19 @@
 			"mode":"tabstart"
 		},
 		{
+			"name":"signin_redirect",
+			"id":"signin_redirect",
+			"type":"Text",
+			"label":"Sign-In Redirect",
+			"input_type":"text",
+			"required":false,
+			"description":"URI users will be redirected to if they do not have access to the page",
+			"maxlength":255,
+			"minlength":1,
+			"filter":"STRING",
+			"default":"/"
+		},
+		{
 			"name":"pagination_size",
 			"id":"pagination_size",
 			"type":"Text",
