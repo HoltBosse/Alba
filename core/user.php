@@ -27,11 +27,20 @@ class User {
 			$query = "INSERT INTO users (username, email, password, state) VALUES (?,?,?,?)";
 			//CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
 			DB::exec($query, [$username,$email,$hash,$state]);
+			$id = CMS::Instance()->pdo->lastInsertId();
+			foreach ($groups as $group) {
+				if (is_int($group)) {
+					$query = "INSERT INTO user_groups (user_id, group_id) values (?,?)";
+					DB::exec($query, [$id,$group]);
+				}
+			}
+			return $id;
 		}
 		else {
-			// TODO:throw
+			CMS::show_error('Unable to create new user');
 		}
 	}
+	
 	// $pdo->prepare($sql)->execute([$name, $id]);
 	public function get_all_users() {
 		//echo "<p>Getting all users...</p>";
