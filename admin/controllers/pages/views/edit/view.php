@@ -15,7 +15,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	padding:0rem;
 	border:1px dashed rgba(0,0,0,0.0);
 	max-height:0;
-	overflow: hidden;
+	/* overflow: hidden; */
 	transition:all 1s ease;
 	opacity:0;
 	display: flex;
