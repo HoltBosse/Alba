@@ -211,7 +211,8 @@ class Widget_menu extends Widget {
 		//echo json_last_error_msg();
 		//CMS::pprint_r ($this_menu_structure);
 		//echo "<code>Menu Widget</code>";
-		echo "<div class='tree_wrap'>";
+		
+		echo "<div id='menu_" . Input::make_alias($this->title) . "' class='tree_wrap'>";
 		$this->render_menu($this_menu_structure);
 		echo "</div>";
 	}
