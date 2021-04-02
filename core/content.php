@@ -498,8 +498,19 @@ class Content {
 			if (is_numeric($tag)) {
 				$where .= " and c.id in (select content_id from tagged where tag_id={$tag} and content_type_id=c.content_type) ";
 			}
+			elseif (is_array($tag)) {
+				// check if all numbers
+				if (array_filter($tag, 'is_numeric') === $tag) {
+					// safe to add imploded array to tag check
+					$taglist = implode(",", $tag);
+					$where .= " and c.id in (select content_id from tagged where tag_id in ({$taglist})) ";
+				}
+				else {
+					CMS::show_error('Content Error - Numerical array expected');
+				}
+			}
 			else {
-				CMS::show_error('Content Blog Error - Numerical tag id expected');
+				CMS::show_error('Content Error - Numerical tag id expected');
 			}
 		}
 
