@@ -179,16 +179,26 @@ class Content {
 		// ensure alias is unique for content_type - will use id for existing content, random 4 digit number otherwise
 		$this->make_alias_unique();
 
+		if (!$this->start) {
+			$this->start = null;
+		}
+		else {
+			//$this->start = date("Y-m-d H:i:s", strtotime($this->start));
+			$this->start = strtotime($this->start);
+		}
+		if (!$this->end) {
+			$this->end = null;
+		}
+		else {
+			//$this->end = date("Y-m-d H:i:s", strtotime($this->end));
+			$this->end = strtotime($this->end);
+		}
+
 		if ($this->id) {
 			// update
 			$query = "update content set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=? where id=?";
 			$stmt = CMS::Instance()->pdo->prepare($query);
-			if (!$this->start) {
-				$this->start = null;
-			}
-			if (!$this->end) {
-				$this->end = null;
-			}
+			
 			$params = array($this->state, $this->title, $this->alias, $this->note, $this->start, $this->end, $this->updated_by, $this->id) ;
 			$required_result = $stmt->execute( $params );
 		}
@@ -203,16 +213,9 @@ class Content {
 			if (!$ordering) {
 				$ordering=1;
 			}
-			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),?)";
+			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?))";
 			$stmt = CMS::Instance()->pdo->prepare($query);
-			if (!$this->start) {
-				//$this->start = date('Y-m-d H:i:s');
-				//$this->start = time();
-				$this->start = null;
-			}
-			if (!$this->end) {
-				$this->end = null;
-			}
+			
 			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end);
 			$required_result = $stmt->execute( $params );
 			if ($required_result) {
@@ -499,7 +502,7 @@ class Content {
 				$where .= " and c.id in (select content_id from tagged where tag_id={$tag} and content_type_id=c.content_type) ";
 			}
 			elseif (is_array($tag)) {
-				// check if all numbers
+				// check if all ints
 				if (array_filter($tag, 'is_numeric') === $tag) {
 					// safe to add imploded array to tag check
 					$taglist = implode(",", $tag);
