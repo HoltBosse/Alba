@@ -196,7 +196,7 @@ class Content {
 
 		if ($this->id) {
 			// update
-			$query = "update content set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=? where id=?";
+			$query = "update content set state=?,  title=?, alias=?, note=?, start=FROM_UNIXTIME(?), end=FROM_UNIXTIME(?), updated_by=? where id=?";
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			
 			$params = array($this->state, $this->title, $this->alias, $this->note, $this->start, $this->end, $this->updated_by, $this->id) ;
