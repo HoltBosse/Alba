@@ -271,6 +271,10 @@ div.field.hidden {
 }
 
 /* media popup */
+.media_selector {
+    height: 90vh;
+    overflow: auto;
+}
 .media_selector_list {
 	display:flex;
 	flex-wrap:wrap;
