@@ -78,7 +78,7 @@ if (sizeof($segments)==1) {
 }
 if (sizeof($segments)==2) {
 	if (is_numeric($segments[1])) {
-		CMS::log("call to Image Controller with single INT {$segments[1]}");
+		//CMS::log("call to Image Controller with single INT {$segments[1]}");
 		// /images/INT
 		$image = get_image ($segments[1]);
 		if ($image) {
@@ -103,7 +103,7 @@ if (sizeof($segments)==3) {
 			if ($param=="thumb") {	
 				$newsize_path = CMSPATH . "/images/processed/thumb_" . $image->filename;
 				if (!file_exists($newsize_path)) {
-					CMS::log('Thumbnail generated for image ' . $image->filename);
+					//CMS::log('Thumbnail generated for image ' . $image->filename);
 					$target_width = 200;
 					make_thumb($original_path, $newsize_path, $target_width, $image);
 				}
@@ -115,7 +115,7 @@ if (sizeof($segments)==3) {
 				$newsize_path = CMSPATH . "/images/processed/web_" . $image->filename;
 				if ($image->width > 1920) {
 					if (!file_exists($newsize_path)) {
-						CMS::log('Web version generated for image ' . $image->filename);
+						//CMS::log('Web version generated for image ' . $image->filename);
 						$target_width = 1920;
 						make_thumb($original_path, $newsize_path, $target_width, $image);
 					}
@@ -132,7 +132,7 @@ if (sizeof($segments)==3) {
 				// passed a width to show
 				$newsize_path = CMSPATH . "/images/processed/" . $param . "w_" . $image->filename;
 				if (!file_exists($newsize_path)) {
-					CMS::log('User passed width generated for image ' . $image->filename);
+					//CMS::log('User passed width generated for image ' . $image->filename);
 					$target_width = $param;
 					make_thumb($original_path, $newsize_path, $target_width, $image, 80); // default to 80 for q
 				}
