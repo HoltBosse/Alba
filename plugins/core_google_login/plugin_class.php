@@ -18,7 +18,7 @@ class Plugin_core_google_login extends Plugin {
 
     public function logout_js() {
         // ACTION - attached to add_to_head hook
-        echo '<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>';
+        echo '<script src="https://apis.google.com/js/platform.js?prompt=select_account&onload=onLoad" async defer></script>';
         echo '<meta name="google-signin-client_id" content="' . $this->get_option('client_id') . '">';
         echo "<script>
         function onLoad() {
