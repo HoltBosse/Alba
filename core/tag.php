@@ -44,8 +44,9 @@ class Tag {
 	}
 
 	public static function get_tags_available_for_content_type ($content_type_id) {
-		$result = DB::fetchall("select * from tags where state>0 and id in (select tag_id from tag_content_type where content_type_id=?)", array($content_type_id));
-		return $result;
+		$result = DB::fetchall("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", array($content_type_id));
+		$result2 = DB::fetchall("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", array($content_type_id));
+		return array_merge ($result,$result2);
 	}
 
 	public static function set_tags_for_content($content_id, $tag_array, $content_type_id) {
