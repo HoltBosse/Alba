@@ -558,7 +558,7 @@ final class CMS {
 					}
 				}
 				if (!$alias) {
-					raise_404();
+					$this->raise_404();
 				}
 				if (Config::$debug) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
