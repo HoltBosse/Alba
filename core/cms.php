@@ -50,8 +50,12 @@ final class CMS {
 	public static function raise_404() {
 		ob_end_clean ();
 		http_response_code(404);
-		//include('my_404.php'); // provide your own HTML for the error page
-		CMS::show_error('Page not found');
+		if (file_exists(CMSPATH . "/my_404.php")) {
+			include('my_404.php'); // provide your own HTML for the error page
+		}
+		else {
+			CMS::show_error('Page not found');
+		}
 		exit(0);
 	}
 
