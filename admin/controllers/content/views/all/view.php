@@ -206,6 +206,7 @@ table.dragging .before_after_wrap {
 		</thead>
 		<tbody>
 			<?php foreach ($all_content as $content_item):?>
+				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $content_item->id; ?>'/>
