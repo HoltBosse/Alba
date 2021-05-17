@@ -241,6 +241,13 @@ class Content {
 		$error_text="";
 		foreach ($content_form->fields as $field) {
 			// insert field info
+			if (isset($field->save)) {
+				if ($field->save===false) {
+					// field have save property set explicitly to false - SKIP saving
+					// this may be a field such as an SQL statement from a non-cms table, or just markup etc
+					continue;
+				}
+			}
 			// TODO: handle other arrays 
 			/* CMS::pprint_r ($field);  */
 			if ($field->filter=="ARRAYOFINT") {
@@ -430,9 +437,13 @@ class Content {
 				foreach ($custom_fields->fields as $custom_field) {
 					if (!in_array($custom_field->name,$ignore_fields)) {
 						// only add if not in ignored array passed to function
-						if ($custom_field->type!=="HTML") {
-							// ignore core unsaved fields such as html
-							$list_fields[] = $custom_field->name;
+						// check if field is saveable
+						if (isset($custom_field->save)) {
+							if ($custom_field->save!==false) {
+								// e.g. not core HTML field or other field
+								// that isn't saved such as presentational or SQL type field for non-cms tables
+								$list_fields[] = $custom_field->name;
+							}
 						}
 					}
 					else {
@@ -443,11 +454,21 @@ class Content {
 			else {
 				
 				// id not passed, just get fields in 'list' property from custom_fields.json
+				// checking it's not ignored and is an actual saveable field
 				if (property_exists($custom_fields,'list')) {
-					foreach ($custom_fields->list as $custom_field_name) {
+					foreach ($custom_fields->list as $list_name) {
 						if (!in_array($custom_field_name,$ignore_fields)) {
 							// only add if not in ignored array passed to funct
-							$list_fields[] = $custom_field_name;
+							// check if field was saveable too
+							foreach ($custom_fields->fields as $custom_field) {
+								if ($custom_field->name==$list_name) {
+									if (isset($custom_field->save)) {
+										if ($custom_field->save!==false) {
+											$list_fields[] = $custom_field->name;
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -540,13 +561,13 @@ class Content {
 			$query .= " order by " . $order_by . " DESC";
 			//return $result;
 		}
-		elseif ($order_by=="ordering"||$order_by=="id") {
+		elseif ($order_by=="title"||$order_by=="ordering"||$order_by=="id") {
 			$query .= " order by " . $order_by . " ASC";
 		}
 		else {
 			//CMS::Instance()->queue_message('Unknown ordering method: ' . $order_by ,'danger', $_SERVER["HTTP_REFERER"]);
 			//$result = CMS::Instance()->pdo->query($query . " order by id ASC")->fetchAll();
-			$query .= " order by id DESC";
+			$query .= " order by title ASC";
 			//return $result;
 		}
 
