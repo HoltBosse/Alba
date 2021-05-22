@@ -38,7 +38,7 @@ class Form {
 				if ($this->repeatable) {
 					$thisfield->in_repeatable_form = true;
 				}
-				$this->fields[] = $thisfield;
+				$this->fields[$field_config->name] = $thisfield;
 			}
 		}
 	}
@@ -50,13 +50,13 @@ class Form {
 	}
 
 	public function get_field_by_name($field_name) {
-		foreach ($this->fields as $field) {
-			if ($field->name == $field_name) {
-				return $field;
-			}
+		if (isset($this->fields[$field_name])) {
+			return $this->fields[$field_name];
 		}
-		if (Config::$debug) {
-			echo "<p class='unimportant'>Field {$field_name} not found.</p>";
+		else {
+			if (Config::$debug) {
+				CMS::log('Unable to load form field ' . $field_name);
+			}
 		}
 		return false;
 	}
