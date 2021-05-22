@@ -437,13 +437,18 @@ class Content {
 				foreach ($custom_fields->fields as $custom_field) {
 					if (!in_array($custom_field->name,$ignore_fields)) {
 						// only add if not in ignored array passed to function
-						// check if field is saveable
+						// check if field is explicitly saveable or no saveable option set
+						// if not set or not true, don't add to query (no data ever saved:))
 						if (isset($custom_field->save)) {
-							if ($custom_field->save!==false) {
+							if ($custom_field->save===true) {
 								// e.g. not core HTML field or other field
 								// that isn't saved such as presentational or SQL type field for non-cms tables
 								$list_fields[] = $custom_field->name;
 							}
+							// not added to query listing if save is anything other than true
+						}
+						else {
+							$list_fields[] = $custom_field->name;
 						}
 					}
 					else {
@@ -458,14 +463,19 @@ class Content {
 				if (property_exists($custom_fields,'list')) {
 					foreach ($custom_fields->list as $list_name) {
 						if (!in_array($custom_field_name,$ignore_fields)) {
-							// only add if not in ignored array passed to funct
-							// check if field was saveable too
+							// only add if not in ignored array passed to function
+							// check if field is explicitly saveable or no saveable option set
+							// if not set or not true, don't add to query (no data ever saved:))
 							foreach ($custom_fields->fields as $custom_field) {
 								if ($custom_field->name==$list_name) {
 									if (isset($custom_field->save)) {
-										if ($custom_field->save!==false) {
+										if ($custom_field->save===true) {
 											$list_fields[] = $custom_field->name;
 										}
+									}
+									else {
+										// assume saveable, add to query list
+										$list_fields[] = $custom_field->name;
 									}
 								}
 							}
@@ -474,6 +484,7 @@ class Content {
 				}
 			}
 		} 
+		
 
 		// if we passed a filter field via url param, ad this to fields to list as well
 		if ($filter_field !== null) {
