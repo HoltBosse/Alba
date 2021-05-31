@@ -13,17 +13,32 @@ class Controller {
 	public function load_view ($view) {
 		// first check folder exists
 		// then load model (this then loads the view)
-		$view_path = $this->path . "/views/" . $this->view;
-		//CMS::pprint_r ($view_path);
-		if (file_exists ($view_path)) {
-			if (is_dir($view_path)) {
-				// TODO: check for included files existing too
-				include_once ($view_path . "/model.php");
-				include_once ($view_path . "/view.php");
-			}
+		$CMS = CMS::Instance();
+		// check for view template overrides first!
+		// note - overrides must include view AND model otherwise it will be ignored
+		$template_folder = $CMS->page->template->folder;
+		$controller_folder = $CMS->page->controller;
+		//$potential_override_model = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $controller_folder . "/model.php";
+		//$potential_override_view = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $controller_folder . "/view.php";
+		if (file_exists($potential_override_model) && file_exists($potential_override_view)) {
+			// override files exist, use those
+			include_once ($potential_override_model);
+			include_once ($potential_override_view);
 		}
 		else {
-			CMS::Instance()->show_error ("View folder {$this->view} doesn't exist for controller at " . $this->path, 'error');
+			// no override model/view, load default
+			$view_path = $this->path . "/views/" . $this->view;
+			//CMS::pprint_r ($view_path);
+			if (file_exists ($view_path)) {
+				if (is_dir($view_path)) {
+					// TODO: check for included files existing too
+					include_once ($view_path . "/model.php");
+					include_once ($view_path . "/view.php");
+				}
+			}
+			else {
+				CMS::Instance()->show_error ("View folder {$this->view} doesn't exist for controller at " . $this->path, 'error');
+			}
 		}
 	}
 }
