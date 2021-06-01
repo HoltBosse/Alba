@@ -18,8 +18,8 @@ class Controller {
 		// note - overrides must include view AND model otherwise it will be ignored
 		$template_folder = $CMS->page->template->folder;
 		$controller_folder = $CMS->page->controller;
-		//$potential_override_model = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $controller_folder . "/model.php";
-		//$potential_override_view = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $controller_folder . "/view.php";
+		$potential_override_model = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $controller_folder . "/" . $this->view . "/model.php";
+		$potential_override_view = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $controller_folder . "/" . $this->view . "/view.php";
 		if (file_exists($potential_override_model) && file_exists($potential_override_view)) {
 			// override files exist, use those
 			include_once ($potential_override_model);
