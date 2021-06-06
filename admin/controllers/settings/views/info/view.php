@@ -90,6 +90,13 @@ else {
 	show_message ('PHPMail','PHPMail is <em>not</em> available. This is required for core email functionality.','is-warning');
 }
 
+if ($mysqldump_available) {
+	show_message ('MySQL Dump Available','MySQL Dump is available. This is required for backups.','is-success');
+}
+else {
+	show_message ('MySQL Dump Available','MySQL Dump is <em>not</em> available. This is required for backups.','is-warning');
+}
+
 ?>
 
 <hr>
