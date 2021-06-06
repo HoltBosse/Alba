@@ -38,3 +38,8 @@ widgets/**
 !widgets/html/**
 !widgets/menu/
 !widgets/menu/**
+temp
+temp/**
+/backups
+/backups/**
+db.sql
