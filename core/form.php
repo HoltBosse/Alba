@@ -38,7 +38,14 @@ class Form {
 				if ($this->repeatable) {
 					$thisfield->in_repeatable_form = true;
 				}
-				$this->fields[$field_config->name] = $thisfield;
+				if (property_exists($field_config,'name')) {
+					// not all form fields require name property - only saveable items
+					// HTML field / Tab field etc are for rendering only
+					$this->fields[$field_config->name] = $thisfield;
+				}
+				else {
+					$this->fields[] = $thisfield;
+				}
 			}
 		}
 	}
