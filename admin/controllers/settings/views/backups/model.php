@@ -91,7 +91,7 @@ if ($submitted) {
 	$zip->close();
 
 	// delete temp db file
-	//unlink($db_backup_file);
+	unlink($db_backup_file);
 
 	CMS::Instance()->queue_message('Backup created','success', Config::$uripath."/admin/settings/backups");
 }
