@@ -55,3 +55,10 @@ if ($plugins_table_ok) {
 else {
 	show_message ('Plugins Table','Plugins table created.','is-warning');
 }
+
+if ($tags_table_ok) {
+	show_message ('Tags Table Parent Column','Tags table OK.','is-success');
+}
+else {
+	show_message ('Tags Table Parent Column','Tags table updated.','is-warning');
+}

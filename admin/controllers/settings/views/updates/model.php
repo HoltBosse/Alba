@@ -52,6 +52,16 @@ if (!$plugins_table_ok) {
 	DB::exec("ALTER TABLE `plugins` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
 }
 
+//plugins_table_ok
+$query = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'parent'";
+$stmt = CMS::Instance()->pdo->prepare($query);
+$stmt->execute(array());
+$tags_table_ok = $stmt->fetchAll();
+
+if (!$tags_table_ok) {
+	DB::exec("ALTER TABLE tags ADD COLUMN `parent` int(11) DEFAULT NULL");
+}
+
 // Perform update if required
 
 if ($submitted) { 

@@ -108,7 +108,8 @@ CREATE TABLE `tags` (
   `image` int(11) DEFAULT NULL,
   `filter` int(11) NOT NULL DEFAULT '1' COMMENT '0 admin only 1 exclusive 2 inclusive',
   `description` varchar(255) DEFAULT NULL,
-  `note` varchar(255) DEFAULT NULL
+  `note` varchar(255) DEFAULT NULL,
+  `parent` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tag_content_type`;
