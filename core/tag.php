@@ -63,10 +63,37 @@ class Tag {
 		}
 	}
 
+	public function get_depth() {
+		$depth=0;
+		$parent_id = $this->parent;
+		return 0;
+		while ($parent_id) {
+			//CMS::pprint_r ($this); 
+			$depth++;
+			$parent = new Tag();
+			$parent->load($parent_id);
+			//CMS::pprint_r ($parent); return 1;
+			$parent_id = $parent->parent;
+		}
+		return $depth;
+	}
+
 	public static function get_all_tags() {
 		//$query = "select * from tags";
 		//return CMS::Instance()->pdo->query($query)->fetchAll();
 		return DB::fetchall("select * from tags");
+	}
+
+	public static function get_all_tags_by_depth($parent=0, $depth=-1) {
+		$depth = $depth+1;
+		$result=array();
+		$children = DB::fetchall("select * from tags where state>-1 and parent=?", array($parent));
+		foreach ($children as $child) {
+			$child->depth = $depth;
+			$result[] = $child;
+			$result = array_merge ($result, Tag::get_all_tags_by_depth($child->id, $depth));
+		}
+		return $result;
 	}
 
 	public static function get_tag_content_types($id) {
@@ -113,7 +140,7 @@ class Tag {
 		$this->contenttypes = $required_details_form->get_field_by_name('contenttypes')->default;
 		$this->parent = $required_details_form->get_field_by_name('parent')->default;
 		if ($this->parent=="0"||$this->parent=="") {
-			$this->parent = null;
+			$this->parent = 0;
 		}
 
 		if ($this->id) {
