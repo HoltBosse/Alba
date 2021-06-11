@@ -71,7 +71,16 @@ div.pull-right {
 						} ?>
 					</button>
 				</td>
-				<td><a href="<?php echo Config::$uripath; ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo $tag->title; ?></a></td>
+				<td>
+					<?php
+					/* $tag_o = new Tag(); $tag_o->load($tag->id);
+					$depth = $tag_o->get_depth(); */
+					for ($n=0; $n<$tag->depth; $n++) {
+						echo "&nbsp-&nbsp";
+					}
+					?>
+					<a href="<?php echo Config::$uripath; ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo $tag->title; ?></a>
+				</td>
 			
 				<td class='usage'>
 				

@@ -21,7 +21,8 @@ class Field_TagParent extends Field {
 			$tags = Content::get_applicable_tags ($this->content_type);
 		}
 		else {
-			$tags = Tag::get_all_tags ();
+			//$tags = Tag::get_all_tags ();
+			$tags = Tag::get_all_tags_by_depth();
 		}
 		if ($this->required) {$required=" required ";}
 		echo "<div class='field'>";
@@ -36,8 +37,12 @@ class Field_TagParent extends Field {
 						foreach ($tags as $tag) {
 							if ($tag->state==1) {
 								$selected = "";
+								$tag_title_prefix="";
+								for ($n=0; $n<$tag->depth; $n++) {
+									$tag_title_prefix .= "&nbsp-&nbsp";
+								}
 								if ($tag->id == $this->default) { $selected="selected";}
-								echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
+								echo "<option {$selected} value='{$tag->id}'>{$tag_title_prefix} {$tag->title}</option>";
 							}
 						}
 					echo "</select>";
