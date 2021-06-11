@@ -25,6 +25,7 @@ class Tag {
 		$this->description = $info->description;
 		$this->image = $info->image;
 		$this->public = $info->public;
+		$this->parent = $info->parent;
 		$query = "select content_type_id from tag_content_type where tag_id=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($this->id));
@@ -97,6 +98,8 @@ class Tag {
 		return implode(', ',$titles);
 	}
 
+
+
 	public function save($required_details_form) {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->get_field_by_name('title')->default;
@@ -108,19 +111,39 @@ class Tag {
 		$this->description = $required_details_form->get_field_by_name('description')->default;
 		$this->public = $required_details_form->get_field_by_name('public')->default;
 		$this->contenttypes = $required_details_form->get_field_by_name('contenttypes')->default;
+		$this->parent = $required_details_form->get_field_by_name('parent')->default;
+		if ($this->parent=="0"||$this->parent=="") {
+			$this->parent = null;
+		}
 
-		
 		if ($this->id) {
+
+			// check we are not trying to make a child node a parent
+			if ($this->parent) {
+				$parent_id = $this->parent;
+				while ($parent_id) {
+					$parent_tag = new Tag();
+					$parent_tag->load($parent_id);
+					$parent_id = $parent_tag->parent;
+					if ($parent_tag->parent) {
+						if ($parent_id==$this->parent) {
+							// can't be child of itself
+							CMS::Instance()->queue_message('Tag cannot be child of itself','danger',Config::$uripath . "/admin/tags");
+						}
+					}
+				}
+			}
+			// reach here, parent is valid or empty
 			
 			// update
-			$query = "update tags set state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=? where id=?";
+			$query = "update tags set state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=? where id=?";
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
 			}
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->id) ;
+			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->id) ;
 			//$stmt = CMS::Instance()->pdo->prepare($query);
 			//$result = $stmt->execute( $params );
 			$result = DB::exec($query, $params);
@@ -146,7 +169,7 @@ class Tag {
 		}
 		else {
 			// new
-			$query = "insert into tags (state,public,title,alias,note,filter,description,image) values(?,?,?,?,?,?,?,?)";
+			$query = "insert into tags (state,public,title,alias,note,filter,description,image,parent) values(?,?,?,?,?,?,?,?,?)";
 			
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
@@ -154,7 +177,7 @@ class Tag {
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image);
+			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent);
 			//$stmt = CMS::Instance()->pdo->prepare($query);
 			//$result = $stmt->execute( $params );
 			$result = DB::exec($query, $params);

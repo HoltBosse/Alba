@@ -51,6 +51,7 @@ else {
 		$required_details_form->get_field_by_name('description')->default = $tag->description;
 		$required_details_form->get_field_by_name('public')->default = $tag->public;
 		$required_details_form->get_field_by_name('contenttypes')->default = $tag->contenttypes;
+		$required_details_form->get_field_by_name('parent')->default = $tag->parent;
 	}
 	
 }
