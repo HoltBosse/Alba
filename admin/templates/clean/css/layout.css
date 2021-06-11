@@ -109,7 +109,7 @@ p.center {
 	text-align:center;
 }
 
-span.user_list, td.note_td, .lighter_note, .unimportant, .usage {
+span.user_list, td.note_td, .lighter_note, .unimportant, .usage, td.tag_parent_td {
 	font-size:70%; opacity:0.6;
 }
 

@@ -85,6 +85,15 @@
 			"default": ""
 		},
 		{
+			"label": "Parent Tag",
+			"name": "parent",
+			"id": "parent",
+			"type": "TagParent",
+			"required": false,
+			"filter": "INT",
+			"default": "0"
+		},
+		{
 			"label": "Description",
 			"name": "description",
 			"id": "description",
@@ -95,6 +104,7 @@
 			"description": "",
 			"default": ""
 		},
+		
 		{
 			"label": "Image",
 			"name": "image",

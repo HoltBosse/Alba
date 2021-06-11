@@ -54,7 +54,7 @@ div.pull-right {
 
 	<table class='table'>
 		<thead>
-			<tr><th>State</th><th>Title</th><th>Available To Use On</th><th>Front-End<th>Note</th>
+			<tr><th>State</th><th>Title</th><th>Available To Use On</th><th>Front-End</th><th>Parent</th><th>Note</th>
 		</thead>
 		<tbody>
 		<?php foreach ($all_tags as $tag):?>
@@ -111,6 +111,13 @@ div.pull-right {
 					<?php else: ?>
 					<i class="fas fa-eye-slash"></i>
 					<?php endif; ?>
+				</td>
+				<td class='tag_parent_td'>
+					<?php if ($tag->parent) {
+						$parent = new Tag();
+						$parent->load($tag->parent);
+						echo $parent->title;
+					}?>
 				</td>
 				<td class='note_td'><?php echo $tag->note; ?></td>
 			</tr>
