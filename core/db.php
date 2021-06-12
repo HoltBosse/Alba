@@ -47,6 +47,7 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::$debug) {
+				//print_r (debug_backtrace()); exit(0);
 				CMS::show_error("Error performing query: " . $e->getMessage());
 			}
 			else {

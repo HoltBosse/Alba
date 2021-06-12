@@ -201,7 +201,9 @@ table.dragging .before_after_wrap {
 					<?php endforeach; ?>
 				<?php endif; ?>
 
-				<th>Tags</th><?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
+				<th>Tags</th>
+				<th>Category</th>
+				<?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -253,6 +255,9 @@ table.dragging .before_after_wrap {
 					echo '</div>';
 					?>
 					</td>
+
+					<td><?php echo $content_item->catname;?></td>
+
 					<?php if (!$content_type_filter):?>
 						<td><?php echo Content::get_content_type_title($content_item->content_type); ?></td>
 					<?php endif; ?>
