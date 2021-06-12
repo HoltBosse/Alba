@@ -17,6 +17,7 @@
 			"id":"custom",
 			"type":"HTML",
 			"label":"Custom",
+			"save":false,
 			"html":"<h4 class='is-4 title'>Open Graph / SEO</h4><p>Details added here will supercede the parent blog when this article is viewed on it's own.</p><hr/>"
 		},
 		{
