@@ -63,6 +63,7 @@ else {
 		$required_details_form->get_field_by_name('note')->default = $content->note;
 		$required_details_form->get_field_by_name('start')->default = $content->start;
 		$required_details_form->get_field_by_name('end')->default = $content->end;
+		$required_details_form->get_field_by_name('category')->default = $content->category;
 		// load tags
 		$tag_id_array=[]; // $content->tags is array of tag objects returned from Tag::get_tags_for_content function
 		foreach ($content->tags as $t) {

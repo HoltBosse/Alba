@@ -74,6 +74,15 @@
 			]
 		},
 		{
+			"name": "category",
+			"id": "category",
+			"type": "Category",
+			"content_type":-3,
+			"label": "Category",
+			"filter": "NUMBER",
+			"default":0
+		},
+		{
 			"label": "Note",
 			"name": "note",
 			"id": "note",
