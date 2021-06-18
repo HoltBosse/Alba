@@ -10,6 +10,7 @@ class Field_Category extends Field {
 		$this->name = "";
 		$this->default = 0;
 		$this->content_type="1";
+		$this->self_id; // prevent showing self as option for parent
 	}
 
 	
@@ -32,6 +33,10 @@ class Field_Category extends Field {
 							echo "<option value='0'>None</option>";
 						}
 						foreach ($cats as $cat) {
+							if ($this->self_id==$cat->id) {
+								// don't show self if self_id is set
+								continue;
+							}
 							if ($cat->state==1) {
 								$selected = "";
 								if ($cat->id == $this->default) { $selected="selected";}

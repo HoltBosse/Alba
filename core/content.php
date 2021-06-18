@@ -306,6 +306,15 @@ class Content {
 		if (!$content_type) {
 			return false;
 		}
+		if ($content_type=="-1") {
+			return "User";
+		}
+		if ($content_type=="-2") {
+			return "Image/Media";
+		}
+		if ($content_type=="-3") {
+			return "Tag";
+		}
 		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_types where id=?");
 		$stmt->execute(array($content_type));
 		$result = $stmt->fetch(); */
