@@ -158,6 +158,17 @@ require_once (CMSPATH . "/core/cms.php");
 							</div>
 						</div>
 
+						<div class="navbar-item has-dropdown is-hoverable">
+							<a href="<?php echo Config::$uripath;?>/admin/categories/all"class="navbar-link">Categories</a>
+							<div class="navbar-dropdown">
+								<?php foreach (Content::get_all_content_types() as $content_type):?>
+									<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/categories/all/<?php echo $content_type->id;?>"><?php echo $content_type->title;?></a>
+								<?php endforeach; ?>
+								<hr class="dropdown-divider">
+								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/categories/all/-3">Tags</a>
+							</div>
+						</div>
+
 					
 					</div>
 

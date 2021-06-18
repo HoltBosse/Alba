@@ -12,6 +12,7 @@ class Content {
 	public $content_type;
 	public $tags;
 	public $alias;
+	public $category;
 
 	public function __construct($content_type=0) {
 		$this->id = false;
@@ -26,6 +27,7 @@ class Content {
 		}
 		$this->created_by = CMS::Instance()->user->id;
 		$this->alias="";
+		$this->category=0;
 	}
 
 	public function get_content_count($content_type, $search="") {
@@ -131,6 +133,7 @@ class Content {
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->created_by = $info->created_by;
 			$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
+			$this->category = $info->category;
 			return true;
 		}
 		else {
@@ -152,6 +155,7 @@ class Content {
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->created_by = $info->created_by;
 			$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
+			$this->category = $info->category;
 			return true;
 		}
 		else {
@@ -175,6 +179,7 @@ class Content {
 		$this->end = $required_details_form->get_field_by_name('end')->default;
 		$this->updated_by = CMS::Instance()->user->id;
 		$this->tags = $required_details_form->get_field_by_name('tags')->default; 
+		$this->category = $required_details_form->get_field_by_name('category')->default; 
 
 		// ensure alias is unique for content_type - will use id for existing content, random 4 digit number otherwise
 		$this->make_alias_unique();
@@ -196,10 +201,10 @@ class Content {
 
 		if ($this->id) {
 			// update
-			$query = "update content set state=?,  title=?, alias=?, note=?, start=FROM_UNIXTIME(?), end=FROM_UNIXTIME(?), updated_by=? where id=?";
+			$query = "update content set state=?,  title=?, alias=?, note=?, start=FROM_UNIXTIME(?), end=FROM_UNIXTIME(?), updated_by=?, category=? where id=?";
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			
-			$params = array($this->state, $this->title, $this->alias, $this->note, $this->start, $this->end, $this->updated_by, $this->id) ;
+			$params = array($this->state, $this->title, $this->alias, $this->note, $this->start, $this->end, $this->updated_by, $this->category, $this->id) ;
 			$required_result = $stmt->execute( $params );
 		}
 		else {
@@ -213,10 +218,10 @@ class Content {
 			if (!$ordering) {
 				$ordering=1;
 			}
-			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?))";
+			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?),?)";
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			
-			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end);
+			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
 			$required_result = $stmt->execute( $params );
 			if ($required_result) {
 				// update object id with inserted id
@@ -301,6 +306,15 @@ class Content {
 		if (!$content_type) {
 			return false;
 		}
+		if ($content_type=="-1") {
+			return "User";
+		}
+		if ($content_type=="-2") {
+			return "Image/Media";
+		}
+		if ($content_type=="-3") {
+			return "Tag";
+		}
 		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_types where id=?");
 		$stmt->execute(array($content_type));
 		$result = $stmt->fetch(); */
@@ -364,6 +378,12 @@ class Content {
 		$tags = DB::fetchall($query, array($content_type_id, $content_type_id));
 		//return $stmt->fetchAll();
 		return $tags;
+	}
+
+	public static function get_applicable_categories ($content_type_id) {
+		$query = "select * from categories where content_type=?";
+		$cats = DB::fetchall($query, array($content_type_id));
+		return $cats;
 	}
 
 	public static function get_content_location($content_type_id) {
@@ -492,21 +512,26 @@ class Content {
 		}
 
 		$query = "select";
-		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note ";
+		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note, c.category, cat.title  as catname";
 		if ($list_fields) {
 			foreach ($list_fields as $field) {
 				$select .= " ,f_{$field}.content as f_{$field}";
 			}
 		}
 
-		$from = " from content c ";
+		// note - added parentheses around from content to make sure
+		// those tables are evaluated BEFORE the left join - this
+		// avoids any 'unknown column in on clause' errors
+		$from = " from ( content c ";
 		if ($list_fields) {
 			foreach ($list_fields as $field) {
 				$from .= " ,content_fields f_{$field}";
 			}
 		}
+
+		$from .= " ) left join categories cat on c.category=cat.id ";
 		
-		$where = " where ";
+		$where = ' where ';
 		if ($published_only) {
 			$where .= " c.state > 0 ";
 		}
@@ -573,12 +598,12 @@ class Content {
 			//return $result;
 		}
 		elseif ($order_by=="title"||$order_by=="ordering"||$order_by=="id") {
-			$query .= " order by " . $order_by . " ASC";
+			$query .= " order by c." . $order_by . " ASC";
 		}
 		else {
 			//CMS::Instance()->queue_message('Unknown ordering method: ' . $order_by ,'danger', $_SERVER["HTTP_REFERER"]);
 			//$result = CMS::Instance()->pdo->query($query . " order by id ASC")->fetchAll();
-			$query .= " order by title ASC";
+			$query .= " order by c.title ASC";
 			//return $result;
 		}
 

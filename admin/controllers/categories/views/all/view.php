@@ -122,13 +122,13 @@ table.dragging .before_after_wrap {
 
 <form action='' method='post' name='content_action' id='content_action_form'>
 
-<h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
+<h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Categories
 	<?php if ($content_type_filter):?>
-	<a class='is-primary pull-right button btn' href='<?php echo Config::$uripath;?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
-	<span class='unimportant subheading'><?php $content_type_fields = Content::get_content_type_fields($content_type_filter);  echo $content_type_fields->description; ?></span>
+	<a class='is-primary pull-right button btn' href='<?php echo Config::$uripath;?>/admin/categories/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Category</a>
+	
 	<?php else: ?>
 		<div class='field pull-right'>
-			<label class='label'>New Content</label>
+			<label class='label'>New Category</label>
 			<div class='control'>
 				<div class='select'>
 					<select onchange="choose_new_content_type();" data-widget_type_id='0' id='new_content_type_selector'>
@@ -140,7 +140,7 @@ table.dragging .before_after_wrap {
 					<script>
 					function choose_new_content_type() {
 						new_id = document.getElementById("new_content_type_selector").value;
-						window.location.href = "<?php echo Config::$uripath;?>/admin/content/edit/new/" + new_id;
+						window.location.href = "<?php echo Config::$uripath;?>/admin/categories/edit/new/" + new_id;
 					}
 					</script>
 				</div>
@@ -149,9 +149,9 @@ table.dragging .before_after_wrap {
 	<?php endif; ?>
 	<!-- content operation toolbar -->
 	<div id="content_operations" class="pull-right buttons has-addons">
-		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/publish' class='button is-primary' type='submit'>Publish</button>
-		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+		<button formaction='<?php echo Config::$uripath;?>/admin/categories/action/publish' class='button is-primary' type='submit'>Publish</button>
+		<button formaction='<?php echo Config::$uripath;?>/admin/categories/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+		<button formaction='<?php echo Config::$uripath;?>/admin/categories/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 	</div>
 </h1>
 
@@ -168,8 +168,8 @@ table.dragging .before_after_wrap {
 
 
 
-<?php if (!$all_content):?>
-	<h2>No content to show!</h2>
+<?php if (!$all_categories):?>
+	<h2>No categories to show!</h2>
 <?php else:?>
 
 	<?php if ($content_type_filter):?>
@@ -187,27 +187,11 @@ table.dragging .before_after_wrap {
 			<tr>
 				<th>State</th><th>Title</th>
 
-				<?php if ($content_list_fields):?>
-					<?php foreach ($content_list_fields as $content_list_field):?>
-						<th>
-						<?php echo $content_list_field->label; ?>
-						<?php if (in_array ($content_list_field->name, $custom_fields->filters)): ?>
-							<br/>
-							<select class='auto_filter'>
-								
-							</select>
-						<?php endif ;?>
-						</th>
-					<?php endforeach; ?>
-				<?php endif; ?>
-
-				<th>Tags</th>
-				<th>Category</th>
-				<?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
+				<?php if (!$content_type_filter):?><th>Type</th><?php endif; ?>
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($all_content as $content_item):?>
+			<?php foreach ($all_categories as $content_item):?>
 				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
@@ -219,7 +203,7 @@ table.dragging .before_after_wrap {
 							<span droppable='true' class='drop_after order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">After</span>
 						</div>
 						<?php endif; ?>
-						<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/content/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
+						<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/categories/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
 							<?php 
 							if ($content_item->state==1) { 
 								echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -230,42 +214,20 @@ table.dragging .before_after_wrap {
 						</button>
 					</td>
 					<td>
-						<a href="<?php echo Config::$uripath; ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
+						<?php $title_prefix="";
+						for ($n=0; $n<$content_item->depth; $n++) {
+							$title_prefix .= "&nbsp;-&nbsp;";
+						}?>
+						<a href="<?php echo Config::$uripath; ?>/admin/categories/edit/<?php echo $content_item->id;?>"><?php echo $title_prefix . $content_item->title; ?></a>
 						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
 					</td>
 
-					<?php if ($content_list_fields):?>
-						<?php foreach ($content_list_fields as $content_list_field):?>
-							<td><?php 
-								$propname = "f_{$content_list_field->name}"; 
-								$classname = "Field_" . $content_list_field->type;
-								$curfield = new $classname($content_item->$propname);
-								//CMS::pprint_r($curfield);
-								echo $curfield->get_friendly_value();
-								?></td>
-						<?php endforeach; ?>
-					<?php endif; ?>
-					
-					<td><?php 
-					$tags = Tag::get_tags_for_content($content_item->id, $content_item->content_type);
-					echo '<div class="tags are-small are-light">';
-					foreach ($tags as $tag) {
-						echo '<span class="tag is-info is-light">' . $tag->title . '</span>';
-					}
-					echo '</div>';
-					?>
-					</td>
-
-					<td><?php echo $content_item->catname;?></td>
+			
 
 					<?php if (!$content_type_filter):?>
 						<td><?php echo Content::get_content_type_title($content_item->content_type); ?></td>
 					<?php endif; ?>
-					<td class='unimportant'><?php echo $content_item->start; ?></td>
-					<td class='unimportant'><?php echo $content_item->end; ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($content_item->updated_by); ?></td>
-					<td class='unimportant'><?php echo $content_item->note; ?></td>
+					
 				</tr>
 				
 			<?php endforeach; ?>
@@ -353,7 +315,7 @@ $num_pages = ceil($content_count/$pagination_size);
 		//console.log('Insert',source_id, insert_position, dest_id);
 		// perform ajax action silently
 		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position};
-		postAjax('<?php echo Config::$uripath;?>/admin/content/api', api_data, function(data){
+		postAjax('<?php echo Config::$uripath;?>/admin/categories/api', api_data, function(data){
 			response = JSON.parse(data);
 			if (response.success=='1') {
 				// do nothing - assume it worked
