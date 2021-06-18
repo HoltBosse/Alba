@@ -26,6 +26,7 @@ class Tag {
 		$this->image = $info->image;
 		$this->public = $info->public;
 		$this->parent = $info->parent;
+		$this->category = $info->category;
 		$query = "select content_type_id from tag_content_type where tag_id=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($this->id));
@@ -87,7 +88,7 @@ class Tag {
 	public static function get_all_tags_by_depth($parent=0, $depth=-1) {
 		$depth = $depth+1;
 		$result=array();
-		$children = DB::fetchall("select * from tags where state>-1 and parent=?", array($parent));
+		$children = DB::fetchall("select t.*, cat.title as cat_title from (tags t) left join categories cat on t.category=cat.id where t.state>-1 and t.parent=?", array($parent));
 		foreach ($children as $child) {
 			$child->depth = $depth;
 			$result[] = $child;
@@ -139,6 +140,7 @@ class Tag {
 		$this->public = $required_details_form->get_field_by_name('public')->default;
 		$this->contenttypes = $required_details_form->get_field_by_name('contenttypes')->default;
 		$this->parent = $required_details_form->get_field_by_name('parent')->default;
+		$this->category = $required_details_form->get_field_by_name('category')->default;
 		if ($this->parent=="0"||$this->parent=="") {
 			$this->parent = 0;
 		}
@@ -163,14 +165,14 @@ class Tag {
 			// reach here, parent is valid or empty
 			
 			// update
-			$query = "update tags set state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=? where id=?";
+			$query = "update tags set state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=? where id=?";
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
 			}
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->id) ;
+			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->id) ;
 			//$stmt = CMS::Instance()->pdo->prepare($query);
 			//$result = $stmt->execute( $params );
 			$result = DB::exec($query, $params);
@@ -196,7 +198,7 @@ class Tag {
 		}
 		else {
 			// new
-			$query = "insert into tags (state,public,title,alias,note,filter,description,image,parent) values(?,?,?,?,?,?,?,?,?)";
+			$query = "insert into tags (state,public,title,alias,note,filter,description,image,parent,category) values(?,?,?,?,?,?,?,?,?,?)";
 			
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
@@ -204,7 +206,7 @@ class Tag {
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent);
+			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category);
 			//$stmt = CMS::Instance()->pdo->prepare($query);
 			//$result = $stmt->execute( $params );
 			$result = DB::exec($query, $params);
