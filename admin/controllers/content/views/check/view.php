@@ -19,6 +19,14 @@ function fix_content ($content_type) {
 	if ($all_content_of_type) {
 		$response = true;
 		foreach ($custom_fields->fields as $field) {
+			// check if field save attribute is false - if so, no need for checking :)
+			if (property_exists($field,'save')) {
+				if ($field->save===false) {
+					echo "<p class='help success'>Field &ldquo;" . $field->name . "&rdquo; is not saveable - skipping</p>";
+					continue;
+				}
+			}
+
 			// field count for content
 			$query = "select count(*) as c from content_fields where name=? and content_id in (select id from content where content_type=?)";
 			$stmt = CMS::Instance()->pdo->prepare($query);
@@ -26,7 +34,6 @@ function fix_content ($content_type) {
 			$field_count = $stmt->fetch()->c;
 
 			$missing_count = sizeof($all_content_of_type) - $field_count;
-
 
 			if (!$missing_count) {
 				echo "<p class='help success'>Field &ldquo;" . $field->name . "&rdquo; ok</p>";
