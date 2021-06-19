@@ -57,10 +57,46 @@ $query = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND
 $stmt = CMS::Instance()->pdo->prepare($query);
 $stmt->execute(array());
 $tags_table_ok = $stmt->fetchAll();
-
 if (!$tags_table_ok) {
 	DB::exec("ALTER TABLE tags ADD COLUMN `parent` int(11) DEFAULT NULL");
 }
+
+// create categories table if not exist
+
+$query = "SELECT * 
+FROM information_schema.tables 
+WHERE table_name = 'categories'
+LIMIT 1;";
+$stmt = CMS::Instance()->pdo->prepare($query);
+$stmt->execute(array());
+$categories_table_ok = $stmt->fetchAll();
+if (!$categories_table_ok) {
+	DB::exec("CREATE TABLE `categories` (
+	`id` int(11) NOT NULL,
+	`state` int(11) NOT NULL DEFAULT '1',
+	`title` varchar(64) NOT NULL,
+	`content_type` int(11) NOT NULL COMMENT '-1 media, -2 user, -3 tag',
+	`parent` int(11) NOT NULL DEFAULT '0'
+  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;");
+  DB::exec("ALTER TABLE `categories` ADD PRIMARY KEY (`id`);");
+  DB::exec("ALTER TABLE `categories` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
+}
+// ensure cat columns exist in content and tags tables
+$query = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'category'";
+$stmt = CMS::Instance()->pdo->prepare($query);
+$stmt->execute(array());
+$tag_category_ok = $stmt->fetchAll();
+if (!$tag_category_ok) {
+	DB::exec("ALTER TABLE tags ADD COLUMN `category` int(11) DEFAULT 0");
+}
+$query = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'content' AND COLUMN_NAME = 'category'";
+$stmt = CMS::Instance()->pdo->prepare($query);
+$stmt->execute(array());
+$content_category_ok = $stmt->fetchAll();
+if (!$content_category_ok) {
+	DB::exec("ALTER TABLE content ADD COLUMN `category` int(11) DEFAULT 0");
+}
+
 
 // Perform update if required
 

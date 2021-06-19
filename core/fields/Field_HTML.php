@@ -10,6 +10,7 @@ class Field_HTML extends Field {
 		$this->default = $default_content;
 		$this->content_type="";
 		$this->nowrap = true;
+		$this->save=false;
 	}
 
 	public function display() {

@@ -9,7 +9,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php endif; ?>
 
 <hr>
-
+<?php //CMS::pprint_r ($required_details_form); ?>
 <form method="POST" action="">
 
 <div class='flex'>
