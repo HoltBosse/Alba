@@ -62,3 +62,17 @@ if ($tags_table_ok) {
 else {
 	show_message ('Tags Table Parent Column','Tags table updated.','is-warning');
 }
+
+if ($content_category_ok) {
+	show_message ('Content Table Category Column','Content table OK.','is-success');
+}
+else {
+	show_message ('Tags Table Category Column','Content table updated.','is-warning');
+}
+
+if ($tag_category_ok) {
+	show_message ('Tags Table Category Column','Tags table OK.','is-success');
+}
+else {
+	show_message ('Tags Table Category Column','Tags table updated.','is-warning');
+}
