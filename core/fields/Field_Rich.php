@@ -317,6 +317,7 @@ class Field_Rich extends Field {
 					<a class='editor_button' href="#" data-command='img'><i class="fa fa-images"></i></a>
 					<a class='editor_button' href="#" data-command='undo'><i class='fa fa-undo'></i></a>
 					<a class='editor_button' href="#" data-command='createlink'><i class='fa fa-link'></i></a>
+					<a class='editor_button' href="#" data-command='unlink'><i class='fa fa-unlink'></i></a>
 					<a class='editor_button' href="#" data-command='justifyLeft'><i class='fa fa-align-left'></i></a>
 					<a class='editor_button' href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
 					<a class='editor_button image_selected' href='#' data-command='floatleft'>FL</a>
