@@ -320,6 +320,7 @@ class Field_Rich extends Field {
 					<a class='editor_button' href="#" data-command='unlink'><i class='fa fa-unlink'></i></a>
 					<a class='editor_button' href="#" data-command='justifyLeft'><i class='fa fa-align-left'></i></a>
 					<a class='editor_button' href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
+					<a class='editor_button' href="#" data-command='removeFormat'><i class='fa fa-broom'></i></a>
 					<a class='editor_button image_selected' href='#' data-command='floatleft'>FL</a>
 					<a class='editor_button image_selected' href='#' data-command='floatright'>FR</a>
 					<a class='editor_button image_selected' href='#' data-command='floatclear'>FC</a>
