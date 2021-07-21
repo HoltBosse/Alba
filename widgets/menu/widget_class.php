@@ -178,7 +178,7 @@ class Widget_menu extends Widget {
 				echo "<a target='{$target}' class='page_id_{$page->id}' href='{$url}'>" . $title . "</a>";
 			}
 			else {
-				echo $node->title;
+				echo "<span class='title_only'>$node->title</span>";
 			}
 			if ($node->children) {
 				echo "<ul>";
