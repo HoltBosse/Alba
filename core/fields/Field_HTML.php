@@ -27,14 +27,11 @@ class Field_HTML extends Field {
 		$this->description = $config->description ?? '';
 		$this->maxlength = $config->maxlength ?? 999;
 		$this->filter = $config->filter ?? 'RAW';
-		$this->minlength = $config->minlength ?? 0;
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
-		$this->input_type = $config->input_type ?? 'text';
 		$this->default = $config->default ?? $this->default;
-		$this->html = $config->html ?? $this->html;
 		$this->nowrap = $config->nowrap ?? true;
-		$this->save = false;
+		$this->save = $config->save ?? false;
 	}
 
 	public function validate() {
