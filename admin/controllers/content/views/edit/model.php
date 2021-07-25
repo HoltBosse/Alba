@@ -38,7 +38,7 @@ $tags_field->content_type = $content->content_type;
 // check if submitted or show defaults/data from db
 if ($required_details_form->is_submitted()) {
 
-	//echo "<h1>Submitted Content!</h1>";
+	//echo "<h1>Submitted Content!</h1>"; exit(0);
 
 	// update forms with submitted values
 	$required_details_form->set_from_submit();
@@ -47,6 +47,19 @@ if ($required_details_form->is_submitted()) {
 	// validate
 	if ($required_details_form->validate() && $content_form->validate()) {
 		// forms are valid, save info
+		// first save version if versions are turned on
+		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
+		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
+			// save old version
+			//$old_version = new content();
+			$old_content = Content::get_all_content("id", "basic_article", $content_id); // 2nd param being passed gives enough info to get custom fields
+			if ($old_content) {
+				Content::save_version($old_content[0]);
+			}
+			else {
+				CMS::Instance()->queue_message('Unable to get all original content fields','danger',$_SERVER['REQUEST_URI']);
+			}
+		}
 		$content->save($required_details_form, $content_form);
 	}
 	else {

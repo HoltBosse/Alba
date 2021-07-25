@@ -30,7 +30,7 @@ class Form {
 			}
 			$tempfields = $obj->fields;
 			$this->id = $obj->id;
-			//CMS::pprint_r ($tempfields);
+			
 			foreach ($tempfields as $field_config) {
 				$class = "Field_" . $field_config->type;
 				$thisfield = new $class();
