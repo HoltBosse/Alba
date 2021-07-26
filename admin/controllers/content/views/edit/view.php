@@ -17,7 +17,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <form method="POST" action="">
 
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
-<div class='toggle_wrap <?php if (!$new_content) { echo " hidden ";}?>'>
+<div class='toggle_wrap '>
 	<div class='flex'>
 		<?php $required_details_form->display_front_end(); ?>
 	</div>
