@@ -573,7 +573,7 @@ final class CMS {
 				}
 
 				$this->page = new Page();
-				$this->page->load_from_alias($page->alias); // also loads correct template obj into page obj
+				$this->page->load_from_id($page->id); // also loads correct template obj into page obj
 				// check user has access
 				$access_granted_to = json_decode($this->page->get_page_option_value("access"));
 				if ($access_granted_to) {
