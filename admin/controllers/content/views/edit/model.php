@@ -3,7 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
 
-
+$version_count = 0;
 
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$content_id = $segments[2];
@@ -11,6 +11,9 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$content = new content();
 	$content->load($content_id);
 	$new_content = false;
+
+	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?',array($content_id))->c;
+	
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
 	$content = new content($segments[3]);
@@ -52,7 +55,9 @@ if ($required_details_form->is_submitted()) {
 		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
 			// save old version
 			//$old_version = new content();
-			$old_content = Content::get_all_content("id", "basic_article", $content_id); // 2nd param being passed gives enough info to get custom fields
+			$content_location = Content::get_content_location($content->content_type);
+			$old_content = Content::get_all_content("id", $content_location, $content_id); // 2nd param being passed gives enough info to get custom fields
+			//CMS::pprint_r (Content::get_content_location($content->content_type)); CMS::pprint_r ($old_content); exit(0);
 			if ($old_content) {
 				Content::save_version($old_content[0]);
 			}

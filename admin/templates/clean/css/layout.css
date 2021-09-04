@@ -322,3 +322,12 @@ h1.title.sticky {
 	background:white;
 	border-radius:0.5rem;
 }
+
+section#version_comparisons {
+    display: flex;
+    max-width: 100%;
+    overflow: scroll;
+    gap: 4rem;
+    /* border-left: 2px solid #aaa; */
+    padding: 2rem;
+}
