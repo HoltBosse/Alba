@@ -2,15 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 //CMS::pprint_r ($content);
 
-function preview_field($field) {
-	?>
-	<tr>
-		<td><?php echo $field->label; ?></td>
-		<td><?php CMS::pprint_r ( $field->default );?></td>
-		<td>TODO</td>
-	</tr>
-	<?php
-}
+
 
 ?>
 
@@ -21,7 +13,7 @@ function preview_field($field) {
 
 
 <hr>
-<?php CMS::pprint_r ($cur_content_fields); ?>
+<p>TODO: nice preview version of current content - will require loading form json etc. previews below work by virtue of label being stored in versions db</p>
 <hr>
 
 <section id='version_comparisons'>
@@ -36,13 +28,24 @@ function preview_field($field) {
 					<thead>
 						<tr>
 							<th>Field</th>
-							<th>Contents</th>
-							<th>Compare</th>
+							<th>Version</th>
+							<th>Current</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php  foreach ($fields as $field):?>
-							<?php preview_field($field); ?>
+							<?php 
+								//CMS::pprint_r ($field);
+								$cur_field = get_field_by_name ($cur_content_fields, $field->name);
+								//CMS::pprint_r ($cur_field);
+								if ($cur_field) {
+									if ($cur_field->content!=$field->content) {
+										// not the same - show diff
+										preview_field($field, $cur_field); 
+									}
+								}
+								// preview_field($field); 
+							?>
 						<?php endforeach; ?>
 					</tbody>
 				</table>
