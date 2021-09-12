@@ -5,6 +5,31 @@ $segments = CMS::Instance()->uri_segments;
 
 $version_count = 0;
 
+function preview_field($field, $cur_field) {
+	?>
+	<tr>
+		<td><?php echo $field->label; ?></td>
+		<td><?php version_field_preview ( $field, 'default' );?></td>
+		<td><?php version_field_preview ( $cur_field, 'content' );?></td>
+	</tr>
+	<?php
+}
+
+function get_field_by_name ($fields, $name) {
+	foreach ($fields as $field) {
+		if ($field->name==$name) {
+			return $field;
+		}
+	}
+	return false;
+}
+
+function version_field_preview ($field, $prop) {
+	echo "<pre><xmp>";
+	print_r ($field->$prop);
+	echo "</xmp></pre>"; 
+}
+
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$content_id = $segments[2];
 	
