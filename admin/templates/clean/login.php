@@ -1,7 +1,4 @@
-<?php defined('CMSPATH') or die; // prevent unauthorized access ?>
-
-<?php
-
+<?php defined('CMSPATH') or die; // prevent unauthorized access 
 $view = Input::getvar('view','STRING');
 
 // handle reset request
@@ -11,7 +8,7 @@ if ($resetemail) {
 	$reset_user = new User();
 	$reset_user->load_from_email($resetemail);
 
-	if ($reset_user) {
+	if ($reset_user && $reset_user->username != 'guest') {
 		$key = $reset_user->generate_reset_key();
 		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 		$domain = $_SERVER['HTTP_HOST'].'/';
