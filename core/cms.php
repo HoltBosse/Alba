@@ -157,7 +157,9 @@ final class CMS {
 	}
 
 	public static function show_error($text) {
-		ob_end_clean();
+		if (ob_get_length()) {
+			ob_end_clean();
+		}
 		echo "<div style='padding:1em; font-family:sans-serif; text-align:center; height:100vh; width:100%; display:flex; align-items:center; justify-content:center;'>";
 		echo "<h1>{$text}</h1>";
 		echo "</div>";
