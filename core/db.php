@@ -24,6 +24,9 @@ class db {
 	}	
 
 	public static function exec($query, $paramsarray=[]) {
+		if (!is_array($paramsarray)) {
+			$paramsarray = array($paramsarray);
+		}
 		try {
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$success = $stmt->execute($paramsarray);
@@ -40,6 +43,9 @@ class db {
 	}
 
 	public static function fetchall($query, $paramsarray=[]) {
+		if (!is_array($paramsarray)) {
+			$paramsarray = array($paramsarray);
+		}
 		try {
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute($paramsarray);
@@ -58,6 +64,9 @@ class db {
 	}
 
 	public static function fetch($query, $paramsarray=[]) {
+		if (!is_array($paramsarray)) {
+			$paramsarray = array($paramsarray);
+		}
 		try {
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute($paramsarray);
