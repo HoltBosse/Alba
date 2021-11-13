@@ -427,6 +427,49 @@ class Content {
 			return false;
 		}
 	}
+
+	public static function get_all_content_for_id ($id) {
+		// accept content id, return object with all named required fields (title, state) etc
+		// determine content type and parse content type custom_fields json
+		// obtain all content_fields for content and store in custom_fields object property
+		// loop over parsed json and create object properties starting with f_ (same as returned by get_all_content function)
+		// if no matched data from content_fields found, populate with default value from form
+		// - function is useful for complex content types that have not been 'fixed' (may have missing content_fields in DB)
+		// - todo: decide if it's worthwhile to also include in returned object all fields in db, not just those required by json form?
+		$result = DB::fetch('select * from content where id=?',$id);
+		if ($result) {
+			$location = Content::get_content_location($result->content_type);
+			$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
+			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			// convert content fields from indexed array to assoc array with 'name' as key
+			$content_fields_assoc = array_column($content_fields, null, 'name');
+			foreach ($custom_fields->fields as $f) {
+				if (property_exists($f,'save')) {
+					if ($f->save===false) {
+						// skip if save property is false - assume any other value or save property missing indicates saveable value
+						continue;
+					}
+				}
+				// saveable field
+				// check if field content already found in db
+				$keyname = "f_" . $f->name;
+				if (array_key_exists($f->name, $content_fields_assoc)) {
+					$result->{$keyname} = $content_fields_assoc[$f->name]->content;
+				}
+				else {
+					// not found, use default from form if exists
+					if (property_exists($f,'default')) {
+						$result->{$keyname} = $f->default;
+					}
+					else {
+						$result->{$keyname} = null; // hey, at least we have the object property :)
+					}
+				}
+			}
+			return $result;
+		}
+		return false;
+	}
 	
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="") {
 		// order by id by default

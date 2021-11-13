@@ -1,7 +1,4 @@
-<?php defined('CMSPATH') or die; // prevent unauthorized access ?>
-
-<?php
-
+<?php defined('CMSPATH') or die; // prevent unauthorized access 
 $view = Input::getvar('view','STRING');
 
 // handle reset request
@@ -11,7 +8,7 @@ if ($resetemail) {
 	$reset_user = new User();
 	$reset_user->load_from_email($resetemail);
 
-	if ($reset_user) {
+	if ($reset_user && $reset_user->username != 'guest') {
 		$key = $reset_user->generate_reset_key();
 		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 		$domain = $_SERVER['HTTP_HOST'].'/';
@@ -23,13 +20,11 @@ if ($resetemail) {
 		<p>Click <a target='_blank' href='{$link}'>here</a> to choose a new password.</p>
 		<p>If you did not initiate this request, please ignore this email.</p>
 		";
-		$reset_email = new Mail();
-		$sent_ok = $reset_email->
-		set_subject('Reset Email for ' . Config::$sitename)->
-		set_message($markup)->
-		set_to($resetemail, $reset_user->username)->
-		set_from('noreply@seamlesscms.com', Config::$sitename)->
-		send();
+		$mail = new Mail();	
+		$mail->addAddress($resetemail,Config::$sitename . - " User");
+		$mail->subject = 'Reset Email for ' . Config::$sitename;
+		$mail->html = $markup;
+		$mail->send();
 	}
 	// either sent or not, show same message
 	CMS::Instance()->queue_message('If your email was associated with a user, you should receive a message with further instructions shortly.','success',Config::$uripath . '/admin');
