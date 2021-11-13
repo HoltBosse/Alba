@@ -20,7 +20,8 @@ CREATE TABLE `content` (
   `updated_by` int(11) NOT NULL,
   `note` varchar(255) DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT current_timestamp(),
-  `category` int(11) NOT NULL DEFAULT 0
+  `category` int(11) NOT NULL DEFAULT 0,
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `content_fields`;
