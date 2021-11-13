@@ -259,7 +259,7 @@ final class CMS {
 					$this->user->email = $result->email;
 					$this->user->id = $result->id;
 					// get groups
-					$query = "select * from groups where id in (select group_id from user_groups where user_id=?)";
+					$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
 					$stmt = $this->pdo->prepare($query);
 					$stmt->execute(array($session_user_id));
 					$this->user->groups = $stmt->fetchAll();
