@@ -51,7 +51,7 @@ class User {
 		$query = "Select u.*, group_concat(DISTINCT g.display) as groups, group_concat(DISTINCT t.title) as tags 
 					from users u 
 					Left Join user_groups ug on ug.user_id = u.id 
-					Left Join groups g on ug.group_id = g.id 
+					Left Join `groups` g on ug.group_id = g.id 
 					Left Join tagged tt on tt.content_id = u.id AND content_type_id=-2 
 					Left Join tags t on t.id = tt.tag_id AND t.state > 0 
 					group by u.id";
@@ -68,7 +68,7 @@ class User {
 		//$result = CMS::Instance()->pdo->query("select * from users")->fetchAll();
 		$query = "Select u.*, group_concat(g.display) as groups from users u 
 					Left Join user_groups ug on ug.user_id = u.id  
-					Left Join groups g on ug.group_id = g.id 
+					Left Join `groups` g on ug.group_id = g.id 
 					WHERE g.id=? 
 					group by u.id";
 		/* $stmt = CMS::Instance()->pdo->prepare($query);
@@ -79,7 +79,7 @@ class User {
 	}
 
 	public static function get_group_name ($group_id) {
-		$query = "select display from groups where id=?";
+		$query = "select display from `groups` where id=?";
 		//$stmt = CMS::Instance()->pdo->prepare($query);
 		//$ok = $stmt->execute(array($group_id));
 		//$result = $stmt->fetch();
@@ -101,7 +101,7 @@ class User {
 	}
 
 	public function is_member_of ($group_value) {
-		$query = "select id from groups where value=? and id in (select group_id from user_groups where user_id=?)";
+		$query = "select id from `groups` where value=? and id in (select group_id from user_groups where user_id=?)";
 		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($group_value, $this->id));
 		$result = $stmt->fetch(); */
@@ -154,7 +154,7 @@ class User {
 			$this->id = $result->id;
 
 			// get groups
-			$query = "select * from groups where id in (select group_id from user_groups where user_id=?)";
+			$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
 			/* $stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute(array($id));
 			$this->groups = $stmt->fetchAll(); */
@@ -353,7 +353,7 @@ class User {
 
 	public function get_all_groups() {
 		//echo "<p>Getting all users...</p>";
-		$result = CMS::Instance()->pdo->query("select * from groups")->fetchAll();
+		$result = CMS::Instance()->pdo->query("select * from `groups`")->fetchAll();
 		return $result;
 	}
 
