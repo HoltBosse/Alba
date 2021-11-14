@@ -56,6 +56,42 @@ class File {
 		$this->width = $new_width;
 	}
 
+
+	public function get_max_upload_size()  {  
+		return min((ini_get('post_max_size')), (ini_get('upload_max_filesize')));  
+	}  
+
+	public function get_max_upload_size_bytes()  {  
+		return min(File::php_size_to_bytes(ini_get('post_max_size')), File::php_size_to_bytes(ini_get('upload_max_filesize')));    
+	}
+
+	
+	public function php_size_to_bytes($php_size) {
+		$suffix = strtoupper(substr($php_size, -1));
+		if (!in_array($suffix,array('P','T','G','M','K'))){
+			return (int)$php_size;  
+		} 
+		$val = substr($php_size, 0, -1);
+		switch ($suffix) {
+			case 'P':
+				$val *= 1024;
+				// Fallthrough intended
+			case 'T':
+				$val *= 1024;
+				// Fallthrough intended
+			case 'G':
+				$val *= 1024;
+				// Fallthrough intended
+			case 'M':
+				$val *= 1024;
+				// Fallthrough intended
+			case 'K':
+				$val *= 1024;
+				break;
+		}
+		return (int)$val;
+	}
+
 	private function import_into_db() {
 	}
 
