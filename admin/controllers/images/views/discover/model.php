@@ -56,41 +56,37 @@ if ($titles_array) {
 	$pdo = CMS::Instance()->pdo;
 	for ($n=0; $n<sizeof($titles_array); $n++) {
 		if ($titles_array[$n] && $alts_array[$n]) {
-			if (image_in_db($all_image_files[$n]) ) {
-				CMS::Instance()->queue_message('File ' . $all_image_files[$n] . ' already exists in DB. Deleting upload file.','warning');
+			$unique_prefix = uniqid() . "_";
+			
+			$title = $titles_array[$n];
+			$alt = $alts_array[$n];
+			$web_friendly = $web_friendly_array[$n];
+			// TODO: further filtering on title and alt just in case
+			$file = new File(CMSPATH . '/images/upload/' . $all_image_files[$n]);
+			if ($file->width > 1920 && $web_friendly[$n]) {
+				$file->original_width = $file->width;
+				$file->recalc_height(1920);
 			}
-			else {
-				$title = $titles_array[$n];
-				$alt = $alts_array[$n];
-				$web_friendly = $web_friendly_array[$n];
-				// TODO: further filtering on title and alt just in case
-				$file = new File(CMSPATH . '/images/upload/' . $all_image_files[$n]);
-				if ($file->width > 1920 && $web_friendly[$n]) {
-					$file->original_width = $file->width;
-					$file->recalc_height(1920);
-				}
-				$query = "insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)";
-				$stmt = $pdo->prepare($query);
-				$in_db_ok = $stmt->execute(array($file->width, $file->height, $title, $alt, $file->filename, $file->mimetype));
-				if ($in_db_ok) {
-					
-					$src = CMSPATH . '/images/upload/' . $file->filename;
-					$dest = CMSPATH . '/images/processed/' . $file->filename;
-					// make web friendly if required
-					if ($file->original_width > 1920 && $web_friendly[$n]) {
-						make_thumb($src, $dest, 1920, $file);
-						unlink($src);
-					}
-					else {
-						// move original file from upload to processed
-						rename ($src, $dest);
-					}
-					$processed[] = $all_image_files[$n];
-
+			$query = "insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)";
+			$stmt = $pdo->prepare($query);
+			$in_db_ok = $stmt->execute(array($file->width, $file->height, $title, $alt, $unique_prefix . $file->filename, $file->mimetype));
+			if ($in_db_ok) {
+				
+				$src = CMSPATH . '/images/upload/' . $file->filename;
+				$dest = CMSPATH . '/images/processed/' . $unique_prefix. $file->filename;
+				// make web friendly if required
+				if ($file->original_width > 1920 && $web_friendly[$n]) {
+					make_thumb($src, $dest, 1920, $file);
+					unlink($src);
 				}
 				else {
-					$failed[] = $all_image_files[$n];
+					// move original file from upload to processed
+					rename ($src, $dest);
 				}
+				$processed[] = $all_image_files[$n];
+			}
+			else {
+				$failed[] = $all_image_files[$n];
 			}
 		}
 		else {
