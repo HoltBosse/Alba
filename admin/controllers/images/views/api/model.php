@@ -72,6 +72,8 @@ if ($action=='delete_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+		$filename_response = DB::fetch('select filename from media where id=?',$image_id);
+
 		// clear tags
 		$query = "delete from tagged where content_id=? and content_type_id=-1";
 		$stmt = $pdo->prepare($query);
@@ -80,7 +82,15 @@ if ($action=='delete_media') {
 		$query = "delete from media where id=?";
 		$stmt = $pdo->prepare($query);
 		$ok = $stmt->execute(array($image_id));
+		
 		// TODO: remove file(s) from /processed or any other thumbnail/resolution cache created in future
+		if ($filename_response) {
+			$filename = $filename_response->filename;
+			foreach (glob(CMSPATH . "/images/processed/*".$filename) as $delfile) {
+				unlink($delfile);
+			}
+		}
+		
 		if ($ok) {
 			$image_ids_tagged[] = $image_id;
 		}
@@ -159,6 +169,7 @@ if ($action=='unpublish') {
 
 if ($action=='delete') {
 	$idlist = implode(',',$id);
+	
 	$query = "DELETE FROM media where id in ({$idlist})"; // relatively safe - ids already filtered to be INTs only
 	$stmt = CMS::Instance()->pdo->prepare($query);
 	$result = $stmt->execute(array()); 
