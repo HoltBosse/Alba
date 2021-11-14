@@ -8,3 +8,6 @@ $image_tags = Content::get_applicable_tags ("-1");
 
 $filter = Input::getvar('filter','STRING');
 
+$max_upload_size = File::get_max_upload_size();
+$max_upload_size_bytes = File::get_max_upload_size_bytes();
+

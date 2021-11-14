@@ -93,6 +93,27 @@ input.mm_url {
 	transform: translateY(1rem);
 }
 
+.upload_preview img {
+	object-fit: contain;
+	aspect-ratio: 1;
+	display:inline-block;
+	width:12rem;
+	height:12rem;
+}
+.upload_details {
+    margin: 1rem;
+}
+.upload_field {
+	display:flex;
+	margin-top: 1rem;
+}
+.upload_field label {
+	width:7rem;
+	display:inline-block;
+	text-align: right;
+    padding-right: 1rem;
+}
+
 .mm_item.pdf {
   background-image:url(http://www.stdicon.com/pdf);
 }
