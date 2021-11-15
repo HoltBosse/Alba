@@ -33,7 +33,7 @@
 				// do ajax call to /admin/images/api
 				// action: tag, media ids: ids, tag id: tag_id
 				api_data = {"action":"tag_media","id_list":ids,"tag_id":tag_id};
-				postAjax('<?php echo Config::$uripath;?>/admin/images/api', api_data, function(data){
+				postAjax(window.uripath + '/admin/images/api', api_data, function(data){
 					response = JSON.parse(data);
 					response.tagged.forEach(item => {
 						add_tag_to_media_item (tag_id, tag_title, item);
