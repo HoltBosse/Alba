@@ -583,7 +583,7 @@ class Content {
 		}
 
 		if ($search) {
-			$where .= " AND (title like ? or note like ?) "; 
+			$where .= " AND (c.title like ? or c.note like ?) "; 
 		}
 		
 		if ($list_fields) {
