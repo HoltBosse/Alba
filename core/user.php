@@ -66,7 +66,7 @@ class User {
 		//$db = CMS::$pdo;
 		//$result = $db->pdo->query("select * from users")->fetchAll();
 		//$result = CMS::Instance()->pdo->query("select * from users")->fetchAll();
-		$query = "Select u.*, group_concat(g.display) as groups from users u 
+		$query = "Select u.*, group_concat(g.display) as `groups` from users u 
 					Left Join user_groups ug on ug.user_id = u.id  
 					Left Join `groups` g on ug.group_id = g.id 
 					WHERE g.id=? 

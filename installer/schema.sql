@@ -189,6 +189,15 @@ CREATE TABLE `categories` (
   `parent` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `content_versions`;
+CREATE TABLE `content_versions` (
+  `id` int NOT NULL,
+  `content_id` int NOT NULL,
+  `created_by` int NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fields_json` mediumtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
@@ -240,6 +249,9 @@ ALTER TABLE `widget_types`
 ALTER TABLE `plugins`
   ADD PRIMARY KEY (`id`);
 
+ALTER TABLE `content_versions`
+  ADD PRIMARY KEY (`id`);
+
 ALTER TABLE `content`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
@@ -278,5 +290,10 @@ ALTER TABLE `plugins`
 
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `content_versions`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+
 
 
