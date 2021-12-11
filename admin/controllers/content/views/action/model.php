@@ -26,7 +26,7 @@ if ($action=='toggle') {
 	}
 }
 
-if ($action=='publish') {
+elseif ($action=='publish') {
 	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
@@ -43,7 +43,7 @@ if ($action=='publish') {
 	}
 }
 
-if ($action=='unpublish') {
+elseif ($action=='unpublish') {
 	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
@@ -60,7 +60,7 @@ if ($action=='unpublish') {
 	}
 }
 
-if ($action=='delete') {
+elseif ($action=='delete') {
 	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
@@ -76,6 +76,22 @@ if ($action=='delete') {
 		CMS::Instance()->queue_message('Failed to delete content','danger', $_SERVER['HTTP_REFERER']);
 	}
 }
+
+elseif ($action=='duplicate') {
+	$ids = Input::getvar('id','ARRAYOFINT');
+	if (!$ids) {
+		//CMS::pprint_r ($ids);exit(0);
+		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
+	}
+	CMS::pprint_r ($id);
+	foreach ($ids as $id) {
+		$orig = new Content();
+		$orig->load($id);
+		$orig->duplicate();
+	}
+}
+
+
 
 else {
 	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
