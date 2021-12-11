@@ -151,6 +151,7 @@ table.dragging .before_after_wrap {
 	<div id="content_operations" class="pull-right buttons has-addons">
 		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/publish' class='button is-primary' type='submit'>Publish</button>
 		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/duplicate' class='button is-info' type='submit'>Duplicate</button>
 		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 	</div>
 </h1>

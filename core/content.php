@@ -10,6 +10,9 @@ class Content {
 	public $configuration;
 	public $updated;
 	public $content_type;
+	public $created_by;
+	public $updated_by;
+	public $note;
 	public $tags;
 	public $alias;
 	public $category;
@@ -132,6 +135,7 @@ class Content {
 			$this->content_type = $info->content_type;
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->created_by = $info->created_by;
+			$this->updated_by = $info->updated_by;
 			$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
 			$this->category = $info->category;
 			return true;
@@ -163,6 +167,48 @@ class Content {
 		}
 	}
 
+	public function duplicate() {
+		// remember original id
+		$original_id = $this->id;
+		// make current duplicate id blank
+		$this->id = false;
+		// add copy to title
+		$this->title = $this->title . " - Copy";
+		$this->make_alias_unique();
+		// ordering
+		$query = "select (max(ordering)+1) as ordering from content";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array());
+		$ordering = $stmt->fetch()->ordering;
+		if (!$ordering) {
+			$ordering=1;
+		}
+		$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
+		$required_result = $stmt->execute( $params );
+		if ($required_result) {
+			$this->id = CMS::Instance()->pdo->lastInsertId();
+			// set tags
+			// note - $this->tags is already array - unlike code in save() function below
+			$tag_id_array=[];
+			foreach ($this->tags as $curtag) {
+				$tag_id_array[] = $curtag->id;
+			}
+			Tag::set_tags_for_content($this->id, $tag_id_array, $this->content_type);
+			// copy content fields
+			$cur_content_fields = DB::fetchAll('select * from content_fields where content_id=?',$original_id);
+			//echo "<p>origin content:</p>"; CMS::pprint_r ($cur_content_fields);
+			foreach ($cur_content_fields as $f) {
+				DB::exec('insert into content_fields (content_id, name, field_type, content) values(?,?,?,?)', array($this->id, $f->name, $f->field_type, $f->content));
+			}
+			CMS::Instance()->queue_message('Content duplicated','success', Config::$uripath . "/admin/content/all");
+		}
+		else {
+			CMS::Instance()->queue_message('Error duplicating content','danger', Config::$uripath . "/admin/content/all");
+		}
+	}
+
 	public function save($required_details_form, $content_form, $return_url='') {
 		// return url will be used as passed, if left blank will use referral
 		// unless in ADMIN section, in which case admin content all page will be used
@@ -185,7 +231,7 @@ class Content {
 		$this->make_alias_unique();
 
 		if (!$this->start) {
-			$this->start = null;
+			$this->start = time();
 		}
 		else {
 			//$this->start = date("Y-m-d H:i:s", strtotime($this->start));
