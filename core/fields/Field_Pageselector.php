@@ -36,8 +36,16 @@ class Field_Pageselector extends Field {
 							<?php foreach ($all_pages as $page):?>
 								<?php 
 								$selected = "";
-								if (in_array($page->id, $this->default)) {
-									$selected = " selected ";
+								$selected = "";
+								if (is_array($this->default)) {
+									if (in_array($page->id, $this->default)) {
+										$selected = " selected ";
+									}
+								}
+								else {
+									if ($page->id==$this->default) {
+										$selected = " selected ";
+									}
 								}
 								for ($n=0; $n<$page->depth; $n++) {
 									$page->title = "&nbsp;-&nbsp;" . $page->title;
