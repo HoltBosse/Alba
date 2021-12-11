@@ -475,6 +475,7 @@ class Content {
 				CMS::Instance()->queue_message('Unable to save version','warning',$_SERVER['REQUEST_URI']);
 			}
 		}
+	}
 
 	public static function get_all_content_for_id ($id) {
 		// accept content id, return object with all named required fields (title, state) etc
