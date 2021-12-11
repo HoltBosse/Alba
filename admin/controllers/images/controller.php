@@ -31,6 +31,9 @@ else {
 	elseif ($segments[1]=='upload') {
 		$view = 'upload';
 	}
+	elseif ($segments[1]=='uploadv2') {
+		$view = 'uploadv2';
+	}
 }
 
 // load model + view
