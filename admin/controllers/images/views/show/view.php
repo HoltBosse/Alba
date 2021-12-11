@@ -191,6 +191,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php endforeach; ?>
 </div>
 
+<?php endif; // skipped display of all images if filter==upload ?>
 
 <div id='upload_modal' class="modal">
   <div class="modal-background"></div>
@@ -205,12 +206,14 @@ defined('CMSPATH') or die; // prevent unauthorized access
     </section>
     <footer class="modal-card-foot">
       <button onclick='document.getElementById("image_upload_form_submit").click();' class="button is-success">Upload</button>
-      <button class="button">Cancel</button>
+      <button class="button cancel">Cancel</button>
     </footer>
   </div>
 </div>
 
-
-<?php endif; // skipped display of all images if filter==upload ?>
-
+<?php if ($autoclose):?>
+	<script>window.autoclose = true;</script>
+<?php else: ?>
+	<script>window.autoclose = false;</script>
+<?php endif; ?>
 <script src='<?php echo Config::$uripath;?>/admin/controllers/images/views/show/script.js'></script>

@@ -314,6 +314,11 @@
 		modal.classList.remove('is-active');
 		html.classList.remove('is-clipped');
 	});
+	modal.querySelector('button.cancel').addEventListener('click', function(e) {
+		e.preventDefault();
+		modal.classList.remove('is-active');
+		html.classList.remove('is-clipped');
+	});
 
 	// add files to form
     let upload_form = modal.querySelector('form');
