@@ -7,7 +7,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<h1 class='title'>New Content</h1>
 <?php else:?>
 	<?php echo "<script>var content_id=" . $content_id . "</script>"; ?>
+	<?php if ($version_count>0):?>
+		<a href='<?php echo Config::$uripath;?>/admin/content/versions/<?php echo $content_id;?>' class='btn button cta pull-right'>Versions</a>
+	<?php endif; ?>
 	<h1 class='title'>Editing &ldquo;<?php echo $content->title; ?>&rdquo; - <?php echo Content::get_content_type_title($content->content_type);?></h1>
+	
 <?php endif; ?>
 
 
@@ -17,7 +21,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <form method="POST" action="">
 
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
-<div class='toggle_wrap <?php if (!$new_content) { echo " hidden ";}?>'>
+<div class='toggle_wrap '>
 	<div class='flex'>
 		<?php $required_details_form->display_front_end(); ?>
 	</div>

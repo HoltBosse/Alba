@@ -428,6 +428,54 @@ class Content {
 		}
 	}
 
+
+	public static function save_version($old_content) {
+		$location = Content::get_content_location($old_content->content_type);
+		//CMS::pprint_r ("Loading: " . CMSPATH . '/controllers/' . $location . "/custom_fields.json");
+		$content_form = new Form (CMSPATH . '/controllers/' . $location . "/custom_fields.json");
+		//CMS::pprint_r ($content_form);exit(0);
+		foreach ($content_form->fields as $field) {
+			// insert field info
+			if (isset($field->save)) {
+				if ($field->save===false) {
+					// field have save property set explicitly to false - SKIP saving
+					// this may be a field such as an SQL statement from a non-cms table, or just markup etc
+					// remove from saved version form data and skip
+					unset($content_form->fields[$field->name]);
+					/* CMS::pprint_r ('skipping false field');
+					CMS::pprint_r ($field);
+					exit(0); */
+					continue;
+				}
+			}
+			if ($field->filter=="ARRAYOFINT") {
+				// convert array of int to string
+				$field->default = implode($field->default);
+			}
+			$field_variable = "f_" . $field->name;
+			$field->default = $old_content->{$field_variable};
+		}
+		$version_json = json_encode($content_form->fields); // only saveable fields encoded :)
+		
+		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
+		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
+			$params = [$old_content->id, CMS::Instance()->user->id, $version_json];
+			$query = "insert into content_versions (content_id, created_by, fields_json) VALUES (?,?,?)";
+			$ok = DB::exec($query, $params);
+			if ($ok) {
+				// remove old versions if required (could be more/fewer than 1, depending on config value change since last save)
+				// there's undoubtedly a more efficient way to make this happen in case multiple deletions are required, but
+				// most of the time there'll be just 1 or none
+				$old_versions = DB::fetchAll('select id from content_versions where content_id=? order by created DESC',array($old_content->id));
+				for ($n=$content_versions; $n<sizeof($old_versions); $n++) {
+					DB::exec("delete IGNORE from content_versions where id=?",array($old_versions[$n]->id));
+				}
+			}
+			else {
+				CMS::Instance()->queue_message('Unable to save version','warning',$_SERVER['REQUEST_URI']);
+			}
+		}
+
 	public static function get_all_content_for_id ($id) {
 		// accept content id, return object with all named required fields (title, state) etc
 		// determine content type and parse content type custom_fields json
@@ -469,6 +517,7 @@ class Content {
 			return $result;
 		}
 		return false;
+
 	}
 	
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="") {
