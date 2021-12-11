@@ -19,7 +19,9 @@ CREATE TABLE `content` (
   `created_by` int(11) NOT NULL,
   `updated_by` int(11) NOT NULL,
   `note` varchar(255) DEFAULT NULL,
-  `created` timestamp NOT NULL DEFAULT current_timestamp()
+  `created` timestamp NOT NULL DEFAULT current_timestamp(),
+  `category` int(11) NOT NULL DEFAULT 0,
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `content_fields`;
@@ -109,7 +111,8 @@ CREATE TABLE `tags` (
   `filter` int(11) NOT NULL DEFAULT '1' COMMENT '0 admin only 1 exclusive 2 inclusive',
   `description` varchar(255) DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL,
-  `parent` int(11) DEFAULT NULL
+  `parent` int(11) DEFAULT NULL,
+  `category` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tag_content_type`;
@@ -176,6 +179,18 @@ CREATE TABLE `plugins` (
   `options` text COMMENT 'options_json',
   `description` mediumtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL,
+  `state` int(11) NOT NULL DEFAULT 1,
+  `title` varchar(64) NOT NULL,
+  `content_type` int(11) NOT NULL COMMENT '-1 media, -2 user, -3 tag',
+  `parent` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `configurations`
   ADD PRIMARY KEY (`name`);
@@ -259,6 +274,9 @@ ALTER TABLE `widget_types`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `plugins`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 

@@ -29,7 +29,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
-	public $version = "0.371";
+	public $version = "0.38";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -157,7 +157,9 @@ final class CMS {
 	}
 
 	public static function show_error($text) {
-		ob_end_clean();
+		if (ob_get_length()) {
+			ob_end_clean();
+		}
 		echo "<div style='padding:1em; font-family:sans-serif; text-align:center; height:100vh; width:100%; display:flex; align-items:center; justify-content:center;'>";
 		echo "<h1>{$text}</h1>";
 		echo "</div>";
@@ -259,7 +261,7 @@ final class CMS {
 					$this->user->email = $result->email;
 					$this->user->id = $result->id;
 					// get groups
-					$query = "select * from groups where id in (select group_id from user_groups where user_id=?)";
+					$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
 					$stmt = $this->pdo->prepare($query);
 					$stmt->execute(array($session_user_id));
 					$this->user->groups = $stmt->fetchAll();

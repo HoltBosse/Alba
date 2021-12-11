@@ -188,8 +188,8 @@ if ($pdo) {
 
 	// setup default groups
 	$query = "truncate table groups; ";
-	$query .= "insert into groups (value, display) values ('admin','Administrators');";
-	$query .= "insert into groups (value, display) values ('editor','Contributors');";
+	$query .= "insert into `groups` (value, display) values ('admin','Administrators');";
+	$query .= "insert into `groups` (value, display) values ('editor','Contributors');";
 	$pdo->exec($query);
 
 
@@ -226,7 +226,7 @@ if ($pdo) {
 	$admin_user_id = $pdo->lastInsertId();
 	// insert user group map
 	// get admin group id
-	$query = "select id from groups where value='admin'";
+	$query = "select id from `groups` where value='admin'";
 	$stmt = $pdo->prepare($query);
 	$stmt->execute(array());
 	$admin_group_id = $stmt->fetch()->id;

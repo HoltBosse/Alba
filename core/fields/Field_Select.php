@@ -27,7 +27,8 @@ class Field_Select extends Field {
 				echo "<div class='select'>";
 					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 						if ($this->required) {
-							echo "<option value='' >{$this->label}</option>";
+							$placeholder = $this->placeholder ?? $this->label;
+							echo "<option value='' >{$placeholder}</option>";
 						}
 						foreach ($this->select_options as $select_option) {
 							$selected = "";
@@ -90,6 +91,7 @@ class Field_Select extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->config = $config;
 		$this->empty_string = $config->empty_string ?? '';
+		$this->placeholder = $config->placeholder ?? '';
 	}
 
 	public function validate() {

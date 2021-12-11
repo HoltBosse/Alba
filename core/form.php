@@ -126,8 +126,13 @@ class Form {
 		//CMS::pprint_r ($json_obj);
 		if ($json_obj) {
 			foreach ($json_obj as $option) {
-				$field = $this->get_field_by_name($option->name);
-				$field->default = $option->value;
+				if ($option->name!=='error!!!') {
+					$field = $this->get_field_by_name($option->name);
+					$field->default = $option->value;
+				}
+				else {
+					return false;
+				}
 			}
 		}
 	}

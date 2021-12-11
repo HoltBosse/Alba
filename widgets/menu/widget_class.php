@@ -124,12 +124,19 @@ class Widget_menu extends Widget {
 
 
 	public function render_menu($node) {
-		//CMS::pprint_r ($node);
+		if (!$node) {
+			return false;
+		}
+		if (!property_exists($node,'type')) {
+			echo "<p>unknown node type</p>";
+			CMS::pprint_r ($node);
+			return false;
+		}
 		if ($node->type!=='root') {
 			$title = "";
 			$target = '';
 			$is_anchor = true;
-			$classList.="";
+			$classList ="";
 			$is_anchor = true; // set to false for headers or other non-links
 
 			if ($node->children) {
@@ -142,10 +149,10 @@ class Widget_menu extends Widget {
 				if ($page->load_from_id($node->info->page_id)) {
 					$url = $page->get_url();
 					$classList.=" page ";
-					if ($tree->value==CMS::Instance()->page->id) {
+					if ($node->info->page_id == CMS::Instance()->page->id) {
 						$classList.=" current ";
 					}
-					if ($tree->children) {
+					if ($node->children) {
 						$classList.=" parent ";
 					}
 					$title = $page->title;
@@ -175,7 +182,8 @@ class Widget_menu extends Widget {
 				
 			echo "<li class='{$classList}'>";
 			if ($is_anchor) {
-				echo "<a target='{$target}' class='page_id_{$page->id}' href='{$url}'>" . $title . "</a>";
+				$pageid = $page->id ?? "";
+				echo "<a target='{$target}' class='page_id_{$pageid}' href='{$url}'>" . $title . "</a>";
 			}
 			else {
 				echo "<span class='title_only'>$node->title</span>";

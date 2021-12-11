@@ -68,6 +68,9 @@ class Mail {
 		if ($encryption=="ssl") {
 			$port=465;
 		}
+
+					
+
 		
 		// setup PHPMailer
 		require_once CMSPATH . "/core/thirdparty/PHPMailer/Exception.php";
@@ -75,9 +78,11 @@ class Mail {
 		require_once CMSPATH . "/core/thirdparty/PHPMailer/SMTP.php";
 		//Instantiation and passing `true` enables exceptions
 		$mail = new PHPMailer(true);
+
+
 		try {
 			//Server settings
-			$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+			$mail->SMTPDebug = false;                      //Enable verbose debug output with SMTP::DEBUG_SERVER
 			$mail->isSMTP();                                            //Send using SMTP
 			$mail->Host       = $smtp_server;                     //Set the SMTP server to send through
 			$mail->SMTPAuth   = $authenticate==true;                                   //Enable SMTP authentication if required
@@ -86,8 +91,8 @@ class Mail {
 			$mail->SMTPSecure = $encryption;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
 			$mail->Port       = $port;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
 			//Recipients
-			$mail->setFrom($smtp_from, $smtp->name);
-			$mail->addReplyTo($smtp_replyto, $smtp->name);
+			$mail->setFrom($smtp_from, $smtp_name);
+			$mail->addReplyTo($smtp_replyto, $smtp_name);
 			// To
 			foreach ($this->to as $add) {
 				if ($add->name) {
@@ -127,8 +132,9 @@ class Mail {
 			$mail->Subject = $this->subject;
 			$mail->Body    = $this->html;
 			$mail->AltBody = $this->text ? $this->text : strip_tags($this->html);
-		
+
 			$mail->send();
+			
 		} 
 		catch (Exception $e) {
 			CMS::log('Could not send email: ' . $mail->ErrorInfo);
