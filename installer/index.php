@@ -6,6 +6,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$native_zip = class_exists('ZipArchive',false);
+$allow_fopen = ini_get('allow_url_fopen');
+$gd_available = function_exists ('imagecreatefromjpeg');
+$virtual_available = function_exists ('virtual');
+$mysqldump_available = `which mysqldump`;
+$curl_available = function_exists('curl_version');
 
 
 function show_error ($string, $continue=false) {
@@ -48,6 +54,18 @@ function show_all_messages ($messages) {
 		echo "<p>{$message['text']}</p>";
 		echo "</div>";
 	}
+}
+
+function show_message ($heading, $text, $class) {
+	echo "<article class=\"message $class\">
+		<div class=\"message-header\">
+			<p>$heading</p>
+			<button class=\"delete\" aria-label=\"delete\"></button>
+		</div>
+		<div class=\"message-body\">
+			$text
+		</div>
+	</article>";
 }
 
 
@@ -176,7 +194,7 @@ if ($pdo) {
 	
 
 	// got here, db ok, tables ok
-	$query = "select count(*) as c from groups";
+	$query = "select count(*) as c from `groups`";
 	$stmt = $pdo->prepare($query);
 	$stmt->execute(array());
 	$group_count = $stmt->fetch()->c;
@@ -187,7 +205,7 @@ if ($pdo) {
 	
 
 	// setup default groups
-	$query = "truncate table groups; ";
+	$query = "truncate table `groups`; ";
 	$query .= "insert into `groups` (value, display) values ('admin','Administrators');";
 	$query .= "insert into `groups` (value, display) values ('editor','Contributors');";
 	$pdo->exec($query);
@@ -365,6 +383,28 @@ else {
 			.msg p:first-of-type {
 				margin-top:1em;
 			}
+			article {
+				width:40rem;
+				margin-left:auto;
+				margin-right:auto;
+				padding: 1em;
+				border: 2px solid white;
+				margin-bottom: 1rem;
+				margin-top: 1rem;
+			}
+			article p {
+				margin:0;
+			}
+			article p:first-of-type {
+				margin-bottom:1em;
+				font-weight:bold;
+			}
+			article button {
+				display:none;
+			}
+			article.message.is-warning {
+				background: #fda;
+			}
 		</style>
 	</head><body>
 		
@@ -436,6 +476,49 @@ else {
 			<button type='submit'>Update And Test Configuration &#xbb;</button>
 			
 		</form>
+		<?php
+		if ($allow_fopen) {
+			show_message ('PHP fopen Allowed','fopen is available. This is required for automatic updates and Google reCAPTCHA.','is-success');
+		}
+		else {
+			show_message ('PHP fopen Allowed','fopen is <em>not</em> available. This is required for automatic updates and Google reCAPTCHA.','is-warning');
+		}
+		
+		if ($gd_available) {
+			show_message ('GD Graphics Library Available','GD is available. This is required for image manipulation.','is-success');
+		}
+		else {
+			show_message ('GD Graphics Library Available','GD is <em>not</em> available. This is required for image manipulation.','is-warning');
+		}
+		
+		if ($virtual_available) {
+			show_message ('Virtual Available','virtual is available. This enables fast file-serving in PHP on Apache.','is-success');
+		}
+		else {
+			show_message ('Virtual Unavailable','virtual is <em>not</em> available. This enables fast file-serving in PHP on Apache, but is not required.','is-warning');
+		}
+		
+		if ($native_zip) {
+			show_message ('Native ZIP','Native ZIP is available. This is required for core update functionality.','is-success');
+		}
+		else {
+			show_message ('Native ZIP','Native ZIP is <em>not</em> available. This is required for core update functionality.','is-warning');
+		}
+		
+		if ($mysqldump_available) {
+			show_message ('MySQL Dump Available','MySQL Dump is available. This is required for backups.','is-success');
+		}
+		else {
+			show_message ('MySQL Dump Available','MySQL Dump is <em>not</em> available. This is required for backups.','is-warning');
+		}
+
+		if ($curl_available) {
+			show_message ('CURL Available','CURL is available. ','is-success');
+		}
+		else {
+			show_message ('CURL Available','CURL is <em>not</em> available.','is-warning');
+		}
+		?>
 	</body></html>
 		<?php
 	
