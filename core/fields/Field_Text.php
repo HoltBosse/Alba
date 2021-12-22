@@ -33,7 +33,12 @@ class Field_Text extends Field {
 						$this->default = "";
 					}
 				}
-				echo "<input type='{$this->input_type}' value='{$this->default}' {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
+				$minmax="";
+				if (property_exists($this,'min')) {
+					$minmax=" min='{$this->min}' max='{$this->max}' ";
+				}
+
+				echo "<input type='{$this->input_type}' value='{$this->default}' {$minmax} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
@@ -81,6 +86,10 @@ class Field_Text extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->input_type = $config->input_type ?? 'text';
+		if ($this->input_type=='range') {
+			$this->min = $config->min ?? "0";
+			$this->max = $config->max ?? "100";
+		}
 		$this->default = $config->default ?? $this->default;
 		$this->attribute_list = $config->attribute_list ?? "";
 	}
