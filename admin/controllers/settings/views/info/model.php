@@ -10,4 +10,5 @@ $gd_available = function_exists ('imagecreatefromjpeg');
 $virtual_available = function_exists ('virtual');
 $mail_available = Mail::is_available();
 $mysqldump_available = `which mysqldump`;
+$curl_available = function_exists('curl_version');
 

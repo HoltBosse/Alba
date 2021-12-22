@@ -83,7 +83,7 @@ else {
 	show_message ('Virtual Unavailable','virtual is <em>not</em> available. This enables fast file-serving in PHP on Apache, but is not required.','is-warning');
 }
 
-if ($native_zip) {
+if ($mail_available) {
 	show_message ('PHPMail','PHPMail is available. This is required for core email functionality.','is-success');
 }
 else {
@@ -95,6 +95,13 @@ if ($mysqldump_available) {
 }
 else {
 	show_message ('MySQL Dump Available','MySQL Dump is <em>not</em> available. This is required for backups.','is-warning');
+}
+
+if ($curl_available) {
+	show_message ('CURL Available','CURL is available. ','is-success');
+}
+else {
+	show_message ('CURL Available','CURL is <em>not</em> available.','is-warning');
 }
 
 ?>
