@@ -23,7 +23,8 @@ class Field_Contentselector extends Field {
 			}
 			if ($this->content_type && is_numeric($this->content_type)) {
 				if (!$this->tags) {
-					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by id ASC")->fetchAll();
+					// default order is alphabetical
+					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by title ASC")->fetchAll();
 				}
 				else {
 					$tags_csv = "'".implode("','", $this->tags)."'";
