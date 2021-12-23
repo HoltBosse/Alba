@@ -223,6 +223,7 @@ if ($action=='list_images') {
 			}
 			$query.=") ";
 		} 
+		$query .= " ORDER BY id DESC"; // newest first
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array());
 	}
