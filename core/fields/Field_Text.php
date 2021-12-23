@@ -9,6 +9,7 @@ class Field_Text extends Field {
 		$this->select_options=[];
 		$this->default = $default_content;
 		$this->content_type="";
+		$this->placeholder="";
 	}
 
 	public function display() {
@@ -37,8 +38,9 @@ class Field_Text extends Field {
 				if (property_exists($this,'min')) {
 					$minmax=" min='{$this->min}' max='{$this->max}' ";
 				}
+				$placeholder = $this->placeholder ?? "";
 
-				echo "<input type='{$this->input_type}' value='{$this->default}' {$minmax} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
+				echo "<input type='{$this->input_type}' value='{$this->default}' placeholder='{$placeholder}' {$minmax} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
