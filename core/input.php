@@ -133,6 +133,9 @@ class Input {
 				return filter_var($foo, FILTER_SANITIZE_NUMBER_INT);
 			}
 		}
+		elseif ($filter=="JSON") {
+			return json_decode($foo) ? $foo : false;
+		}
 		else {
 			//return $foo;
 			return false;
