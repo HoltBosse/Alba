@@ -42,6 +42,10 @@ class db {
 		return $success;
 	}
 
+	public static function get_last_insert_id() {
+		return CMS::Instance()->pdo->lastInsertId();
+	}
+
 	public static function fetchall($query, $paramsarray=[]) {
 		if (!is_array($paramsarray)) {
 			$paramsarray = array($paramsarray);
