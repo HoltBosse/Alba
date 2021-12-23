@@ -148,7 +148,8 @@ class Form {
 		// loop through fields and call display();
 		foreach ($this->fields as $field) {
 			if (!property_exists($field,'nowrap')) {
-				echo "<div class='form_field field'>";
+				$wrapclass = $field->wrapclass ?? "";
+				echo "<div {$wrapclass} class='form_field field'>";
 			}
 			$field->display();
 			if (!property_exists($field,'nowrap')) {
