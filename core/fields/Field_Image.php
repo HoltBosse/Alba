@@ -155,6 +155,11 @@ class Field_Image extends Field {
 		
 	}
 
+	public function get_friendly_value() {
+		$img = new Image($this->id);
+		$img->render('thumb','backend');
+	}
+
 
 	public function load_from_config($config) {
 		//CMS::pprint_r ($config);
