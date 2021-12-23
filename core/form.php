@@ -2,13 +2,11 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class Form {
-	public $location; // relative to CMS path for json config
 	public $fields;
 	public $repeatable;
 
 	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
 		$this->fields = array();
-		$this->location = "";
 		$this->repeatable = $repeatable;
 		$this->load_json($path);
 	}
