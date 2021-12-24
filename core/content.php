@@ -567,7 +567,7 @@ class Content {
 
 	}
 	
-	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="") {
+	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
 		// order by id by default
 		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
 		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
@@ -747,7 +747,12 @@ class Content {
 		}
 
 		if ($page) {
-			$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
+			if ($custom_pagination_size && is_numeric($custom_pagination_size)) {
+				$pagination_size = $custom_pagination_size;
+			}
+			else {
+				$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
+			}
 			if (is_numeric($pagination_size) && is_numeric($page)) {
 				$query .= " LIMIT " . (($page-1)*$pagination_size) . "," . $pagination_size;
 			}

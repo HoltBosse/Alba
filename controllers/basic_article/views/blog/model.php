@@ -7,6 +7,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // config for this view has name: menutag and a value
 $view_config = CMS::Instance()->page->view_configuration_object;
 $tag_id = Content::get_config_value ($view_config, 'blogtag');
+$articles_per_page = Content::get_config_value ($view_config, 'articles_per_page') ?? 999;
+$cur_page = Input::getvar('page') ? Input::getvar('page') : 1; // always make sure we get page number for blog
+
+
 if (CMS::Instance()->uri_segments) {
 	// could be a single blog or tag/bydate/etc... 
 	if (CMS::Instance()->uri_segments[0]=='tag') {
@@ -59,8 +63,18 @@ if (CMS::Instance()->uri_segments) {
 else {
 	// all blog listing - ignore markup field - not needed for listing view, potentially save lots of data that
 	// won't be shown in view anyway
-	$blog_content_items = Content::get_all_content($order_by="start", 1, false, $tag_id, true, [], ['markup']); 
+	//$blog_content_items = Content::get_all_content($order_by="start", 1, false, $tag_id, true, [], ['markup']); 
+	$blog_content_items = Content::get_all_content($order_by="start", 1, null, $tag_id, true, [], ['markup'], null, null, $cur_page, null, $articles_per_page);
 	// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
+	$show_next = false;
+	$show_prev = false;
+	if (sizeof($blog_content_items)==$articles_per_page) {
+		// potentially more
+		$show_next = true;
+	}
+	if ($cur_page>1) {
+		$show_prev = true;
+	}
 }
 
 
