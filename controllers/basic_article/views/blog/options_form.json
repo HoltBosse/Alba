@@ -10,6 +10,17 @@
 			"description": "",
 			"filter": "NUMBER",
 			"content_type":1
+		},
+		{
+			"name":"articles_per_page",
+			"id":"articles_per_page",
+			"type":"Text",
+			"input_type":"number",
+			"max":999,
+			"min":1,
+			"default":999,
+			"label":"Article Per Page",
+			"filter":"NUMBER"
 		}
 	]
 }
