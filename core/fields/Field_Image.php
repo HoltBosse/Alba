@@ -83,9 +83,19 @@ class Field_Image extends Field {
 			</div>
 			`;
 			document.body.appendChild(media_selector); 
-			var searchtrigger = document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
+
+			// todo: DRY below two event listeners
+			//click button
+			document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
 				var searchtext = document.getElementById('media_selector_modal_search').value;
 				fetch_images(searchtext, null); // string, no tags
+			});
+			// press return
+			document.getElementById('media_selector_modal_search').addEventListener('keyup',function(e){
+				if (e.key==="Enter") {
+					var searchtext = document.getElementById('media_selector_modal_search').value;
+					fetch_images(searchtext, null); // string, no tags
+				}
 			});
 
 			fetch_images (null, null); // no search, all tags
