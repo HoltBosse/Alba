@@ -351,7 +351,7 @@ class User {
 		}
 	}
 
-	public function get_all_groups() {
+	public static function get_all_groups() {
 		//echo "<p>Getting all users...</p>";
 		$result = CMS::Instance()->pdo->query("select * from `groups`")->fetchAll();
 		return $result;
