@@ -87,13 +87,20 @@ class Input {
 						// this one is fine
 					}
 					else {
-						$ok = false;
+						$bar = (int)$bar;
+						if ($bar===0||is_numeric($bar)) {
+							// cast to int ok
+						}
+						else {
+							$ok = false;
+						}
 					}
 				}
 				if ($ok) {
 					return $foo;
 				}
 				else {
+					CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::$uripath . '/admin');
 					return false;
 				}
 			}

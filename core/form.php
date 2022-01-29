@@ -121,15 +121,16 @@ class Form {
 
 	public function deserialize_json($json) {
 		$json_obj = json_decode($json);
-		//CMS::pprint_r ($json_obj);
 		if ($json_obj) {
 			foreach ($json_obj as $option) {
 				if ($option->name!=='error!!!') {
+					echo "<p>Updating field: {$option->name}</p>";
 					$field = $this->get_field_by_name($option->name);
 					$field->default = $option->value;
 				}
 				else {
-					return false;
+					// keep going - other fields exist maybe :)
+					continue;
 				}
 			}
 		}
