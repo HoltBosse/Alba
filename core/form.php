@@ -124,7 +124,6 @@ class Form {
 		if ($json_obj) {
 			foreach ($json_obj as $option) {
 				if ($option->name!=='error!!!') {
-					echo "<p>Updating field: {$option->name}</p>";
 					$field = $this->get_field_by_name($option->name);
 					$field->default = $option->value;
 				}
