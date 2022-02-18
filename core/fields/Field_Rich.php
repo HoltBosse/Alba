@@ -6,6 +6,22 @@ class Field_Rich extends Field {
 	public function display() {
 		?>
 		<style>
+		.editor a {
+			position:relative;
+		}
+		.editor a[target='_blank']::before {
+			content: "🔗";
+			font-weight:400;
+			display:block;
+			position:absolute;
+			transform:translateY(-1em);
+			text-align:right;
+			font-size:12px;
+			opacity:0.5;
+			right:0;
+			top:0;
+			min-width:16px;
+		}
 		.editor { border:2px dashed #aaa; padding:1rem; max-height:25rem; overflow:auto;}
 		.editor_button {margin-left:1rem;}
 		.editor h1, .editor h2, .editor h3, .editor h4, .editor h5,.editor p {
@@ -293,6 +309,20 @@ class Field_Rich extends Field {
 						}
 					}
 
+					else if (command=='toggle_external_link') {
+						let this_sel = document.getSelection(); 
+						let this_parent = this_sel.focusNode.parentElement;
+						if (this_parent && this_parent.nodeName=="A") {
+							// caret inside anchor!
+							if (this_parent.target=="_blank") {
+								this_parent.target="_self";
+							}
+							else {
+								this_parent.target="_blank";
+							}
+						}
+					}
+
 					else document.execCommand(command, false, null);
 				});
 			});
@@ -318,6 +348,7 @@ class Field_Rich extends Field {
 					<a class='editor_button' href="#" data-command='undo'><i class='fa fa-undo'></i></a>
 					<a class='editor_button' href="#" data-command='createlink'><i class='fa fa-link'></i></a>
 					<a class='editor_button' href="#" data-command='unlink'><i class='fa fa-unlink'></i></a>
+					<a class='editor_button' href="#" data-command='toggle_external_link' title='Toggle external link'><i class='fa fa-external-link'></i></a>
 					<a class='editor_button' href="#" data-command='justifyLeft'><i class='fa fa-align-left'></i></a>
 					<a class='editor_button' href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
 					<a class='editor_button' href="#" data-command='removeFormat'><i class='fa fa-broom'></i></a>
