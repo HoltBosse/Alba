@@ -101,15 +101,10 @@ class User {
 	}
 
 	public function is_member_of ($group_value) {
-		$query = "select id from `groups` where value=? and id in (select group_id from user_groups where user_id=?)";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($group_value, $this->id));
-		$result = $stmt->fetch(); */
-		$result = DB::fetch($query, array($group_value, $this->id));
+		$query = "select * from user_groups where group_id=? and user_id=?";
+		$result = DB::fetchAll($query, array($group_value, $this->id));
 		if ($result) {
-			if ($result->id) {
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
