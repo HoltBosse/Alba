@@ -75,6 +75,8 @@ if ($required_details_form->is_submitted()) {
 else {
 	// set defaults if needed
 	if (!$new_content) {
+		// set category based on currently edited content type
+		$required_details_form->get_field_by_name('category')->content_type = $content->content_type;
 		$required_details_form->get_field_by_name('state')->default = $content->state;
 		$required_details_form->get_field_by_name('title')->default = $content->title;
 		$required_details_form->get_field_by_name('alias')->default = $content->alias;
