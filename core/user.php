@@ -106,7 +106,7 @@ class User {
 		}
 		else {
 			// by group name value
-			$query = "select id from groups where value=? and id in (select group_id from user_groups where user_id=?)";
+			$query = "select id from `groups` where value=? and id in (select group_id from user_groups where user_id=?)";
 		}
 		$result = DB::fetchAll($query, array($group_value, $this->id));
 		if ($result) {
