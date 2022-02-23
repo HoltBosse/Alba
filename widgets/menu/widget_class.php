@@ -137,7 +137,8 @@ class Widget_menu extends Widget {
 			$target = '';
 			$is_anchor = true;
 			$classList ="";
-			$is_anchor = true; // set to false for headers or other non-links
+			$aria = "";
+			$is_anchor = true; // set to false for non-links - keep for headers
 
 			if ($node->children) {
 				$classList.=" parent ";
@@ -176,14 +177,14 @@ class Widget_menu extends Widget {
 			if ($node->type=="heading") {
 				$title = $node->title;
 				$classList.=" menu_heading ";
-				$is_anchor = false;
+				$aria = ' aria-haspopup="true" aria-expanded="false" ';
 			}
 
 				
 			echo "<li class='{$classList}'>";
 			if ($is_anchor) {
 				$pageid = $page->id ?? "";
-				echo "<a target='{$target}' class='page_id_{$pageid}' href='{$url}'>" . $title . "</a>";
+				echo "<a {$aria} target='{$target}' class='page_id_{$pageid}' href='{$url}'>" . $title . "</a>";
 			}
 			else {
 				echo "<span class='title_only'>$node->title</span>";
