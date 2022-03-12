@@ -80,6 +80,41 @@ class Field_Rich extends Field {
 		<script>
 			document.addEventListener("DOMContentLoaded", function(){
 				
+				// mentions
+				
+				// mention @ handler
+				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('keyup',function(e){
+					if (e.key=="@") {
+						// check space exists or no char exists
+						// immediately before @ 
+						let sel = window.getSelection();
+						//console.log(sel.rangeCount);
+						if (sel.rangeCount==1) {
+							// only work on single keypress without ranged selection active
+							let range = sel.getRangeAt(0).cloneRange();
+							range.setStart(e.target, 0);
+							let last_two_chars = range.toString().slice(-2);
+							if (last_two_chars.length==2) {
+								// not start of ALL content
+								// check first char
+								if (range.endContainer.data.length == 1) {
+									// this is first char in our element, trigger
+									// no early exit, continue to trigger
+								}
+								else {
+									// check if first char is whitespace, if not, do not trigger
+									if (last_two_chars === last_two_chars.trim()) {
+										// not 1st char in container AND 
+										// no whitespace before @, could be email etc, ignore
+										return;
+									}
+								}
+								alert('starting mention thing');
+							}
+						}
+					}
+				});
+
 				// move markup to hidden textarea on blur
 				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('blur',function(e){
 					//console.log('updating textarea for editor');
