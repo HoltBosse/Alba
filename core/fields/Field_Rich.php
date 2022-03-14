@@ -75,13 +75,91 @@ class Field_Rich extends Field {
 		.editor .rich_image_active {
 			outline:2px dotted green;
 		}
+		.mention_wrapper {
+			position:absolute;
+			background:white;
+			padding:2rem;
+			z-index:2;
+			box-shadow:0 0 5px rgba(0,0,0,0.4);
+		}
+		.mention_wrapper ul {
+			list-style:none;
+			max-height:20rem;
+			overflow-y:scroll;
+		}
+		.mention_wrapper ul li {
+			display:flex;
+		}
+		.mention_wrapper ul li:focus {
+			outline:1px solid #77a;
+		}
 		
 		</style>
 		<script>
 			document.addEventListener("DOMContentLoaded", function(){
 				
 				// mentions
-				
+				// create user picker modal
+				function create_mention_list(sel, range) {
+					//console.log('creating user list for ',sel ,range);
+					let rect = range.getBoundingClientRect();
+					console.log(rect);
+					let x = rect.left;
+					let y = rect.top + 20;
+					let mention_wrapper = document.createElement('DIV');
+					mention_wrapper.classList.add('mention_wrapper');
+					mention_wrapper.style.left = x.toString() + 'px';
+					mention_wrapper.style.top = y.toString() + 'px';
+					let mention_ul = document.createElement('UL');
+					// create users to click on
+					<?php foreach (DB::fetchAll('select id,username from users where state>0 order by username ASC') as $u):?>
+						var mention_ul_li = document.createElement('LI');
+						mention_ul_li.dataset.userid = <?php echo $u->id;?> ;
+						mention_ul_li.dataset.username = "<?php echo $u->username; ?>";
+						mention_ul_li.tabIndex = 1;
+						mention_ul_li.addEventListener('click',function(e){
+							let clicked_li = e.target.closest('li');
+							let userid = clicked_li.dataset.userid;
+							let username = clicked_li.dataset.username;
+							console.log('clicked on ',username);
+							// refocus editor
+							window.last_editor.focus();
+							// restore caret position
+							window.sel.collapse(window.saved[0], window.saved[1]);
+							// make anchor in editor for mention
+							// style attribute to prevent execcommand inserthtml from adding shit
+							let mention_anchor = ` <a style='font-size:inherit; font-weight:inherit; background-color:inherit;' class="mention" data-mentionuserid="${userid}">${username}</a> `;
+							document.execCommand("insertHTML", false, mention_anchor);
+							// kill mention picker
+							e.target.closest('.mention_wrapper').remove();
+						});
+						var mention_markup = `
+						<div class='left'>
+							<img src='/image/1/60'/>
+						</div>
+						<div class='right'>
+							<span><?php echo $u->username;?></span>
+						</div>
+						`;
+						mention_ul_li.innerHTML = mention_markup;
+						mention_ul.appendChild(mention_ul_li);
+					<?php endforeach; ?>
+					// handle escape
+					mention_wrapper.addEventListener('keydown',function(e){
+						if (e.key=="Escape") {
+							mention_wrapper.remove();
+						}
+					});
+					// add to DOM
+					mention_wrapper.appendChild(mention_ul);
+					document.body.appendChild(mention_wrapper);
+					// focus on first li
+					let mention_lis = document.querySelectorAll('.mention_wrapper li');
+					console.log(mention_lis);
+					if (mention_lis) {
+						mention_lis[0].focus();
+					}
+				}
 				// mention @ handler
 				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('keyup',function(e){
 					if (e.key=="@") {
@@ -109,7 +187,12 @@ class Field_Rich extends Field {
 										return;
 									}
 								}
-								alert('starting mention thing');
+								// remember the editor to refocus for mention insertion
+								window.last_editor = document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>');
+								window.sel = document.getSelection(); 
+								window.saved = [ window.sel.focusNode, window.sel.focusOffset ];
+								// create mention popup
+								create_mention_list(sel, range);
 							}
 						}
 					}
