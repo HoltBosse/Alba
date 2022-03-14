@@ -74,7 +74,7 @@
 		tags_container = item.querySelector('.image_tags');
 		new_markup = `
 		<div class="control">
-			<div data-title="${tag_title}" data-id="${tag_id}" class="tags are-small has-addons">
+			<div data-title="${tag_title}" data-id="${tag_id}" class="tag_id_${tag_id} tags are-small has-addons">
 				<span class="tag is-light is-info">${tag_title}</span>
 				<a class="tag_add tag is-delete is-warning"></a>
 			</div>
