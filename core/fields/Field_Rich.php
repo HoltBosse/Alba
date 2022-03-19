@@ -75,6 +75,7 @@ class Field_Rich extends Field {
 		.editor .rich_image_active {
 			outline:2px dotted green;
 		}
+		/* mention styles */
 		.mention_wrapper {
 			position:absolute;
 			background:white;
@@ -89,11 +90,21 @@ class Field_Rich extends Field {
 		}
 		.mention_wrapper ul li {
 			display:flex;
+			padding:0.5rem;
 		}
 		.mention_wrapper ul li:focus {
-			outline:1px solid #77a;
+			outline: 2px solid #77a;
+    		margin: 2px;
 		}
-		
+		.mention_wrapper img {
+			border-radius:100%;
+		}
+		.mention_wrapper .right {
+			display:flex;
+			align-items:center;
+		}
+		/* end mention styles */
+
 		</style>
 		<script>
 			document.addEventListener("DOMContentLoaded", function(){
@@ -128,7 +139,7 @@ class Field_Rich extends Field {
 							window.sel.collapse(window.saved[0], window.saved[1]);
 							// make anchor in editor for mention
 							// style attribute to prevent execcommand inserthtml from adding shit
-							let mention_anchor = ` <a style='font-size:inherit; font-weight:inherit; background-color:inherit;' class="mention" data-mentionuserid="${userid}">${username}</a> `;
+							let mention_anchor = ` <a href="#" style='font-size:inherit; font-weight:inherit; background-color:inherit;' class="mention" data-mentionuserid="${userid}">${username}</a> `;
 							document.execCommand("insertHTML", false, mention_anchor);
 							// kill mention picker
 							e.target.closest('.mention_wrapper').remove();
@@ -147,6 +158,13 @@ class Field_Rich extends Field {
 					// handle escape
 					mention_wrapper.addEventListener('keydown',function(e){
 						if (e.key=="Escape") {
+							mention_wrapper.remove();
+						}
+					});
+					// handle click outside of wrapper
+					document.body.addEventListener('click',function(e){
+						if (!e.target.closest('.mention_wrapper')) {
+							// not inside wrapper, close it
 							mention_wrapper.remove();
 						}
 					});
