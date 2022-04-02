@@ -158,6 +158,16 @@ defined('CMSPATH') or die; // prevent unauthorized access
 .bigger {
 	font-size:120%;
 }
+dialog::backdrop {
+	backdrop-filter:blur(5px);
+	/* background: repeating-linear-gradient(
+		45deg,
+		rgba(0, 0, 0, 0.2),
+		rgba(0, 0, 0, 0.2) 1px,
+		rgba(0, 0, 0, 0.3) 1px,
+		rgba(0, 0, 0, 0.3) 20px
+	); */
+}
 </style>
 
 
@@ -210,6 +220,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
     </footer>
   </div>
 </div>
+
+<dialog id="uploading_progress_dialog">
+	<section>
+		<p>Uploading... Please wait</p>
+	</section>
+</dialog>
 
 <?php if ($autoclose):?>
 	<script>window.autoclose = true;</script>

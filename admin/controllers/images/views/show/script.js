@@ -1,4 +1,4 @@
-
+var uploading_progress_dialog = document.getElementById('uploading_progress_dialog');
 
 	// image click handler
 	all_image_containers = document.querySelectorAll('.all_images_image_container');
@@ -242,6 +242,15 @@
 		}
 		// got all our data - hide form
 		document.getElementById('image_upload_form').innerHTML = "<p>Uploading...</p>";
+		document.getElementById('upload_modal').closest('.modal').classList.remove('is-active');
+		uploading_progress_dialog.showModal();
+
+		for (var pair of window.formdata.entries()) {
+			console.log(pair[0], pair[1]); 
+			console.log('----');
+		}
+		//return false; // early exit for testing
+
 		// send xhr data
 		xhr.open('POST', window.uripath + '/admin/images/uploadv2', true);
 		xhr.onload = function (e) {
@@ -255,11 +264,13 @@
 					// console.error(xhr.statusText);
 					alert("Upload error!");
 				}
+				uploading_progress_dialog.close();
 			}
 		};
 		xhr.onerror = function (e) {
 			// ERROR - Do something
 			// console.error(xhr.statusText);
+			uploading_progress_dialog.close();
 			alert("Upload error!");
 		};
 		xhr.send(window.formdata);
