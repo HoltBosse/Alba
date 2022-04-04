@@ -249,7 +249,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 			console.log(pair[0], pair[1]); 
 			console.log('----');
 		}
-		//return false; // early exit for testing
+		return false; // early exit for testing
 
 		// send xhr data
 		xhr.open('POST', window.uripath + '/admin/images/uploadv2', true);
@@ -298,6 +298,10 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
     e.preventDefault();
     e.stopPropagation();
 
+	for (var i = 0; i < e.dataTransfer.files.length; i++) {
+		console.log(e.dataTransfer.files[i]);
+	}
+
 	// RUN THROUGH THE DROPPED FILES + AJAX UPLOAD
 	window.formdata = new FormData();
 
@@ -336,19 +340,16 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 	// empty form except for hidden submit button - this is clicked via js from the 'upload' modal button
 	// this allows browser html form checking to trigger
     upload_form.innerHTML = '<button style="display:none !important" class="button" id="image_upload_form_submit" type="submit">Upload</button>';
-    for (var i = 0; i < e.dataTransfer.files.length; i++) {
+    for (let i = 0; i < e.dataTransfer.files.length; i++) {
         if (!(e.dataTransfer.files[i].type=='image/png' || e.dataTransfer.files[i].type=='image/jpeg')) {
             // skip anything but png or jpg
             continue;
         }
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            let upload_form = modal.querySelector('form');
-            let src = e.target.result;
-            markup = `
+		let id = "img_id_" + i;
+		markup = `
             <div class='upload_field'>
                 <div class='upload_preview'>
-                    <img src='${src}'>
+                    <img id='${id}' src=''>
                 </div>
                 <div class='upload_details'>
                     <div class='field'>
@@ -370,9 +371,15 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
                 </div>
             </div>
             `;
-            upload_form.innerHTML = upload_form.innerHTML + markup;
+        upload_form.innerHTML = upload_form.innerHTML + markup;
+	}
+	for (let i = 0; i < e.dataTransfer.files.length; i++) {
+		var reader = new FileReader();
+		reader.onload = function(e) {
+            let src = e.target.result;
+			document.getElementById("img_id_"+i).src = src;
         }
-        reader.readAsDataURL(e.dataTransfer.files[i]);
+		reader.readAsDataURL(e.dataTransfer.files[i]);
 		window.formdata.append('file-upload[]', e.dataTransfer.files[i]);
 	}
   });
