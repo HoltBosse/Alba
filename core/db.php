@@ -67,6 +67,28 @@ class db {
 		return $result;
 	}
 
+	public static function fetchallcolumn($query, $paramsarray=[]) {
+		// fetch single col as array
+		if (!is_array($paramsarray)) {
+			$paramsarray = array($paramsarray);
+		}
+		try {
+			$stmt = CMS::Instance()->pdo->prepare($query);
+			$stmt->execute($paramsarray);
+			$result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+		}
+		catch (\PDOException $e) {
+			if (Config::$debug) {
+				//print_r (debug_backtrace()); exit(0);
+				CMS::show_error("Error performing query: " . $e->getMessage());
+			}
+			else {
+				CMS::show_error("Database query error - turn on debug for more information.");
+			}
+		}
+		return $result;
+	}
+
 	public static function fetch($query, $paramsarray=[]) {
 		if (!is_array($paramsarray)) {
 			$paramsarray = array($paramsarray);
