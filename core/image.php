@@ -31,6 +31,7 @@ class Image {
     
     public function render($size="original", $class="") {
         // size should be original, web, or thumb 
-        echo "<img loading='lazy' class='{$class}' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
+        //echo "<img loading='lazy' class='{$class}' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
+        echo "<img decode='async' width='{$this->width}' height='{$this->height}' loading='lazy' class='rendered_img' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
     }
 }
