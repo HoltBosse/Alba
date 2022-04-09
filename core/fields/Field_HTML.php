@@ -32,6 +32,7 @@ class Field_HTML extends Field {
 		$this->default = $config->default ?? $this->default;
 		$this->nowrap = $config->nowrap ?? true;
 		$this->save = $config->save ?? false;
+		$this->html = $config->html ?? "";
 	}
 
 	public function validate() {
