@@ -249,7 +249,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 			console.log(pair[0], pair[1]); 
 			console.log('----');
 		}
-		return false; // early exit for testing
+		//return false; // early exit for testing
 
 		// send xhr data
 		xhr.open('POST', window.uripath + '/admin/images/uploadv2', true);
