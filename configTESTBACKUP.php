@@ -16,4 +16,5 @@ static $domain = 'auto';
 static $user_core_controllers = NULL;
 static $admintemplate = 'clean';
 static $frontendlogin = false;
+static $environment = "dev"; // dev/staging/live
 }
