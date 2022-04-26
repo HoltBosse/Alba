@@ -33,12 +33,12 @@ class Content {
 		$this->category=0;
 	}
 
-	public function get_content_count($content_type, $search="") {
+	public function get_content_count($content_type, $search="", $state=0) {
 		if ($search) {
 			$like = '%' . $search . '%';
 			if (!$content_type) {
 				// return count of all content
-				return DB::fetch('select count(*) as c from content where (title like ? OR note like ?) and state>0',array($like,$like))->c;
+				return DB::fetch('select count(*) as c from content where (title like ? OR note like ?) and state>?',array($like,$like,$state))->c;
 			}
 			if (!is_numeric($content_type)) {
 				// try and get type id
@@ -52,7 +52,7 @@ class Content {
 		else {
 			if (!$content_type) {
 				// return count of all content
-				return DB::fetch('select count(*) as c from content where state>0',array())->c;
+				return DB::fetch('select count(*) as c from content where state>?',array($state))->c;
 			}
 			if (!is_numeric($content_type)) {
 				// try and get type id
@@ -61,7 +61,7 @@ class Content {
 					CMS::Instance()->show_error('Unable to determine content type when retrieving count');
 				}
 			}
-			return DB::fetch('select count(*) as c from content where state>0 and content_type=?',array($content_type))->c;
+			return DB::fetch('select count(*) as c from content where state>? and content_type=?',array($state, $content_type))->c;
 		}
 	}
 
