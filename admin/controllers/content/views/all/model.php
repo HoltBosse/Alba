@@ -20,7 +20,7 @@ else {
 
 $all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page, $search);
 $all_content_types = Content::get_all_content_types();
-$content_count = Content::get_content_count($content_type_filter, $search);
+$content_count = Content::get_content_count($content_type_filter, $search, -1);
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
 
 // handle custom optional listing on content specific 'all' view
