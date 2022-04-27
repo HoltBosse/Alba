@@ -24,11 +24,19 @@ class Field_Rich extends Field {
 		}
 		.editor .internal_anchor {
 			display:inline-block;
-			width:1rem; height:1rem;
+			width:2em;
+			height:2em;
+			text-align:center;
+			aspect-ratio:1/1;
 			content:"A";
 			background:black;
 			color:white;
+			margin:0.25em;
+			font-size:10px;
+			padding:0.25em;
+			/* text-indent:-9999px; */
 		}
+		
 		.editor { border:2px dashed #aaa; padding:1rem; max-height:25rem; overflow:auto;}
 		.editor_button {margin-left:1rem;}
 		.editor h1, .editor h2, .editor h3, .editor h4, .editor h5,.editor p {
@@ -184,10 +192,10 @@ class Field_Rich extends Field {
 
 					else if (command == 'createanchor' ) {
 						window.sel = document.getSelection();
-						anchorid = prompt('Anchor ID: ','#');
+						anchorid = prompt('Anchor ID: ','');
 						if (window.sel.getRangeAt && window.sel.rangeCount) {
 							range = window.sel.getRangeAt(0);
-							var frag = range.createContextualFragment("<a class='internal_anchor' id='"+anchorid+"' ></a>");
+							var frag = range.createContextualFragment("<a title='#"+anchorid+"' class='internal_anchor' id='"+anchorid+"' ><i class='fa fa-anchor' aria-hidden='true'></i></a>");
 							range.insertNode(frag);
 						}
 					}
