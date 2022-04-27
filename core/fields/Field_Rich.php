@@ -22,6 +22,13 @@ class Field_Rich extends Field {
 			top:0;
 			min-width:16px;
 		}
+		.editor .internal_anchor {
+			display:inline-block;
+			width:1rem; height:1rem;
+			content:"A";
+			background:black;
+			color:white;
+		}
 		.editor { border:2px dashed #aaa; padding:1rem; max-height:25rem; overflow:auto;}
 		.editor_button {margin-left:1rem;}
 		.editor h1, .editor h2, .editor h3, .editor h4, .editor h5,.editor p {
@@ -31,7 +38,7 @@ class Field_Rich extends Field {
 			border:2px dotted rgba(0,0,0,0.05);
 			position:relative;
 		}
-		.editor p::before, .editor h1::before, .editor h2::before, .editor h3::before, .editor h4::before, .editor h5::before {
+		.editor p::before, .editor h1::before, .editor h2::before, .editor h3::before, .editor h4::before, .editor h5::before, .editor ul::before {
 			font-size:60%;
 			background:white;
 			padding:0.5rem;
@@ -41,6 +48,9 @@ class Field_Rich extends Field {
 			position:absolute;
 			top:-1rem;
 			right:-1rem;
+		}
+		.editor ul::before {
+			content:"UL";
 		}
 		.editor p::before {
 			content:"P";
@@ -170,6 +180,16 @@ class Field_Rich extends Field {
 					else if (command == 'createlink' || command == 'insertimage') {
 						url = prompt('Enter the link here: ','https:\/\/');
 						document.execCommand(command, false, url);
+					}
+
+					else if (command == 'createanchor' ) {
+						window.sel = document.getSelection();
+						anchorid = prompt('Anchor ID: ','#');
+						if (window.sel.getRangeAt && window.sel.rangeCount) {
+							range = window.sel.getRangeAt(0);
+							var frag = range.createContextualFragment("<a class='internal_anchor' id='"+anchorid+"' ></a>");
+							range.insertNode(frag);
+						}
 					}
 
 					else if (command=='floatleft') {
@@ -323,6 +343,31 @@ class Field_Rich extends Field {
 						}
 					}
 
+					else if (command == 'ul') {
+						document.execCommand('insertunorderedlist', false, command);
+					}
+					else if (command == 'ol') {
+						document.execCommand('insertorderedlist', false, command);
+					}
+					else if (command == 'addclass') {
+						let classname = window.prompt('Enter class text: ');
+						let parent = window.getSelection().focusNode.parentNode;
+						if (classname) {
+                  			parent.classList.add(classname);
+						}
+					}
+
+					else if (command=="removeFormat") {
+						// remove all inline style from all elements and
+						// then do default remove formatting
+						let editor = document.querySelector('#editor_for_<?php echo $this->name;?>');
+						let editor_els = editor.querySelectorAll('*');
+						editor_els.forEach(el => {
+							el.removeAttribute('style');
+						});
+						document.execCommand(command, false, null);
+					}
+
 					else document.execCommand(command, false, null);
 				});
 			});
@@ -344,10 +389,16 @@ class Field_Rich extends Field {
 					<a class='editor_button' href="#" data-command='h3'>H3</a>
 					<a class='editor_button' href="#" data-command='h4'>H4</a>
 					<a class='editor_button' href="#" data-command='p'>P</a>
+					<a class='editor_button' href="#" data-command='ul'>UL</a>
+					<a class='editor_button' href="#" data-command='ol'>OL</a>
+					<a class='editor_button' href="#" data-command='bold'><i class="fa fa-bold"></i></a>
+					<a class='editor_button' href="#" data-command='underline'><i class="fa fa-underline"></i></a>
+					<a class='editor_button' href="#" data-command='addclass'>Cls+</a>
 					<a class='editor_button' href="#" data-command='img'><i class="fa fa-images"></i></a>
 					<a class='editor_button' href="#" data-command='undo'><i class='fa fa-undo'></i></a>
 					<a class='editor_button' href="#" data-command='createlink'><i class='fa fa-link'></i></a>
 					<a class='editor_button' href="#" data-command='unlink'><i class='fa fa-unlink'></i></a>
+					<a class='editor_button' href="#" data-command='createanchor'><i class='fa fa-anchor'></i></a>
 					<a class='editor_button' href="#" data-command='toggle_external_link' title='Toggle external link'><i class='fa fa-external-link'></i></a>
 					<a class='editor_button' href="#" data-command='justifyLeft'><i class='fa fa-align-left'></i></a>
 					<a class='editor_button' href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
@@ -402,7 +453,7 @@ class Field_Rich extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 9999;
+		$this->maxlength = $config->maxlength ?? 99999;
 		$this->filter = $config->filter ?? 'RAW';
 		$this->minlength = $config->minlength ?? 0;
 		$this->missingconfig = $config->missingconfig ?? false;
