@@ -39,14 +39,14 @@ class Field_Rich extends Field {
 		
 		.editor { border:2px dashed #aaa; padding:1rem; max-height:25rem; overflow:auto;}
 		.editor_button {margin-left:1rem;}
-		.editor h1, .editor h2, .editor h3, .editor h4, .editor h5,.editor p {
+		.editor h1, .editor h2, .editor h3, .editor h4, .editor h5,.editor p, .editor ul, .editor ol {
 			padding:0.5rem;
 			margin:0.5rem;
 			background:rgba(0,0,0,0.05);
 			border:2px dotted rgba(0,0,0,0.05);
 			position:relative;
 		}
-		.editor p::before, .editor h1::before, .editor h2::before, .editor h3::before, .editor h4::before, .editor h5::before, .editor ul::before {
+		.editor p::before, .editor h1::before, .editor h2::before, .editor h3::before, .editor h4::before, .editor h5::before, .editor ul::before, .editor ol::before {
 			font-size:60%;
 			background:white;
 			padding:0.5rem;
@@ -58,6 +58,9 @@ class Field_Rich extends Field {
 			right:-1rem;
 		}
 		.editor ul::before {
+			content:"UL";
+		}
+		.editor ol::before {
 			content:"UL";
 		}
 		.editor p::before {
