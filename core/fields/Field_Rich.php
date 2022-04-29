@@ -99,6 +99,7 @@ class Field_Rich extends Field {
 		
 		</style>
 		<script>
+
 			document.addEventListener("DOMContentLoaded", function(){
 				
 				// move markup to hidden textarea on blur
@@ -354,11 +355,33 @@ class Field_Rich extends Field {
 						}
 					}
 
-					else if (command == 'ul') {
-						document.execCommand('insertunorderedlist', false, command);
-					}
-					else if (command == 'ol') {
-						document.execCommand('insertorderedlist', false, command);
+					else if (command == 'ul' || command == 'ol') {
+						if (command=='ol') {
+							document.execCommand('insertorderedlist', false, command);
+						}
+						else {
+							document.execCommand('insertunorderedlist', false, command);
+						}
+						// clean empty ps - move wysiwyg to textarea then back again to clean up then remove
+						// note - that this process will destroy undo stack of contenteditable
+						let editor_content_el = e.target.closest('.control').querySelector('.editor.content');
+						let editor_textarea_el = e.target.closest('.control').querySelector('.editor_raw');
+						editor_textarea_el.innerText = editor_content_el.innerHTML;
+						editor_content_el.innerHTML = editor_textarea_el.innerText;
+						let ps = editor_content_el.getElementsByTagName('p');
+						// no idea why I have to do this twice right now...
+						for (let el of ps) {
+							console.log(el.innerText);
+							if (el.innerText=="") {
+								el.parentNode.removeChild(el);
+							}
+						}
+						for (let el of ps) {
+							console.log(el.innerText);
+							if (el.innerText=="") {
+								el.parentNode.removeChild(el);
+							}
+						}
 					}
 					else if (command == 'addclass') {
 						let classname = window.prompt('Enter class text: ');
