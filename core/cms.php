@@ -591,6 +591,9 @@ final class CMS {
 					if (!$has_access) {
 						// send to front-end homepage for now - TODO: make back-end config option
 						$redirect_uri = Configuration::get_configuration_value ('general_options', 'signin_redirect');
+						// make requested page available via session for login redirect if needed
+						$smart_redirect = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+						$_SESSION['smart_redirect'] = $smart_redirect;
 						$this->queue_message('You do not have access to this page','danger', Config::$uripath . $redirect_uri);
 					}
 				}
