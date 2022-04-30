@@ -42,7 +42,8 @@ div.flex > * {min-width:2rem;}
 
 
 <div class="fixed-control-bar">
-	<button class="button is-primary" type="submit">Save</button>
+	<button title='Save and exit' class="button is-primary" type="submit">Save</button>
+	<button title='Save and keep working!' class="button is-info" name="quicksave" value="quicksave" type="submit">Quick Save</button>
 	<button class="button is-warning" type="button" onclick="window.history.back();">Cancel</button>
 </div>
 
