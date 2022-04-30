@@ -65,7 +65,13 @@ if ($required_details_form->is_submitted()) {
 				CMS::Instance()->queue_message('Unable to get all original content fields','danger',$_SERVER['REQUEST_URI']);
 			}
 		}
-		$content->save($required_details_form, $content_form);
+		$quicksave = Input::getvar('quicksave',"STRING");
+		if ($quicksave) {
+			$content->save($required_details_form, $content_form, $_SERVER['HTTP_REFERER'] );
+		}
+		else {
+			$content->save($required_details_form, $content_form);
+		}
 	}
 	else {
 		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
