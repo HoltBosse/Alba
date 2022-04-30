@@ -362,26 +362,6 @@ class Field_Rich extends Field {
 						else {
 							document.execCommand('insertunorderedlist', false, command);
 						}
-						// clean empty ps - move wysiwyg to textarea then back again to clean up then remove
-						// note - that this process will destroy undo stack of contenteditable
-						let editor_content_el = e.target.closest('.control').querySelector('.editor.content');
-						let editor_textarea_el = e.target.closest('.control').querySelector('.editor_raw');
-						editor_textarea_el.innerText = editor_content_el.innerHTML;
-						editor_content_el.innerHTML = editor_textarea_el.innerText;
-						let ps = editor_content_el.getElementsByTagName('p');
-						// no idea why I have to do this twice right now...
-						for (let el of ps) {
-							console.log(el.innerText);
-							if (el.innerText=="") {
-								el.parentNode.removeChild(el);
-							}
-						}
-						for (let el of ps) {
-							console.log(el.innerText);
-							if (el.innerText=="") {
-								el.parentNode.removeChild(el);
-							}
-						}
 					}
 					else if (command == 'addclass') {
 						let classname = window.prompt('Enter class text: ');
@@ -454,31 +434,17 @@ class Field_Rich extends Field {
 		echo "</div>";
 	}
 
-	public function inject_designer_javascript() {
-		?>
-		<script>
-			window.Field_Rich = {};
-			// template is what gets injected when the field 'insert new' button gets clicked
-			window.Field_Rich.designer_template = `
-			<div class="field">
-				<h2 class='heading title'>Rich/HTML Field</h2>	
-
-				<label class="label">Label</label>
-				<div class="control has-icons-left has-icons-right">
-					<input required name="label" class="input iss-success" type="label" placeholder="Label" value="">
-				</div>
-
-				<label class="label">Required</label>
-				<div class="control has-icons-left has-icons-right">
-					<input name="required" class="checkbox iss-success" type="checkbox"  value="">
-				</div>
-			</div>`;
-		</script>
-		<?php 
-	}
-
-	public function designer_display() {
-
+	public function set_from_submit() {
+		$value = Input::getvar($this->name, $this->filter);
+		if (is_string($value)||is_numeric($value)) {
+			// strip empty tags / nonsense made by ol/ul creation
+			// they are illegal html ;) but they are
+			// produced by UL/OL creation in contenteditable
+			$value = str_replace("<p></p>","",$value);
+			$value = str_replace("<p><ul>","<ul>",$value);
+			$value = str_replace("</ul></p>","</ul>",$value);
+			$this->default = $value;
+		}
 	}
 
 	public function load_from_config($config) {
