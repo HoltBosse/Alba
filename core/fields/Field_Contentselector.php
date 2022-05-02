@@ -9,7 +9,8 @@ class Field_Contentselector extends Field {
 		$this->id = "";
 		$this->name = "";
 		$this->select_options=[];
-		$this->content_type=$content_type;
+		$this->default=$content_type;
+		$this->list_unpublished=false;
 		$this->tags=[];
 	}
 
@@ -22,16 +23,24 @@ class Field_Contentselector extends Field {
 				$this->content_type = Content::get_content_type_id($this->content_type);
 			}
 			if ($this->content_type && is_numeric($this->content_type)) {
+				
+				if ($this->list_unpublished) {
+					$min_state = 0;
+				}
+				else {
+					$min_state = 1;
+				}
 				if (!$this->tags) {
 					// default order is alphabetical
-					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state=1 order by title ASC")->fetchAll();
+					$query = "select * from content where content_type={$this->content_type} and state>={$min_state} order by title ASC";
+					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state>={$min_state} order by title ASC")->fetchAll();
 				}
 				else {
 					$tags_csv = "'".implode("','", $this->tags)."'";
 					$query = "select c.* from content c where c.content_type={$this->content_type} and c.state=1 ";
 					$query .= " and c.id in (";
 						$query .= " select tc.content_id from tagged tc where tc.content_type_id={$this->content_type} and tc.tag_id in (";
-							$query .= "select t.id from tags t where t.state>0 and t.alias in ($tags_csv)";
+							$query .= "select t.id from tags t where t.state>={$min_state} and t.alias in ($tags_csv)";
 						$query .= ")";
 					$query .= ") order by c.title ASC";
 					$stmt = CMS::Instance()->pdo->query($query);
@@ -60,11 +69,9 @@ class Field_Contentselector extends Field {
 							echo "<option value='0' >{$this->empty_string}</option>";
 						}
 						foreach ($options_all_articles as $tag) {
-							if ($tag->state==1) {
-								$selected = "";
-								if ($tag->id == $this->default) { $selected="selected";}
-								echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
-							}
+							$selected = "";
+							if ($tag->id == $this->default) { $selected="selected";}
+							echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
 						}
 					echo "</select>";
 				echo "</div>";
@@ -73,34 +80,6 @@ class Field_Contentselector extends Field {
 		if ($this->description) {
 			echo "<p class='help'>" . $this->description . "</p>";
 		}
-	}
-
-
-	public function inject_designer_javascript() {
-		?>
-		<script>
-			window.Field_Contentselector = {};
-			// template is what gets injected when the field 'insert new' button gets clicked
-			window.Field_Contentselector.designer_template = `
-			<div class="field">
-				<h2 class='heading title'>Text Field</h2>	
-
-				<label class="label">Label</label>
-				<div class="control has-icons-left has-icons-right">
-					<input required name="label" class="input iss-success" type="label" placeholder="Label" value="">
-				</div>
-
-				<label class="label">Required</label>
-				<div class="control has-icons-left has-icons-right">
-					<input name="required" class="checkbox iss-success" type="checkbox"  value="">
-				</div>
-			</div>`;
-		</script>
-		<?php 
-	}
-
-	public function designer_display() {
-
 	}
 
 	public function load_from_config($config) {
@@ -117,6 +96,13 @@ class Field_Contentselector extends Field {
 		$this->content_type = $config->content_type ?? false;
 		$this->empty_string = $config->empty_string ?? '';
 		$this->tags = $config->tags ?? [];
+		$this->list_unpublished = $config->list_unpublished ?? false;
+	}
+
+	public function get_friendly_value() {
+		//CMS::pprint_r ($this->content_type);
+		//CMS::pprint_r ($this);
+		echo DB::fetch('select title from content where id=?',$this->default)->title ?? "";
 	}
 
 	public function validate() {
