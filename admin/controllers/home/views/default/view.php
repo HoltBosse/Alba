@@ -5,6 +5,20 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	Home
 </h1>
 
+<p>
+	<?php
+	$content_search = new Content_Search();
+	$content_search->page_size=2;
+	$content_search->list_fields = ['markup'];
+	$content_search->filters = [
+		['note','tagtest!!!']
+	];
+	$search_results = $content_search->exec();
+	CMS::pprint_r ($search_results);
+	echo "<h1>count: {$content_search->count}</h1>";
+	?>
+</p>
+
 <section id='content' class='content'>
 	<p>Welcome to <span title="Holt Bosse Content Management System"><?php echo Config::$sitename; ?></span>
 	<p>Here's a quick explanation of how things are organised:</p>
