@@ -18,9 +18,9 @@ class Content_Search {
 	public $searchtext;
 	public $page_size;
 	public $filters; // array of tuples where 0=colname and 1=value to match e.g. [['note','test']]
-	public $count; // set after query is exec() shows total potential row count for paginated calls
-	private $search_pdo_params = [];
-	private $filter_pdo_params = [];
+	private $count; // set after query is exec() shows total potential row count for paginated calls
+	private $search_pdo_params;
+	private $filter_pdo_params;
 
 	public function __construct() {
 		$this->order_by = "id";
@@ -33,8 +33,14 @@ class Content_Search {
 		$this->list_fields=[];
 		$this->count=0;
 		$this->filters=[];
+		$this->filter_pdo_params = [];
+		$this->search_pdo_params = [];
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
+
+	public function get_count() {
+		return $this->count;
+	}
 
 	public function exec() {
 		// Create and run query based on criteria in object properties
@@ -136,14 +142,14 @@ class Content_Search {
 		}
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
-			$result = DB::fetchall($query,array_merge([$like,$like],$filter_pdo_params)); // title and note
+			$result = DB::fetchall($query,array_merge([$like,$like],$filter_pdo_params ?? [])); // title and note
 			// set count
-			$this->count = DB::fetch($count_query,array_merge([$like,$like],$filter_pdo_params))->c ?? 0;
+			$this->count = DB::fetch($count_query,array_merge([$like,$like],$filter_pdo_params ?? []))->c ?? 0;
 		}
 		else {
-			$result = DB::fetchall($query,$filter_pdo_params);
+			$result = DB::fetchall($query,$filter_pdo_params ?? []);
 			// set count
-			$this->count = DB::fetch($count_query,$filter_pdo_params)->c ?? 0;
+			$this->count = DB::fetch($count_query,$filter_pdo_params ?? [])->c ?? 0;
 		}
 		return $result;
 	}
