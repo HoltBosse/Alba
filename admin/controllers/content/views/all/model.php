@@ -18,10 +18,33 @@ else {
 	$cur_page = null;
 }
 
-$all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page, $search);
+// og all content call - comment out experimental section below to restore
+// and uncomment next 3 lines
+//$all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page, $search);
+// og content count
+//$content_count = Content::get_content_count($content_type_filter, $search, -1);
+
 $all_content_types = Content::get_all_content_types();
-$content_count = Content::get_content_count($content_type_filter, $search, -1);
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
+
+// start new content search class call - experimental
+$content_search = new Content_Search();
+$content_search->searchtext = $search;
+$content_search->type_filter = $content_type_filter;
+$content_search->page = $cur_page;
+if ($order_by) {
+	$content_search->order_by = "ordering";
+	$content_search->order_direction = "ASC";
+	$content_search->page_size = 99999999; // silly large number
+	$content_search->page = 1; // always one for ordering view
+}
+$all_content = $content_search->exec();
+$content_count = $content_search->get_count();
+// end new conten search class - experimental
+
+
+
+
 
 // handle custom optional listing on content specific 'all' view
 
