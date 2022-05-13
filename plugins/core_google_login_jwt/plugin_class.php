@@ -13,26 +13,14 @@ class Plugin_core_google_login_jwt extends Plugin {
 
     public function logout_onclick_js() {
         // ACTION - attached to logout_onclick_js hook
-        echo "googleSignOut();";
+        // not needed for new google login method
+        // leaving just in case we need to do anything else
     }
 
     public function logout_js() {
         // ACTION - attached to add_to_head hook
-        echo '<script src="https://apis.google.com/js/platform.js?prompt=select_account&onload=onLoad" async defer></script>';
-        echo '<meta name="google-signin-client_id" content="' . $this->get_option('client_id') . '">';
-        echo "<script>
-        function onLoad() {
-            gapi.load('auth2', function() {
-              gapi.auth2.init();
-            });
-          }
-        function googleSignOut() {
-          var auth2 = gapi.auth2.getAuthInstance();
-          auth2.signOut().then(function () {
-            console.log('User signed out.');
-          });
-        }
-      </script>";
+        // Not needed for new google login method
+        // leaving just in case we need to do anything else
     }
 
 
@@ -73,6 +61,7 @@ class Plugin_core_google_login_jwt extends Plugin {
         $tks = explode(".",$jwt_credentials);
         $jwt_obj = json_decode(base64_decode(str_replace('_', '/', str_replace('-','+',$tks[1]))));
         $sig = $this->urlsafeB64Decode($tks[2]);
+        $data = $tks[0] . "." . $tks[1]; // original JWT payload
 
         if (!$jwt_obj) {
             CMS::Instance()->queue_message('Invalid/no JWT returned from Google','danger', Config::$uripath . "/admin");
@@ -102,11 +91,15 @@ class Plugin_core_google_login_jwt extends Plugin {
         }
         $valid = false;
         $pem_arr = get_mangled_object_vars($google_pems_obj); // convert obj to arr
-        $pem = reset($pem_arr); // get first pem from obj
-        $pem = openssl_pkey_get_public($pem); // prepare
-        $kid = key($pem_arr); // get key of pem if needed?
-        $data = $tks[0] . "." . $tks[1]; // original JWT payload
-        $valid = openssl_verify( $data, $sig, $pem, "RSA-SHA256");     
+        
+        // loop over public keys for match
+        foreach ($pem_arr as $pem) {
+            $prepped_pem = openssl_pkey_get_public($pem); // prepare
+            $valid = openssl_verify( $data, $sig, $prepped_pem, "RSA-SHA256"); 
+            if ($valid===1) {
+                break;
+            }
+        }
         if ($valid!==1) {
             CMS::Instance()->queue_message('Invalid JWT','danger', Config::$uripath . "/admin");
         }
@@ -161,9 +154,17 @@ class Plugin_core_google_login_jwt extends Plugin {
         <div id="g_id_onload"
             data-client_id="<?php echo $this->get_option('client_id');?>"
             data-ux_mode="redirect"
-            data-login_uri="<?php echo $login_page;?>">
+            data-login_uri="<?php echo $login_page;?>"
+            data-context="signin"
+            data-auto_select="true">
         </div>
-        <div class="g_id_signin" data-type="standard"></div>
+        <div class="g_id_signin" 
+        data-type="standard" 
+        data-shape="rectangular"
+        data-theme="outline"
+        data-text="signin"
+        data-size="large"
+        data-logo_alignment="left"></div>
         <?php
     }
 }
