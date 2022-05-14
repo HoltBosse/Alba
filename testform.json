@@ -1,97 +1,15 @@
 {
 	"id":"testform",
 	"fields":[
+		
 		{
-			"type":"Tab",
-			"mode":"tabs",
-			"id":"configtabs",
-			"tabs":["System","Email","Google"]
-		},
-		{
-			"type":"Tab",
-			"mode":"tabscontentstart"
-		},
-			{
-				"type":"Tab",
-				"mode":"tabstart"
-			},
-				{
-					"name":"testtags",
-					"id":"testtags",
-					"type":"TagMultiple",
-					"label":"Multi Tags",
-					"required":false,
-					"description":"Multitag Test",
-					"filter":"ARRAYOFINT"
-				},
-				{
-					"name":"repeater",
-					"id":"repeater",
-					"type":"Repeatable",
-					"label":"Testing Repeatable Form",
-					"required":false,
-					"form_path":"/testrepeatform.json",
-					"description":"Testing repeatable form."
-				},
-			{
-				"type":"Tab",
-				"mode":"tabend"
-			},
-			{
-				"type":"Tab",
-				"mode":"tabstart"
-			},
-				{
-					"type":"HTML",
-					"html":"<p>Tab 2 content</p>"
-				},
-			{
-				"type":"Tab",
-				"mode":"tabend"
-			},
-		{
-			"type":"Tab",
-			"mode":"tabscontentend"
-		},
-		{
-			"type":"Tab",
-			"mode":"tabs",
-			"id":"configtabs2",
-			"tabs":["Tab 1","Tab 2","Tab 3"]
-		},
-		{
-			"type":"Tab",
-			"mode":"tabscontentstart"
-		},
-			{
-				
-				"type":"Tab",
-				"mode":"tabstart"
-			},
-				{
-					"type":"HTML",
-					"html":"<p>Tabs 2, tab 1 content</p>"
-				},
-			{
-				"type":"Tab",
-				"mode":"tabend"
-			},
-			{
-				
-				"type":"Tab",
-				"mode":"tabstart"
-			},
-				{
-					"type":"HTML",
-					"html":"<p>Tabs 2, tab 2 content</p>"
-				},
-			{
-				"type":"Tab",
-				"mode":"tabend"
-			},
-		{
-			"type":"Tab",
-			"mode":"tabscontentend"
+			"name":"repeater",
+			"id":"repeater",
+			"type":"Repeatable",
+			"label":"Testing Repeatable Form",
+			"required":false,
+			"form_path":"/testrepeatform.json",
+			"description":"Testing repeatable form."
 		}
 	]
 }

@@ -32,6 +32,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php
 	//$test_form->display_front_end();
 	?>
-	<!-- <button class='submit button is-success' type='submit'>Submit</button>  -->
+	<!-- <button class='submit button is-success' type='submit'>Submit</button> --> 
 	</form>
 </section>

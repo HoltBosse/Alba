@@ -8,7 +8,27 @@ class Field_Repeatable extends Field {
 	public $form_path;
 
 	public function display() {
-		$this->form = new Form(CMSPATH . $this->form_path, true); // second parameter is boolean for repeatable or not
+		// get default saved repeatable form stuff
+		$saved_data = json_decode($this->default);
+		
+		// get example repeatable for js rendering
+		$this->form = new Form(CMSPATH . $this->form_path, true); 
+		// loop over existing data and render
+		$this->forms = [];
+		if ($saved_data) {
+			foreach ($saved_data as $repeatable_form_data) {
+				// load form
+				$repeatable_form = new Form(CMSPATH . $repeatable_form_data->form_path, true); // second parameter is boolean for repeatable or not
+				foreach ($repeatable_form_data->fields as $field_info) {
+					$field = $repeatable_form->get_field_by_name($field_info->name);
+					if ($field) {
+						//CMS::pprint_r ($field_info);
+						$field->default = $field_info->default;
+					}
+				}
+				$repeatable_form->display_front_end();
+			}
+		}
 		?>
 		<style>
 		.repeatable {
@@ -17,7 +37,6 @@ class Field_Repeatable extends Field {
 			padding:1em;
 		}
 		</style>
-
 		<script>
 		<?php
 			// generate template for form repeatable and store in JS variable
@@ -77,11 +96,12 @@ class Field_Repeatable extends Field {
 	public function set_from_submit() {
 		// create base repeatable form
 		$forms=[];
-		$repeatable_form = new Form(CMSPATH . $this->form_path);
+		$repeatable_form = new Form(CMSPATH . $this->form_path, true); // must be true / repeatable
 		$repeat_count = sizeof (Input::getvar('form_' . $repeatable_form->id, 'ARRAYRAW'));
 		// loop over this submitted repeatable and make sub-form for each element
 		for ($n=0; $n<$repeat_count; $n++) {
-			$repeatable_form = new Form(CMSPATH . $this->form_path);
+			$repeatable_form = new Form(CMSPATH . $this->form_path, true);
+			$repeatable_form->form_path = $this->form_path;
 			// get info for field
 			foreach ($repeatable_form->fields as $field) {
 				$field->set_from_submit_repeatable($n);
@@ -89,7 +109,7 @@ class Field_Repeatable extends Field {
 			$forms[] = $repeatable_form;
 		}
 		$this->forms = $forms;
-		
+		$this->default = json_encode($forms);
 	}
 
 
@@ -102,6 +122,7 @@ class Field_Repeatable extends Field {
 		$this->default = $config->default ?? false;
 		$this->type = 'Repeatable';
 		$this->form_path = $config->form_path ?? false;
+		$this->repeatable = true; // always!!!
 		//$this->form = new Form($this->form_path);
 	}
 
@@ -113,6 +134,7 @@ class Field_Repeatable extends Field {
 				$all_valid=false;
 			}
 		}
+		return true;
 		return $all_valid;
 	}
 }

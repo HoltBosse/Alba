@@ -1,5 +1,6 @@
 {
 	"id":"testrepeatform",
+	"repeatable":true,
 	"fields":[
 		{
 			"name":"qqq",
