@@ -10,11 +10,20 @@ class Field_Repeatable extends Field {
 	public function display() {
 		// get default saved repeatable form stuff
 		$saved_data = json_decode($this->default);
-		
+
 		// get example repeatable for js rendering
 		$this->form = new Form(CMSPATH . $this->form_path, true); 
 		// loop over existing data and render
 		$this->forms = [];
+
+		echo "<div class='field'>";
+			echo "<label for='{$this->id}' class='label'>";
+			echo $this->label;
+			echo "</label>";
+			
+			echo "<div class='repeated_forms_container' id='repeated_forms_container_{$this->form->id}'>";
+		
+		
 		if ($saved_data) {
 			foreach ($saved_data as $repeatable_form_data) {
 				// load form
@@ -26,10 +35,31 @@ class Field_Repeatable extends Field {
 						$field->default = $field_info->default;
 					}
 				}
-				$repeatable_form->display_front_end();
+				?>
+				<div class='repeatable'>
+					<button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
+					<button type='button' onclick='move_repeatable_up(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>^</button>
+					<button type='button' onclick='move_repeatable_down(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>v</button>
+					<?php $repeatable_form->display_front_end(); ?>
+				</div>
+				<?php
 			}
 		}
 		?>
+		
+
+		<?php
+		
+			echo "</div>"; // end repeatable form container
+			
+			echo "<button type='button' data-repeatable_template_var='repeatable_form_template_{$this->form->id}' id='add_repeater_{$this->form->id}' class='add_new_repeatable button btn is-primary'>+</button>";
+
+			if ($this->description) {
+				echo "<p class='help'>" . $this->description . "</p>";
+			}
+		echo "</div>"; // end field
+		?>
+
 		<style>
 		.repeatable {
 			border:2px solid #aaa;
@@ -53,25 +83,7 @@ class Field_Repeatable extends Field {
 			ob_end_clean(); // end temp buffering without outputting any of the form to browser / existing buffer
 		?>
 		window.repeatable_form_template_<?php echo $this->form->id;?> = <?php echo json_encode($repeatable_template); ?>;
-		</script>
 
-		<?php
-		echo "<div class='field'>";
-			echo "<label for='{$this->id}' class='label'>";
-			echo $this->label;
-			echo "</label>";
-			
-			echo "<div class='repeated_forms_container' id='repeated_forms_container_{$this->form->id}'>";
-			echo "</div>";
-			
-			echo "<button type='button' data-repeatable_template_var='repeatable_form_template_{$this->form->id}' id='add_repeater_{$this->form->id}' class='add_new_repeatable button btn is-primary'>+</button>";
-
-			if ($this->description) {
-				echo "<p class='help'>" . $this->description . "</p>";
-			}
-		echo "</div>";
-		?>
-		<script>
 
 		var add_repeater_<?php echo $this->form->id;?> = document.getElementById('add_repeater_<?php echo $this->form->id;?>');
 		add_repeater_<?php echo $this->form->id;?>.addEventListener('click',function(e){
@@ -88,6 +100,25 @@ class Field_Repeatable extends Field {
 			var this_repeater = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>');
 			this_repeater.appendChild(new_node);
 		});
+
+		function move_repeatable_up(el) {
+			// todo: check if repeatable? should be, or null
+			if (el.previousElementSibling) {
+				el.parentNode.insertBefore(el, el.previousElementSibling);
+			}
+			else {
+				alert('Already at top!');
+			}
+		}
+
+		function move_repeatable_down(el) {
+			if (el.nextElementSibling) {
+				el.parentNode.insertBefore(el.nextElementSibling, el);
+			}
+			else {
+				alert('Already at bottom!');
+			}
+		}
 		</script>
 		<?php
 
