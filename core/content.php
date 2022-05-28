@@ -14,6 +14,7 @@ class Content_Search {
 	public $published_only;
 	public $list_fields;
 	public $ignore_fields;
+	public $created_by_cur_user;
 	public $page;
 	public $searchtext;
 	public $page_size;
@@ -35,6 +36,7 @@ class Content_Search {
 		$this->filters=[];
 		$this->filter_pdo_params = [];
 		$this->search_pdo_params = [];
+		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
 
@@ -129,8 +131,13 @@ class Content_Search {
 			}
 		}
 
+		if ($this->created_by_cur_user) {
+			$where .= " AND created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
+		}
+
 		$count_query = $query . $count_select . $from . $where;
 		$query = $query . $select . $from . $where;
+		
 
 		if ($this->order_by) {
 			$query .= " order by " . $this->order_by . " " . $this->order_direction;
