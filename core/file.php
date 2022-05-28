@@ -57,11 +57,11 @@ class File {
 	}
 
 
-	public function get_max_upload_size()  {  
+	public static function get_max_upload_size()  {  
 		return min((ini_get('post_max_size')), (ini_get('upload_max_filesize')));  
 	}  
 
-	public function get_max_upload_size_bytes()  {  
+	public static function get_max_upload_size_bytes()  {  
 		return min(File::php_size_to_bytes(ini_get('post_max_size')), File::php_size_to_bytes(ini_get('upload_max_filesize')));    
 	}
 
