@@ -192,7 +192,7 @@ final class CMS {
 		}
 		$request = str_ireplace($to_remove, "", $request);
 		// split into array of segments
-		$this->uri_segments = preg_split('@/@', parse_url($request, PHP_URL_PATH), NULL, PREG_SPLIT_NO_EMPTY);
+		$this->uri_segments = preg_split('@/@', parse_url($request, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
 
 		
 		if (@$this->uri_segments[0]=='image') {
