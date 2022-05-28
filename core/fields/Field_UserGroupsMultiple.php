@@ -41,7 +41,9 @@ class Field_UserGroupsMultiple extends Field {
 						}
 						foreach ($groups as $group) {
 							$selected = "";
-							if (in_array($group->id, $this->array_values)) { $selected="selected";}
+							if (is_array($this->array_values)) {
+								if (in_array($group->id, $this->array_values)) { $selected="selected";}
+							}
 							echo "<option {$selected} value='{$group->id}'>{$group->display}</option>";
 						}
 					echo "</select>";
