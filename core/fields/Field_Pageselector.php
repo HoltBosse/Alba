@@ -12,8 +12,10 @@ class Field_Pageselector extends Field {
 				foreach ($all_pages as $page) {
 					echo "<label class='checkbox'>";
 						$checked = "";
-						if (in_array($page->id, $this->default)) {
-							$checked = " checked ";
+						if (is_array($this->default)) {
+							if (in_array($page->id, $this->default)) {
+								$checked = " checked ";
+							}
 						}
 						echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='{$page->id}'>";
 						for ($n=0; $n<$page->depth; $n++) {
