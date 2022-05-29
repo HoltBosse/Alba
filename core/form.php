@@ -124,8 +124,10 @@ class Form {
 		if ($json_obj) {
 			foreach ($json_obj as $option) {
 				if ($option->name!=='error!!!') {
-					$field = $this->get_field_by_name($option->name);
-					$field->default = $option->value;
+					$field = $this->get_field_by_name($option->name); 
+					if (is_object($field)) {
+						$field->default = $option->value;
+					}
 				}
 				else {
 					// keep going - other fields exist maybe :)
