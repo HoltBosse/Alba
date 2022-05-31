@@ -10,11 +10,14 @@ class Field_Text extends Field {
 		$this->default = $default_content;
 		$this->content_type="";
 		$this->placeholder="";
+		$this->pattern = "";
 	}
 
 	public function display() {
 		$hidden = "";
 		$required="";
+		$pattern="";
+		if ($this->pattern) {$pattern="pattern='{$this->pattern}'"; };
 		if ($this->required) {$required=" required ";}
 		if (property_exists($this,'attribute_list')) {
 			$attributes = explode(' ',$this->attribute_list);
@@ -40,7 +43,7 @@ class Field_Text extends Field {
 				}
 				$placeholder = $this->placeholder ?? "";
 
-				echo "<input type='{$this->input_type}' value='{$this->default}' placeholder='{$placeholder}' {$minmax} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
+				echo "<input type='{$this->input_type}' value='{$this->default}' placeholder='{$placeholder}' {$minmax} {$pattern} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
@@ -88,6 +91,7 @@ class Field_Text extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->input_type = $config->input_type ?? 'text';
+		$this->pattern = $config->pattern ?? '';
 		if ($this->input_type=='range') {
 			$this->min = $config->min ?? "0";
 			$this->max = $config->max ?? "100";
