@@ -149,7 +149,7 @@ class Plugin_core_google_login_jwt extends Plugin {
         <script src="https://accounts.google.com/gsi/client" async defer></script>
         <?php 
         //$client_id =  $this->get_option('client_id');
-        $login_page = $this->get_option('login_page') ?? Config::$uripath . "/admin/";
+        $login_page = (Config::$uripath . $this->get_option('login_page')) ?? Config::$uripath . "/admin/";
         ?>
         <div id="g_id_onload"
             data-client_id="<?php echo $this->get_option('client_id');?>"
