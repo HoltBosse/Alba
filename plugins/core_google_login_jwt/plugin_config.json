@@ -36,8 +36,8 @@
 			"required":false,
 			"filter":"STRING",
 			"maxlength":255,
-			"description":"Defaults to /admin if empty.",
-			"default":"/admin"
+			"description":"Defaults to /admin/ if empty. Note - for JWT version MUST end in trailing slash!",
+			"default":"/admin/"
 		}
     ]
 }
