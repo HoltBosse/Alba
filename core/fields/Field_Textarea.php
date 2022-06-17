@@ -9,6 +9,7 @@ class Field_Textarea extends Field {
 		$this->select_options=[];
 		$this->default = $default_content;
 		$this->content_type="";
+		$this->placeholder="";
 	}
 
 	public function display() {
@@ -24,7 +25,7 @@ class Field_Textarea extends Field {
 				$required="";
 				if ($this->required) {$required=" required ";}
 				$this->default = str_replace("[NEWLINE]","\n",$this->default);
-				echo "<textarea type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
+				echo "<textarea type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} placeholder='{$this->placeholder}' minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
 				echo $this->default;
 				echo "</textarea>";
 			echo "</div>";
@@ -39,6 +40,7 @@ class Field_Textarea extends Field {
 		$this->name = $config->name ?? 'error!!!';
 		$this->id = $config->id ?? $this->name;
 		$this->label = $config->label ?? '';
+		$this->placeholder = $config->placeholder ?? $this->placeholder;
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
 		$this->maxlength = $config->maxlength ?? 99999;
