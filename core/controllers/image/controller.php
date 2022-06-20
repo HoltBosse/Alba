@@ -37,6 +37,9 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=65) {
 	if ($file->mimetype=='image/jpeg') {
 		$source_image = imagecreatefromjpeg($src);
 	}
+	elseif ($file->mimetype=='image/webp') {
+		$source_image = imagecreatefromwebp($src);
+	}
 	else {
 		$source_image = imagecreatefrompng($src);
 	}
@@ -51,6 +54,9 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=65) {
 	/* create the physical thumbnail image to its destination */
 	if ($file->mimetype=='image/jpeg') {
 		imagejpeg($virtual_image, $dest, $quality);
+	}
+	elseif ($file->mimetype=='image/webp') {
+		imagewebp($virtual_image, $dest);
 	}
 	else {
 		imagepng($virtual_image, $dest);
