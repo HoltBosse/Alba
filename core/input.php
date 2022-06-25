@@ -70,6 +70,17 @@ class Input {
 			}
 			return $foo;
 		}
+		elseif ($filter=="CSVINT") {
+			$temparr = explode(",",$foo);
+			$ok = true;
+			foreach ($temparr as $temp) {
+				if (!is_numeric($temp)) {
+					CMS::Instance()->queue_message('CSVINT can only contains INTS','danger',Config::$uripath . '/admin');
+					return false;
+				}
+			}
+			return $foo;
+		}
 		elseif ($filter=="ARRAYTOJSON"||$filter=="ARRAY") {
 			if (!is_array($foo)) {
 				CMS::Instance()->queue_message('Cannot convert non-array to json in ARRAYTOJSON','danger',Config::$uripath . '/admin');
