@@ -91,16 +91,26 @@ class Field_ContentPickerOrdered extends Field {
                                     >
                                         <?php echo $item->title;?><span class='right-arrow pull-right'>></span>
                                     </li>
-									<?php 
-									if (in_array($item->id, $existing_arr)) {
-										$loaded_lis .= "<li data-content_id='{$item->id}' data-content_title='{$item->title}'>{$item->title}</li>";
-									}
-									?>
+									
                                 <?php endforeach; ?>
                             </ul>
 							
                         </div>
                     </div>
+					<?php 
+					// generate default currently selected list
+					// check for existing content
+					// (ensures that if content is deleted, won't show up here)
+					foreach ($existing_arr as $loaded_id) {
+						$exists = false;
+						foreach ($options_all_articles as $item) {
+							if ($loaded_id==$item->id) {
+								$loaded_lis .= "<li data-content_id='{$item->id}' data-content_title='{$item->title}'>{$item->title}</li>";
+								break;
+							}
+						}
+					}
+					?>
                     <div class="twocol_picker_right">
                         <h4 class='is-title title is-4'>Currently Selected</h4>
                         <div class='twocol_picker_wrap'>
