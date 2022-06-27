@@ -10,7 +10,7 @@ class Controller {
 		$this->view = $view;
 	}
 
-	public function load_view ($view) {
+	public function load_view ($view, $controllervars=null) {
 		// first check folder exists
 		// then load model (this then loads the view)
 		$CMS = CMS::Instance();
