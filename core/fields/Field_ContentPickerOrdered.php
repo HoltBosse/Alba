@@ -225,7 +225,7 @@ class Field_ContentPickerOrdered extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
+		$this->filter = $config->filter ?? 'CSVINT';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
