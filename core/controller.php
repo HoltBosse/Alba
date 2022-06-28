@@ -22,8 +22,8 @@ class Controller {
 		$potential_override_view = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $controller_folder . "/" . $this->view . "/view.php";
 		if (file_exists($potential_override_model) && file_exists($potential_override_view)) {
 			// override files exist, use those
-			include_once ($potential_override_model);
-			include_once ($potential_override_view);
+			require ($potential_override_model);
+			require ($potential_override_view);
 		}
 		else {
 			// no override model/view, load default
@@ -32,8 +32,8 @@ class Controller {
 			if (file_exists ($view_path)) {
 				if (is_dir($view_path)) {
 					// TODO: check for included files existing too
-					include_once ($view_path . "/model.php");
-					include_once ($view_path . "/view.php");
+					require ($view_path . "/model.php");
+					require ($view_path . "/view.php");
 				}
 			}
 			else {
