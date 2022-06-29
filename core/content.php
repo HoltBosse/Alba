@@ -248,7 +248,7 @@ class Content {
 				// if clash isn't with just itself
 				if ($this->id) {
 					// add id to alias to make unique for existing content item
-					$this->alias = $this->alias . "_" . $this->id;
+					$this->alias = $this->alias . "-" . $this->id;
 					CMS::Instance()->queue_message('Added content id as suffix to "URL Friendly" field to ensure uniqueness.','warning');
 				}
 				else {
@@ -259,7 +259,7 @@ class Content {
 					// a unique suffix
 					// I leave this is a relatively easily solved gift to future me
 					$fourRandomDigit = mt_rand(1000,9999);
-					$this->alias = $this->alias . "_" . $fourRandomDigit;
+					$this->alias = $this->alias . "-" . $fourRandomDigit;
 					CMS::Instance()->queue_message('Added random suffix to "URL Friendly" field to ensure uniqueness.','warning');
 				}
 			}
