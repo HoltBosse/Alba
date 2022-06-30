@@ -156,6 +156,13 @@ class Field_Rich extends Field {
 						var img = e.target;
 						img.classList.add('rich_image_active');
 					}
+					else {
+						// remove rich_image_active
+						let all_editor_active_images = e.target.closest('.editor').querySelectorAll('img.rich_image_active');
+						all_editor_active_images.forEach(img => {
+							img.classList.remove('rich_image_active');
+						});
+					}
 				});
 
 
@@ -226,7 +233,25 @@ class Field_Rich extends Field {
 							if (new_alt) {
 								active_image.title = new_title;
 							}
-							// TODO: force change into textarea containing markup?
+							active_image.classList.remove('rich_image_active');
+							// push updated content to textarea
+							active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
+						}
+						else {
+							alert('No image selected');
+						}
+					}
+
+					else if (command=='edit_image_attribution') {
+						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
+						if (active_image!==null) {
+							active_image.dataset.author = window.prompt('Enter Author: ', active_image.dataset.author);
+							active_image.dataset.source = window.prompt('Enter Source: ', active_image.dataset.source);
+							active_image.dataset.licence = window.prompt('Enter Licence Name: ', active_image.dataset.licence);
+							active_image.dataset.licencelink = window.prompt('Enter Licence Link: ', active_image.dataset.licencelink);
+							active_image.classList.remove('rich_image_active');
+							// push updated content to textarea
+							active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
 						}
 						else {
 							alert('No image selected');
@@ -420,7 +445,8 @@ class Field_Rich extends Field {
 					<a class='editor_button image_selected' href='#' data-command='floatleft'>FL</a>
 					<a class='editor_button image_selected' href='#' data-command='floatright'>FR</a>
 					<a class='editor_button image_selected' href='#' data-command='floatclear'>FC</a>
-					<a class='editor_button image_selected' href='#' data-command='edit_image_props'>ALT/TITLE</a>
+					<a class='editor_button image_selected' href='#' data-command='edit_image_props'>IMG ALT/TITLE</a>
+					<a class='editor_button image_selected' href='#' data-command='edit_image_attribution'>IMG ATTRIB</a>
 					<a class='editor_button toggle_editor_raw' href="#" data-command='none'><i class='fa fa-edit'></i></a>
 				</div>
 				<?php
