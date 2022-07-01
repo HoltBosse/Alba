@@ -96,7 +96,12 @@ class Field_Rich extends Field {
 		.editor .rich_image_active {
 			outline:2px dotted green;
 		}
-		
+		.editor figure.rich_image_figure {
+			margin: 1rem;
+			padding: 1rem;
+			border: 2px solid rgba(0,0,0,0.1);
+			display: inline-block;
+		}
 		</style>
 		<script>
 
@@ -249,6 +254,32 @@ class Field_Rich extends Field {
 							active_image.dataset.source = window.prompt('Enter Source: ', active_image.dataset.source);
 							active_image.dataset.licence = window.prompt('Enter Licence Name: ', active_image.dataset.licence);
 							active_image.dataset.licencelink = window.prompt('Enter Licence Link: ', active_image.dataset.licencelink);
+							// check for figure/caption and add if needed
+							if (active_image.parentElement.nodeName!=="FIGURE") {
+								// need to make figure + caption
+								var fig = document.createElement('FIGURE');
+								fig.classList.add('rich_image_figure');
+								var cap = document.createElement('FIGCAPTION');
+								active_image.parentElement.insertBefore(fig, active_image);
+								fig.appendChild(active_image);
+								fig.appendChild(cap);
+							}
+							else {
+								var fig = active_image.closest('figure');
+								var cap = active_image.nextElementSibling;
+							}
+							// update caption info
+							cap.innerHTML = "";
+							if (active_image.dataset.author) {
+								cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Author:</span> " + active_image.dataset.author + "</div>";
+							}
+							if (active_image.dataset.source) {
+								cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Source:</span> " + active_image.dataset.source + "</div>";
+							}
+							if (active_image.dataset.licence) {
+								cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Licence:</span> " + active_image.dataset.licence + "</div>";
+							}
+							// make image in editor inactive
 							active_image.classList.remove('rich_image_active');
 							// push updated content to textarea
 							active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
