@@ -7,6 +7,19 @@ if (CMS::Instance()->user->username=="guest") {
 	CMS::Instance()->queue_message("Must be logged in to upload media",Config::$uripath . '/admin');
 }
 
+/*
+	state 0: invalid
+	state 1: valid+thumbnails
+	state 2: valid+no thumbnails
+*/
+$image_types_data = [
+	"image/jpeg" => 1,
+	"image/webp" => 1,
+	"image/png" => 1,
+	"image/svg+xml" => 2,
+	"image/svg" => 2
+];
+
 $uploaded_files_array = $_FILES['file-upload'];
 $alts = Input::getvar('alt','ARRAYOFSTRING');
 $titles = Input::getvar('title','ARRAYOFSTRING');
@@ -106,7 +119,7 @@ foreach ($_FILES["file-upload"]["error"] as $key => $error) {
 		if ($in_db_ok) {
 			$thumbdest = CMSPATH . '/images/processed/' . "web_" . $file->filename;
 			// make web friendly if required
-			if ($file->original_width > 1920 && $web_friendly[$n]) {
+			if ($file->original_width > 1920 && $web_friendly[$n] && $image_types_data[$file->mimetype]==1) {
 				make_thumb($dest, $thumbdest, 1920, $file);
 				unlink($src);
 			}
