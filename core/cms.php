@@ -489,6 +489,9 @@ final class CMS {
 			}
 			if ($email && $password) {
 				if ($login_user->load_from_email($email)) {
+					if ($login_user->state<1) {
+						$this->queue_message('Incorrect email or password','danger', $redirect_path);
+					}
 					// user exists, check password
 					if ($login_user->check_password($password)) {
 						// logged in!
