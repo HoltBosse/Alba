@@ -1,5 +1,13 @@
 var uploading_progress_dialog = document.getElementById('uploading_progress_dialog');
 
+	var valid_image_types = {
+		"image/png": true,
+		"image/webp": true,
+		"image/jpeg": true,
+		"image/svg+xml": true,
+		"image/svg": true,
+	}
+
 	// image click handler
 	all_image_containers = document.querySelectorAll('.all_images_image_container');
 	//console.log(all_image_containers);
@@ -308,8 +316,8 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 	// check against max upload size
 	var uploaded_size_total=0;
 	for (var i = 0; i < e.dataTransfer.files.length; i++) {
-        if (!(e.dataTransfer.files[i].type=='image/png' || e.dataTransfer.files[i].type=='image/jpeg' || e.dataTransfer.files[i].type=='image/webp')) {
-			// skip anything but png or jpg or webp
+        if (!valid_image_types[e.dataTransfer.files[i].type]) {
+			// skip non valid types
             continue;
         }
 		uploaded_size_total += e.dataTransfer.files[i].size;
@@ -341,8 +349,8 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 	// this allows browser html form checking to trigger
     upload_form.innerHTML = '<button style="display:none !important" class="button" id="image_upload_form_submit" type="submit">Upload</button>';
     for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        if (!(e.dataTransfer.files[i].type=='image/png' || e.dataTransfer.files[i].type=='image/jpeg' || e.dataTransfer.files[i].type=='image/webp')) {
-            // skip anything but png or jpg or webp
+        if (!valid_image_types[e.dataTransfer.files[i].type]) {
+            // skip non valid types
             continue;
         }
 		let id = "img_id_" + i;
