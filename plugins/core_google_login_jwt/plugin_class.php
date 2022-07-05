@@ -111,7 +111,7 @@ class Plugin_core_google_login_jwt extends Plugin {
         // check if google email matches user in syste,
 
         $google_email = $jwt_obj->email;
-        $query = 'select * from users where email=?';
+        $query = 'select * from users where email=? and state>=1';
         $stmt = CMS::Instance()->pdo->prepare($query);
         $stmt->execute(array($google_email));
         $result = $stmt->fetch();
