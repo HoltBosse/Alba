@@ -8,7 +8,6 @@ class User {
 	public $password;
 	public $email;
 	public $tags;
-	public $state;
 
 
 
@@ -209,7 +208,6 @@ class User {
 			$this->groups = false; // TODO: get groups
 			$this->email = $result->email;
 			$this->id = $result->id;
-			$this->state = $result->state;
 			return true;
 		}
 		else {

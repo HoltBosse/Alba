@@ -489,7 +489,7 @@ final class CMS {
 			}
 			if ($email && $password) {
 				if ($login_user->load_from_email($email)) {
-					// user exists, and has a valid state, check password
+					// user exists, check password
 					if ($login_user->check_password($password)) {
 						// logged in!
 						$_SESSION['user_id'] = $login_user->id;
