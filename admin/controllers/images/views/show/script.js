@@ -8,6 +8,11 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 		"image/svg": true,
 	}
 
+	var web_friendly_blacklist = {
+		"image/svg+xml": true,
+		"image/svg": true,
+	}
+
 	// image click handler
 	all_image_containers = document.querySelectorAll('.all_images_image_container');
 	//console.log(all_image_containers);
@@ -368,7 +373,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
                         <label>Alt</label>
                         <input name='alt[]' required/>
                     </div>
-                    <div class='field'>
+                    <div class='field' style='${(web_friendly_blacklist[e.dataTransfer.files[i].type] ? "display:none;" : "")}'>
                         <label>Web Friendly</label>
                         <select name='web_friendly[]'>
                             <option selected value='1'>Yes</option>
