@@ -196,7 +196,7 @@ class User {
 
 	public function load_from_email($email) {
 		//echo "<h5>Loading user object from db with email {$email}</h5>";
-		$query = "select * from users where email=?";
+		$query = "select * from users where email=? and state>=1";
 		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($email));
 		$result = $stmt->fetch(); */
