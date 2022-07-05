@@ -8,6 +8,7 @@ class User {
 	public $password;
 	public $email;
 	public $tags;
+	public $state;
 
 
 
@@ -208,20 +209,12 @@ class User {
 			$this->groups = false; // TODO: get groups
 			$this->email = $result->email;
 			$this->id = $result->id;
+			$this->state = $result->state;
 			return true;
 		}
 		else {
 			return false;
 		}
-	}
-
-	public function check_state($email) {
-		$query = "select * from users where email=? and state>=1";
-		$result = DB::fetch($query, array($email));
-		if($result) {
-			return true;
-		}
-		return false;
 	}
 
 	public function generate_reset_key() {
