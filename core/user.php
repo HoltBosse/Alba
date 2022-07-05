@@ -153,7 +153,7 @@ class User {
 			$this->created = $result->created;
 			$this->email = $result->email;
 			$this->id = $result->id;
-
+			$this->state = $result->state;
 			// get groups
 			$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
 			/* $stmt = CMS::Instance()->pdo->prepare($query);
@@ -208,6 +208,7 @@ class User {
 			$this->groups = false; // TODO: get groups
 			$this->email = $result->email;
 			$this->id = $result->id;
+			$this->state = $result->state;
 			return true;
 		}
 		else {
