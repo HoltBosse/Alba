@@ -106,7 +106,17 @@ if (sizeof($segments)==3) {
 			$param = $segments[2];
 			$target_width = $image->width;
 			$newsize_path = "";
-			if ($param=="thumb") {	
+
+			//even if a specific version of these types of files is requested,
+			//return the native image due to lack of php handling at this time
+			$proccessed_blacklist = [
+				"image/svg+xml"=> true,
+				"image/svg"=> true,
+			];
+			if($proccessed_blacklist[$image->mimetype]) {
+				serve_file ($image, $original_path);
+			}
+			elseif ($param=="thumb") {	
 				$newsize_path = CMSPATH . "/images/processed/thumb_" . $image->filename;
 				if (!file_exists($newsize_path)) {
 					//CMS::log('Thumbnail generated for image ' . $image->filename);

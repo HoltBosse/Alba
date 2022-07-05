@@ -1,8 +1,11 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-$query = "select * from media where mimetype in ('image/jpeg','image/webp','image/png')";
-$all_images = CMS::Instance()->pdo->query($query)->fetchAll();
+$valid_image_types = [
+    "'image/jpeg'", "'image/webp'", "'image/png'", "'image/svg+xml'", "'image/svg'"
+];
+
+$all_images = DB::fetchall("select * from media where mimetype in (" . implode(",", $valid_image_types) . ")");
 
 $image_tags = Content::get_applicable_tags ("-1");
 
