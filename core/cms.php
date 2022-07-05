@@ -488,8 +488,8 @@ final class CMS {
 				$this->queue_message('Invalid email','danger', $redirect_path);
 			}
 			if ($email && $password) {
-				if ($login_user->load_from_email($email)) {
-					// user exists, check password
+				if ($login_user->load_from_email($email) && $login_user->check_state($email)) {
+					// user exists, and has a valid state, check password
 					if ($login_user->check_password($password)) {
 						// logged in!
 						$_SESSION['user_id'] = $login_user->id;

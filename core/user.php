@@ -196,7 +196,7 @@ class User {
 
 	public function load_from_email($email) {
 		//echo "<h5>Loading user object from db with email {$email}</h5>";
-		$query = "select * from users where email=? and state>=1";
+		$query = "select * from users where email=?";
 		/* $stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($email));
 		$result = $stmt->fetch(); */
@@ -213,6 +213,15 @@ class User {
 		else {
 			return false;
 		}
+	}
+
+	public function check_state($email) {
+		$query = "select * from users where email=? and state>=1";
+		$result = DB::fetch($query, array($email));
+		if($result) {
+			return true;
+		}
+		return false;
 	}
 
 	public function generate_reset_key() {
