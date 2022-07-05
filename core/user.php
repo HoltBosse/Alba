@@ -8,7 +8,7 @@ class User {
 	public $password;
 	public $email;
 	public $tags;
-
+	public $state;
 
 
 	public function __construct() {
@@ -19,6 +19,7 @@ class User {
 		$this->registered = date('Y-m-d H:i:s');
 		$this->id = false;
 		$this->tags = array();
+		$this->state = 1;
 	}
 
 	public static function create_new ($username, $password, $email, $groups=[], $state=0) {
