@@ -1,4 +1,4 @@
-# SeamlessCMS
+# Alba
 A PHP/MySQL based Content Management System. Designed with developer flexibility in mind.
 
 ## Requirements
@@ -14,4 +14,4 @@ Native PHP zip + 'fopen' PHP function availablity required for automatic updates
 4. In browser, go to /installer
 5. Follow instructions on screen
 
-That's it, now browse to /admin to start. See [wiki](https://github.com/bobmitch/SeamlessCMS/wiki) for more info.
+That's it, now browse to /admin to start. See [wiki](https://github.com/HoltBosse/Alba/wiki) for more info.

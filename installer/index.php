@@ -1,6 +1,6 @@
 <?php
 
-// SeamlessCMS Installer
+// Alba Installer
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -17,7 +17,7 @@ $curl_available = function_exists('curl_version');
 function show_error ($string, $continue=false) {
 	echo "
 	<head>
-	<title>SeamlessCMS Installation - Failed</title>
+	<title>Alba Installation - Failed</title>
 	</head>
 	<style>
 	body {display:flex;align-items:center;background:#eee;}
@@ -288,7 +288,7 @@ else {
 		}
 		?>
 	<html><head>
-		<title>SeamlessCMS Installation</title>
+		<title>Alba Installation</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<style>
 			html {
@@ -408,7 +408,7 @@ else {
 		</style>
 	</head><body>
 		
-		<h1>SeamlessCMS Install</h1>
+		<h1>Alba Install</h1>
 		<form method="POST" action="">
 		
 			<?php echo $protocalwarning; ?>
