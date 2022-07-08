@@ -102,7 +102,7 @@ else {
 	// set content form TODO
 	foreach ($content_form->fields as $content_field) {
 		$value = $content->get_field($content_field->name);
-		if ($value) {
+		if ($value||is_numeric($value)) {
 			$content_field->default = $value;
 		}
 	}
