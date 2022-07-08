@@ -1,6 +1,8 @@
 # Alba
 A PHP/MySQL based Content Management System. Designed with developer flexibility in mind.
 
+![image](https://user-images.githubusercontent.com/23583515/177893353-88814756-a371-4537-a3f0-5a9dada85efb.png)
+
 ## Requirements
 * PHP 7.0 + (with mod_rewrite)
 * MySQL/MariaDB 5.0+
