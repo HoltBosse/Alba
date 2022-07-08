@@ -1,21 +1,13 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-// router
+// create views directory and a 'default' view directory with model 
+// and view files if needed - otherwise homepage will be empty
 
-$segments = CMS::Instance()->uri_segments;
-if (sizeof($segments)==1) {
-	$view = 'default';
+$view = "default";
+if (is_dir(realpath(dirname(__FILE__) . "/views"))) {
+	$home_controller = new Controller(realpath(dirname(__FILE__)),$view);
+	$home_controller->load_view($view);
 }
-else {
-	$view = 'default';
-}
-
-// load model + view
-
-//CMS::queue_message('Test','success');
-
-$home_controller = new Controller(realpath(dirname(__FILE__)),$view);
-$home_controller->load_view($view);
 
 
