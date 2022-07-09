@@ -4,7 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Content_Search {
 	// TODO
-	// make sure that filters cols are added to list_fields ?
+	// make sure that filters cols are added to list_fields ? only relevant for code/admin backend views
 	// 
 	// $order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], 
 	// $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null
@@ -18,7 +18,7 @@ class Content_Search {
 	public $page;
 	public $searchtext;
 	public $page_size;
-	public $filters; // array of tuples where 0=colname and 1=value to match e.g. [['note','test']]
+	public $filters; // array of tuples where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $search_pdo_params;
 	private $filter_pdo_params;
@@ -121,13 +121,17 @@ class Content_Search {
 
 		// filters
 		if ($this->filters) {
+			// filters = array of tuples with [colname, value]
 			foreach ($this->filters as $filter) {
 				// can't parameterize column name....
-				//$filter_pdo_params[] = $filter[0];
-				// TODO
-				// check that $filter[0] matches a field name - with f_ added?
 				$filter_pdo_params[] = $filter[1];
-				$where .= " and ".$filter[0]."=? ";
+				// check if f_ present, if so it's custom field
+				if (strpos($filter[0],"f_")===0) {
+					$where .= " and ".$filter[0].".content=? ";
+				}
+				else {
+					$where .= " and ".$filter[0]."=? ";
+				}
 			}
 		}
 
@@ -147,6 +151,7 @@ class Content_Search {
 				$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
 			}
 		}
+
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
 			$result = DB::fetchall($query,array_merge([$like,$like],$filter_pdo_params ?? [])); // title and note
