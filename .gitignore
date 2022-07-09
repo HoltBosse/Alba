@@ -44,4 +44,5 @@ temp/**
 /backups/**
 db.sql
 #ignore admin home view (if any)
+admin/controllers/home/views
 admin/controllers/home/views/**
