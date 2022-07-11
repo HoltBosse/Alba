@@ -109,11 +109,7 @@ if (sizeof($segments)==3) {
 
 			//even if a specific version of these types of files is requested,
 			//return the native image due to lack of php handling at this time
-			$proccessed_blacklist = [
-				"image/svg+xml"=> true,
-				"image/svg"=> true,
-			];
-			if($proccessed_blacklist[$image->mimetype]) {
+			if(File::get_image_types()[$image->mimetype]==2) {
 				serve_file ($image, $original_path);
 			}
 			elseif ($param=="thumb") {	
