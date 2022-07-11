@@ -6,11 +6,13 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 		"image/jpeg": true,
 		"image/svg+xml": true,
 		"image/svg": true,
+		"image/gif": true,
 	}
 
 	var web_friendly_blacklist = {
 		"image/svg+xml": true,
 		"image/svg": true,
+		"image/gif": true,
 	}
 
 	// image click handler

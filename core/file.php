@@ -40,7 +40,7 @@ class File {
 	}
 
 	public function is_image() {
-		if ($this->mimetype=="image/jpeg" || $this->mimetype=="image/webp" || $this->mimetype=="image/png" || $this->mimetype=="image/svg+xml" || $this->mimetype=="image/svg") {
+		if (File::get_image_types()[$this->mimetype] >= 0 ) {
 			return true;
 		}
 		else {
@@ -95,4 +95,21 @@ class File {
 	private function import_into_db() {
 	}
 
+	public static function get_image_types() {
+		/*
+			state 0: invalid
+			state 1: valid+thumbnails
+			state 2: valid+no thumbnails
+		*/
+		$image_types = [
+			"image/jpeg" => 1,
+			"image/webp" => 1,
+			"image/png" => 1,
+			"image/svg+xml" => 2,
+			"image/svg" => 2,
+			"image/gif" => 2
+		];
+
+		return $image_types;
+	}
 }

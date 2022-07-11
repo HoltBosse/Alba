@@ -1,9 +1,10 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-$valid_image_types = [
-    "'image/jpeg'", "'image/webp'", "'image/png'", "'image/svg+xml'", "'image/svg'"
-];
+$valid_image_types = [];
+foreach(File::get_image_types() as $type => $value) {
+    array_push($valid_image_types, "'$type'");
+}
 
 $all_images = DB::fetchall("select * from media where mimetype in (" . implode(",", $valid_image_types) . ")");
 
