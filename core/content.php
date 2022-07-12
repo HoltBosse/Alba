@@ -303,7 +303,9 @@ class Content {
 			/* CMS::pprint_r ($field);  */
 			if ($field->filter=="ARRAYOFINT") {
 				// convert array of int to string
-				$field->default = implode($field->default);
+				if (is_array($field->default)) {
+					$field->default = implode(",",$field->default);
+				}
 			}
 			CMS::Instance()->log("Saving: " . $field->default);
 			$query = "insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)";
