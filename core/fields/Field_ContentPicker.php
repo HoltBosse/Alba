@@ -42,7 +42,7 @@ class Field_ContentPicker extends Field {
 				echo "<div class='select is-multiple'>";
 					echo "<select class='is-multiple' multiple {$required} id='{$this->id}{$repeatable_id_suffix}' {$this->get_rendered_name(true)}>";
 						if ($this->required) {
-							echo "<option value='' >{$this->label}</option>";
+							echo "<option disabled value='' >{$this->label}</option>";
 						}
 						foreach ($content as $item) {
 							if ($item->state==1) {
