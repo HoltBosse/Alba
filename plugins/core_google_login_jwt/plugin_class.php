@@ -90,7 +90,7 @@ class Plugin_core_google_login_jwt extends Plugin {
             CMS::Instance()->queue_message('Failed to retrieve valid PEMs from Google','danger', Config::$uripath . "/admin");
         }
         $valid = false;
-        $pem_arr = get_mangled_object_vars($google_pems_obj); // convert obj to arr
+        $pem_arr = (array) $google_pems_obj; // convert obj to arr
         
         // loop over public keys for match
         foreach ($pem_arr as $pem) {
@@ -148,8 +148,8 @@ class Plugin_core_google_login_jwt extends Plugin {
         </script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
         <?php 
-        //$client_id =  $this->get_option('client_id');
-        $login_page = (Config::$uripath . $this->get_option('login_page')) ?? Config::$uripath . "/admin/";
+            $login_page = $_SERVER['REQUEST_URI']; //redirect to current uri path
+            $login_page[strlen($login_page)-1] == "/" ?: $login_page = $login_page . "/"; //add / at end if missing to make google happy
         ?>
         <div id="g_id_onload"
             data-client_id="<?php echo $this->get_option('client_id');?>"
