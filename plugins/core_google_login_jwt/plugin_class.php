@@ -149,7 +149,7 @@ class Plugin_core_google_login_jwt extends Plugin {
         <script src="https://accounts.google.com/gsi/client" async defer></script>
         <?php 
             $login_page = $_SERVER['REQUEST_URI']; //redirect to current uri path
-            $login_page[strlen($login_page)-1] == "/" ?: $login_page = $login_page . "/"; //add / at end if missing to make google happy
+            substr($login_page, -1) == "/" ?: $login_page = $login_page . "/"; //add / at end if missing to make google happy
         ?>
         <div id="g_id_onload"
             data-client_id="<?php echo $this->get_option('client_id');?>"
