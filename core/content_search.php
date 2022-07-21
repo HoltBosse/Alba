@@ -40,6 +40,18 @@ class Content_Search {
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
 
+	private function field_in_filters($field_name) {
+		//CMS::pprint_r ("checking if {$field_name} is in: ");
+		//CMS::pprint_r ($this->filters);
+		$field_name = "f_" . $field_name;
+		foreach ($this->filters as $filter) {
+			if ($filter[0]==$field_name) {
+				return $filter[1];
+			}
+		}
+		return false;
+	}
+
 	public function get_count() {
 		return $this->count;
 	}
@@ -77,7 +89,7 @@ class Content_Search {
 									else {
 										// assume saveable, add to query list
 										$this->list_fields[] = $custom_field->name;
-									}
+									} 
 								}
 							}
 						}
@@ -89,17 +101,35 @@ class Content_Search {
 		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note, c.category, cat.title  as catname";
 		if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {
-				$select .= " ,f_{$field}.content as f_{$field}";
+				$select .= " ,f_{$field}_t.content as f_{$field}";
 			}
 		}
 		$count_select = " count(*) as c ";
 		$from = " from ( content c ";
-		if ($this->list_fields) {
-			foreach ($this->list_fields as $field) {
-				$from .= " ,content_fields f_{$field}";
+
+		// if custom field exists as filter - needs to be added in from/where not as left join
+		// also save filter value to filter_pdo_params
+		foreach ($this->list_fields as $field) {
+			$val = $this->field_in_filters($field);
+			if ($val!==false) {
+				$filter_pdo_params[] = $val;
+				$from .= ", content_fields f_{$field}_t ";
 			}
 		}
+
 		$from .= " ) left join categories cat on c.category=cat.id ";
+
+		// left join custom field fields
+		// ONLY where not in filters
+		if ($this->list_fields) {
+			foreach ($this->list_fields as $field) {				
+				$filter_val = $this->field_in_filters($field);
+				if ($filter_val===false) {
+					$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
+				}
+			}
+		}
+
 		$where = ' where ';
 		if ($this->published_only) {
 			$where .= " c.state > 0 ";
@@ -110,27 +140,19 @@ class Content_Search {
 		if ($this->searchtext) {
 			$where .= " AND (c.title like ? or c.note like ?) "; 
 		}
-		if ($this->list_fields) {
-			foreach ($this->list_fields as $field) {
-				$where .= " and f_{$field}.content_id=c.id and f_{$field}.name='{$field}' ";
-			}
-		}
+		
 		if ($this->type_filter && is_numeric($this->type_filter)) {
 			$where .= " and c.content_type={$this->type_filter} ";
 		}
 
-		// filters
-		if ($this->filters) {
-			// filters = array of tuples with [colname, value]
-			foreach ($this->filters as $filter) {
-				// can't parameterize column name....
-				$filter_pdo_params[] = $filter[1];
-				// check if f_ present, if so it's custom field
-				if (strpos($filter[0],"f_")===0) {
-					$where .= " and ".$filter[0].".content=? ";
-				}
-				else {
-					$where .= " and ".$filter[0]."=? ";
+		// custom fields being filtered
+		if ($this->list_fields) {
+			foreach ($this->list_fields as $field) {				
+				$filter_val = $this->field_in_filters($field);
+				if ($filter_val!==false) {
+					$this->filter_pdo_params[] = $filter_val;
+					$where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
+					$where .= " and f_{$field}_t.content = ? ";
 				}
 			}
 		}
@@ -151,6 +173,9 @@ class Content_Search {
 				$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
 			}
 		}
+		/* CMS::pprint_r ($this->filters);*/
+		//CMS::pprint_r ($this->filter_pdo_params);
+		//CMS::pprint_r ($query); die(); 
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
