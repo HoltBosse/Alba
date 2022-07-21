@@ -166,8 +166,13 @@ class Field_Image extends Field {
 	}
 
 	public function get_friendly_value() {
-		$img = new Image($this->id);
-		$img->render('thumb','backend');
+		if (is_numeric($this->id)) {
+			$img = new Image($this->id);
+			$img->render('thumb','backend');
+		}
+		else {
+			echo "<span>No Image</span>";
+		}
 	}
 
 
