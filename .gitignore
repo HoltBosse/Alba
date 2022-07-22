@@ -46,3 +46,7 @@ db.sql
 #ignore admin home view (if any)
 admin/controllers/home/views
 admin/controllers/home/views/**
+#ignore non default controllers
+core/controllers/**
+!controllers/image/
+!controllers/image/**
