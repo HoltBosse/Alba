@@ -54,7 +54,7 @@ final class CMS {
 			include('my_404.php'); // provide your own HTML for the error page
 		}
 		else {
-			include('default_404.php');
+			CMS::show_error("Oops, something went wrong &#129300", "404");
 		}
 		exit(0);
 	}
@@ -156,13 +156,30 @@ final class CMS {
 		//CMS::pprint_r ($widgets);
 	}
 
-	public static function show_error($text) {
+	public static function show_error($text, $http_code="") {
 		if (ob_get_length()) {
 			ob_end_clean();
 		}
-		echo "<div style='padding:1em; font-family:sans-serif; text-align:center; height:100vh; width:100%; display:flex; align-items:center; justify-content:center;'>";
-		echo "<h1>{$text}</h1>";
-		echo "</div>";
+		?>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+			<div style="display:flex; justify-content:center; align-items:center; height: 100%;">
+				<div style="max-width: 50%;">
+					<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
+						<?php 
+							$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
+							$logo_src = $logo_image_id ? Config::$uripath . "/image/" . $logo_image_id : Config::$uripath . "/admin/templates/clean/alba_logo.webp";
+						?>
+						<img src="<?php echo $logo_src;?>" >
+						<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+					</div>
+					<br><br>
+					<div>
+						<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
+						<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;">Visit Home</a></p>
+					</div>
+				</div>
+			</div>
+		<?php
 		die();
 	}
 
