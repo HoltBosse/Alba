@@ -433,12 +433,10 @@ final class CMS {
 			exit(); // shouldn't be needed, controller should exit
 		}
 		// check for user core controllers
-		if (property_exists("Config",'user_core_controllers')) {
-			if (Config::$user_core_controllers) {
-				if (in_array($this->uri_segments[0], Config::$user_core_controllers)) {
-					include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controller.php");
-					exit(); // shouldn't be needed, controller should exit
-				}
+		foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
+			if($this->uri_segments[0] == $folder) {
+				include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controller.php");
+				exit(); // shouldn't be needed, controller should exit
 			}
 		}
 
