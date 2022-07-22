@@ -77,7 +77,7 @@ require_once (CMSPATH . "/core/cms.php");
 				<div id="navbarBasicExample" class="navbar-menu">
 					<div class="navbar-start">
 
-						<?php if (CMS::Instance()->user->is_member_of('admin')):?>
+						<?php if (Access::can_access(Admin_Config::$access["settings"])):?>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">System</a>
 							<div class="navbar-dropdown">
@@ -89,7 +89,7 @@ require_once (CMSPATH . "/core/cms.php");
 						</div>
 						<?php endif; ?>
 
-						<?php if (CMS::Instance()->user->is_member_of('admin')):?>
+						<?php if (Access::can_access(Admin_Config::$access["users"])):?>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Users</a>
 							<div class="navbar-dropdown">
@@ -105,8 +105,11 @@ require_once (CMSPATH . "/core/cms.php");
 						</div>
 						<?php endif; ?>
 
+						<?php if (Access::can_access(Admin_Config::$access["pages"])):?>
 						<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/pages/">Pages</a>
-						
+						<?php endif; ?>
+
+						<?php if (Access::can_access(Admin_Config::$access["content"])):?>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Content</a>
 							<div class="navbar-dropdown">
@@ -122,7 +125,9 @@ require_once (CMSPATH . "/core/cms.php");
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/content/new">Create New Type</a>
 							</div>
 						</div>
+						<?php endif; ?>
 
+						<?php if (Access::can_access(Admin_Config::$access["widgets"])):?>
 						<!--<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/controllers/all">Controllers</a>-->
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Widgets</a>
@@ -134,7 +139,9 @@ require_once (CMSPATH . "/core/cms.php");
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/widgets/show/">All Widgets</a>
 							</div>
 						</div>
+						<?php endif; ?>
 
+						<?php if (Access::can_access(Admin_Config::$access["plugins"])):?>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Plugins</a>
 							<div class="navbar-dropdown">
@@ -145,7 +152,9 @@ require_once (CMSPATH . "/core/cms.php");
 								<?php endforeach; ?>
 							</div>
 						</div>
+						<?php endif; ?>
 
+						<?php if (Access::can_access(Admin_Config::$access["tags"])):?>
 						<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/tags">Tags</a>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Media</a>
@@ -157,7 +166,9 @@ require_once (CMSPATH . "/core/cms.php");
 								
 							</div>
 						</div>
+						<?php endif; ?>
 
+						<?php if (Access::can_access(Admin_Config::$access["categories"])):?>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a href="<?php echo Config::$uripath;?>/admin/categories/all"class="navbar-link">Categories</a>
 							<div class="navbar-dropdown">
@@ -168,7 +179,7 @@ require_once (CMSPATH . "/core/cms.php");
 								<a class="navbar-item" href="<?php echo Config::$uripath;?>/admin/categories/all/-3">Tags</a>
 							</div>
 						</div>
-
+						<?php endif; ?>
 					
 					</div>
 
