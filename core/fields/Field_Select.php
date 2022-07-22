@@ -13,6 +13,7 @@ class Field_Select extends Field {
 	}
 
 	public function display() {
+		$UpdateSelect = [];
 		$required="";
 		if ($this->required) {$required=" required ";}
 		if (property_exists($this,'attribute_list')) {
@@ -33,6 +34,7 @@ class Field_Select extends Field {
 						foreach ($this->select_options as $select_option) {
 							$selected = "";
 							if ($select_option->value == $this->default) { $selected="selected";}
+							if (isset($select_option->UpdateSelect)) { $UpdateSelect[$select_option->value] = $select_option->UpdateSelect;}
 							echo "<option {$selected} value='{$select_option->value}'>{$select_option->text}</option>";
 						}
 					echo "</select>";
@@ -42,6 +44,33 @@ class Field_Select extends Field {
 		if ($this->description) {
 			echo "<p class='help {$hidden}'>" . $this->description . "</p>";
 		}
+		if (sizeof($UpdateSelect >=1)):
+		?>
+			<script>	
+				function <?php echo "FieldUpdate" . $this->id; ?>() {	
+					var <?php echo $this->id . "_UpdateSelect"?> = <?php echo json_encode($UpdateSelect, JSON_UNESCAPED_SLASHES) ?>;	
+					var sel = document.getElementById("<?php echo $this->id; ?>");	
+					var oel = sel.options[sel.selectedIndex].value;	
+					if(<?php echo $this->id . "_UpdateSelect"?>[oel] && document.getElementById(<?php echo $this->id . "_UpdateSelect"?>[oel].id)){	
+						var markup="";	
+						var ojson = <?php echo $this->id . "_UpdateSelect"?>[oel].select_options	
+						for (const key in ojson) {	
+							if (ojson[key].text != "") {	
+								markup+=`<option value="${ojson[key].value}">${ojson[key].text}</option>`	
+							}	
+						}	
+						document.getElementById(<?php echo $this->id . "_UpdateSelect"?>[oel].id).innerHTML=markup;	
+					}	
+				}	
+				document.getElementById("<?php echo $this->id; ?>").addEventListener('change', (e) => {	
+					<?php echo "FieldUpdate" . $this->id; ?>();	
+				});	
+				window.addEventListener('load', function () {	
+					<?php echo "FieldUpdate" . $this->id; ?>();	
+				});	
+			</script>
+		<?php
+		endif;
 	}
 
 
