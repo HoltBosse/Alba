@@ -12,20 +12,20 @@ class Form {
 	}
 
 	public function load_json($path = CMSPATH . "/testform.json") {
-		if (!is_file($path)) {
-			echo "<h5>File {$path} not found</h5>";
+		$obj;
+		if (gettype($path)=="object") {
+			$obj = $path;
+		} elseif (is_file($path)) {
+			$json = file_get_contents($path);
+			$obj = json_decode($json);
+		} else {
+			echo "<h5>File {$path} not found or invalid data passed</h5>";
 			if (Config::$debug) {
 				echo "<p class='help'>Called from /core/form.php load_json function</p>";
 			}
 		}
-		else {
 
-			$json = file_get_contents($path);
-			$obj = json_decode($json);
-			if (!$obj) {
-				echo "<h5>Invalid json in file {$path}</h5>";
-				//CMS::Instance()->queue_message('Invalid JSON found in: ' . $path,'danger',Config::$uripath.'/admin');
-			}
+		if ($obj) {
 			$tempfields = $obj->fields;
 			$this->id = $obj->id;
 			
