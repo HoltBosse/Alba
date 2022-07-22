@@ -7,7 +7,7 @@
                 $logo_src = $logo_image_id ? Config::$uripath . "/image/" . $logo_image_id : Config::$uripath . "/admin/templates/clean/alba_logo.webp";
             ?>
             <img src="<?php echo $logo_src;?>" >
-            <h1 class="title" style="font-size: 6rem">404</h1>
+            <h1 class="title" style="font-size: 6rem; width: 6rem;">404</h1>
         </div>
         <br><br>
         <div>
