@@ -5,6 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 // load config
 require_once (CMSPATH . "/config.php");
+require_once (CMSPATH . "/admin/admin_config.php");
 
 if (Config::$debug) {
 	ini_set('display_errors', 1);
@@ -535,6 +536,11 @@ final class CMS {
 
 		else {
 			if (ADMINPATH) {
+				//check the users access rights
+				if (sizeof($this->uri_segments) >= 1 && !Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
+					$this->queue_message('You do not have access to this page','danger', Config::$uripath . "/admin");
+				}
+
 				ob_start();
 				$template = $this->get_admin_template();
 				include_once (CURPATH . '/templates/' . $template . "/index.php");
@@ -594,27 +600,17 @@ final class CMS {
 
 				$this->page = new Page();
 				$this->page->load_from_id($page->id); // also loads correct template obj into page obj
+
 				// check user has access
-				$access_granted_to = json_decode($this->page->get_page_option_value("access"));
-				if ($access_granted_to) {
-					// at least one group set, make sure user is member of group
-					// if none set, means public
-					$has_access = false;
-					foreach ($this->user->groups as $group) {
-						if (in_array($group->id, $access_granted_to)) {
-							$has_access = true;
-							break;
-						}
-					}
-					if (!$has_access) {
-						// send to front-end homepage for now - TODO: make back-end config option
-						$redirect_uri = Configuration::get_configuration_value ('general_options', 'signin_redirect');
-						// make requested page available via session for login redirect if needed
-						$smart_redirect = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-						$_SESSION['smart_redirect'] = $smart_redirect;
-						$this->queue_message('You do not have access to this page','danger', Config::$uripath . $redirect_uri);
-					}
+				if (!Access::can_access(json_decode($this->page->get_page_option_value("access")))) {
+					// send to front-end homepage for now - TODO: make back-end config option
+					$redirect_uri = Configuration::get_configuration_value ('general_options', 'signin_redirect');
+					// make requested page available via session for login redirect if needed
+					$smart_redirect = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+					$_SESSION['smart_redirect'] = $smart_redirect;
+					$this->queue_message('You do not have access to this page','danger', Config::$uripath . $redirect_uri);
 				}
+
 				// front end buffering for plugin functionality
 				ob_start();
 				include_once (CURPATH . '/templates/' . $this->page->template->folder . "/index.php");
