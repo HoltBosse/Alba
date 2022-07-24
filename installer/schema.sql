@@ -234,7 +234,6 @@ ALTER TABLE `templates`
 
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
 
 ALTER TABLE `user_groups`
