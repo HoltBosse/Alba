@@ -4,7 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Access {
     public static function can_access($page_groups=[], $user_groups=[]) {
         //prep and parse the inputs
-        if (sizeof($user_groups) == 0) {
+        if (!$user_groups) {
             $user_groups = CMS::Instance()->user->groups;
         }
         if (sizeof($page_groups) == 0 && ADMINPATH) {
@@ -12,7 +12,7 @@ class Access {
         }
 
         //logic
-        if(sizeof($page_groups) == 0) {
+        if(!$page_groups) {
             return true;
         }
 
