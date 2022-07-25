@@ -51,20 +51,23 @@ if ($required_details_form->is_submitted()) {
 	if ($required_details_form->validate() && $content_form->validate()) {
 		// forms are valid, save info
 		// first save version if versions are turned on
-		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
+		
+		// TODO: make versions work with new fields
+		/* $content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
 		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
 			// save old version
 			//$old_version = new content();
 			$content_location = Content::get_content_location($content->content_type);
 			$old_content = Content::get_all_content("id", $content_location, $content_id); // 2nd param being passed gives enough info to get custom fields
-			//CMS::pprint_r (Content::get_content_location($content->content_type)); CMS::pprint_r ($old_content); exit(0);
+			
 			if ($old_content) {
 				Content::save_version($old_content[0]);
 			}
 			else {
 				CMS::Instance()->queue_message('Unable to get all original content fields','danger',$_SERVER['REQUEST_URI']);
 			}
-		}
+		} */
+
 		$quicksave = Input::getvar('quicksave',"STRING");
 		if ($quicksave) {
 			$content->save($required_details_form, $content_form, $_SERVER['HTTP_REFERER'] );
