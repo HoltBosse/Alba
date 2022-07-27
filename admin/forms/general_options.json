@@ -45,7 +45,7 @@
 			"label": "Version Save Count",
 			"required": true,
 			"description": "Enter the number of content versions to save. Entering 0 will save none and will use the least database space.",
-			"default":3,
+			"default":1,
 			"filter": "NUM"
 		},
 		{
