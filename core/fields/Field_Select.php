@@ -26,7 +26,7 @@ class Field_Select extends Field {
 		echo "<div class='field {$hidden} {$required}'>";
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
-				echo "<div class='" . ($this->silmselect ? "silmselect_select" : "select") . "'>";
+				echo "<div class='" . ($this->silmselect ? "slimselect_select" : "select") . "'>";
 					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 						if ($this->required) {
 							$placeholder = $this->placeholder ?? $this->label;
