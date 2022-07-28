@@ -27,6 +27,20 @@
 			"description":"Repeatable text fields 2."
 		},
 		{
+			"name":"sel",
+			"id":"sel",
+			"type":"Select",
+			"label":"Repeatable SlimSelect Select",
+			"required":false,
+			"description":"Repeatable select with slimselect.",
+			"slimselect":true,
+			"select_options":[
+				{"text":"ID","value":"id"},
+				{"text":"Ordering","value":"order"},
+				{"text":"Created Date","value":"created"}
+			]
+		},
+		{
 			"name":"testrepeattags",
 			"id":"testrepeattags",
 			"type":"TagMultiple",
