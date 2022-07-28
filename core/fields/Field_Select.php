@@ -13,6 +13,7 @@ class Field_Select extends Field {
 	}
 
 	public function display() {
+		//CMS::pprint_r($this);
 		$UpdateSelect = [];
 		$required="";
 		if ($this->required) {$required=" required ";}
@@ -25,7 +26,7 @@ class Field_Select extends Field {
 		echo "<div class='field {$hidden} {$required}'>";
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
-				echo "<div class='select'>";
+				echo "<div class='" . ($this->slimselect ? "slimselect_select" : "select") . "'>";
 					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 						if ($this->required) {
 							$placeholder = $this->placeholder ?? $this->label;
@@ -68,6 +69,19 @@ class Field_Select extends Field {
 				window.addEventListener('load', function () {	
 					<?php echo "FieldUpdate" . $this->id; ?>();	
 				});	
+			</script>
+		<?php
+		endif;
+		if($this->slimselect):
+		?>
+			<script>
+				try {
+					document.getElementById('<?php echo $this->id;?>').slimselect = new SlimSelect({
+						select: '#<?php echo $this->id;?>'
+					});
+				} catch {
+					alert("SlimSelect is not present!");
+				}
 			</script>
 		<?php
 		endif;
@@ -121,6 +135,7 @@ class Field_Select extends Field {
 		$this->config = $config;
 		$this->empty_string = $config->empty_string ?? '';
 		$this->placeholder = $config->placeholder ?? '';
+		$this->slimselect = $config->slimselect ?: false;
 	}
 
 	public function validate() {
