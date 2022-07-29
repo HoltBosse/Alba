@@ -12,9 +12,9 @@ class Field_Image extends Field {
 		$this->default = null;
 	}
 
-	public function display() {
+	public function display($repeatable_template=false) {
 
-		//CMS::pprint_r ($this);
+		// repeatable template boolean initiated in Field_Repeatable.php if inside repeatable form
 
 		$required="";
 		if ($this->required) {$required=" required ";}
@@ -25,7 +25,12 @@ class Field_Image extends Field {
 			$repeatable_id_suffix='';
 		}
 		else {
-			$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
+			if ($repeatable_template) {
+				$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
+			}
+			else {
+				$repeatable_id_suffix = "_" . uniqid();
+			}
 			$this->id = $this->id . $repeatable_id_suffix;
 		}
 
