@@ -4,6 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 $segments = CMS::Instance()->uri_segments;
 $order_by = Input::getvar('order_by','STRING');
 $search = Input::getvar('search','TEXT',null);
+$filters = Input::tuples_to_assoc( Input::getvar('filters','RAW',null) );
 
 $content_type_filter = null;
 if (sizeof($segments)==3) {
@@ -32,6 +33,9 @@ $content_search = new Content_Search();
 $content_search->searchtext = $search;
 $content_search->type_filter = $content_type_filter;
 $content_search->page = $cur_page;
+if ($filters) {
+	$content_search->filters = $filters;
+}
 if ($order_by) {
 	$content_search->order_by = "ordering";
 	$content_search->order_direction = "ASC";
@@ -40,6 +44,8 @@ if ($order_by) {
 }
 $all_content = $content_search->exec();
 $content_count = $content_search->get_count();
+
+
 // end new conten search class - experimental
 
 

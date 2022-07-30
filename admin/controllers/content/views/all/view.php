@@ -120,6 +120,8 @@ table.dragging .before_after_wrap {
 
 <form id='searchform' action="" method="GET"></form>
 
+
+
 <form action='' method='post' name='content_action' id='content_action_form'>
 
 <h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
@@ -165,6 +167,15 @@ table.dragging .before_after_wrap {
 			Search
 			</button>
 		</div>
+		<div class='control'>
+			<input form="searchform" type='hidden' name='filters[0][key]' value='category'/>
+			<input form="searchform" type='text' value='' name='filters[0][value]' placeholder='9'/>
+		</div>
+		<!-- TEMP filter testing -->
+		<!-- <div class='control'>
+			<input form="searchform" type='hidden' name='filters[1][key]' value='created_by'/>
+			<input form="searchform" type='text' value='' name='filters[1][value]' placeholder='686'/>
+		</div> -->
 	</div>
 
 

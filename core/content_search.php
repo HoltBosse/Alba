@@ -99,7 +99,7 @@ class Content_Search {
 		// also save filter value to filter_pdo_params
 		foreach ($this->list_fields as $field) {
 			if (array_key_exists($field, $this->filters)) {
-				$filter_pdo_params[] = $this->filters[$field];
+				$this->filter_pdo_params[] = $this->filters[$field];
 				$from .= ", content_fields f_{$field}_t ";
 			}
 		}
@@ -140,6 +140,19 @@ class Content_Search {
 			}
 		}
 
+		// required fields filter
+		foreach ($this->filters as $key => $value) {
+			if (strpos($key,'f_')===false) {
+				// not custom field
+				// check if core field (nb - content type handled elsewhere in class, as more common)
+				if (in_array($key,['id','alias','title','category','created_by','created','updated_by','updated','note','start','end'])) {
+					// add value to params for safety
+					$this->filter_pdo_params[] = $value;
+					$where .= " and c." . $key . " = ? " ;
+				}
+			}
+		}
+
 		if ($this->created_by_cur_user) {
 			$where .= " AND created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
 		}
@@ -157,19 +170,21 @@ class Content_Search {
 			}
 		}
 		/* CMS::pprint_r ($this->filters);*/
-		//CMS::pprint_r ($this->filter_pdo_params);
-		//CMS::pprint_r ($query); die(); 
+		/* CMS::pprint_r ($this->filter_pdo_params);
+		if ($this->filters) {
+			CMS::pprint_r ($query); die(); 
+		} */
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
-			$result = DB::fetchall($query,array_merge([$like,$like],$filter_pdo_params ?? [])); // title and note
+			$result = DB::fetchall($query,array_merge([$like,$like],$this->filter_pdo_params ?? [])); // title and note
 			// set count
-			$this->count = DB::fetch($count_query,array_merge([$like,$like],$filter_pdo_params ?? []))->c ?? 0;
+			$this->count = DB::fetch($count_query,array_merge([$like,$like],$this->filter_pdo_params ?? []))->c ?? 0;
 		}
 		else {
-			$result = DB::fetchall($query,$filter_pdo_params ?? []);
+			$result = DB::fetchall($query,$this->filter_pdo_params ?? []);
 			// set count
-			$this->count = DB::fetch($count_query,$filter_pdo_params ?? [])->c ?? 0;
+			$this->count = DB::fetch($count_query,$this->filter_pdo_params ?? [])->c ?? 0;
 		}
 		return $result;
 	}
