@@ -222,6 +222,15 @@ table.dragging .before_after_wrap {
 				</button>
 			</div>
 		</div>
+
+		<div class='field'>
+			<label class="label">&nbsp;</label>
+			<div class='control'>
+				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0];' class="button is-default">
+					Clear
+				</button>
+			</div>
+		</div>
 	</div>
 
 	
