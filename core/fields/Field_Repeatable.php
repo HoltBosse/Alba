@@ -77,7 +77,7 @@ class Field_Repeatable extends Field {
 			?>
 			<div class='repeatable'><button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
 			<?php
-			$this->form->display_front_end(); 
+			$this->form->display_front_end(true); // pass true here to let form know it's for template/repeatable
 			echo "</div>";
 			$repeatable_template->markup = ob_get_contents();
 			ob_end_clean(); // end temp buffering without outputting any of the form to browser / existing buffer

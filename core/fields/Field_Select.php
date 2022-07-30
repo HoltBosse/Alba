@@ -13,7 +13,16 @@ class Field_Select extends Field {
 	}
 
 	public function display() {
-		//CMS::pprint_r($this);
+		// if id needs to be unique for scripting purposes, make sure replacement text inserted
+		// this will be replaced during repeatable template literal js injection when adding new
+		// repeatable form item
+		if ($this->in_repeatable_form===null) {
+			$repeatable_id_suffix='';
+		}
+		else {
+			$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
+			$this->id = $this->id . $repeatable_id_suffix;
+		}
 		$UpdateSelect = [];
 		$required="";
 		if ($this->required) {$required=" required ";}
