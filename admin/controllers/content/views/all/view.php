@@ -158,32 +158,41 @@ table.dragging .before_after_wrap {
 	</div>
 </h1>
 
-	<div class="field has-addons">
-		<div class="control">
-			<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="Search title/note">
+	<div class='flex'>
+		<div class="field">
+			<div class="control">
+				<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="Search title/note">
+			</div>
 		</div>
-		<div class="control">
-			<button form="searchform" type="submit" class="button is-info">
+			<!-- TEMP filter testing -->
+		<div class="field">
+			<label class="label">Cat</label>			
+			<div class='control'>
+				<input form="searchform" type='hidden' name='filters[0][key]' value='category'/>
+				<input form="searchform" type='text' value='' name='filters[0][value]' placeholder='9'/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">Created By</label>	
+			<div class='control'>
+				<input form="searchform" type='hidden' name='filters[1][key]' value='created_by'/>
+				<input form="searchform" type='text' value='' name='filters[1][value]' placeholder='686'/>
+			</div>
+		</div>
+		<div class="field">
+			<label class="label">f_video_image</label>	
+			<div class='control'>
+				<input form="searchform" type='hidden' name='filters[2][key]' value='f_video_image'/>
+				<input form="searchform" type='text' value='' name='filters[2][value]' placeholder='119'/>
+			</div>
+		</div>
+		<button form="searchform" type="submit" class="button is-info">
 			Search
 			</button>
-		</div>
-		<!-- TEMP filter testing -->
-
-		<div class='control'>
-			<input form="searchform" type='hidden' name='filters[0][key]' value='category'/>
-			<input form="searchform" type='text' value='' name='filters[0][value]' placeholder='9'/>
-		</div>
-		
-		<div class='control'>
-			<input form="searchform" type='hidden' name='filters[1][key]' value='created_by'/>
-			<input form="searchform" type='text' value='' name='filters[1][value]' placeholder='686'/>
-		</div>
-
-		<div class='control'>
-			<input form="searchform" type='hidden' name='filters[2][key]' value='f_video_image'/>
-			<input form="searchform" type='text' value='' name='filters[2][value]' placeholder='119'/>
-		</div>
 	</div>
+
+	
+	
 
 
 
