@@ -108,9 +108,11 @@ class Content_Search {
 
 		// left join custom field fields
 		// ONLY where not in filters
-		if ($this->list_fields) {			
-			if (!array_key_exists($field)) {
-				$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
+		if ($this->list_fields) {	
+			foreach ($this->list_fields as $field) {
+				if (!array_key_exists($field, $this->filters)) {
+					$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
+				}
 			}
 		}
 
@@ -132,8 +134,9 @@ class Content_Search {
 		// custom fields being filtered
 		if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {			
-				if (array_key_exists($field, $this->filters)) {
-					$this->filter_pdo_params[] = $filter_val;
+				if (array_key_exists('f_' . $field, $this->filters)) {
+					//CMS::pprint_r ('Got filter for custom field ' . $field);
+					$this->filter_pdo_params[] = $this->filters['f_'.$field];
 					$where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
 					$where .= " and f_{$field}_t.content = ? ";
 				}
@@ -169,11 +172,13 @@ class Content_Search {
 				$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
 			}
 		}
-		/* CMS::pprint_r ($this->filters);*/
-		/* CMS::pprint_r ($this->filter_pdo_params);
+
+		/* CMS::pprint_r ($this->filters);
+		CMS::pprint_r ($this->list_fields);
 		if ($this->filters) {
 			CMS::pprint_r ($query); die(); 
-		} */
+		}
+		CMS::pprint_r ($query); die();  */
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';

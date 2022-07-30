@@ -167,15 +167,22 @@ table.dragging .before_after_wrap {
 			Search
 			</button>
 		</div>
+		<!-- TEMP filter testing -->
+
 		<div class='control'>
 			<input form="searchform" type='hidden' name='filters[0][key]' value='category'/>
 			<input form="searchform" type='text' value='' name='filters[0][value]' placeholder='9'/>
 		</div>
-		<!-- TEMP filter testing -->
-		<!-- <div class='control'>
+		
+		<div class='control'>
 			<input form="searchform" type='hidden' name='filters[1][key]' value='created_by'/>
 			<input form="searchform" type='text' value='' name='filters[1][value]' placeholder='686'/>
-		</div> -->
+		</div>
+
+		<div class='control'>
+			<input form="searchform" type='hidden' name='filters[2][key]' value='f_video_image'/>
+			<input form="searchform" type='text' value='' name='filters[2][value]' placeholder='119'/>
+		</div>
 	</div>
 
 
