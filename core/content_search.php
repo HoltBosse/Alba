@@ -40,18 +40,6 @@ class Content_Search {
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
 
-	private function field_in_filters($field_name) {
-		//CMS::pprint_r ("checking if {$field_name} is in: ");
-		//CMS::pprint_r ($this->filters);
-		$field_name = "f_" . $field_name;
-		foreach ($this->filters as $filter) {
-			if ($filter[0]==$field_name) {
-				return $filter[1];
-			}
-		}
-		return false;
-	}
-
 	public function get_count() {
 		return $this->count;
 	}
@@ -110,9 +98,8 @@ class Content_Search {
 		// if custom field exists as filter - needs to be added in from/where not as left join
 		// also save filter value to filter_pdo_params
 		foreach ($this->list_fields as $field) {
-			$val = $this->field_in_filters($field);
-			if ($val!==false) {
-				$filter_pdo_params[] = $val;
+			if (array_key_exists($field, $this->filters)) {
+				$filter_pdo_params[] = $this->filters[$field];
 				$from .= ", content_fields f_{$field}_t ";
 			}
 		}
@@ -121,12 +108,9 @@ class Content_Search {
 
 		// left join custom field fields
 		// ONLY where not in filters
-		if ($this->list_fields) {
-			foreach ($this->list_fields as $field) {				
-				$filter_val = $this->field_in_filters($field);
-				if ($filter_val===false) {
-					$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
-				}
+		if ($this->list_fields) {			
+			if (!array_key_exists($field)) {
+				$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
 			}
 		}
 
@@ -147,9 +131,8 @@ class Content_Search {
 
 		// custom fields being filtered
 		if ($this->list_fields) {
-			foreach ($this->list_fields as $field) {				
-				$filter_val = $this->field_in_filters($field);
-				if ($filter_val!==false) {
+			foreach ($this->list_fields as $field) {			
+				if (array_key_exists($field, $this->filters)) {
 					$this->filter_pdo_params[] = $filter_val;
 					$where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
 					$where .= " and f_{$field}_t.content = ? ";
