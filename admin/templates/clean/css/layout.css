@@ -121,6 +121,20 @@ input.mm_url {
   background-image:url(http://www.stdicon.com/zip);
 }
 
+div#content_search_controls {
+	display:flex;
+	gap:1rem;
+}
+div#content_search_controls .field {
+	min-width:5rem;
+}
+#content_operations {
+	float:none;
+	display:flex;
+	justify-content: end;
+	margin:0 1rem;
+}
+
 html > footer {
 	background:rgba(0,0,0,0.1);
 	padding:3rem;

@@ -158,37 +158,70 @@ table.dragging .before_after_wrap {
 	</div>
 </h1>
 
-	<div class='flex'>
+	<?php //CMS::pprint_r ($filters); ?>
+
+	<div id='content_search_controls' class='flex'>
+
 		<div class="field">
+			<label class="label">Search Title/Note</label>
 			<div class="control">
-				<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="Search title/note">
+				<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="">
 			</div>
 		</div>
-			<!-- TEMP filter testing -->
-		<div class="field">
-			<label class="label">Cat</label>			
+
+		<div class='field'>
+			<label class="label">State</label>
 			<div class='control'>
-				<input form="searchform" type='hidden' name='filters[0][key]' value='category'/>
-				<input form="searchform" type='text' value='' name='filters[0][value]' placeholder='9'/>
+				<div class="select">
+					<input type='hidden' name='filters[2][key]' value='state' form='searchform'/>
+					<select name="filters[2][value]" form="searchform">
+						<option value=''>State</option>
+						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
+						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
+						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
+					</select>
+				</div>
 			</div>
 		</div>
-		<div class="field">
-			<label class="label">Created By</label>	
+
+		<div class='field'>
+			<label class="label">Category</label>
 			<div class='control'>
-				<input form="searchform" type='hidden' name='filters[1][key]' value='created_by'/>
-				<input form="searchform" type='text' value='' name='filters[1][value]' placeholder='686'/>
+				<div class="select">
+					<input type='hidden' name='filters[1][key]' value='category' form='searchform'/>
+					<select name="filters[1][value]" form="searchform">
+						<option value=''>Select Category</option>
+						<?php foreach ($applicable_categories as $cat):?>
+							<option <?php if ($filters['category']==$cat->id) { echo " selected "; }?> value='<?=$cat->id?>'><?=$cat->title?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
 			</div>
 		</div>
-		<div class="field">
-			<label class="label">f_video_image</label>	
+
+		<div class='field'>
+			<label class="label">Creator</label>
 			<div class='control'>
-				<input form="searchform" type='hidden' name='filters[2][key]' value='f_video_image'/>
-				<input form="searchform" type='text' value='' name='filters[2][value]' placeholder='119'/>
+				<div class="select">
+					<input type='hidden' name='filters[3][key]' value='created_by' form='searchform'/>
+					<select name="filters[3][value]" form="searchform">
+						<option value=''>Select Creator</option>
+						<?php foreach ($applicable_users as $u):?>
+							<option <?php if ($filters['created_by']==$u->id) { echo " selected "; }?> value='<?=$u->id?>'><?=$u->username?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
 			</div>
 		</div>
-		<button form="searchform" type="submit" class="button is-info">
-			Search
-			</button>
+		
+		<div class='field'>
+			<label class="label">&nbsp;</label>
+			<div class='control'>
+				<button form="searchform" type="submit" class="button is-info">
+					Search
+				</button>
+			</div>
+		</div>
 	</div>
 
 	

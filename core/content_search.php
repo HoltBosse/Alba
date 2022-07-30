@@ -148,7 +148,7 @@ class Content_Search {
 			if (strpos($key,'f_')===false) {
 				// not custom field
 				// check if core field (nb - content type handled elsewhere in class, as more common)
-				if (in_array($key,['id','alias','title','category','created_by','created','updated_by','updated','note','start','end'])) {
+				if (in_array($key,['state','id','alias','title','category','created_by','created','updated_by','updated','note','start','end'])) {
 					// add value to params for safety
 					$this->filter_pdo_params[] = $value;
 					$where .= " and c." . $key . " = ? " ;
