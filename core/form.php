@@ -137,7 +137,7 @@ class Form {
 		}
 	}
 
-	public function display_front_end() {
+	public function display_front_end($repeatable_template=false) {
 		
 		// first make sure array added to name if required
 		$aftername='';
@@ -151,7 +151,7 @@ class Form {
 				$wrapclass = $field->wrapclass ?? "";
 				echo "<div class='{$wrapclass} form_field field field_id_{$field->id}'>";
 			}
-			$field->display();
+			$field->display($repeatable_template); // pass repeatable_template so it knows this is called for making js repeatable template
 			if (!property_exists($field,'nowrap')) {
 				echo "</div><!-- end field -->";
 			}
