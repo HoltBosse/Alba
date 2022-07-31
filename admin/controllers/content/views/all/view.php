@@ -213,6 +213,24 @@ table.dragging .before_after_wrap {
 				</div>
 			</div>
 		</div>
+
+		<div class='field' id='content_search_tags_wrap'>
+			<label class="label">Tagged</label>
+			<div class='control'>
+				<div class="select">
+					<select id="content_search_tags" name="coretags[]" form="searchform" multiple>
+						<?php foreach ($applicable_tags as $t):?>
+							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=$t->title?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+		</div>
+		<script>
+		new SlimSelect({
+			select:'#content_search_tags'
+		});
+		</script>
 		
 		<div class='field'>
 			<label class="label">&nbsp;</label>
@@ -226,7 +244,7 @@ table.dragging .before_after_wrap {
 		<div class='field'>
 			<label class="label">&nbsp;</label>
 			<div class='control'>
-				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0];' class="button is-default">
+				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0]; return false;' class="button is-default">
 					Clear
 				</button>
 			</div>

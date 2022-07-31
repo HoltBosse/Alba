@@ -89,6 +89,10 @@ input.mm_url {
     margin-right: 32px; */
 }
 
+#content_search_tags_wrap .ss-main {
+	min-width:12rem;
+}
+
 .notification {
 	transform: translateY(1rem);
 }

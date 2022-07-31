@@ -18,7 +18,8 @@ class Content_Search {
 	public $page;
 	public $searchtext;
 	public $page_size;
-	public $filters; // array of tuples where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
+	public $tags; // array of tag ids to match 
+	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $search_pdo_params;
 	private $filter_pdo_params;
@@ -34,6 +35,7 @@ class Content_Search {
 		$this->list_fields=[];
 		$this->count=0;
 		$this->filters=[];
+		$this->tags=[];
 		$this->filter_pdo_params = [];
 		$this->search_pdo_params = [];
 		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
@@ -117,6 +119,7 @@ class Content_Search {
 		}
 
 		$where = ' where ';
+
 		if ($this->published_only) {
 			$where .= " c.state > 0 ";
 		}
@@ -125,6 +128,22 @@ class Content_Search {
 		}
 		if ($this->searchtext) {
 			$where .= " AND (c.title like ? or c.note like ?) "; 
+		}
+
+		if ($this->tags) {
+			// check array of ints
+			// guaranteed to be arr of ints in core, but not in the wild...
+			$tags_ok = true;
+			foreach ($this->tags as $t) {
+				if (!is_numeric($t)) {
+					$tags_ok = false;
+					break;
+				}
+			}
+			if ($tags_ok) {
+				// safe to implode without param injection
+				$where .= " and c.id in (select content_id from tagged where tag_id in (" . implode(',', $this->tags) . ")) ";
+			}
 		}
 		
 		if ($this->type_filter && is_numeric($this->type_filter)) {
