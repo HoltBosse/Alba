@@ -42,6 +42,18 @@ class Content_Search {
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
 
+	private function field_in_filters($field_name) {
+		//CMS::pprint_r ("checking if {$field_name} is in: ");
+		//CMS::pprint_r ($this->filters);
+		$field_name = "f_" . $field_name;
+		foreach ($this->filters as $filter) {
+			if ($filter[0]==$field_name) {
+				return $filter[1];
+			}
+		}
+		return false;
+	}
+
 	public function get_count() {
 		return $this->count;
 	}
@@ -100,6 +112,7 @@ class Content_Search {
 		// if custom field exists as filter - needs to be added in from/where not as left join
 		// also save filter value to filter_pdo_params
 		foreach ($this->list_fields as $field) {
+
 			if (array_key_exists($field, $this->filters)) {
 				$this->filter_pdo_params[] = $this->filters[$field];
 				$from .= ", content_fields f_{$field}_t ";
@@ -145,6 +158,7 @@ class Content_Search {
 				$where .= " and c.id in (select content_id from tagged where tag_id in (" . implode(',', $this->tags) . ")) ";
 			}
 		}
+
 		
 		if ($this->type_filter && is_numeric($this->type_filter)) {
 			$where .= " and c.content_type={$this->type_filter} ";
@@ -191,6 +205,9 @@ class Content_Search {
 				$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
 			}
 		}
+		/* CMS::pprint_r ($this->filters);*/
+		//CMS::pprint_r ($this->filter_pdo_params);
+		//CMS::pprint_r ($query); die(); 
 
 		/* CMS::pprint_r ($this->filters);
 		CMS::pprint_r ($this->list_fields);
