@@ -18,7 +18,8 @@ class Content_Search {
 	public $page;
 	public $searchtext;
 	public $page_size;
-	public $filters; // array of tuples where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
+	public $tags; // array of tag ids to match 
+	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $search_pdo_params;
 	private $filter_pdo_params;
@@ -34,6 +35,7 @@ class Content_Search {
 		$this->list_fields=[];
 		$this->count=0;
 		$this->filters=[];
+		$this->tags=[];
 		$this->filter_pdo_params = [];
 		$this->search_pdo_params = [];
 		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
@@ -110,9 +112,9 @@ class Content_Search {
 		// if custom field exists as filter - needs to be added in from/where not as left join
 		// also save filter value to filter_pdo_params
 		foreach ($this->list_fields as $field) {
-			$val = $this->field_in_filters($field);
-			if ($val!==false) {
-				$filter_pdo_params[] = $val;
+
+			if (array_key_exists($field, $this->filters)) {
+				$this->filter_pdo_params[] = $this->filters[$field];
 				$from .= ", content_fields f_{$field}_t ";
 			}
 		}
@@ -121,16 +123,16 @@ class Content_Search {
 
 		// left join custom field fields
 		// ONLY where not in filters
-		if ($this->list_fields) {
-			foreach ($this->list_fields as $field) {				
-				$filter_val = $this->field_in_filters($field);
-				if ($filter_val===false) {
+		if ($this->list_fields) {	
+			foreach ($this->list_fields as $field) {
+				if (!array_key_exists($field, $this->filters)) {
 					$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
 				}
 			}
 		}
 
 		$where = ' where ';
+
 		if ($this->published_only) {
 			$where .= " c.state > 0 ";
 		}
@@ -140,6 +142,23 @@ class Content_Search {
 		if ($this->searchtext) {
 			$where .= " AND (c.title like ? or c.note like ?) "; 
 		}
+
+		if ($this->tags) {
+			// check array of ints
+			// guaranteed to be arr of ints in core, but not in the wild...
+			$tags_ok = true;
+			foreach ($this->tags as $t) {
+				if (!is_numeric($t)) {
+					$tags_ok = false;
+					break;
+				}
+			}
+			if ($tags_ok) {
+				// safe to implode without param injection
+				$where .= " and c.id in (select content_id from tagged where tag_id in (" . implode(',', $this->tags) . ")) ";
+			}
+		}
+
 		
 		if ($this->type_filter && is_numeric($this->type_filter)) {
 			$where .= " and c.content_type={$this->type_filter} ";
@@ -147,12 +166,25 @@ class Content_Search {
 
 		// custom fields being filtered
 		if ($this->list_fields) {
-			foreach ($this->list_fields as $field) {				
-				$filter_val = $this->field_in_filters($field);
-				if ($filter_val!==false) {
-					$this->filter_pdo_params[] = $filter_val;
+			foreach ($this->list_fields as $field) {			
+				if (array_key_exists('f_' . $field, $this->filters)) {
+					//CMS::pprint_r ('Got filter for custom field ' . $field);
+					$this->filter_pdo_params[] = $this->filters['f_'.$field];
 					$where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
 					$where .= " and f_{$field}_t.content = ? ";
+				}
+			}
+		}
+
+		// required fields filter
+		foreach ($this->filters as $key => $value) {
+			if (strpos($key,'f_')===false) {
+				// not custom field
+				// check if core field (nb - content type handled elsewhere in class, as more common)
+				if (in_array($key,['state','id','alias','title','category','created_by','created','updated_by','updated','note','start','end'])) {
+					// add value to params for safety
+					$this->filter_pdo_params[] = $value;
+					$where .= " and c." . $key . " = ? " ;
 				}
 			}
 		}
@@ -177,16 +209,23 @@ class Content_Search {
 		//CMS::pprint_r ($this->filter_pdo_params);
 		//CMS::pprint_r ($query); die(); 
 
+		/* CMS::pprint_r ($this->filters);
+		CMS::pprint_r ($this->list_fields);
+		if ($this->filters) {
+			CMS::pprint_r ($query); die(); 
+		}
+		CMS::pprint_r ($query); die();  */
+
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
-			$result = DB::fetchall($query,array_merge([$like,$like],$filter_pdo_params ?? [])); // title and note
+			$result = DB::fetchall($query,array_merge([$like,$like],$this->filter_pdo_params ?? [])); // title and note
 			// set count
-			$this->count = DB::fetch($count_query,array_merge([$like,$like],$filter_pdo_params ?? []))->c ?? 0;
+			$this->count = DB::fetch($count_query,array_merge([$like,$like],$this->filter_pdo_params ?? []))->c ?? 0;
 		}
 		else {
-			$result = DB::fetchall($query,$filter_pdo_params ?? []);
+			$result = DB::fetchall($query,$this->filter_pdo_params ?? []);
 			// set count
-			$this->count = DB::fetch($count_query,$filter_pdo_params ?? [])->c ?? 0;
+			$this->count = DB::fetch($count_query,$this->filter_pdo_params ?? [])->c ?? 0;
 		}
 		return $result;
 	}
