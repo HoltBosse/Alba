@@ -120,6 +120,8 @@ table.dragging .before_after_wrap {
 
 <form id='searchform' action="" method="GET"></form>
 
+
+
 <form action='' method='post' name='content_action' id='content_action_form'>
 
 <h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
@@ -156,16 +158,101 @@ table.dragging .before_after_wrap {
 	</div>
 </h1>
 
-	<div class="field has-addons">
-		<div class="control">
-			<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="Search title/note">
+	<?php //CMS::pprint_r ($filters); ?>
+
+	<div id='content_search_controls' class='flex'>
+
+		<div class="field">
+			<label class="label">Search Title/Note</label>
+			<div class="control">
+				<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="">
+			</div>
 		</div>
-		<div class="control">
-			<button form="searchform" type="submit" class="button is-info">
-			Search
-			</button>
+
+		<div class='field'>
+			<label class="label">State</label>
+			<div class='control'>
+				<div class="select">
+					<input type='hidden' name='filters[2][key]' value='state' form='searchform'/>
+					<select name="filters[2][value]" form="searchform">
+						<option value=''>State</option>
+						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
+						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
+						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class='field'>
+			<label class="label">Category</label>
+			<div class='control'>
+				<div class="select">
+					<input type='hidden' name='filters[1][key]' value='category' form='searchform'/>
+					<select name="filters[1][value]" form="searchform">
+						<option value=''>Select Category</option>
+						<?php foreach ($applicable_categories as $cat):?>
+							<option <?php if ($filters['category']==$cat->id) { echo " selected "; }?> value='<?=$cat->id?>'><?=$cat->title?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class='field'>
+			<label class="label">Creator</label>
+			<div class='control'>
+				<div class="select">
+					<input type='hidden' name='filters[3][key]' value='created_by' form='searchform'/>
+					<select name="filters[3][value]" form="searchform">
+						<option value=''>Select Creator</option>
+						<?php foreach ($applicable_users as $u):?>
+							<option <?php if ($filters['created_by']==$u->id) { echo " selected "; }?> value='<?=$u->id?>'><?=$u->username?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class='field' id='content_search_tags_wrap'>
+			<label class="label">Tagged</label>
+			<div class='control'>
+				<div class="select">
+					<select id="content_search_tags" name="coretags[]" form="searchform" multiple>
+						<?php foreach ($applicable_tags as $t):?>
+							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=$t->title?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+			</div>
+		</div>
+		<script>
+		new SlimSelect({
+			select:'#content_search_tags'
+		});
+		</script>
+		
+		<div class='field'>
+			<label class="label">&nbsp;</label>
+			<div class='control'>
+				<button form="searchform" type="submit" class="button is-info">
+					Search
+				</button>
+			</div>
+		</div>
+
+		<div class='field'>
+			<label class="label">&nbsp;</label>
+			<div class='control'>
+				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0]; return false;' class="button is-default">
+					Clear
+				</button>
+			</div>
 		</div>
 	</div>
+
+	
+	
 
 
 
@@ -282,20 +369,39 @@ CMS::pprint_r ($pagination_size);
 CMS::pprint_r ($order_by);
 CMS::pprint_r (sizeof($all_content)); */
 $num_pages = ceil($content_count/$pagination_size);
+
+//$url_query_params = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+$url_query_params = $_GET;
+$url_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+
+if ($cur_page) {
+	// not ordering view and page url is either 1 or no passed and assumed to be 1 in model
+	$url_query_params['page'] = $cur_page+1;
+	$next_url_params = http_build_query($url_query_params);
+	$url_query_params['page'] = $cur_page-1;
+	$prev_url_params = http_build_query($url_query_params);
+	/* CMS::pprint_r ($url_query_params);
+	CMS::pprint_r ($next_url_params); */
+}
+
 ?>
 
 <?php if ($content_count>$pagination_size && !$order_by):?>
 <nav class="pagination is-centered" role="navigation" aria-label="pagination">
 	<?php if ($cur_page>1):?>
-		<a href='?page=<?php echo $cur_page-1;?><?php if ($search) { echo "&search=" . $search; }?>' class="pagination-previous">Previous</a>
+		<a href='<?=$url_path . "?" . $prev_url_params;?>' class="pagination-previous">Previous</a>
 	<?php endif;?>
 	<?php if ( ($content_count>sizeof($all_content)) && !$order_by && ( ($cur_page*$pagination_size)<$content_count ) ):?>
-		<a href='?page=<?php echo $cur_page+1;?><?php if ($search) { echo "&search=" . $search; }?>' class="pagination-next">Next page</a>
+		<a href='<?=$url_path . "?" . $next_url_params;?>' class="pagination-next">Next page</a>
 	<?php endif; ?>
 	<ul class="pagination-list">
 		<?php for ($n=1; $n<=$num_pages; $n++):?>
-		<li>
-			<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='?page=<?php echo $n;?><?php if ($search) { echo "&search=" . $search; }?>'><?php echo $n;?></a>
+			<?php 
+			$url_query_params['page'] = $n;
+			$url_params = http_build_query($url_query_params);
+			?>
+		<li> 
+			<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='<?=$url_path . "?" . $url_params?>'><?php echo $n;?></a>
 		</li>
 		<?php endfor; ?>
 	</ul>

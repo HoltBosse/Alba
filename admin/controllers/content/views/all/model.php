@@ -4,6 +4,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 $segments = CMS::Instance()->uri_segments;
 $order_by = Input::getvar('order_by','STRING');
 $search = Input::getvar('search','TEXT',null);
+$filters = Input::tuples_to_assoc( Input::getvar('filters','RAW',null) );
+$coretags = Input::getvar('coretags','ARRAYOFINT',null);
 
 $content_type_filter = null;
 if (sizeof($segments)==3) {
@@ -32,6 +34,13 @@ $content_search = new Content_Search();
 $content_search->searchtext = $search;
 $content_search->type_filter = $content_type_filter;
 $content_search->page = $cur_page;
+
+if ($filters) {
+	$content_search->filters = $filters;
+}
+if ($coretags) {
+	$content_search->tags = $coretags;
+}
 if ($order_by) {
 	$content_search->order_by = "ordering";
 	$content_search->order_direction = "ASC";
@@ -40,10 +49,20 @@ if ($order_by) {
 }
 $all_content = $content_search->exec();
 $content_count = $content_search->get_count();
+
 // end new conten search class - experimental
 
+// get filter values for dropdowns etc
 
-
+$applicable_users = DB::fetchAll('select id,username from users order by username asc');
+if ($content_type_filter) {
+	$applicable_categories = DB::fetchAll('select * from categories where content_type=? order by title asc',$content_type_filter);
+	$applicable_tags = Tag::get_tags_available_for_content_type ($content_type_filter);
+}
+else {
+	$applicable_categories = DB::fetchAll('select * from categories order by title asc');
+	$applicable_tags = DB::fetchAll('select * from tags order by title asc');
+}
 
 
 // handle custom optional listing on content specific 'all' view
