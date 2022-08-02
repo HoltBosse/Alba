@@ -221,6 +221,12 @@ class Field_Rich extends Field {
 						if (active_image!==null) {
 							active_image.classList.add('pull-left');
 							active_image.classList.remove('rich_image_active','pull-right');
+
+							// do the same for parent figure if active_image captioned
+							if (active_image.parentElement.tagName == 'FIGURE') {
+								active_image.parentElement.classList.add('pull-left');
+								active_image.parentElement.classList.remove('pull-right');
+							}
 						}
 						else {
 							alert('No image selected');
@@ -250,39 +256,140 @@ class Field_Rich extends Field {
 					else if (command=='edit_image_attribution') {
 						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
 						if (active_image!==null) {
-							active_image.dataset.author = window.prompt('Enter Author: ', active_image.dataset.author);
-							active_image.dataset.source = window.prompt('Enter Source: ', active_image.dataset.source);
-							active_image.dataset.licence = window.prompt('Enter Licence Name: ', active_image.dataset.licence);
-							active_image.dataset.licencelink = window.prompt('Enter Licence Link: ', active_image.dataset.licencelink);
-							// check for figure/caption and add if needed
-							if (active_image.parentElement.nodeName!=="FIGURE") {
-								// need to make figure + caption
-								var fig = document.createElement('FIGURE');
-								fig.classList.add('rich_image_figure');
-								var cap = document.createElement('FIGCAPTION');
-								active_image.parentElement.insertBefore(fig, active_image);
-								fig.appendChild(active_image);
-								fig.appendChild(cap);
-							}
-							else {
-								var fig = active_image.closest('figure');
-								var cap = active_image.nextElementSibling;
-							}
-							// update caption info
-							cap.innerHTML = "";
-							if (active_image.dataset.author) {
-								cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Author:</span> " + active_image.dataset.author + "</div>";
-							}
-							if (active_image.dataset.source) {
-								cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Source:</span> " + active_image.dataset.source + "</div>";
-							}
-							if (active_image.dataset.licence) {
-								cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Licence:</span> " + active_image.dataset.licence + "</div>";
-							}
-							// make image in editor inactive
-							active_image.classList.remove('rich_image_active');
-							// push updated content to textarea
-							active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
+
+							// check data attributes if present to load into modal
+							var author = active_image.dataset.author ? active_image.dataset.author : "";
+							var source = active_image.dataset.source ? active_image.dataset.source : "";
+							var license = active_image.dataset.license ? active_image.dataset.license : "";
+							var licenselink = active_image.dataset.licenselink ? active_image.dataset.licenselink : "";
+
+
+							var attr_modal = document.createElement('div');
+							attr_modal.innerHTML = `
+								<div class="modal-background"></div>
+								<div class="modal-content">
+									<div class="box">
+
+										<div class="field">
+											<label class="label">Image Author</label>
+											<div class="control">
+												<input id="image_author" class="input" type="text" value="` + author + `">
+											</div>
+										</div>
+
+										<div class="field">
+											<label class="label">Image Source</label>
+											<div class="control">
+												<input id="image_source" class="input" type="text" value="` + source + `">
+											</div>
+										</div>
+
+										<div class="field">
+											<label class="label">License Name</label>
+											<div class="control">
+												<input id="license_name" class="input" type="text" value="` + license + `">
+											</div>
+										</div>
+
+										<div class="field">
+											<label class="label">License Link</label>
+											<div class="control">
+												<input id="license_link" class="input" placeholder='Full link to license including "https://".' type="text" value="` + licenselink + `">
+											</div>
+										</div>
+
+										<button id="attr_modal_save" class="button is-primary attr_modal_save">Add</button>
+										<button id="attr_modal_cancel" class="button is-warning">Cancel</button>
+
+									</div>
+								</div>
+							`;
+							attr_modal.classList = "modal attr_modal";
+							document.body.appendChild(attr_modal);
+
+							// display modal
+							attr_modal.classList.add("is-active");
+
+							// handle cancel
+							document.getElementById('attr_modal_cancel').addEventListener('click',function(e){
+								var modal = e.target.closest('.modal');
+								modal.parentNode.removeChild(modal);
+							});
+
+							// handle save
+							document.getElementById('attr_modal_save').addEventListener('click',function(e){
+								
+								// store data with img
+								active_image.dataset.author = document.getElementById('image_author').value;
+								active_image.dataset.source = document.getElementById('image_source').value;
+								active_image.dataset.license = document.getElementById('license_name').value;
+								active_image.dataset.licenselink = document.getElementById('license_link').value;
+								
+								// check for figure/caption and add if needed
+								if (active_image.parentElement.nodeName!=="FIGURE") {
+									// need to make figure + caption
+									var fig = document.createElement('FIGURE');
+									fig.classList.add('rich_image_figure');
+									
+									// if image has pull-right class
+									if (active_image.classList.contains('pull-right')) {
+										fig.classList.add('pull-right');
+									} else if (active_image.classList.contains('pull-left')) {
+										fig.classList.add('pull-left');
+									} else {
+										fig.classList.remove('pull-left');
+										fig.classList.remove('pull-left');
+									}
+
+
+									fig.classList.add('rich_image_figure');
+									var cap = document.createElement('FIGCAPTION');
+									cap.setAttribute("contenteditable", false);
+									active_image.parentElement.insertBefore(fig, active_image);
+									fig.appendChild(active_image);
+									fig.appendChild(cap);
+								}
+								else {
+									var fig = active_image.closest('figure');
+									var cap = active_image.nextElementSibling;
+								}
+								// update caption info
+								cap.innerHTML = "";
+								if (active_image.dataset.author) {
+									cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Author:</span> " + active_image.dataset.author + "</div>";
+								}
+								if (active_image.dataset.source) {
+									cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Source:</span> " + active_image.dataset.source + "</div>";
+								}
+								if (active_image.dataset.license) {
+
+									// if link present
+									if (active_image.dataset.licenselink) {
+										var link_begin = `<a href="` + active_image.dataset.licenselink + `" target="_blank">`;
+										var link_end = `</a>`;
+										cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>License:</span> " + link_begin + active_image.dataset.license + link_end + "</div>";
+									}
+									else {
+										cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>License:</span> " + active_image.dataset.license + "</div>";
+									}
+
+								}
+								if (!active_image.dataset.license && active_image.dataset.licenselink) {
+									var link_begin = `<a href="` + active_image.dataset.licenselink + `" target="_blank">`;
+									var link_end = `</a>`;
+									cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>License:</span> " + link_begin + active_image.dataset.licenselink + link_end + "</div>";
+								}
+								// make image in editor inactive
+								active_image.classList.remove('rich_image_active');
+								// push updated content to textarea
+								active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
+
+								// close modal
+								var modal = e.target.closest('.modal');
+								modal.parentNode.removeChild(modal);
+
+							});
+							
 						}
 						else {
 							alert('No image selected');
@@ -294,6 +401,13 @@ class Field_Rich extends Field {
 						if (active_image!==null) {
 							active_image.classList.add('pull-right');
 							active_image.classList.remove('rich_image_active','pull-left');
+
+							// do the same for parent figure if active_image captioned
+							if (active_image.parentElement.tagName == 'FIGURE') {
+								active_image.parentElement.classList.add('pull-right');
+								active_image.parentElement.classList.remove('pull-left');
+							}
+
 						}
 						else {
 							alert('No image selected');
@@ -305,13 +419,18 @@ class Field_Rich extends Field {
 						if (active_image!==null) {
 							active_image.classList.remove('pull-left','pull-right');
 							active_image.classList.remove('rich_image_active');
+
+							// do the same for parent figure if active_image captioned
+							if (active_image.parentElement.tagName == 'FIGURE') {
+								active_image.parentElement.classList.remove('pull-left', 'pull-right');
+							}
 						}
 						else {
 							alert('No image selected');
 						}
 					}
 					
-					else if (command == 'img') {
+					else if (command=='img') {
 						//alert('choose image');
 						// launch image selector
 						var media_selector = document.createElement('div');
