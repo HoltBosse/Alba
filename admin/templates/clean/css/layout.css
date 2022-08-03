@@ -303,6 +303,12 @@ div.field.hidden {
 .rich_image.pull-right {
 	float:right;
 }
+.rich_image_figure.pull-right .rich_image.pull-right {
+	float: none;
+}
+.rich_image_figure.pull-left .rich_image.pull-left {
+	float: none;
+}
 
 /* clean up multiselect using slimselect library */
 .select:not(.is-multiple):not(.is-loading)::after {
