@@ -7,15 +7,25 @@ $segments = CMS::Instance()->uri_segments;
 
 $submitted = Input::getvar('update_please');
 
+$channel = Config::$channel ?? 'stable';
+
 $latest = new stdClass();
 $latest->version = null;
-$latest_json = file_get_contents('https://cms.bobmitch.com/version.json');
+$update_domain = Config::$updatedomain ?? "alba.holtbosse.com";
+$latest_json = file_get_contents("https://" . $update_domain . "/version.json");
+
 if (Config::$debug) {
 	CMS::pprint_r ($latest_json);
 }
 if ($latest_json) {
 	$latest = json_decode($latest_json);
+	$latest_version_current_channel = $latest->{$channel} ?? $latest->version;
 }
+else {
+	$latest_version_current_channel = null;
+}
+
+
 
 // Legacy DB Checks / Fixes
 
@@ -103,8 +113,8 @@ if (!$content_category_ok) {
 if ($submitted) { 
 	// DO UPDATE
 	$saved = true;
-	// get latest.zip
-	$got_file = @file_put_contents(CMSPATH . "/latest.zip", fopen("https://cms.bobmitch.com/latest.zip", 'r'));
+	// get appropriate update file
+	$got_file = @file_put_contents(CMSPATH . "/latest.zip", fopen("https://".$update_domain."/" . $channel . ".zip", 'r'));
 	if ($got_file) {
 		$zip = new ZipArchive();
 		$ok = $zip->open(CMSPATH . "/latest.zip", ZipArchive::CREATE);
@@ -118,6 +128,6 @@ if ($submitted) {
 		}
 	}
 	else {
-		CMS::Instance()->queue_message('Error fetching latest update file (no fopen?)','danger',Config::$uripath."/admin/settings/updates");
+		CMS::Instance()->queue_message('Error fetching latest update file (no fopen?) - Channel: ' . $channel, 'danger',Config::$uripath."/admin/settings/updates");
 	}
 }
