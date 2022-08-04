@@ -12,7 +12,7 @@ $channel = Config::$channel ?? 'stable';
 $latest = new stdClass();
 $latest->version = null;
 $update_domain = Config::$updatedomain ?? "alba.holtbosse.com";
-$latest_json = file_get_contents("https://" . $update_domain . "/version.jsson");
+$latest_json = file_get_contents("https://" . $update_domain . "/version.json");
 
 if (Config::$debug) {
 	CMS::pprint_r ($latest_json);
