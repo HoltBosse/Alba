@@ -124,6 +124,7 @@ final class CMS {
 		if ($rc_sitekey):?>
 			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 		<?php endif; ?>
+		<?php echo "<script>window.uripath='" . Config::$uripath . "';</script>" ?>
 
 		<?php 
 		$cms_head = ob_get_contents();
