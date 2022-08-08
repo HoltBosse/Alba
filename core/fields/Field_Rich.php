@@ -201,9 +201,77 @@ class Field_Rich extends Field {
 						document.execCommand('formatBlock', false, command);
 					}
 					
+					// note that 'insertimage' command is not available in text editor.
 					else if (command == 'createlink' || command == 'insertimage') {
-						url = prompt('Enter the link here: ','https:\/\/');
-						document.execCommand(command, false, url);
+						
+						// get selected text to add to link
+						var selection = window.getSelection().toString();
+
+						// insert html at anchor location
+						var link_html = "<a id='newly_created_link'>" + selection + "</a>";
+						document.execCommand('insertHTML', false, link_html);							link = document.getElementById('newly_created_link');
+						link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
+
+						// display modal
+						var url = "";
+						var modal = document.createElement('div');
+						modal.innerHTML = `
+							<div class="modal-background"></div>
+							<div class="modal-content">
+								<div class="box">
+
+									<div class="field">
+										<label class="label">Link Address</label>
+										<div class="control">
+											<input id="created_url" class="input" type="text" value="https://` + url + `">
+										</div>
+										<p class='help'>Full web addres (including "https://").</p>
+									</div>
+									
+									<div class="field">
+										<label class="label">Display Text</label>
+										<div class="control">
+											<input id="text_to_display" class="input" placeholder='' type="text" value="` + selection + `">
+										</div>
+									</div>
+
+									<button id="modal_save" class="button is-primary">Add URL</button>
+									<button id="modal_cancel" class="button is-warning">Cancel</button>
+
+								</div>
+							</div>
+						`;
+						modal.classList = "modal";
+						document.body.appendChild(modal);
+						modal.classList.add("is-active");
+
+						// handle cancel
+						document.getElementById('modal_cancel').addEventListener('click',function(e){
+							
+							// replace anchor with original text
+							parent = link.parentNode;
+							parent.replaceChild(document.createTextNode(selection), link);
+
+							// close modal
+							var modal = e.target.closest('.modal');
+							modal.parentNode.removeChild(modal);
+						});
+
+						// handle save
+						document.getElementById('modal_save').addEventListener('click',function(e){
+							
+							// get values and update link
+							var link = document.getElementById('newly_created_link');
+							console.log(link);
+							console.log(link.innerHTML);
+							link.href = document.getElementById('created_url').value;
+							link.innerHTML = document.getElementById('text_to_display').value;
+							link.removeAttribute('id');		// remove id so future links not messed up
+
+							// close modal
+							var modal = e.target.closest('.modal');
+							modal.parentNode.removeChild(modal);
+						});
 					}
 
 					else if (command == 'createanchor' ) {
