@@ -10,6 +10,7 @@ require_once (CMSPATH . "/core/cms.php");
 	<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/bulma.min.css"></link>
 <link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/dashboard.css"></link>
 <link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/layout.css"></link>
+<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/darkmode.css"></link>
 
 <script src="https://kit.fontawesome.com/e73dd5d55b.js" crossorigin="anonymous"></script>
 
