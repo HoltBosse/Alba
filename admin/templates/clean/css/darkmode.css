@@ -1,0 +1,68 @@
+@media (prefers-color-scheme: dark) {
+    /* general */
+    :root {
+        color-scheme: dark;
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 0.5rem;}
+    ::-webkit-scrollbar-button { background-color: #555; height: 0.5rem; }
+    ::-webkit-scrollbar-track {  background-color: #555;}
+    ::-webkit-scrollbar-track-piece { background-color: #333;}
+    ::-webkit-scrollbar-thumb { height: 50px; background-color: #555; border-radius: 3px;}
+    ::-webkit-scrollbar-corner { background-color: #555;}
+    ::-webkit-resizer { background-color: #666;}
+
+    /* core color */
+    body,html{background:#222; color:#aaa;}
+
+    /* sepcific overrides */
+    pre{background:#444; color:white;}
+    .container {
+        background-color: #111;
+        color: #aaa;
+        padding: 1rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 15px rgb(0 0 0 / 50%);
+    }
+    .table {
+        border-radius: 0.25rem;
+    }
+    .fixed-control-bar {
+        height: 8rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    #template_layout_container, .template_layout_widget_wrap {
+        border-color: rgba(255,255,255,0.2) !important;
+    }
+
+    /* color overrides */
+    .title, strong {
+        color: white;
+    }
+    .navbar-item:hover, .navbar-item.has-dropdown:hover .navbar-link, a.navbar-item:hover, .navbar-dropdown, .input, .select select, .table, .modal-card-body {
+        background-color: #222;
+        color: white
+    }
+    .navbar-link, .navbar-item, .label, .tabs.is-toggle a, label, .table thead th {
+        color: #aaa;
+    }
+    .navbar-dropdown a.navbar-item:hover, .dropdown-divider, .modal-card-head, .modal-card-foot, .modal-card-title {
+        background-color: #333;
+        color: white;
+    }
+    .button, .button.is-light {
+        background-color: #333;
+        color: #aaa;
+    }
+    .button:hover, .button.is-light:hover, .tabs.is-toggle a:hover {
+        background-color: #444;
+        color: white;
+    }
+    .navbar-end .navbar-item:hover, .tag:not(body), .fixed-control-bar, .tag:not(body).is-info.is-light, h1.title.sticky {
+        background-color: #111;
+        color: #aaa;
+    }
+}
