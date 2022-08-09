@@ -65,4 +65,61 @@
         background-color: #111;
         color: #aaa;
     }
+
+    /* buttons */
+    .button.is-primary {
+        background-color: #009688;
+    }
+    .button.is-primary:hover {
+        background-color: #26A69A;
+    }
+    .button.is-warning {
+        background-color: #FFEB3B;
+    }
+    .button.is-warning:hover {
+        background-color: #FFEE58;
+    }
+    .button.is-info {
+        background-color: #0288D1;
+    }
+    .button.is-info:hover {
+        background-color: #039BE5;
+    }
+    .button.is-danger {
+        background-color: #D32F2F;
+    }
+    .button.is-danger:hover {
+        background-color: #E53935;
+    }
+    .button.is-primary.is-outlined {
+        border-color: #009688;
+    }
+    .button.is-primary.is-outlined:hover {
+        background-color: #009688;
+    }
+
+    /* random bulma */
+    .notification.is-success {
+        background-color: #009688;
+    }
+    .message.is-success .message-header {
+        background-color: #009688;
+    }
+
+    /* slim select */
+    .ss-main .ss-multi-selected {
+        background-color: #222 !important;
+    }
+    .ss-content {
+        background-color: #222 !important;
+        color: white !important;
+    }
+    .ss-search input {
+        background-color: #111 !important;
+        color: white !important;
+    }
+    .ss-content .ss-list .ss-option.ss-disabled {
+        background-color: #555 !important;
+        color: black !important;
+    }
 }
