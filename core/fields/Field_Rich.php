@@ -170,9 +170,98 @@ class Field_Rich extends Field {
 					}
 				});
 
+				/**
+				 * Creates and displays a modal handling onclick events for user input. An example function call might look
+				 * like the following:
+				 * 
+				 * createModal(["Name", "Age"], 
+				 *			   ["John", "23"],
+				 *			   ["This is what people call you", "This is how long you've existed"], 
+				 *			   function() { console.log("I'm onAdd!")}, 
+				 *			   function() { console.log("I'm onCancel!")});
+				 *
+				 * @param {array} inputLabels - An array with the basic names of inputs being requested.
+				 * @param {array} currentValues - An array containing the current values of inputs if they exist. Empty by default.
+				 * @param {array} helpLabels - An array containing the help values associated with the inputs to be displayed to the user.
+				 * @param {function} onAdd - A user defined function to be executed upon user's click of "Add" button.
+				 * @param {function} onCancel - A user defined function to be executed upon user's click of "Cancel" button.
+				 * @return {array} - An array containing id references to the ids of the created input labels. May be used by user functions to capture values. 
+				**/
+				function createModal(inputLabels, currentValues=[], helpLabels, onAdd, onCancel) {
+
+					// create and show modal based on desired user inputs
+					let modal = document.createElement('div');
+					// modal.id = "add_info_modal_for_<?php echo $this->name;?>";
+					modal.classList = "modal is-active";
+					let modal_html = `
+						<div class="modal-background"></div>
+						<div class="modal-content">
+							<div class="box">
+					`;
+					return_ids = [];
+					for (let i = 0; i < inputLabels.length; i++) {
+
+						let id = `modal_for_<?php echo $this->name; ?>_input_for_${inputLabels[i]}`;
+						id = id.replace(/\s+/g, '_');	// strip possible spaces, see https://stackoverflow.com/questions/5963182/how-to-remove-spaces-from-a-string-using-javascript
+						console.log(id);
+						modal_html += `
+								<div class="field">
+									<label class="label">${inputLabels[i]}</label>
+									<div class="control">
+										<input id="${id}" class="input" type="text" value="${currentValues[i]}">
+									</div>
+									<p class='help'>${helpLabels[i]}</p>
+								</div>
+						`;
+
+						// add id to to list to return
+						return_ids.push(id);
+
+					}
+					modal_html += `
+								<button class="button is-primary" data-modal-action="add">Add</button>
+								<button class="button is-warning" data-modal-action="cancel">Cancel</button>
+								
+							</div>
+						</div>						
+					`;
+
+					modal.innerHTML = modal_html;
+					document.body.appendChild(modal);
+
+					// listener for modal
+					modal.addEventListener('click', function(e){
+						e.preventDefault();
+
+						switch (e.target.dataset.modalAction) {
+							
+							case "add":
+								onAdd();
+								// purposefully no break!!
+
+							case "cancel":
+								onCancel();
+								modal = e.target.closest('.modal.is-active');
+								parent = modal.parentNode;
+								parent.removeChild(modal);
+								break;
+						}
+
+					});
+
+					return return_ids;
+
+				}
+
+				let return_stuff = createModal(	["First Name", "Age"], 
+												["John", "23"],
+												["This is what people call you", "This is how long you've existed"], 
+												function() { console.log("I'm onAdd!")}, 
+												function() { console.log("I'm onCancel!")});
+
+				console.log(return_stuff);
 
 				// toolbar click - TODO: handle multiple editors per page // DONE?
-
 				document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>').addEventListener('click',function(e){
 					e.preventDefault();
 
@@ -201,9 +290,12 @@ class Field_Rich extends Field {
 						document.execCommand('formatBlock', false, command);
 					}
 					
-					// note that 'insertimage' command is not available in text editor.
-					else if (command == 'createlink' || command == 'insertimage') {
+					else if (command == 'createlink') {
 						
+						// let inputLabels = ['url', 'display_text']
+
+						// let return_ids = createModal()
+
 						// get selected text to add to link
 						var selection = window.getSelection().toString();
 
