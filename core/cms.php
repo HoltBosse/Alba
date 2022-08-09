@@ -30,7 +30,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
-	public $version = "2.4.71";
+	public $version = "2.4.73";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -124,6 +124,7 @@ final class CMS {
 		if ($rc_sitekey):?>
 			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 		<?php endif; ?>
+		<?php echo "<script>window.uripath='" . Config::$uripath . "';</script>" ?>
 
 		<?php 
 		$cms_head = ob_get_contents();
