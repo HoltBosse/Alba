@@ -223,9 +223,9 @@ class Field_Rich extends Field {
 									<div class="field">
 										<label class="label">Link Address</label>
 										<div class="control">
-											<input id="created_url" class="input" type="text" value="https://` + url + `">
+											<input id="created_url" class="input" type="text" value="` + url + `">
 										</div>
-										<p class='help'>Full web addres (including "https://").</p>
+										<p class='help'>Enter full link including https://</p>
 									</div>
 									
 									<div class="field">
@@ -235,7 +235,7 @@ class Field_Rich extends Field {
 										</div>
 									</div>
 
-									<button id="modal_save" class="button is-primary">Add URL</button>
+									<button id="modal_save" class="button is-primary">Add</button>
 									<button id="modal_cancel" class="button is-warning">Cancel</button>
 
 								</div>
@@ -304,17 +304,77 @@ class Field_Rich extends Field {
 					else if (command=='edit_image_props') {
 						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
 						if (active_image!==null) {
-							let new_alt = window.prompt('Enter ALT text: ',active_image.alt);
-							let new_title = window.prompt('Enter TITLE text: ',active_image.title);
-							if (new_alt) {
-								active_image.alt = new_alt;
-							}
-							if (new_alt) {
-								active_image.title = new_title;
-							}
-							active_image.classList.remove('rich_image_active');
-							// push updated content to textarea
-							active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
+
+							// get current image props
+							var title = active_image.title;
+							var alt = active_image.alt;
+
+							// display modal
+							var modal = document.createElement('div');
+							modal.innerHTML = `
+								<div class="modal-background"></div>
+								<div class="modal-content">
+									<div class="box">
+										
+										<div class="field">
+											<label class="label">Alt Text</label>
+											<div class="control">
+												<input id="new_alt_text" class="input" placeholder='' type="text" value="` + alt + `">
+												<p class="help">Alternative text for the visually impaired, will also display when the browser cannot render the image.</p>
+											</div>
+										</div>
+									
+										<div class="field">
+											<label class="label">Image Title</label>
+											<div class="control">
+												<input id="new_image_title" class="input" type="text" value="` + title + `">
+											</div>
+											<p class="help">Title will appear in a tooltip on hover of the image. It can also be used to provide a broader description than the alt text.</p>
+
+										</div>
+
+										<button id="modal_save" class="button is-primary">Add</button>
+										<button id="modal_cancel" class="button is-warning">Cancel</button>
+
+									</div>
+								</div>
+							`;
+							modal.classList = "modal";
+							document.body.appendChild(modal);
+							modal.classList.add("is-active");
+
+							// handle cancel
+							document.getElementById('modal_cancel').addEventListener('click',function(e){
+
+								// close modal
+								var modal = e.target.closest('.modal');
+								modal.parentNode.removeChild(modal);
+
+							});
+
+							// handle save
+							document.getElementById('modal_save').addEventListener('click',function(e){
+								
+								// set to image
+								let new_alt = document.getElementById('new_alt_text').value;
+								let new_title = document.getElementById('new_image_title').value;
+								if (new_alt) {
+									active_image.alt = new_alt;
+								}
+								if (new_title) {
+									active_image.title = new_title;
+								}
+								active_image.classList.remove('rich_image_active');
+								
+								// push updated content to textarea
+								active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
+
+								// close modal
+								var modal = event.target.closest('.modal');
+								modal.parentNode.removeChild(modal);
+
+							});
+
 						}
 						else {
 							alert('No image selected');
@@ -362,7 +422,8 @@ class Field_Rich extends Field {
 										<div class="field">
 											<label class="label">License Link</label>
 											<div class="control">
-												<input id="license_link" class="input" placeholder='Full link to license including "https://".' type="text" value="` + licenselink + `">
+												<input id="license_link" class="input" type="text" value="` + licenselink + `">
+												<p class='help'>Enter full link including https://</p>
 											</div>
 										</div>
 
@@ -607,11 +668,68 @@ class Field_Rich extends Field {
 						}
 					}
 					else if (command == 'addclass') {
-						let classname = window.prompt('Enter class text: ');
+
+						// get parent model to potentially use later
 						let parent = window.getSelection().focusNode.parentNode;
-						if (classname) {
-                  			parent.classList.add(classname);
-						}
+
+						// display modal
+						let modal = document.createElement('div');
+						modal.innerHTML = `
+							<div class="modal-background"></div>
+							<div class="modal-content">
+								<div class="box">
+									
+									<div class="field">
+										<label class="label">Add Class</label>
+										<div class="control">
+											<input id="new_class_name" class="input" placeholder='' type="text" value="">	
+											<p class="help">Must be alphanumeric with no spaces.</p>
+										</div>
+									</div>
+
+									<button id="modal_save" class="button is-primary">Add</button>
+									<button id="modal_cancel" class="button is-warning">Cancel</button>
+
+								</div>
+							</div>
+						`;
+						modal.classList = "modal";
+						document.body.appendChild(modal);
+						modal.classList.add("is-active");
+
+						// handle cancel
+						document.getElementById('modal_cancel').addEventListener('click',function(e){
+
+							// close modal
+							let modal = e.target.closest('.modal');
+							modal.parentNode.removeChild(modal);
+
+						});
+
+						// handle save
+						document.getElementById('modal_save').addEventListener('click',function(e){
+
+							// add class
+							let new_class_name = document.getElementById('new_class_name').value;
+							var modal = event.target.closest('.modal');
+							if (new_class_name) {
+
+								try {
+									parent.classList.add(new_class_name);
+								} catch {
+
+									// make text red to indicate class name not accepted
+									text = modal.querySelector('.help').classList.add('is-danger');
+									modal.querySelector('input').classList.add('is-danger');
+									return;
+								}
+							}
+
+							// close modal
+							modal.parentNode.removeChild(modal);
+
+						});
+
 					}
 
 					else if (command=="removeFormat") {
