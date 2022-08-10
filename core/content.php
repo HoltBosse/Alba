@@ -569,207 +569,33 @@ class Content {
 	}
 
 
-	
+	//exists for legacy compat, please use new content_search for new code instead of this
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
-		// order by id by default
-		// type filter for back-end curation if set and no id/tag passed, will return only content fields in custom_fields.json 'list' property
-		// id / tag if either set will get ALL content fields for matching content id or content tagged with tag id
-		// list_fields if empty will default to all or just those in list property of form if not id or tag passed
-		// allows to get just specific custom content fields, such as opengraph data but not markup for fast blogs
-		// $page=0 indicates no pagination. $page=x will use systemwide Configuration::get_configuration_value ('general_options', 'pagination_size')
+		//add inputed filters, and then if id is present, add that to filters as well
+		$filters = [$filter_field=>$filter_val];
+		$id ? $filters["id"] = $id : "";
 
-		if ($type_filter) {
-			// get list fields from custom_fields.json file
-			if (!is_numeric($type_filter)) {
-				// try and get type id
-				$type_filter = Content::get_content_type_id($type_filter);
-				if (!$type_filter) {
-					CMS::Instance()->show_error('Unable to determine content type');
-				}
-			}
+		if(!$list_fields && $type_filter) {
 			$location = Content::get_content_location($type_filter);
-			//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
-			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-			//CMS::pprint_r ($custom_fields); 
-			if ($list_fields) {
-				// skip - only do fields passed to function
-			}
-			elseif ($id !== null || $tag !== null) {
-				// get all fields if we have specific id or tag
-				foreach ($custom_fields->fields as $custom_field) {
-					if (!in_array($custom_field->name,$ignore_fields)) {
-						// only add if not in ignored array passed to function
-						// check if field is explicitly saveable or no saveable option set
-						// if not set or not true, don't add to query (no data ever saved:))
-						if (isset($custom_field->save)) {
-							if ($custom_field->save===true) {
-								// e.g. not core HTML field or other field
-								// that isn't saved such as presentational or SQL type field for non-cms tables
-								$list_fields[] = $custom_field->name;
-							}
-							// not added to query listing if save is anything other than true
-						}
-						else {
-							$list_fields[] = $custom_field->name;
-						}
-					}
-					else {
-						//echo "ignore {$custom_field->name} , ";
-					}
-				}
-			}
-			else {
-				
-				// id not passed, just get fields in 'list' property from custom_fields.json
-				// checking it's not ignored and is an actual saveable field
-				if (property_exists($custom_fields,'list')) {
-					foreach ($custom_fields->list as $list_name) {
-						if (!in_array($custom_field_name,$ignore_fields)) {
-							// only add if not in ignored array passed to function
-							// check if field is explicitly saveable or no saveable option set
-							// if not set or not true, don't add to query (no data ever saved:))
-							foreach ($custom_fields->fields as $custom_field) {
-								if ($custom_field->name==$list_name) {
-									if (isset($custom_field->save)) {
-										if ($custom_field->save===true) {
-											$list_fields[] = $custom_field->name;
-										}
-									}
-									else {
-										// assume saveable, add to query list
-										$list_fields[] = $custom_field->name;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		} 
-		
-
-		// if we passed a filter field via url param, ad this to fields to list as well
-		if ($filter_field !== null) {
-			$list_fields[] = $filter_field;
-		}
-
-		$query = "select";
-		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note, c.category, cat.title  as catname";
-		if ($list_fields) {
-			foreach ($list_fields as $field) {
-				$select .= " ,f_{$field}.content as f_{$field}";
+			$form = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			foreach($form->fields as $field) {
+				$list_fields[] = $field->name;
 			}
 		}
 
-		// note - added parentheses around from content to make sure
-		// those tables are evaluated BEFORE the left join - this
-		// avoids any 'unknown column in on clause' errors
-		$from = " from ( content c ";
-		if ($list_fields) {
-			foreach ($list_fields as $field) {
-				$from .= " ,content_fields f_{$field}";
-			}
-		}
+		$content_search = new Content_Search();
+		$content_search->order_by = $order_by;
+		$content_search->type_filter = $type_filter;
+		$content_search->tags = [$tag];
+		$content_search->published_only = $published_only;
+        $content_search->list_fields = $list_fields;
+		$content_search->ignore_fields = $ignore_fields;
+        $content_search->filters = $filters;
+		$content_search->page = $page;
+		$content_search->searchtext = $search;
+		$content_search->$page_size = $custom_pagination_size;
 
-		$from .= " ) left join categories cat on c.category=cat.id ";
-		
-		$where = ' where ';
-		if ($published_only) {
-			$where .= " c.state > 0 ";
-		}
-		else {
-			$where .= " c.state >= 0 ";
-		}
-
-		if ($search) {
-			$where .= " AND (c.title like ? or c.note like ?) "; 
-		}
-		
-		if ($list_fields) {
-			foreach ($list_fields as $field) {
-				$where .= " and f_{$field}.content_id=c.id and f_{$field}.name='{$field}' ";
-			}
-		}
-		//$query = "select  c.id, c.state, c.content_type, c.title, c.alias, c.start, c.end, c.created_by, c.updated_by, c.note from content c where state>0";
-		
-		if ($type_filter && is_numeric($type_filter)) {
-			$where .= " and c.content_type={$type_filter} ";
-		}
-
-		if ($tag) {
-			if (is_numeric($tag)) {
-				$where .= " and c.id in (select content_id from tagged where tag_id={$tag} and content_type_id=c.content_type) ";
-			}
-			elseif (is_array($tag)) {
-				// check if all ints
-				if (array_filter($tag, 'is_numeric') === $tag) {
-					// safe to add imploded array to tag check
-					$taglist = implode(",", $tag);
-					$where .= " and c.id in (select content_id from tagged where tag_id in ({$taglist})) ";
-				}
-				else {
-					CMS::show_error('Content Error - Numerical array expected');
-				}
-			}
-			else {
-				CMS::show_error('Content Error - Numerical tag id expected');
-			}
-		}
-
-		if ($id !== null) {
-			if (is_numeric($id)) {
-				$where .= " and c.id={$id} ";
-			}
-		}
-
-		if ($filter_field && $filter_val) {
-			// TODO: sanity check on filter field before adding to query
-			$where .= " and f_" . $filter_field . ".content=" . CMS::Instance()->pdo->quote($filter_val);
-		}
-
-		$query = $query . $select . $from . $where;
-
-		if (Config::$debug) {
-			CMS::pprint_r ($query);
-		}
-
-		// order intelligently
-		if ($order_by=="start") {
-			//$result = CMS::Instance()->pdo->query($query . " order by " . $order_by . " ASC")->fetchAll();
-			$query .= " order by " . $order_by . " DESC";
-			//return $result;
-		}
-		elseif ($order_by=="title"||$order_by=="ordering"||$order_by=="id") {
-			$query .= " order by c." . $order_by . " ASC";
-		}
-		else {
-			//CMS::Instance()->queue_message('Unknown ordering method: ' . $order_by ,'danger', $_SERVER["HTTP_REFERER"]);
-			//$result = CMS::Instance()->pdo->query($query . " order by id ASC")->fetchAll();
-			$query .= " order by c.title ASC";
-			//return $result;
-		}
-
-		if ($page) {
-			if ($custom_pagination_size && is_numeric($custom_pagination_size)) {
-				$pagination_size = $custom_pagination_size;
-			}
-			else {
-				$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
-			}
-			if (is_numeric($pagination_size) && is_numeric($page)) {
-				$query .= " LIMIT " . (($page-1)*$pagination_size) . "," . $pagination_size;
-			}
-		}
-		//CMS::pprint_r ($query);exit(0);
-		if ($search) {
-			$like = '%'.$search.'%';
-			$result = DB::fetchall($query,array($like,$like)); // title and note
-		}
-		else {
-			$result = DB::fetchall($query);
-		}
-		//CMS::pprint_r ($result);exit(0);
-		return $result;
+		return $content_search->exec();
 	}
 
 }
