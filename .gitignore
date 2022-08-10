@@ -11,6 +11,8 @@ cleardb.php
 phpmyadmin/
 # ignore created packages
 latest.zip
+alpha.zip
+stable.zip
 # ignore config.php - contains db stuff
 config.php
 # images
