@@ -577,16 +577,17 @@ class Content {
 		// list_fields if empty will default to all or just those in list property of form if not id or tag passed
 		// allows to get just specific custom content fields, such as opengraph data but not markup for fast blogs
 		// $page=0 indicates no pagination. $page=x will use systemwide Configuration::get_configuration_value ('general_options', 'pagination_size')
+		$filters = [$filter_field=>$filter_val];
+		$id ? $filters["id"] = $id : "";
 
 		$content_search = new Content_Search();
 		$content_search->order_by = $order_by;
 		$content_search->type_filter = $type_filter;
-		//id
-		//tag
+		$content_search->tags = [$tag];
 		$content_search->published_only = $published_only;
         $content_search->list_fields = $list_fields;
 		$content_search->ignore_fields = $ignore_fields;
-        $content_search->filters = [[$filter_field, $filter_val]];
+        $content_search->filters = $filters;
 		$content_search->page = $page;
 		$content_search->searchtext = $search;
 		$content_search->$page_size = $custom_pagination_size;
