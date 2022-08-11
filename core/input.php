@@ -46,7 +46,7 @@ class Input {
 			return Input::filter($_POST[$input], $filter);
 		}
 		else {
-			if ($default) {
+			if ($default!==NULL) {
 				return $default;
 			}
 			else {
