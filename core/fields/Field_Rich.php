@@ -177,8 +177,9 @@ class Field_Rich extends Field {
 				 * createModal(["Name", "Age"], 
 				 *			   ["John", "23"],
 				 *			   ["This is what people call you", "This is how long you've existed"], 
-				 *			   function() { console.log("I'm onAdd!")}, 
-				 *			   function() { console.log("I'm onCancel!")});
+				 *			   function() { console.log("I'm called in onCreate!")}, 
+				 *			   function() { console.log("I'm called in onAdd!")}, 
+				 *			   function() { console.log("I'm called in onCancel!")});
 				 *
 				 * @param {array} inputLabels - An array with the basic names of inputs being requested.
 				 * @param {array} inputIds - An array containing the ids for created input fields.
@@ -399,69 +400,113 @@ class Field_Rich extends Field {
 
 							function onAdd() {
 								
-								// store data with img
-								active_image.dataset.author = document.getElementById(iI[0]).value;
-								active_image.dataset.source = document.getElementById(iI[1]).value;
-								active_image.dataset.license = document.getElementById(iI[2]).value;
-								active_image.dataset.licenselink = document.getElementById(iI[3]).value;
+								// get new values for information
+								let new_author = document.getElementById(iI[0]).value;
+								let new_source = document.getElementById(iI[1]).value;
+								let new_license = document.getElementById(iI[2]).value;
+								let new_licenselink = document.getElementById(iI[3]).value;
 								
-								// check for figure/caption and add if needed
-								if (active_image.parentElement.nodeName!=="FIGURE") {
-									// need to make figure + caption
-									var fig = document.createElement('FIGURE');
-									fig.classList.add('rich_image_figure');
+								// update image dataset
+								active_image.dataset.author = new_author;
+								active_image.dataset.source = new_source
+								active_image.dataset.license = new_license
+								active_image.dataset.licenselink = new_licenselink
+
+								// will be used to determine if there will be captions
+								let new_data = [new_author, new_source, new_license, new_licenselink];
+
+								function allEmpty(array) {
+									for (const item of array) {
+										if (item!="") return false;
+									}
+									return true;
+								}
+
+								let hasFigure = active_image.parentElement.nodeName==="FIGURE";
+								let hasCaptions = !allEmpty(new_data);
+
+								function createFigure() {
+									let image = active_image;
+									let figure = document.createElement('FIGURE');
+									figure.classList.add('rich_image_figure');
 									
-									// if image has pull-right class
-									if (active_image.classList.contains('pull-right')) {
-										fig.classList.add('pull-right');
-									} else if (active_image.classList.contains('pull-left')) {
-										fig.classList.add('pull-left');
-									} else {
-										fig.classList.remove('pull-left');
-										fig.classList.remove('pull-left');
+									// deal with pull left and right
+									if (image.classList.contains('pull-right')) { 
+										figure.classList.add('pull-right');
+									}
+									if (image.classList.contains('pull-left')) {
+										figure.classList.add('pull-left');
 									}
 
-									fig.classList.add('rich_image_figure');
-									var cap = document.createElement('FIGCAPTION');
-									cap.setAttribute("contenteditable", false);
-									active_image.parentElement.insertBefore(fig, active_image);
-									fig.appendChild(active_image);
-									fig.appendChild(cap);
+									active_image.replaceWith(figure);
+									figure.appendChild(image);
 								}
-								else {
-									var fig = active_image.closest('figure');
-									var cap = active_image.nextElementSibling;
-								}
-								// update caption info
-								cap.innerHTML = "";
-								if (active_image.dataset.author) {
-									cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Author:</span> " + active_image.dataset.author + "</div>";
-								}
-								if (active_image.dataset.source) {
-									cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>Source:</span> " + active_image.dataset.source + "</div>";
-								}
-								if (active_image.dataset.license) {
 
-									// if link present
-									if (active_image.dataset.licenselink) {
-										var link_begin = `<a href="` + active_image.dataset.licenselink + `" target="_blank">`;
-										var link_end = `</a>`;
-										cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>License:</span> " + link_begin + active_image.dataset.license + link_end + "</div>";
-									}
-									else {
-										cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>License:</span> " + active_image.dataset.license + "</div>";
-									}
+								function removeFigure() {
+									let figure = active_image.parentElement;
+									let image = active_image;
+									figure.replaceWith(image);
+								}
 
+								function addCaptions() {
+
+									let figure = active_image.parentElement;
+
+									function appendFigcaptionToFigure(label, content, figure) {
+										let figCaption = document.createElement('FIGCAPTION');
+										let uniq = label.replace(/\s+/g, '_').toLowerCase();
+										let div = `<div class="image_${uniq}"><span class="attrib_label">${label}:&nbsp;</span><span class="attrib_value">${content}</span></div>`;
+										figCaption.innerHTML = div; 
+										console.log(figCaption);
+										figure.appendChild(figCaption);
+									} 
+
+									// create only needed captions
+									if (new_author) {
+										appendFigcaptionToFigure(`Author`, new_author, figure);
+									}
+									if (new_source) {
+										appendFigcaptionToFigure(`Source`, new_source, figure);
+									}
+									if (new_license || new_licenselink) {
+
+										function makeLinkHTML(href, content) {
+											return `<a href="${href}">${content}</a>`;
+										}
+
+										// sort out whether a link should/shouldn't be included
+										let new_content = "";
+										if (new_licenselink && new_license) {
+											new_content = makeLinkHTML(new_licenselink, new_license);
+										} 
+										else if (new_licenselink && !new_license) {
+											new_content = makeLinkHTML(new_licenselink, new_licenselink);
+										}
+										else if (!new_licenselink && new_license) {
+											new_content = new_license;
+										}
+
+										appendFigcaptionToFigure(`License`, new_content, figure);
+									}
 								}
-								if (!active_image.dataset.license && active_image.dataset.licenselink) {
-									var link_begin = `<a href="` + active_image.dataset.licenselink + `" target="_blank">`;
-									var link_end = `</a>`;
-									cap.innerHTML = cap.innerHTML + "<div class='image_author'><span class='attrib_label'>License:</span> " + link_begin + active_image.dataset.licenselink + link_end + "</div>";
+
+								// logical schema for when to add/rem figure and captions
+								if (!hasFigure && hasCaptions) {
+									createFigure();
+									addCaptions();
 								}
-								// make image in editor inactive
-								active_image.classList.remove('rich_image_active');
-								// push updated content to textarea
-								active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
+								else if (hasFigure && hasCaptions) {
+									removeFigure();
+									createFigure();
+									addCaptions();
+								} 
+								else if (hasFigure && !hasCaptions) {
+									removeFigure();
+								}
+								else if (!hasFigure && !hasCaptions) {
+									// all is well, do nothing
+								}
+
 							}
 
 							createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
@@ -615,67 +660,28 @@ class Field_Rich extends Field {
 						}
 					}
 					else if (command == 'addclass') {
-
+						
 						// get parent model to potentially use later
 						let parent = window.getSelection().focusNode.parentNode;
 
-						// display modal
-						let modal = document.createElement('div');
-						modal.innerHTML = `
-							<div class="modal-background"></div>
-							<div class="modal-content">
-								<div class="box">
-									
-									<div class="field">
-										<label class="label">Add Class</label>
-										<div class="control">
-											<input id="new_class_name" class="input" placeholder='' type="text" value="">	
-											<p class="help">Must be alphanumeric with no spaces.</p>
-										</div>
-									</div>
+						let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
-									<button id="modal_save" class="button is-primary">Add</button>
-									<button id="modal_cancel" class="button is-warning">Cancel</button>
-
-								</div>
-							</div>
-						`;
-						modal.classList = "modal";
-						document.body.appendChild(modal);
-						modal.classList.add("is-active");
-
-						// handle cancel
-						document.getElementById('modal_cancel').addEventListener('click',function(e){
-
-							// close modal
-							let modal = e.target.closest('.modal');
-							modal.parentNode.removeChild(modal);
-
-						});
-
-						// handle save
-						document.getElementById('modal_save').addEventListener('click',function(e){
-
+						let iL = ["Add Class"];
+						let iI = [`new_class_for_${uniq}`];
+						let cV = [""];
+						let hL = ["Must be alphanumeric with no spaces or will not be added."];
+						
+						function onAdd() {
+							
 							// add class
-							let new_class_name = document.getElementById('new_class_name').value;
+							let new_class_name = document.getElementById(iI[0]).value;
 							var modal = event.target.closest('.modal');
 							if (new_class_name) {
-
-								try {
-									parent.classList.add(new_class_name);
-								} catch {
-
-									// make text red to indicate class name not accepted
-									text = modal.querySelector('.help').classList.add('is-danger');
-									modal.querySelector('input').classList.add('is-danger');
-									return;
-								}
+								parent.classList.add(new_class_name);
 							}
+						}
 
-							// close modal
-							modal.parentNode.removeChild(modal);
-
-						});
+						createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
 
 					}
 
