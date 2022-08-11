@@ -5,7 +5,8 @@ $segments = CMS::Instance()->uri_segments;
 $order_by = Input::getvar('order_by','STRING');
 $search = Input::getvar('search','TEXT',null);
 $filters = Input::tuples_to_assoc( Input::getvar('filters','RAW',null) );
-$coretags = Input::getvar('coretags','ARRAYOFINT',null);
+// make sure coretags getvar returns empty array PHP 8+ in_array required haystack to be array
+$coretags = Input::getvar('coretags','ARRAYOFINT',[]);
 
 $content_type_filter = null;
 if (sizeof($segments)==3) {
