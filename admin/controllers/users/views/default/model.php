@@ -56,6 +56,9 @@ $all_groups = User::get_all_groups();
 if ($groups) {
 	$user_search->groups = $groups;
 }
+if ($filters) {
+	$user_search->filters = $filters;
+}
 if ($coretags) {
 	$user_search->tags = $coretags;
 }

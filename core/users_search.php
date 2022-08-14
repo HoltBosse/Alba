@@ -94,6 +94,7 @@ class Users_Search {
 		else {
 			$where .= " u.state >= 0 ";
 		}
+
 		if ($this->searchtext) {
 			$where .= " AND (u.username like ? or u.email like ?) "; 
 		}
@@ -110,7 +111,7 @@ class Users_Search {
 			}
 			if ($tags_ok) {
 				// safe to implode without param injection
-				$where .= " and u.id in (select content_id from tagged where tag_id in (" . implode(',', $this->tags) . ")) ";
+				$where .= " and u.id in (select content_id from tagged where content_type_id=-2 and tag_id in (" . implode(',', $this->tags) . ")) ";
 			}
 		}
 
@@ -167,6 +168,10 @@ class Users_Search {
 			if (is_numeric($this->page_size) && is_numeric($this->page)) {
 				$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
 			}
+		}
+
+		if (Config::$debug) {
+			CMS::pprint_r ($query);
 		}
 
 		if ($this->searchtext) {
