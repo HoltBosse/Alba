@@ -88,7 +88,7 @@ div.pull-right {
 			<label class="label">Group</label>
 			<div class='control'>
 				<div class="select">
-					<select  name="groups[]" form="searchform">
+					<select id="user_search_groups" name="groups[]" form="searchform">
 						<option value=''>Select Group</option>
 						<?php foreach ($all_groups as $g):?>
 							<option <?php if (in_array($g->id,$groups)) { echo " selected "; }?> value='<?=$g->id?>'><?=$g->display?></option>
@@ -113,6 +113,9 @@ div.pull-right {
 		<script>
 		new SlimSelect({
 			select:'#content_search_tags'
+		});
+		new SlimSelect({
+			select:'#user_search_groups'
 		});
 		</script>
 		
