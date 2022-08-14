@@ -74,8 +74,8 @@ div.pull-right {
 					<input type='hidden' name='filters[2][key]' value='state' form='searchform'/>
 					<select name="filters[2][value]" form="searchform">
 						<option value=''>State</option>
-						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
-						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
+						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Enabled</option>
+						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Disabled</option>
 						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
 					</select>
 				</div>
