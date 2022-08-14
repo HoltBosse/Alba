@@ -31,11 +31,6 @@ $filters = Input::tuples_to_assoc( Input::getvar('filters','RAW',null) );
 $coretags = Input::getvar('coretags','ARRAYOFINT',[]);
 $groups = Input::getvar('groups','ARRAYOFINT',[]); 
 
-$content_type_filter = null;
-if (sizeof($segments)==3) {
-	$content_type_filter = $segments[2];
-}
-
 if (!$order_by) {
 	$cur_page = Input::getvar('page','INT','1');
 }
