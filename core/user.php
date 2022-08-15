@@ -79,6 +79,11 @@ class User {
 		return DB::fetchall($query, array($group_id));
 	}
 
+	public static function get_all_groups_for_user($user_id) {
+		$query = "SELECT * from `groups` where id in (select group_id from user_groups where user_id=?) ORDER BY display ASC";
+		return DB::fetchAll($query, $user_id);
+	}
+
 	public static function get_group_name ($group_id) {
 		$query = "select display from `groups` where id=?";
 		//$stmt = CMS::Instance()->pdo->prepare($query);
@@ -356,7 +361,7 @@ class User {
 
 	public static function get_all_groups() {
 		//echo "<p>Getting all users...</p>";
-		$result = CMS::Instance()->pdo->query("select * from `groups`")->fetchAll();
+		$result = CMS::Instance()->pdo->query("select * from `groups` ORDER BY display ASC")->fetchAll();
 		return $result;
 	}
 

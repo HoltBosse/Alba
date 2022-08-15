@@ -92,6 +92,9 @@ input.mm_url {
 #content_search_tags_wrap .ss-main {
 	min-width:12rem;
 }
+div .ss-main :is(.ss-multi-selected, .ss-single-selected) {
+	min-height:35px; /* get slim select to match bulma input field heights */
+}
 
 .notification {
 	transform: translateY(1rem);
