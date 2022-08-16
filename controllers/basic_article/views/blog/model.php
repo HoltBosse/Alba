@@ -10,6 +10,12 @@ $tag_id = Content::get_config_value ($view_config, 'blogtag');
 $articles_per_page = Content::get_config_value ($view_config, 'articles_per_page') ?? 999;
 $cur_page = Input::getvar('page') ? Input::getvar('page') : 1; // always make sure we get page number for blog
 
+//work around for content_search limitation over old get_all_content
+$basic_article_form = JSON::load_obj_from_file(CMSPATH . '/controllers/basic_article/custom_fields.json');
+foreach($basic_article_form->fields as $field) {
+	$list_fields[] = $field->name;
+}
+
 
 if (CMS::Instance()->uri_segments) {
 	// could be a single blog or tag/bydate/etc... 
@@ -17,7 +23,13 @@ if (CMS::Instance()->uri_segments) {
 		if (sizeof(CMS::Instance()->uri_segments)==2) {
 			$filter_tag = DB::fetch('select * from tags where alias=?',[CMS::Instance()->uri_segments[1]]);
 			if ($filter_tag) {
-				$blog_content_items = Content::get_all_content($order_by="start", 1, null, $filter_tag->id, true); // null is specific content id
+				$cs = new Content_Search();
+				$cs->order_by = "start";
+				$cs->type_filter = 1;
+				$cs->tags = [$filter_tag->id];
+				$cs->published_only = true;
+				$cs->list_fields = $list_fields;
+				$blog_content_items = $cs->exec(); // null is specific content id
 			}
 			else {
 				CMS::show_error('Tag alias not found');
@@ -36,7 +48,13 @@ if (CMS::Instance()->uri_segments) {
 		if (!$blog_found || $blog->state<1) {
 			CMS::raise_404();
 		}
-		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true); 
+		$cs = new Content_Search();
+		$cs->order_by = "start";
+		$cs->type_filter = 1;
+		$cs->filters = ["id" => $blog->id];
+		$cs->published_only = true;
+		$cs->list_fields = $list_fields;
+		$blog_content_items = $cs->exec(); 
 		// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
 		
 		if ($blog_content_items) {
@@ -63,8 +81,16 @@ if (CMS::Instance()->uri_segments) {
 else {
 	// all blog listing - ignore markup field - not needed for listing view, potentially save lots of data that
 	// won't be shown in view anyway
-	//$blog_content_items = Content::get_all_content($order_by="start", 1, false, $tag_id, true, [], ['markup']); 
-	$blog_content_items = Content::get_all_content($order_by="start", 1, null, $tag_id, true, [], ['markup'], null, null, $cur_page, null, $articles_per_page);
+	$cs = new Content_Search();
+	$cs->order_by = "start";
+	$cs->type_filter = 1;
+	$cs->tags = [$tag_id];
+	$cs->published_only = true;
+	$cs->ignore_fields = ['markup'];
+	$cs->page = $cur_page;
+	$cs->$page_size = $articles_per_page;
+	$cs->list_fields = $list_fields;
+	$blog_content_items = $cs->exec();
 	// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
 	$show_next = false;
 	$show_prev = false;
