@@ -17,6 +17,7 @@ class Content_Search {
 	public $created_by_cur_user;
 	public $page;
 	public $searchtext;
+	public $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
 	public $page_size;
 	public $tags; // array of tag ids to match 
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
@@ -35,6 +36,7 @@ class Content_Search {
 		$this->list_fields=[];
 		$this->count=0;
 		$this->filters=[];
+		$this->fetch_all = false;
 		$this->tags=[];
 		$this->filter_pdo_params = [];
 		$this->search_pdo_params = [];
@@ -73,29 +75,48 @@ class Content_Search {
 			}
 			$location = Content::get_content_location($this->type_filter);
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-			if (!$this->list_fields) {
-				// no fields request, BUT...
-				// mimimally get all fields in 'list' property in custom_fields
-				// checking it's not ignored and is an actual saveable field
-				if (property_exists($custom_fields,'list')) {
-					foreach ($custom_fields->list as $list_name) {
+			if (!$this->list_fields || $this->fetch_all) {
+				// no fields request, so see if we need to get all or just get list items from json
+				if ($this->fetch_all) {
+					// get all saveable, not explicitly ignored fields
+					foreach ($custom_fields->fields as $custom_field) {
 						if (!in_array($custom_field_name,$this->ignore_fields)) {
-							// check if field is explicitly saveable or no saveable option set
-							foreach ($custom_fields->fields as $custom_field) {
-								if ($custom_field->name==$list_name) {
-									if (isset($custom_field->save)) {
-										if ($custom_field->save===true) {
-											$this->list_fields[] = $custom_field->name;
+							if (isset($custom_field->save)) {
+								if ($custom_field->save===true) {
+									$this->list_fields[] = $custom_field->name;
+								}
+							}
+							else {
+								// assume saveable, add to query list
+								$this->list_fields[] = $custom_field->name;
+							} 
+						}
+					}
+				}
+				else {
+					// don't want all, but....
+					// mimimally get all fields in 'list' property in custom_fields
+					// checking it's not ignored and is an actual saveable field
+					if (property_exists($custom_fields,'list')) {
+						foreach ($custom_fields->list as $list_name) {
+							if (!in_array($custom_field_name,$this->ignore_fields)) {
+								// check if field is explicitly saveable or no saveable option set
+								foreach ($custom_fields->fields as $custom_field) {
+									if ($custom_field->name==$list_name) {
+										if (isset($custom_field->save)) {
+											if ($custom_field->save===true) {
+												$this->list_fields[] = $custom_field->name;
+											}
 										}
+										else {
+											// assume saveable, add to query list
+											$this->list_fields[] = $custom_field->name;
+										} 
 									}
-									else {
-										// assume saveable, add to query list
-										$this->list_fields[] = $custom_field->name;
-									} 
 								}
 							}
 						}
-					}
+					} 
 				}
 			}
 		} 
