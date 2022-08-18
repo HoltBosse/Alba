@@ -105,6 +105,9 @@
     .message.is-success .message-header {
         background-color: #009688;
     }
+    .navbar-link:not(.is-arrowless)::after {
+        border-color: #aaa;
+    }
 
     /* slim select */
     .ss-main .ss-multi-selected {
