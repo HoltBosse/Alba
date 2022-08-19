@@ -46,14 +46,14 @@ class db {
 		return CMS::Instance()->pdo->lastInsertId();
 	}
 
-	public static function fetchall($query, $paramsarray=[]) {
+	public static function fetchall($query, $paramsarray=[], $options=[]) {
 		if (!is_array($paramsarray)) {
 			$paramsarray = array($paramsarray);
 		}
 		try {
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute($paramsarray);
-			$result = $stmt->fetchAll();
+			$result = $stmt->fetchAll($options["mode"]);
 		}
 		catch (\PDOException $e) {
 			if (Config::$debug) {
@@ -68,35 +68,17 @@ class db {
 	}
 
 	public static function fetchallcolumn($query, $paramsarray=[]) {
-		// fetch single col as array
-		if (!is_array($paramsarray)) {
-			$paramsarray = array($paramsarray);
-		}
-		try {
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute($paramsarray);
-			$result = $stmt->fetchAll(PDO::FETCH_COLUMN);
-		}
-		catch (\PDOException $e) {
-			if (Config::$debug) {
-				//print_r (debug_backtrace()); exit(0);
-				CMS::show_error("Error performing query: " . $e->getMessage());
-			}
-			else {
-				CMS::show_error("Database query error - turn on debug for more information.");
-			}
-		}
-		return $result;
+		return DB::fetchall($query, $paramsarray, ["mode"=>PDO::FETCH_COLUMN]);
 	}
 
-	public static function fetch($query, $paramsarray=[]) {
+	public static function fetch($query, $paramsarray=[], $options=[]) {
 		if (!is_array($paramsarray)) {
 			$paramsarray = array($paramsarray);
 		}
 		try {
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute($paramsarray);
-			$result = $stmt->fetch();
+			$result = $stmt->fetch($options["mode"]);
 		}
 		catch (\PDOException $e) {
 			if (Config::$debug) {
