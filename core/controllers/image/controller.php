@@ -10,7 +10,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 $segments = CMS::Instance()->uri_segments;
 
 
-function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000, $mode="fast") {
+function serve_file ($media_obj, $fullpath, $mode="fast", $seconds_to_cache=31536000) {
+	//CMS::log('Serve method: ' . $mode);
 	$seconds_to_cache = $seconds_to_cache;
 	$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
 	header("Expires: $ts");
