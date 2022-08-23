@@ -2,7 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 // api style controller - end output
-ob_end_clean();
+//ob_end_clean();
 
 
 // router
@@ -10,35 +10,37 @@ ob_end_clean();
 $segments = CMS::Instance()->uri_segments;
 
 
-function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
+function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000, $mode="fast") {
 	$seconds_to_cache = $seconds_to_cache;
 	$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
 	header("Expires: $ts");
 	header("Pragma: cache");
 	header("Cache-Control: max-age=$seconds_to_cache");
-	// TODO: move to File class
 	header("Content-type: " . $media_obj->mimetype);
-	header("Location: " . Config::$uripath . "/images/processed/" . basename($fullpath));
-	exit(0);
-	// legacy file serving - TODO: maybe turn 'hide image url' as config option and use this instead of header location above?
-	if (function_exists('virtual')) {
-		virtual($fullpath);
+
+	// fast redirect serving - image uri visible in redirect
+	if ($mode=="fast") {
+		header("Location: " . Config::$uripath . "/images/processed/" . basename($fullpath));
+		exit(0);
 	}
 	else {
-		$fp = fopen($fullpath, 'rb');
-		fpassthru($fp);
-		fclose($fp);
+		// legacy file serving - also hides image uri
+		if (function_exists('virtual')) {
+			virtual($fullpath);
+		}
+		else {
+			$fp = fopen($fullpath, 'rb');
+			fpassthru($fp);
+			fclose($fp);
+		}
+		exit(0);
 	}
-	exit(0);
 }
 
 
 function make_thumb ($src, $dest, $desired_width, $file, $quality=65) {
 	if ($file->mimetype=='image/jpeg') {
 		$source_image = imagecreatefromjpeg($src);
-	}
-	elseif ($file->mimetype=='image/webp') {
-		$source_image = imagecreatefromwebp($src);
 	}
 	else {
 		$source_image = imagecreatefrompng($src);
@@ -55,9 +57,6 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=65) {
 	if ($file->mimetype=='image/jpeg') {
 		imagejpeg($virtual_image, $dest, $quality);
 	}
-	elseif ($file->mimetype=='image/webp') {
-		imagewebp($virtual_image, $dest);
-	}
 	else {
 		imagepng($virtual_image, $dest);
 	}
@@ -71,18 +70,20 @@ function get_image ($id) {
 	return $stmt->fetch();
 }
 
-if (sizeof($segments)==0) {
+$segsize = sizeof($segments);
+
+if ($segsize==0) {
 	//CMS::Instance()->queue_message('Unknown image id','danger',Config::$uripath.'/');
 	echo "<h1>wtf - shouldn't get here :)</h1>";
 }
-if (sizeof($segments)==1) {
+if ($segsize==1) {
 	//CMS::Instance()->queue_message('Unknown image id','danger',Config::$uripath.'/');
 	//$view = 'show';
 	
 	echo "<h1>NO IMAGE GIVEN!</h1>";
 	exit(0);
 }
-if (sizeof($segments)==2) {
+if ($segsize==2) {
 	if (is_numeric($segments[1])) {
 		//CMS::log("call to Image Controller with single INT {$segments[1]}");
 		// /images/INT
@@ -98,7 +99,14 @@ if (sizeof($segments)==2) {
 	}
 	exit(0);
 }
-if (sizeof($segments)==3) {
+
+if ($segsize==3||$segsize==4) {
+	$method="fast";
+	if ($segsize==4) {
+		if ($segments[3]!=="fast") {
+			$method="legacy";
+		}
+	}
 	if (is_numeric($segments[1])) {
 		$image = get_image ($segments[1]);
 		if ($image) {
@@ -106,37 +114,31 @@ if (sizeof($segments)==3) {
 			$param = $segments[2];
 			$target_width = $image->width;
 			$newsize_path = "";
-
-			//even if a specific version of these types of files is requested,
-			//return the native image due to lack of php handling at this time
-			if(File::get_image_types()[$image->mimetype]==2) {
-				serve_file ($image, $original_path);
-			}
-			elseif ($param=="thumb") {	
+			if ($param=="thumb") {	
 				$newsize_path = CMSPATH . "/images/processed/thumb_" . $image->filename;
 				if (!file_exists($newsize_path)) {
-					//CMS::log('Thumbnail generated for image ' . $image->filename);
+					CMS::log('Thumbnail generated for image ' . $image->filename);
 					$target_width = 200;
 					make_thumb($original_path, $newsize_path, $target_width, $image);
 				}
 				// serve existing file or new thumb if created above
-				serve_file ($image, $newsize_path);
+				serve_file ($image, $newsize_path, $method);
 			}
 			elseif ($param=="web") {	
 				$original_path = CMSPATH . "/images/processed/" . $image->filename;
 				$newsize_path = CMSPATH . "/images/processed/web_" . $image->filename;
 				if ($image->width > 1920) {
 					if (!file_exists($newsize_path)) {
-						//CMS::log('Web version generated for image ' . $image->filename);
+						CMS::log('Web version generated for image ' . $image->filename);
 						$target_width = 1920;
 						make_thumb($original_path, $newsize_path, $target_width, $image);
 					}
 					// serve web friendly version
-					serve_file ($image, $newsize_path); // exits script
+					serve_file ($image, $newsize_path, $method); // exits script
 				}
 				else {
 					// serve original, it's already web friendly
-					serve_file ($image, $original_path); // exits script
+					serve_file ($image, $original_path, $method); // exits script
 				}
 				// serve existing file or new thumb if created above
 			}
@@ -144,15 +146,15 @@ if (sizeof($segments)==3) {
 				// passed a width to show
 				$newsize_path = CMSPATH . "/images/processed/" . $param . "w_" . $image->filename;
 				if (!file_exists($newsize_path)) {
-					//CMS::log('User passed width generated for image ' . $image->filename);
+					CMS::log('User passed width generated for image ' . $image->filename);
 					$target_width = $param;
 					make_thumb($original_path, $newsize_path, $target_width, $image, 80); // default to 80 for q
 				}
 				// serve existing file or new thumb if created above
-				serve_file ($image, $newsize_path);
+				serve_file ($image, $newsize_path, $method);
 			}
 			else {
-				serve_file ($image, $original_path); // exits script
+				serve_file ($image, $original_path, $method); // exits script
 			}
 		}
 		else {
