@@ -149,17 +149,14 @@ class Mail {
 
 			if ($sent) {
 				return true;
+			} 
+			else {
+				return false;
 			}
-			
+
 		} 
 		catch (Exception $e) {
 			CMS::log('Could not send email: ' . $mail->ErrorInfo);
-			if (Config::$debug) {
-				CMS::show_error('Could not send email: ' . $mail->ErrorInfo);
-			}
-			else {
-				CMS::show_error('Could not send email');
-			}
 			return false;
 		}
 	}
