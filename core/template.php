@@ -14,7 +14,7 @@ class Template {
 		if ($id===0) {
 			$id = $this->get_default_template()->id;
 		}
-		$template = DB::fetch("select * from templates where id=?". [$id]);
+		$template = DB::fetch("select * from templates where id=?", [$id]);
 		$this->id = $template->id;
 		$this->title = $template->title;
 		$this->folder = $template->folder;
