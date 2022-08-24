@@ -254,7 +254,7 @@ class User {
 				foreach ($this->groups as $group) {
 					// todo: sanity check - make sure each group exists before insertion
 					// don't trust post data
-					DB::execute("insert into user_groups (user_id, group_id) values (?,?)", array($this->id, $group));
+					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", array($this->id, $group));
 				}
 				return true;
 			}
@@ -284,7 +284,7 @@ class User {
 				$this->id = $new_user_id;
 				// user tags
 				foreach ($this->tags as $tag) {
-					DB::execute("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($new_user_id, $tag));
+					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($new_user_id, $tag));
 				}
 			}
 			if ($result) {
@@ -293,7 +293,7 @@ class User {
 				foreach ($this->groups as $group) {
 					// todo: sanity check - make sure each group exists before insertion
 					// don't trust post data
-					DB::execute("insert into user_groups (user_id, group_id) values (?,?)", array($new_user_id, $group));
+					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", array($new_user_id, $group));
 				}
 				return true;
 			}
