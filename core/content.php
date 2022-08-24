@@ -68,11 +68,6 @@ class Content {
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
-			// make alias unique for specific content type - it's fine to have same alias for multiple contents of different types
-			/* $query = "select * from content where alias=? and content_type=?";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute(array($this->alias, $this->content_type));
-			$results = $stmt->fetchAll();  */
 			$results = DB::fetchall("select * from content where alias=? and content_type=?", array($this->alias, $this->content_type) );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
@@ -110,10 +105,7 @@ class Content {
 	}
 
 	public function get_field($field_name) {
-		$query = "select content from content_fields where content_id=? and name=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($this->id, $field_name));
-		$value = $stmt->fetch();
+		$value = DB::fetch("select content from content_fields where content_id=? and name=?", [$this->id, $field_name]);
 		if ($value) {
 			return $value->content;
 		}
@@ -176,17 +168,12 @@ class Content {
 		$this->title = $this->title . " - Copy";
 		$this->make_alias_unique();
 		// ordering
-		$query = "select (max(ordering)+1) as ordering from content";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array());
-		$ordering = $stmt->fetch()->ordering;
+		$ordering = DB::fetch("select (max(ordering)+1) as ordering from content")->ordering;
 		if (!$ordering) {
 			$ordering=1;
 		}
-		$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
-		$stmt = CMS::Instance()->pdo->prepare($query);
 		$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
-		$required_result = $stmt->execute( $params );
+		$required_result = DB::exec("insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
 			$this->id = CMS::Instance()->pdo->lastInsertId();
 			// set tags
@@ -247,28 +234,20 @@ class Content {
 
 		if ($this->id) {
 			// update
-			$query = "update content set state=?,  title=?, alias=?, note=?, start=FROM_UNIXTIME(?), end=FROM_UNIXTIME(?), updated_by=?, category=? where id=?";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			
 			$params = array($this->state, $this->title, $this->alias, $this->note, $this->start, $this->end, $this->updated_by, $this->category, $this->id) ;
-			$required_result = $stmt->execute( $params );
+			$required_result = DB::exec("update content set state=?,  title=?, alias=?, note=?, start=FROM_UNIXTIME(?), end=FROM_UNIXTIME(?), updated_by=?, category=? where id=?", $params);
 		}
 		else {
 			// new
 			//CMS::pprint_r ($this);
 			// get next order value
-			$query = "select (max(ordering)+1) as ordering from content";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute(array());
-			$ordering = $stmt->fetch()->ordering;
+			$ordering = DB::fetch("select (max(ordering)+1) as ordering from content")->ordering;
 			if (!$ordering) {
 				$ordering=1;
 			}
 			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?),?)";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			
 			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
-			$required_result = $stmt->execute( $params );
+			$required_result = DB::execute($query, $params);
 			if ($required_result) {
 				// update object id with inserted id
 				$this->id = CMS::Instance()->pdo->lastInsertId();
@@ -286,9 +265,7 @@ class Content {
 		/* CMS::pprint_r ($this);
 		CMS::pprint_r ($content_form); */
 		// first remove old field data if any exists
-		$query = "delete from content_fields where content_id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($this->id));
+		DB::exec("delete from content_fields where content_id=?", array($this->id));
 		$error_text="";
 		foreach ($content_form->fields as $field) {
 			// insert field info
@@ -308,10 +285,7 @@ class Content {
 				}
 			}
 			CMS::Instance()->log("Saving: " . $field->default);
-			$query = "insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$field_data = array($this->id, $field->name, $field->type, $field->default);
-			$result = $stmt->execute($field_data);
+			$result = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$this->id, $field->name, $field->type, $field->default]);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
 				CMS::Instance()->log("Error saving: " . $field->name);
@@ -363,9 +337,6 @@ class Content {
 		if ($content_type=="-3") {
 			return "Tag";
 		}
-		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_types where id=?");
-		$stmt->execute(array($content_type));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch("select title from content_types where id=?", array($content_type));
 		if ($result) {
 			return $result->title;
@@ -379,9 +350,6 @@ class Content {
 		if (!$content_type) {
 			return false;
 		}
-		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_types where id=?");
-		$stmt->execute(array($content_type));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch("select * from content_types where id=?", array($content_type));
 		if ($result) {
 			return $result;
@@ -395,9 +363,7 @@ class Content {
 		if (!$controller_location) {
 			return false;
 		}
-		$stmt = CMS::Instance()->pdo->prepare("select id from content_types where controller_location=?");
-		$stmt->execute(array($controller_location));
-		$result = $stmt->fetch();
+		$result = DB::fetch("select id from content_types where controller_location=?", [$controller_location]);
 		if ($result) {
 			return $result->id;
 		}
@@ -420,11 +386,7 @@ class Content {
 	public static function get_applicable_tags ($content_type_id) {
 		$query = "select * from tags where (filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)) ";
 		$query.= "or (filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)) ";
-		//$query.= "and state>-1";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($content_type_id, $content_type_id)); */
 		$tags = DB::fetchall($query, array($content_type_id, $content_type_id));
-		//return $stmt->fetchAll();
 		return $tags;
 	}
 
@@ -435,27 +397,16 @@ class Content {
 	}
 
 	public static function get_content_location($content_type_id) {
-		/* $stmt = CMS::Instance()->pdo->prepare("select controller_location from content_types where id=?");
-		$stmt->execute(array($content_type_id));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch("select controller_location from content_types where id=?", array($content_type_id));
 		return $result->controller_location;
 	}
 
 	public static function get_view_location($view_id) {
-		/* $stmt = CMS::Instance()->pdo->prepare("select location from content_views where id=?");
-		$stmt->execute(array($view_id));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch("select location from content_views where id=?", array($view_id));
 		return $result->location;
 	}
 
 	public static function get_content_type_for_view ($view_id) {
-		/* $stmt = CMS::Instance()->pdo->prepare("select content_type_id from content_views where id=?");
-		$stmt->execute(array($view_id));
-		$result = $stmt->fetch(); */
-		//echo "trying to get content type for view {$view_id}";
-		//exit (0);
 		$result = DB::fetch("select content_type_id from content_views where id=?", array($view_id));
 		return $result->content_type_id;
 	}
@@ -464,9 +415,6 @@ class Content {
 		if (!$view_id) {
 			return false;
 		}
-		/* $stmt = CMS::Instance()->pdo->prepare("select title from content_views where id=?");
-		$stmt->execute(array($view_id));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch("select title from content_views where id=?", array($view_id));
 		if ($result) {
 			return $result->title;

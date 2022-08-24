@@ -434,8 +434,7 @@ class Field_Tree extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->input_type = $config->input_type ?? 'text';
 		$this->sql = $config->sql ?? 'select id as value, title as text from pages where state=1';
-		$stmt = CMS::Instance()->pdo->query($this->sql);
-		$this->dataset = $stmt->fetchAll();
+		$this->dataset = DB::fetchAll($this->sql);
 		$this->default = $config->default ?? '{"parent":null,"value":"-1","text":"Root","children":[]}';
 	}
 

@@ -269,10 +269,7 @@ final class CMS {
 				//$this->user->load_from_id(s::get('user_id'));
 				//$this->user->load_from_id($session_user_id); // cant use user class as it requires CMS - will call constructor twice!
 				// code below is almost same as 'load_from_id' in user class
-				$query = "select * from users where id=?";
-				$stmt = $this->pdo->prepare($query);
-				$stmt->execute(array($session_user_id));
-				$result = $stmt->fetch();
+				$result = DB::fetch("select * from users where id=?", [$session_user_id]);
 				if ($result) {
 					$this->user->username = $result->username;
 					$this->user->password = $result->password;
@@ -280,10 +277,7 @@ final class CMS {
 					$this->user->email = $result->email;
 					$this->user->id = $result->id;
 					// get groups
-					$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
-					$stmt = $this->pdo->prepare($query);
-					$stmt->execute(array($session_user_id));
-					$this->user->groups = $stmt->fetchAll();
+					$this->user->groups = DB::fetchAll("select * from `groups` where id in (select group_id from user_groups where user_id=?)", [$session_user_id]);
 				}
 			}
 			// check if session too old
@@ -406,10 +400,7 @@ final class CMS {
 			}
 			else {
 				// get controller for current page
-				$query = "select controller_location from content_types where id=?";
-				$stmt = $this->pdo->prepare($query);
-				$stmt->execute(array($this->page->content_type));
-				$result = $stmt->fetch();
+				$result = DB::fetch("select controller_location from content_types where id=?", $this->page->content_type);
 				if ($result) {
 					$this->page->controller = $result->controller_location;
 					return $result->controller_location;
@@ -570,10 +561,7 @@ final class CMS {
 					$parent = -1; // start with root
 					$this->uri_path_segments = [];
 					while ($this->uri_segments) {
-						$query = "select * from pages where parent=? and alias=? and state > 0";
-						$stmt = $this->pdo->prepare($query);
-						$stmt->execute(array($parent, $this->uri_segments[0]));
-						$result = $stmt->fetch();
+						$result = DB::fetch("select * from pages where parent=? and alias=? and state > 0", [$parent, $this->uri_segments[0]]);
 						if ($result) {
 							// found possible alias, will check for deeper match on next loop - if any
 							$alias = $result->alias;

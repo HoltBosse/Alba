@@ -39,10 +39,6 @@ class Page {
 		$segments = array($this->alias);
 		$parent = $this->parent;
 		while ($parent>=0) {
-			/* $query = "select parent,alias from pages where id=?";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute(array($parent));
-			$result = $stmt->fetch(); */
 			$result = DB::fetch("select parent,alias from pages where id=?", array($parent));
 			$parent = $result->parent;
 			array_unshift ($segments, $result->alias);
@@ -79,10 +75,6 @@ class Page {
 		$parent=$id;
 		$depth = 0;
 		while (!$parent_root) {
-			/* $query = "select parent,alias from pages where id=?";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute(array($parent));
-			$result = $stmt->fetch(); */
 			$result = DB::fetch("select parent,alias from pages where id=?", array($parent));
 			$parent = $result->parent;
 			$depth++;
@@ -107,9 +99,6 @@ class Page {
 	public static function get_all_pages_by_depth($parent=-1, $depth=-1) {
 		$depth = $depth+1;
 		$result=array();
-		/* $stmt = CMS::Instance()->pdo->prepare("select * from pages where state>-1 and parent=?");
-		$stmt->execute(array($parent)); 
-		$children = $stmt->fetchAll(); */
 		$children = DB::fetchall("select * from pages where state>-1 and parent=?", array($parent));
 		foreach ($children as $child) {
 			$child->depth = $depth;
@@ -133,11 +122,6 @@ class Page {
 	}
 
 	public static function has_overrides ($page) {
-		//echo "Page:{$page} Template:{$template}";
-		/* $query = "select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($page));
-		$w = $stmt->fetchAll(); */
 		$w = DB::fetchall("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", array($page));
 		//CMS::pprint_r ($w);
 		return $w;
@@ -175,10 +159,6 @@ class Page {
 	}
 
 	public function load_from_id($id) {
-		/* $query = "select * from pages where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id));
-		$result = $stmt->fetch();  */
 		$result = DB::fetch("select * from pages where id=?", array($id) );
 		if ($result) {
 			$this->id = $result->id;
@@ -203,10 +183,6 @@ class Page {
 
 
 	public function load_from_alias($alias) {
-		/* $query = "select * from pages where alias=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($alias));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch("select * from pages where alias=?", array($alias));
 		if ($result) {
 			$this->id = $result->id;

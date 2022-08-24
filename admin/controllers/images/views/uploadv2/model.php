@@ -107,9 +107,7 @@ foreach ($_FILES["file-upload"]["error"] as $key => $error) {
 			$file->original_width = $file->width;
 			$file->recalc_height(1920);
 		}
-		$query = "insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)";
-		$stmt = $pdo->prepare($query);
-		$in_db_ok = $stmt->execute(array($file->width, $file->height, $title, $alt, $file->filename, $file->mimetype));
+		$in_db_ok = DB::exec("insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)", [$file->width, $file->height, $title, $alt, $file->filename, $file->mimetype]);
 		if ($in_db_ok) {
 			$thumbdest = CMSPATH . '/images/processed/' . "web_" . $file->filename;
 			// make web friendly if required

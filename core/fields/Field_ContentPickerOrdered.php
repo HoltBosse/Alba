@@ -43,8 +43,7 @@ class Field_ContentPickerOrdered extends Field {
 							$query .= "select t.id from tags t where t.state>={$min_state} and t.alias in ($tags_csv)";
 						$query .= ")";
 					$query .= ") order by c.title ASC";
-					$stmt = CMS::Instance()->pdo->query($query);
-					$options_all_articles = $stmt->fetchAll();
+					$options_all_articles = DB::fetchAll($query);
 				}
 			}
 		}

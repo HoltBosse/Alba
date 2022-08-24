@@ -67,9 +67,7 @@ class Field_Category extends Field {
 	}
 
 	public function get_friendly_value() {
-		$stmt = CMS::Instance()->pdo->prepare('select title from categories where id=?');
-		$stmt->execute(array($this->default));
-		return $stmt->fetch()->title;
+		return DB::fetch('select title from categories where id=?', [$this->default])->title;
 	}
 
 	public function validate() {

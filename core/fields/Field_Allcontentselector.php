@@ -72,17 +72,7 @@ class Field_Allcontentselector extends Field {
 	}
 
 	public function get_friendly_value() {
-		$stmt = CMS::Instance()->pdo->prepare('select title from content where id=?');
-		/* $query = "select p.id as id, p.title as title, c1.content as jobnumber, c2.content as initials 
-		from content p, content_fields c1, content_fields c2 
-		WHERE c1.content_id = p.id 
-		and c1.name = 'number' 
-		and c2.content_id = (select content from content_fields where name='client' and content_id=p.id) 
-		and c2.name = 'initials' 
-		AND p.id = ? ";
-		$stmt = CMS::Instance()->pdo->prepare($query); */
-		$stmt->execute(array($this->default));
-		$result = $stmt->fetch();
+		$result = DB::fetch('select title from content where id=?', $this->default);
 		//CMS::pprint_r ($this);
 		//$friendly = $result->initials . $result->jobnumber . " - " . $result->title;
 		$friendly = $result->title;

@@ -12,9 +12,7 @@ if (!$id) {
 }
 
 if ($action=='toggle') {
-	$query = "UPDATE plugins SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array($id[0])); // id always array even with single id being passed
+	$result = DB::exec("UPDATE plugins SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		CMS::Instance()->queue_message('Toggled state of plugin','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -25,9 +23,7 @@ if ($action=='toggle') {
 
 if ($action=='publish') {
 	$idlist = implode(',',$id);
-	$query = "UPDATE plugins SET state = 1 where id in ({$idlist})"; // relatively safe - ids already filtered to be INTs only
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array()); 
+	$result = DB::exec("UPDATE plugins SET state = 1 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published plugin','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -38,9 +34,7 @@ if ($action=='publish') {
 
 if ($action=='unpublish') {
 	$idlist = implode(',',$id);
-	$query = "UPDATE plugins SET state = 0 where id in ({$idlist})"; // relatively safe - ids already filtered to be INTs only
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array()); 
+	$result = DB::exec("UPDATE plugins SET state = 0 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished plugin','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -51,9 +45,7 @@ if ($action=='unpublish') {
 
 if ($action=='delete') {
 	$idlist = implode(',',$id);
-	$query = "UPDATE plugins SET state = -1 where id in ({$idlist})"; // relatively safe - ids already filtered to be INTs only
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array()); 
+	$result = DB::exec("UPDATE plugins SET state = -1 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted plugin','success', $_SERVER['HTTP_REFERER']);
 	}

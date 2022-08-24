@@ -4,10 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Widget_menu extends Widget {
 
 	public function get_page($id) {
-		$query = "select * from pages where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id));
-		$page = $stmt->fetch();
+		$page = DB::fetch("select * from pages where id=?", [$id]);
 		return $page;
 	}
 
