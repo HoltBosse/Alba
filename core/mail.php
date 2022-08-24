@@ -12,6 +12,7 @@ class Mail {
 	public $html;
 	public $text;
 	private $bcc;
+	public $attachments;
 
 	public function __construct() {
 		$this->to = [];
@@ -20,6 +21,7 @@ class Mail {
 		$this->text = "";
 		$this->cc = [];
 		$this->bcc = [];
+		$this->attachments = [];
 	}
 
 	public function addAddress($address, $name=false) {
@@ -41,6 +43,13 @@ class Mail {
 		$add->address = $address;
 		$add->name = $name;
 		$this->cc[] = $add;
+	}
+
+	public function addAttachment($attachment, $name=false) {
+		$add = new stdClass();
+		$add->attachment = $attachment;
+		$add->name = $name;
+		$this->attachments[] = $add;
 	}
 
 	public function send() {
@@ -120,12 +129,15 @@ class Mail {
 					$mail->addBCC($add->address);
 				}
 			}
-			
-			
-
-			//Attachments
-			//$mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
-			//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
+			// attachments
+			foreach ($this->attachments as $add) {
+				if ($add->name) {
+					$mail->addAttachment($add->attachment, $add->name);
+				}
+				else {
+					$mail->addAttachment($add->attachment);
+				}
+			}
 		
 			//Content
 			$mail->isHTML(true);                                  //Set email format to HTML
@@ -133,7 +145,11 @@ class Mail {
 			$mail->Body    = $this->html;
 			$mail->AltBody = $this->text ? $this->text : strip_tags($this->html);
 
-			$mail->send();
+			$sent = $mail->send();
+
+			if ($sent) {
+				return true;
+			}
 			
 		} 
 		catch (Exception $e) {
@@ -144,6 +160,7 @@ class Mail {
 			else {
 				CMS::show_error('Could not send email');
 			}
+			return false;
 		}
 	}
 
