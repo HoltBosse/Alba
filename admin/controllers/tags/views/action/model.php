@@ -34,7 +34,7 @@ if ($action=='publish') {
 
 if ($action=='unpublish') {
 	$idlist = implode(',',$id);
-	$result = DB::execute("UPDATE tags SET state = 0 where id in ({$idlist})"); 
+	$result = DB::exec("UPDATE tags SET state = 0 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished tags','success', $_SERVER['HTTP_REFERER']);
 	}
