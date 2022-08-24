@@ -23,9 +23,7 @@ class Widget {
 		from widgets 
 		where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) 
 		and global_position=? and state>=0 ORDER BY ordering,id ASC';
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($page_id, $page_id, $position));
-		return $stmt->fetchAll();
+		return DB::fetchAll($query, [$page_id, $page_id, $position]);
 	}
 
 	public function get_type_object() {
@@ -45,42 +43,25 @@ class Widget {
 	}
 
 	public static function get_widget_title ($id) {
-		$query = "select title from widgets where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id));
-		return $stmt->fetch()->title;
+		return DB::fetch("select title from widgets where id=?", [$id])->title;
 	}
 
 
 	public static function get_widget_overrides_csv_for_position ($page, $position) {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
-		$query = "select widgets from page_widget_overrides where page_id=? and position=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($page, $position));
-		$widget_ids = $stmt->fetch()->widgets; // csv
+		$widget_ids = DB::fetch("select widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets; // csv
 		return $widget_ids;
-		/* $query = 'select id,title,type,state 
-		from widgets 
-		where id in (?) and state>=0';
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($widget_ids));
-		return $stmt->fetchAll(); */
 	}
 
 	public static function get_widget_overrides_for_position ($page, $position) {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
-		$query = "select widgets from page_widget_overrides where page_id=? and position=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($page, $position));
-		$widget_ids = $stmt->fetch()->widgets; // csv
+		$widget_ids = DB::fetch("select widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets; // csv
 		if ($widget_ids) {
 			$query = 'select id,title,type,state 
 			from widgets 
 			where id in ('.$widget_ids.') and state>=0 
 			ORDER BY FIELD(id,'.$widget_ids.')';
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute();
-			return $stmt->fetchAll();
+			return DB::fetchAll($query);
 		}
 		return false;
 	}
@@ -157,10 +138,8 @@ class Widget {
 
 		if ($this->id) {
 			// update
-			$query = "update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=? where id=?";
-			$stmt = CMS::Instance()->pdo->prepare($query);
 			$params = array($this->state, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list), $this->id) ;
-			$result = $stmt->execute( $params );
+			$result = DB::exec("update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=? where id=?", $params);
 			
 			if ($result) {
 				CMS::Instance()->queue_message('Widget updated','success',Config::$uripath . '/admin/widgets/show');	
@@ -171,10 +150,8 @@ class Widget {
 		}
 		else {
 			// new
-			$query = "insert into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)";
-			$stmt = CMS::Instance()->pdo->prepare($query);
 			$params = array($this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)) ;
-			$result = $stmt->execute( $params );
+			$result = DB::exec("insert into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)", $params);
 			if ($result) {
 				CMS::Instance()->queue_message('New widget saved','success',Config::$uripath . '/admin/widgets/show');	
 			}

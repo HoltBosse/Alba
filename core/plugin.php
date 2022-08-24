@@ -48,10 +48,7 @@ class Plugin {
     }
 
 	public static function get_plugin_title ($id) {
-		$query = "select title from plugins where id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id));
-		return $stmt->fetch()->title;
+		return DB::fetch("select title from plugins where id=?", [$id])->title;
 	}
 
 	public function show_admin_form() {
@@ -84,10 +81,7 @@ class Plugin {
 
 		if ($this->id) {
 			// update
-			$query = "update plugins set options=? where id=?";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$params = array($options_json, $this->id) ;
-			$result = $stmt->execute( $params );
+			$result = DB::exec("update plugins set options=? where id=?", [$options_json, $this->id]);
 			
 			if ($result) {
 				CMS::Instance()->queue_message('Plugin options updated','success',Config::$uripath . '/admin/plugins/show');	

@@ -12,10 +12,7 @@ function fix_content ($content_type) {
 	// loop through fields and check name / content_id pair exists for every content item
 	// of type in database
 	// also check for lack of default value for missing items
-	$query = "select * from content where content_type=?";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$stmt->execute(array($content_type->id));
-	$all_content_of_type = $stmt->fetchAll();
+	$all_content_of_type = DB::fetchall("select * from content where content_type=?", [$content_type->id]);
 	if ($all_content_of_type) {
 		$response = true;
 		foreach ($custom_fields->fields as $field) {
@@ -28,10 +25,7 @@ function fix_content ($content_type) {
 			}
 
 			// field count for content
-			$query = "select count(*) as c from content_fields where name=? and content_id in (select id from content where content_type=?)";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute(array($field->name, $content_type->id));
-			$field_count = $stmt->fetch()->c;
+			$field_count = DB::fetch("select count(*) as c from content_fields where name=? and content_id in (select id from content where content_type=?)", [$field->name, $content_type->id])->c;
 
 			$missing_count = sizeof($all_content_of_type) - $field_count;
 
@@ -47,14 +41,9 @@ function fix_content ($content_type) {
 					// insert default value field where it doesn't exist
 					foreach ($all_content_of_type as $content) {
 						// check if missing field
-						$query = 'select count(content_id) as c from content_fields where name=? and content_id=?';
-						$stmt = CMS::Instance()->pdo->prepare($query);
-						$stmt->execute(array($field->name, $content->id));
-						$present_c = $stmt->fetch()->c;
-						if (!$present_c) {		
-							$query = "insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)";
-							$stmt = CMS::Instance()->pdo->prepare($query);
-							$ok = $stmt->execute(array($content->id, $field->name, $field->type, $field->default));
+						$present_c = DB::fetch('select count(content_id) as c from content_fields where name=? and content_id=?', [$field->name, $content->id])->c;
+						if (!$present_c) {
+							$ok = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$content->id, $field->name, $field->type, $field->default]);
 							if (!$ok) {
 								echo "<p class='help error'>Error inserting default &ldquo;" . $field->name . "&rdquo; for content &ldquo;{$content->title}&rdquo;</p>";								
 							}

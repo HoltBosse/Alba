@@ -67,9 +67,7 @@ if ($titles_array) {
 				$file->original_width = $file->width;
 				$file->recalc_height(1920);
 			}
-			$query = "insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)";
-			$stmt = $pdo->prepare($query);
-			$in_db_ok = $stmt->execute(array($file->width, $file->height, $title, $alt, $unique_prefix . $file->filename, $file->mimetype));
+			$in_db_ok = DB::exec("insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)", [$file->width, $file->height, $title, $alt, $unique_prefix . $file->filename, $file->mimetype]);
 			if ($in_db_ok) {
 				
 				$src = CMSPATH . '/images/upload/' . $file->filename;
@@ -102,10 +100,7 @@ if ($titles_array) {
 
 
 function image_in_db($filename) {
-	$query = "select filename from media where filename=?";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$stmt->execute(array($filename));
-	$match = $stmt->fetch();
+	$match = DB::fetch("select filename from media where filename=?", [$filename]);
 	//CMS::pprint_r ($match);
 	//if (property_exists($match,'filename')) {
 	if ($match) {

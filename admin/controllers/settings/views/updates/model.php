@@ -30,10 +30,6 @@ else {
 // Legacy DB Checks / Fixes
 
 // check page_options column in pages table
-/* $query = "show columns FROM `pages` LIKE 'page_options'";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$page_options_ok = $stmt->fetchAll(); */
 $page_options_ok = DB::fetchall("show columns FROM `pages` LIKE 'page_options'");
 if (!$page_options_ok) {
 	// add column
@@ -41,13 +37,7 @@ if (!$page_options_ok) {
 	$fixed_ok = true;
 }
 
-$query = "SELECT * 
-FROM information_schema.tables 
-WHERE table_name = 'plugins'
-LIMIT 1;";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$plugins_table_ok = $stmt->fetchAll();
+$plugins_table_ok = DB::fetchall("SELECT * FROM information_schema.tables WHERE table_name = 'plugins' LIMIT 1;");;
 if (!$plugins_table_ok) {
 	DB::exec("DROP TABLE IF EXISTS `plugins`;");
 	DB::exec("CREATE TABLE `plugins` (
@@ -63,23 +53,14 @@ if (!$plugins_table_ok) {
 }
 
 //plugins_table_ok
-$query = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'parent'";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$tags_table_ok = $stmt->fetchAll();
+$tags_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'parent'");
 if (!$tags_table_ok) {
 	DB::exec("ALTER TABLE tags ADD COLUMN `parent` int(11) DEFAULT NULL");
 }
 
 // create categories table if not exist
 
-$query = "SELECT * 
-FROM information_schema.tables 
-WHERE table_name = 'categories'
-LIMIT 1;";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$categories_table_ok = $stmt->fetchAll();
+$categories_table_ok = DB::fetchAll("SELECT * FROM information_schema.tables WHERE table_name = 'categories'LIMIT 1;");
 if (!$categories_table_ok) {
 	DB::exec("CREATE TABLE `categories` (
 	`id` int(11) NOT NULL,
@@ -92,17 +73,11 @@ if (!$categories_table_ok) {
   DB::exec("ALTER TABLE `categories` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;");
 }
 // ensure cat columns exist in content and tags tables
-$query = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'category'";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$tag_category_ok = $stmt->fetchAll();
+$tag_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'category'");
 if (!$tag_category_ok) {
 	DB::exec("ALTER TABLE tags ADD COLUMN `category` int(11) DEFAULT 0");
 }
-$query = "SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'content' AND COLUMN_NAME = 'category'";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$content_category_ok = $stmt->fetchAll();
+$content_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'content' AND COLUMN_NAME = 'category'");
 if (!$content_category_ok) {
 	DB::exec("ALTER TABLE content ADD COLUMN `category` int(11) DEFAULT 0");
 }

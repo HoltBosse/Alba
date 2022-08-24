@@ -62,20 +62,11 @@ class User {
 	}
 
 	public function get_all_users_in_group($group_id) {
-		//echo "<p>Getting all users...</p>";
-		//$db = new db();
-		//$db = CMS::$pdo;
-		//$result = $db->pdo->query("select * from users")->fetchAll();
-		//$result = CMS::Instance()->pdo->query("select * from users")->fetchAll();
 		$query = "Select u.*, group_concat(g.display) as `groups` from users u 
 					Left Join user_groups ug on ug.user_id = u.id  
 					Left Join `groups` g on ug.group_id = g.id 
 					WHERE g.id=? 
 					group by u.id";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$ok = $stmt->execute(array($group_id));
-		$result = $stmt->fetchAll();
-		return $result; */
 		return DB::fetchall($query, array($group_id));
 	}
 
@@ -86,9 +77,6 @@ class User {
 
 	public static function get_group_name ($group_id) {
 		$query = "select display from `groups` where id=?";
-		//$stmt = CMS::Instance()->pdo->prepare($query);
-		//$ok = $stmt->execute(array($group_id));
-		//$result = $stmt->fetch();
 		$result = DB::fetch($query, array($group_id));
 		return $result->display;
 	}
@@ -97,11 +85,6 @@ class User {
 	public function update_password ($new_password) {
 		$hash = password_hash ($new_password, PASSWORD_DEFAULT);
 		$query = "update users set password=? where id=?";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$ok = $stmt->execute(array($hash, $this->id));
-		if (!$ok) {
-			return false;
-		} */
 		DB::exec($query, array($hash, $this->id));
 		return true;
 	}
@@ -148,10 +131,6 @@ class User {
 
 	public function load_from_id($id) {
 		$query = "select * from users where id=?";
-		//$db = new db();
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id)); */
-		//$result = $stmt->fetch();
 		$result = DB::fetch($query, array($id));
 		if ($result) {
 			$this->username = $result->username;
@@ -162,9 +141,6 @@ class User {
 			$this->state = $result->state;
 			// get groups
 			$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
-			/* $stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute(array($id));
-			$this->groups = $stmt->fetchAll(); */
 			$this->groups = DB::fetchall($query, array($id));
 
 			// get tags
@@ -183,19 +159,12 @@ class User {
 
 	
 	public static function get_username_by_id($id) {
-		/* $stmt = CMS::Instance()->pdo->prepare("select username from users where id=?");
-		$stmt->execute(array($id));
-		$result = $stmt->fetch()->username; */
 		$result = DB::fetch("select username from users where id=?", array($id));
 		return $result->username;
 	}
 
 	public function check_password($password) {
 		$query = "select password from users where id=?";
-		//$db = new db();
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($this->id));
-		$hash = $stmt->fetch(); */
 		$hash = DB::fetch($query, array($this->id));
 		return password_verify($password, $hash->password);
 	}
@@ -203,9 +172,6 @@ class User {
 	public function load_from_email($email) {
 		//echo "<h5>Loading user object from db with email {$email}</h5>";
 		$query = "select * from users where email=?";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($email));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch($query, array($email));
 		if ($result) {
 			$this->username = $result->username;
@@ -227,8 +193,6 @@ class User {
    		$addKey = substr(md5(uniqid(rand(),1)),3,10);
 		$key = $key . $addKey;
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$ok = $stmt->execute(array($key, $this->id)); */
 		$ok = DB::exec($query, array($key, $this->id));
 		if (!$ok) {
 			CMS::Instance()->queue_message('Error creating password reset key for ' . $this->username, 'error', Config::$uripath."/admin");
@@ -239,8 +203,6 @@ class User {
 
 	public function remove_reset_key() {
 		$query = "update users set reset_key=null, reset_key_expires=null where id=?";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$ok = $stmt->execute(array($this->id)); */
 		$ok = DB::exec($query, array($this->id)); 
 		if (!$ok) {
 			return false;
@@ -253,9 +215,6 @@ class User {
 	public function get_user_by_reset_key ($key) {
 		// get used for reset key - only returns anything if reset key has not expired
 		$query = "select * from users where reset_key=? and reset_key_expires>NOW() LIMIT 1";
-		/* $stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($key));
-		$result = $stmt->fetch(); */
 		$result = DB::fetch($query, array($key));
 		if ($result) {
 			return $this->load_from_id($result->id);
@@ -280,13 +239,9 @@ class User {
 			}
 			if ($result) {
 				// user tags
-				$query = "delete from tagged where content_id=?";
-				$stmt = CMS::Instance()->pdo->prepare($query);
-				$stmt->execute(array($this->id));
+				DB::exec("delete from tagged where content_id=?");
 				foreach ($this->tags as $tag) {
-					$query = "insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)"; // -2 for user!
-					$stmt = CMS::Instance()->pdo->prepare($query);
-					$stmt->execute(array($this->id, $tag));
+					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($this->id, $tag));
 				}
 			}
 			if ($result) {
@@ -294,16 +249,12 @@ class User {
 				// UDPATE GROUPS
 				// delete existing
 				// todo: sanity checks, don't trust post data etc...
-				$query = "delete from user_groups where user_id=?";
-				$stmt = CMS::Instance()->pdo->prepare($query);
-				$stmt->execute(array($this->id));
+				DB::exec("delete from user_groups where user_id=?", array($this->id));
 				// re-add new config
 				foreach ($this->groups as $group) {
-					$query = "insert into user_groups (user_id, group_id) values (?,?)";
-					$stmt = CMS::Instance()->pdo->prepare($query);
 					// todo: sanity check - make sure each group exists before insertion
 					// don't trust post data
-					$stmt->execute(array($this->id, $group));
+					DB::execute("insert into user_groups (user_id, group_id) values (?,?)", array($this->id, $group));
 				}
 				return true;
 			}
@@ -333,20 +284,16 @@ class User {
 				$this->id = $new_user_id;
 				// user tags
 				foreach ($this->tags as $tag) {
-					$query = "insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)"; // -2 for user
-					$stmt = CMS::Instance()->pdo->prepare($query);
-					$stmt->execute(array($new_user_id, $tag));
+					DB::execute("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($new_user_id, $tag));
 				}
 			}
 			if ($result) {
 				// user groups
 				
 				foreach ($this->groups as $group) {
-					$query = "insert into user_groups (user_id, group_id) values (?,?)";
-					$stmt = CMS::Instance()->pdo->prepare($query);
 					// todo: sanity check - make sure each group exists before insertion
 					// don't trust post data
-					$stmt->execute(array($new_user_id, $group));
+					DB::execute("insert into user_groups (user_id, group_id) values (?,?)", array($new_user_id, $group));
 				}
 				return true;
 			}

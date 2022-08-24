@@ -20,15 +20,10 @@ if ($action=='tag_media') {
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
 		// check if already tagged
-		$query = "select count(tag_id) as c from tagged where content_id=? and content_type_id=-1 and tag_id=?";
-		$stmt = $pdo->prepare($query);
-		$stmt->execute(array($image_id, $tag_id));
-		$c = $stmt->fetch()->c;
+		$c = DB::fetch("select count(tag_id) as c from tagged where content_id=? and content_type_id=-1 and tag_id=?", [$image_id, $tag_id])->c;
 		if (!$c) {
 			// not tagged, insert
-			$query = "insert into tagged (content_id, tag_id, content_type_id) values (?,?,-1)";
-			$stmt = $pdo->prepare($query);
-			$ok = $stmt->execute(array($image_id, $tag_id));
+			$ok = DB::exec("insert into tagged (content_id, tag_id, content_type_id) values (?,?,-1)", [$image_id, $tag_id]);
 			if ($ok) {
 				$image_ids_tagged[] = $image_id;
 			}
@@ -51,9 +46,7 @@ if ($action=='cleartags_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
-			$query = "delete from tagged where content_id=? and content_type_id=-1";
-			$stmt = $pdo->prepare($query);
-			$ok = $stmt->execute(array($image_id));
+			$ok = DB::exec("delete from tagged where content_id=? and content_type_id=-1", [$image_id]);
 			if ($ok) {
 				$image_ids_tagged[] = $image_id;
 			}
@@ -75,13 +68,9 @@ if ($action=='delete_media') {
 		$filename_response = DB::fetch('select filename from media where id=?',$image_id);
 
 		// clear tags
-		$query = "delete from tagged where content_id=? and content_type_id=-1";
-		$stmt = $pdo->prepare($query);
-		$ok = $stmt->execute(array($image_id));
+		$ok = DB::exec("delete from tagged where content_id=? and content_type_id=-1", [$image_id]);
 		// clear media table
-		$query = "delete from media where id=?";
-		$stmt = $pdo->prepare($query);
-		$ok = $stmt->execute(array($image_id));
+		$ok = DB::exec("delete from media where id=?", [$image_id]);
 		
 		// TODO: remove file(s) from /processed or any other thumbnail/resolution cache created in future
 		if ($filename_response) {
@@ -112,9 +101,7 @@ if ($action=='untag_media') {
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
 		// clear tags
-		$query = "delete from tagged where content_id=? and content_type_id=-1 and tag_id=?";
-		$stmt = $pdo->prepare($query);
-		$ok = $stmt->execute(array($image_id, $tag_id));
+		$ok = DB::exec("delete from tagged where content_id=? and content_type_id=-1 and tag_id=?", [$image_id, $tag_id]);
 		if ($ok) {
 			$image_ids_untagged[] = $image_id;
 		}
@@ -128,9 +115,7 @@ if ($action=='untag_media') {
 
 if ($action=='toggle') {
 	// NOT APPLICABLE TO IMAGES!
-	$query = "UPDATE tags SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array($id[0])); // id always array even with single id being passed
+	$result = DB::exec("UPDATE tags SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		CMS::Instance()->queue_message('Toggled state of tag','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -142,9 +127,7 @@ if ($action=='toggle') {
 if ($action=='publish') {
 	// NOT APPLICABLE TO IMAGES!
 	$idlist = implode(',',$id);
-	$query = "UPDATE tags SET state = 1 where id in ({$idlist})"; // relatively safe - ids already filtered to be INTs only
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array()); 
+	$result = DB::exec("UPDATE tags SET state = 1 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published tags','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -156,9 +139,7 @@ if ($action=='publish') {
 if ($action=='unpublish') {
 	// NOT APPLICABLE TO IMAGES!
 	$idlist = implode(',',$id);
-	$query = "UPDATE tags SET state = 0 where id in ({$idlist})"; // relatively safe - ids already filtered to be INTs only
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array()); 
+	$result = DB::exec("UPDATE tags SET state = 0 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished tags','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -170,9 +151,7 @@ if ($action=='unpublish') {
 if ($action=='delete') {
 	$idlist = implode(',',$id);
 	
-	$query = "DELETE FROM media where id in ({$idlist})"; // relatively safe - ids already filtered to be INTs only
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array()); 
+	$result = DB::exec("DELETE FROM media where id in ({$idlist})"); 
 	if ($result) {
 		//CMS::Instance()->queue_message('Deleted tags','success', $_SERVER['HTTP_REFERER']);
 		echo '{"success":1,"msg":"Image(s) deleted"}';
@@ -204,9 +183,7 @@ if ($action=='list_images') {
 			}
 			$query.=") ";
 		}
-		
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array("%$searchtext%","%$searchtext%"));
+		DB::exec($query, ["%$searchtext%","%$searchtext%"]);
 	}
 	else {
 		$query = "select * from media";
@@ -237,9 +214,7 @@ if ($action=='rename_image') {
 	$title = Input::getvar('title','STRING');
 	$alt = Input::getvar('alt','STRING');
 	$image_id = Input::getvar('image_id','NUM');
-	$query = "update media set title=?, alt=? where id=?";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array($title, $alt, $image_id));
+	$result = DB::exec("update media set title=?, alt=? where id=?", [$title, $alt, $image_id]);
 	if ($result) {
 		echo '{"success":1,"msg":"Image renamed"}';
 		exit(0);

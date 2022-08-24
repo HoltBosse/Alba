@@ -21,10 +21,6 @@ else {
 }
 
 // check for new widget types
-/* $query = "select * from widget_types";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$all_widget_types = $stmt->fetchAll(); */
 $all_widget_types = DB::fetchall("select * from widget_types");
 $missing_widgets=[];
 foreach (new DirectoryIterator(CMSPATH . '/widgets/') as $f) {
@@ -59,9 +55,7 @@ if ($missing) { ?>
 						if (!$w_config->description) {
 							$w_config->description = "No description found in json file";
 						}
-						$query = "insert into widget_types (title, location, description) values (?,?,?)";
-						$stmt = CMS::Instance()->pdo->prepare($query);
-						$ok = $stmt->execute(array($w_config->title, $missed, $w_config->description));
+						$ok = DB::exec("insert into widget_types (title, location, description) values (?,?,?)", array($w_config->title, $missed, $w_config->description));
 						if ($ok) {
 							echo "<li class='list-item'><strong>{$w_config->title}</strong> - {$w_config->description} - <em>Installed</em></li>";
 						}

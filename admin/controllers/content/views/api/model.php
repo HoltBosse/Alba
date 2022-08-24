@@ -12,15 +12,9 @@ if ($action=='insert') {
 	$insert_position = Input::getvar('insert_position','STRING');
 	
 	// source ordering
-	$query = "select ordering from content where id=?";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$stmt->execute(array($source_id));
-	$source_ordering = $stmt->fetch()->ordering;
+	$source_ordering = DB::fetch("select ordering from content where id=?", [$source_id])->ordering;
 	// dest ordering
-	$query = "select ordering from content where id=?";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$stmt->execute(array($dest_id));
-	$dest_ordering = $stmt->fetch()->ordering;
+	$dest_ordering = DB::fetch("select ordering from content where id=?", [$dest_id])->ordering;
 
 	// make space in ordering first
 	if ($source_ordering < $dest_ordering && $insert_position=='before') {
@@ -40,11 +34,9 @@ if ($action=='insert') {
 		$move_query = "update content set ordering = " . ($dest_ordering + 1) . " where id={$source_id}";
 	}
 	// make space
-	$stmt = CMS::Instance()->pdo->prepare($space_query);
-	$stmt->execute(array($source_ordering, $dest_ordering));
+	DB::exec($space_query, [$source_ordering, $dest_ordering]);
 	// move
-	$stmt = CMS::Instance()->pdo->prepare($move_query);
-	$stmt->execute(array());
+	DB::exec($move_query);
 	echo '{"success":1,"message":"Ordering complete"}';
 	exit(0);
 }

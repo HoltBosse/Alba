@@ -37,12 +37,8 @@ class Tag {
 
 	public static function get_tags_for_content($content_id, $content_type_id=-1) {
 		// default to media/image content type
-		/* $query = "select * from tags where id in (select tag_id from tagged where content_id=? and content_type_id=?)";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($content_id, $content_type_id)); */
 		$result = DB::fetchall("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", array($content_id, $content_type_id));
 		return $result;
-		//return $stmt->fetchAll();
 	}
 
 	public static function get_tags_available_for_content_type ($content_type_id) {
@@ -52,14 +48,8 @@ class Tag {
 	}
 
 	public static function set_tags_for_content($content_id, $tag_array, $content_type_id) {
-		/* $query = "delete from tagged where content_id=? and content_type_id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($content_id,$content_type_id)); */
 		DB::exec("delete from tagged where content_id=? and content_type_id=?", array($content_id,$content_type_id));
 		foreach ($tag_array as $tag_id) {
-			/* $query = "insert into tagged (tag_id, content_id, content_type_id) values (?,?,?)";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute(array($tag_id, $content_id, $content_type_id)); */
 			DB::exec("insert into tagged (tag_id, content_id, content_type_id) values (?,?,?)", array($tag_id, $content_id, $content_type_id));
 		}
 	}
@@ -98,20 +88,12 @@ class Tag {
 	}
 
 	public static function get_tag_content_types($id) {
-		/* $query = "select content_type_id from tag_content_type where tag_id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id));
-		return $stmt->fetchAll(); */
 		return DB::fetchall("select content_type_id from tag_content_type where tag_id=?", array($id));
 	}
 
 	public static function get_tag_content_type_titles($id) {
 		$tag = new Tag();
 		$tag->load($id);
-		/* $query = "select title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($id));
-		$titles_obj = $stmt->fetchAll(); */
 		$titles_obj = DB::fetchall("select title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", array($id));
 		$titles = array();
 		if (in_array('-1',$tag->contenttypes)) {
@@ -173,21 +155,14 @@ class Tag {
 				$this->image=null;
 			}
 			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->id) ;
-			//$stmt = CMS::Instance()->pdo->prepare($query);
-			//$result = $stmt->execute( $params );
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// clear any content types applicable to this tag from tag_content_type
-				/* $query = "delete from tag_content_type where tag_id=?";
-				$stmt = CMS::Instance()->pdo->prepare($query);
-				$stmt->execute(array($this->id)); */
 				
 				DB::exec("delete from tag_content_type where tag_id=?", array($this->id));
 				
 				// insert new tag content_type relationships if required
 				foreach ($this->contenttypes as $contenttype) {
-					/* $stmt = CMS::Instance()->pdo->prepare('insert into tag_content_type (tag_id,content_type_id) values (?,?)');
-					$stmt->execute(array($this->id, $contenttype)); */
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($this->id, $contenttype));
 				}
 				CMS::Instance()->queue_message('Tag updated','success',Config::$uripath . '/admin/tags/show');	
@@ -207,15 +182,11 @@ class Tag {
 				$this->image=null;
 			}
 			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category);
-			//$stmt = CMS::Instance()->pdo->prepare($query);
-			//$result = $stmt->execute( $params );
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// insert new tag content_type relationships if required
 				$new_id = CMS::Instance()->pdo->lastInsertId();
 				foreach ($this->contenttypes as $contenttype) {
-					/* $stmt = CMS::Instance()->pdo->prepare('insert into tag_content_type (tag_id,content_type_id) values (?,?)');
-					$stmt->execute(array($new_id, $contenttype)); */
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($new_id, $contenttype));
 				}
 				CMS::Instance()->queue_message('New tag saved','success',Config::$uripath . '/admin/tags/');	
