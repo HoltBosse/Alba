@@ -100,20 +100,11 @@ class Category {
 
 		if ($this->id) {
 			// update
-			$query = "update categories set state=?,  title=?, parent=? where id=?";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			
-			$params = array($this->state, $this->title, $this->parent, $this->id) ;
-			$required_result = $stmt->execute( $params );
+			$required_result = DB::exec("update categories set state=?,  title=?, parent=? where id=?", [$this->state, $this->title, $this->parent, $this->id]);
 		}
 		else {
 			// new
-			
-			$query = "insert into categories (state,title,content_type, parent) values(?,?,?,?)";
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			
-			$params = array($this->state, $this->title, $this->content_type, $this->parent);
-			$required_result = $stmt->execute( $params );
+			$required_result = DB::exec("insert into categories (state,title,content_type, parent) values(?,?,?,?)", [$this->state, $this->title, $this->content_type, $this->parent]);
 			if ($required_result) {
 				// update object id with inserted id
 				$this->id = CMS::Instance()->pdo->lastInsertId();

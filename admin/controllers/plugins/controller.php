@@ -21,10 +21,6 @@ else {
 }
 
 // check for new plugins
-/* $query = "select * from plugins";
-$stmt = CMS::Instance()->pdo->prepare($query);
-$stmt->execute(array());
-$all_plugins = $stmt->fetchAll(); */
 $all_plugins = DB::fetchall("select * from plugins");
 $missing_plugins=[];
 foreach (new DirectoryIterator(CMSPATH . '/plugins/') as $f) {
@@ -59,9 +55,7 @@ if ($missing) { ?>
 						if (!$w_config->description) {
 							$w_config->description = "No description found in json file";
 						}
-						$query = "insert into plugins (title, location, description) values (?,?,?)";
-						$stmt = CMS::Instance()->pdo->prepare($query);
-						$ok = $stmt->execute(array($w_config->title, $missed, $w_config->description));
+						$ok = DB::exec("insert into plugins (title, location, description) values (?,?,?)", [$w_config->title, $missed, $w_config->description]);
 						if ($ok) {
 							echo "<li class='list-item'><strong>{$w_config->title}</strong> - {$w_config->description} - <em>Installed</em></li>";
 						}

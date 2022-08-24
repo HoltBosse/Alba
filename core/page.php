@@ -107,9 +107,6 @@ class Page {
 	public static function get_all_pages_by_depth($parent=-1, $depth=-1) {
 		$depth = $depth+1;
 		$result=array();
-		/* $stmt = CMS::Instance()->pdo->prepare("select * from pages where state>-1 and parent=?");
-		$stmt->execute(array($parent)); 
-		$children = $stmt->fetchAll(); */
 		$children = DB::fetchall("select * from pages where state>-1 and parent=?", array($parent));
 		foreach ($children as $child) {
 			$child->depth = $depth;

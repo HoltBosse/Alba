@@ -14,9 +14,7 @@ class Template {
 		if ($id===0) {
 			$id = $this->get_default_template()->id;
 		}
-		$stmt = CMS::Instance()->pdo->prepare("select * from templates where id=?");
-		$stmt->execute(array($id));
-		$template = $stmt->fetch();
+		$template = DB::fetch("select * from templates where id=?". [$id]);
 		$this->id = $template->id;
 		$this->title = $template->title;
 		$this->folder = $template->folder;
@@ -64,10 +62,6 @@ class Template {
 
 		// TODO: move to page controller? view?
 		
-		/* $query = 'select id,title,state from widgets where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) and global_position=? and state>=0';
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($page_id, $page_id, $position));
-		$all_global_widgets = $stmt->fetchAll(); */
 		$all_global_widgets = Widget::get_widgets_for_position($page_id, $position);
 		//CMS::pprint_r ($all_global_widgets);
 

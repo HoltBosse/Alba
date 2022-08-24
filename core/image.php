@@ -17,9 +17,7 @@ class Image {
         }
         else {
             $this->id = $id;
-            $stmt = CMS::Instance()->pdo->prepare('select * from media where id=?');
-            $stmt->execute(array($this->id)); 
-            $db_image = $stmt->fetch();
+            $db_image = DB::fetch('select * from media where id=?', [[$this->id]]);
             $this->filename = $db_image->filename;
             $this->width = $db_image->width;
             $this->height = $db_image->height;

@@ -43,11 +43,8 @@ if ($success) {
 	// save widget overrides
 	// unique key on page, template and position in table	
 	for ($n=0; $n < sizeof ($_POST['override_positions_widgets']); $n++ ) {
-		$query = "insert into page_widget_overrides (page_id, position, widgets) ";
-		$query.= "values (?,?,?) on duplicate key update page_id=?, position=?, widgets=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
 		$data = array( $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n], $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n] );
-		$override_success = $stmt->execute($data);
+		$override_success = DB::exec("insert into page_widget_overrides (page_id, position, widgets) values (?,?,?) on duplicate key update page_id=?, position=?, widgets=?", $data);
 	}
 	
 	

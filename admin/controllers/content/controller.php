@@ -52,9 +52,7 @@ if ($missing) { ?>
 						if (!$w_config->description) {
 							$w_config->description = "No description found in json file";
 						}
-						$query = "insert into content_types (title, controller_location, description, state) values (?,?,?,1)";
-						$stmt = CMS::Instance()->pdo->prepare($query);
-						$ok = $stmt->execute(array($w_config->title, $missed, $w_config->description));
+						$ok = DB::exec("INSERT into content_types (title, controller_location, description, state) values (?,?,?,1)", [$w_config->title, $missed, $w_config->description]);
 						if ($ok) {
 							echo "<li class='list-item'><strong>{$w_config->title}</strong> - {$w_config->description} - <em>Installed</em>";
 							// install views as well
@@ -79,9 +77,7 @@ if ($missing) { ?>
 											$view->config->description = null;
 										}
 										// insert view content_type_id	title	location
-										$query = "insert into content_views (content_type_id,title,location,description) values (?,?,?,?)";
-										$stmt = CMS::Instance()->pdo->prepare($query);
-										$view_ok = $stmt->execute(array($content_type_id, $view_config->title, $view_folder,$view_config->description));
+										$view_ok = DB::exec("INSERT into content_views (content_type_id,title,location,description) values (?,?,?,?)", [$content_type_id, $view_config->title, $view_folder,$view_config->description]);
 										if ($view_ok) {
 											echo "<br>View " . $view_folder . " <em>Installed</em>.";
 										}

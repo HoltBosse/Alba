@@ -59,10 +59,7 @@ class Plugin_core_google_login extends Plugin {
             $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             if ($http_code==200) {
                 $google_email = json_decode($result)->email;
-                $query = 'select * from users where email=? and state>=1';
-                $stmt = CMS::Instance()->pdo->prepare($query);
-                $stmt->execute(array($google_email));
-                $result = $stmt->fetch();
+                $result = DB::fetch('select * from users where email=? and state>=1', [$google_email]);
                 if ($result) {
                     // google user email matched user in system - return user details class
                     $a_user->load_from_id($result->id);

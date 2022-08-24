@@ -97,9 +97,7 @@ class Field_TagParent extends Field {
 	}
 
 	public function get_friendly_value() {
-		$stmt = CMS::Instance()->pdo->prepare('select title from tags where id=?');
-		$stmt->execute(array($this->default));
-		return $stmt->fetch()->title;
+		return DB::fetch('select title from tags where id=?', [$this->default])->title;
 	}
 
 	public function validate() {
