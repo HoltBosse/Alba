@@ -88,6 +88,9 @@ if ($submitted) {
 	$zip->addFile(CMSPATH . "/cmslog.txt", "cmslog.txt");
 	$zip->addFile(CMSPATH . "/config.php", "config.php");
 	$zip->addFile(CMSPATH . "/temp/db.sql", "db.sql");
+	if (file_exists(CMSPATH . "/my_404.php")) {
+		$zip->addFile(CMSPATH . "/my_404.php", "my_404.php");
+	}
 	$zip->close();
 
 	// delete temp db file
