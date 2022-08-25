@@ -5,7 +5,7 @@
     "description":"Replaces anything matching your string of choice in CMS front-end output with current year. Defaults to {YEAR}",
     "version":"1.0",
     "author":"Bob Mitchell",
-    "website":"https://bobmitch.com",
+    "website":"https://alba.holtbosse.com",
 	"fields":[
 		{
 			"name":"testoption",
