@@ -5,7 +5,7 @@
     "description":"Allows logging in with google account. JWT version due to deprecated oAuth token version.",
     "version":"1.1",
     "author":"Bob Mitchell",
-    "website":"https://bobmitch.com",
+    "website":"https://alba.holtbosse.com",
 	"fields":[
         {
 			"label":"Client ID",
