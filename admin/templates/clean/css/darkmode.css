@@ -110,8 +110,9 @@
     }
 
     /* slim select */
-    .ss-main .ss-multi-selected {
+    .ss-main .ss-multi-selected, .ss-main .ss-single-selected {
         background-color: #222 !important;
+        color: white;
     }
     .ss-content {
         background-color: #222 !important;
@@ -124,5 +125,8 @@
     .ss-content .ss-list .ss-option.ss-disabled {
         background-color: #555 !important;
         color: black !important;
+    }
+    .ss-main .ss-multi-selected .ss-values .ss-value {
+        background-color: #0288D1 !important;
     }
 }
