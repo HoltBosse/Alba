@@ -525,6 +525,9 @@ class Content {
 
 		if(!$list_fields && $type_filter) {
 			$location = Content::get_content_location($type_filter);
+			if(!is_numeric($type_filter)) {
+				$location = $type_filter;
+			}
 			$form = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 			foreach($form->fields as $field) {
 				$list_fields[] = $field->name;
