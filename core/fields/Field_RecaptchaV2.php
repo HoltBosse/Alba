@@ -13,6 +13,7 @@ class Field_RecaptchaV2 extends Field {
 	public function display() {
 		$rc_sitekey = Configuration::get_configuration_value ('general_options', 'rc_sitekey');
 		if ($rc_sitekey) {
+			echo "<script src='https://www.google.com/recaptcha/api.js' async defer></script>";
 			echo "<div class='g-recaptcha' data-sitekey='{$rc_sitekey}'></div>";
 		}
 		else {
