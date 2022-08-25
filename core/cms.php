@@ -118,12 +118,6 @@ final class CMS {
 			<?php endif; ?>
 		<?php endif; ?>
 
-		<?php
-		// reCAPTCHA
-		$rc_sitekey = Configuration::get_configuration_value ('general_options', 'rc_sitekey');
-		if ($rc_sitekey):?>
-			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-		<?php endif; ?>
 		<?php echo "<script>window.uripath='" . Config::$uripath . "';</script>" ?>
 
 		<?php 
