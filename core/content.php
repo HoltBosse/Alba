@@ -231,6 +231,8 @@ class Content {
 			//$this->end = date("Y-m-d H:i:s", strtotime($this->end));
 			$this->end = strtotime($this->end);
 		}
+		
+		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
 		if ($this->id) {
 			// update
