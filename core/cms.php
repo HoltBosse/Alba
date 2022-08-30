@@ -30,6 +30,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
+	public $head_entries = []; // array of string to be output during CMSHEAD replacement
 	public $version = "2.4.76";
 
 	/* protected function __construct() {}
@@ -604,6 +605,10 @@ final class CMS {
 				$this->page_contents = Hook::execute_hook_filters('content_ready_frontend', $this->page_contents);
 				// render CMS header - can incorporate changes to page title/og/metatags from content controllers
 				$cms_head = $this->render_head();
+				// add additional head_entries that may have been created
+				foreach ($this->head_entries as $he) {
+					$cms_head .= $he;
+				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				// output final content
 				echo $this->page_contents;
