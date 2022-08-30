@@ -17,7 +17,7 @@ class Field_ContentTypeselector extends Field {
 			// ok we added users here too 
 			if ($this->showmedia) {
 				$checked = "";
-				if (in_array("-1", $this->default)) {
+				if ($this->default && in_array("-1", $this->default)) {
 					$checked = " checked ";
 				}
 				echo "<label class='checkbox'>";
@@ -27,7 +27,7 @@ class Field_ContentTypeselector extends Field {
 			}
 			if ($this->showusers) {
 				$checked = "";
-				if (in_array("-2", $this->default)) {
+				if ($this->default && in_array("-2", $this->default)) {
 					$checked = " checked ";
 				}
 				echo "<label class='checkbox'>";
@@ -39,7 +39,7 @@ class Field_ContentTypeselector extends Field {
 			foreach ($all_contenttypes as $type) {
 				echo "<label class='checkbox'>";
 					$checked = "";
-					if (in_array($type->id, $this->default)) {
+					if ($this->default && in_array($type->id, $this->default)) {
 						$checked = " checked ";
 					}
 					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='{$type->id}'>";
