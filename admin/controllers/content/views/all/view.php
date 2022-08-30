@@ -279,7 +279,7 @@ table.dragging .before_after_wrap {
 					<?php foreach ($content_list_fields as $content_list_field):?>
 						<th>
 						<?php echo $content_list_field->label; ?>
-						<?php if (in_array ($content_list_field->name, $custom_fields->filters)): ?>
+						<?php if (is_array($custom_fields->filters) && in_array ($content_list_field->name, $custom_fields->filters)): ?>
 							<br/>
 							<select class='auto_filter'>
 								
