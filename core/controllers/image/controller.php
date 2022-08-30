@@ -16,20 +16,17 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	header("Expires: $ts");
 	header("Pragma: cache");
 	header("Cache-Control: max-age=$seconds_to_cache");
-	// TODO: move to File class
 	header("Content-type: " . $media_obj->mimetype);
-	header("Location: " . Config::$uripath . "/images/processed/" . basename($fullpath));
-	exit(0);
-	// legacy file serving - TODO: maybe turn 'hide image url' as config option and use this instead of header location above?
+
+	// virtual 
 	if (function_exists('virtual')) {
 		virtual($fullpath);
 	}
 	else {
-		$fp = fopen($fullpath, 'rb');
-		fpassthru($fp);
-		fclose($fp);
+		readfile($fullpath);
 	}
 	exit(0);
+
 }
 
 
@@ -71,18 +68,20 @@ function get_image ($id) {
 	return $stmt->fetch();
 }
 
-if (sizeof($segments)==0) {
+$segsize = sizeof($segments);
+
+if ($segsize==0) {
 	//CMS::Instance()->queue_message('Unknown image id','danger',Config::$uripath.'/');
 	echo "<h1>wtf - shouldn't get here :)</h1>";
 }
-if (sizeof($segments)==1) {
+if ($segsize==1) {
 	//CMS::Instance()->queue_message('Unknown image id','danger',Config::$uripath.'/');
 	//$view = 'show';
 	
 	echo "<h1>NO IMAGE GIVEN!</h1>";
 	exit(0);
 }
-if (sizeof($segments)==2) {
+if ($segsize==2) {
 	if (is_numeric($segments[1])) {
 		//CMS::log("call to Image Controller with single INT {$segments[1]}");
 		// /images/INT
@@ -98,7 +97,8 @@ if (sizeof($segments)==2) {
 	}
 	exit(0);
 }
-if (sizeof($segments)==3) {
+
+if ($segsize==3) {
 	if (is_numeric($segments[1])) {
 		$image = get_image ($segments[1]);
 		if ($image) {
