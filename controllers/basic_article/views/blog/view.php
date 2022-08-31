@@ -3,7 +3,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // default view is blog listing
 // if single blog entry detected, single.php view is loaded
 ?>
-<pre>Articles Per Page: <?php echo $articles_per_page; ?></pre>
 <h1 class='title is-1'><?php echo CMS::Instance()->page->title;?></h1>
 <?php if (sizeof($blog_content_items)==0):?>
 <p>No blog entries found!</p>
