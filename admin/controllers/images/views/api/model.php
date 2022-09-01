@@ -183,7 +183,9 @@ if ($action=='list_images') {
 			}
 			$query.=") ";
 		}
-		DB::exec($query, ["%$searchtext%","%$searchtext%"]);
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(["%$searchtext%","%$searchtext%"]);
+		//DB::exec($query, ["%$searchtext%","%$searchtext%"]);
 	}
 	else {
 		$query = "select * from media";
