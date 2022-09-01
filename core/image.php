@@ -17,7 +17,7 @@ class Image {
         }
         else {
             $this->id = $id;
-            $db_image = DB::fetch('select * from media where id=?', [[$this->id]]);
+            $db_image = DB::fetch('select * from media where id=?', $this->id);
             $this->filename = $db_image->filename;
             $this->width = $db_image->width;
             $this->height = $db_image->height;
