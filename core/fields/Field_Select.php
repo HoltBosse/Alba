@@ -54,7 +54,7 @@ class Field_Select extends Field {
 		if ($this->description) {
 			echo "<p class='help {$hidden}'>" . $this->description . "</p>";
 		}
-		if (sizeof($UpdateSelect >=1)):
+		if (sizeof($UpdateSelect) >=1):
 		?>
 			<script>	
 				function <?php echo "FieldUpdate" . $this->id; ?>() {	
