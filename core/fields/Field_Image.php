@@ -77,14 +77,19 @@ class Field_Image extends Field {
 		trigger_image_selector_<?php echo $this->id; ?>.addEventListener('click',function(e){
 			// launch image selector
 			var media_selector = document.createElement('div');
+			media_selector.id = "media_selector";
 			media_selector.innerHTML =`
 			<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
-			<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
-			<h1 style='color:white;'>Choose Image <a href='#' class='delete_parent'>X</a></h1>
-			<div class='form-group'>
-				<input id='media_selector_modal_search'/><button type='button' id='trigger_media_selector_search'>Search</button>
-			</div>
-			<div class='media_selector'><h2>LOADING</h2></div>
+				<div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
+					<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
+					<h1 style='color:white;'>Click image or search: </h1>
+					<div class='form-group' style='display:flex; gap:2rem;'>
+						<input id='media_selector_modal_search'/>
+						<button class='button btn is-small is-primary' type='button' id='trigger_media_selector_search'>Search</button>
+						<button class='button btn is-small' type='button' id='clear_media_selector_search'>Clear</button>
+					</div>
+				</div>
+				<div class='media_selector'><h2>LOADING</h2></div>
 			</div>
 			`;
 			document.body.appendChild(media_selector); 
@@ -102,6 +107,19 @@ class Field_Image extends Field {
 					fetch_images(searchtext, null); // string, no tags
 				}
 			});
+			document.addEventListener('keyup',function(e){
+				let media_selector = document.getElementById('media_selector');
+				if (media_selector) {
+					if (e.key=="Escape") {
+						media_selector.parentNode.removeChild(media_selector);
+					}
+				}
+			});
+			// handle clear
+			document.getElementById('clear_media_selector_search').addEventListener('click',function(e){
+				document.getElementById('media_selector_modal_search').value="";
+				fetch_images(null, null); // string, no tags
+			});
 
 			fetch_images (null, null); // no search, all tags
 
@@ -111,6 +129,9 @@ class Field_Image extends Field {
 				postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
 					var image_list = JSON.parse(data);
 					var image_list_markup = "<ul class='media_selector_list single'>";
+					if (image_list.images.length==0) {
+						image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
+					}
 					image_list.images.forEach(image => {
 						image_list_markup += `
 						<li>
@@ -127,18 +148,13 @@ class Field_Image extends Field {
 						var modal = e.target.closest('.media_selector_modal');
 						modal.parentNode.removeChild(modal);
 					});
-					// handle modal close
-					media_selector.querySelector('.delete_parent').addEventListener('click',function(e){
-						e.preventDefault();
-						e.target.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode);
-					});
+					
 					// add click event handler to capture child selection clicks
 					media_selector.addEventListener('click',function(e){
 						//console.log(e.target);
 						e.preventDefault();
 						e.stopPropagation();
 						var selected_image = e.target.closest('.media_selector_selection');
-						console.log(selected_image);
 						if (selected_image!==null) {
 							var media_id = selected_image.dataset.id;
 							var url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
