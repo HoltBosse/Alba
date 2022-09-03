@@ -46,7 +46,7 @@ class Field_TagMultiple extends Field {
 						foreach ($tags as $tag) {
 							if ($tag->state==1) {
 								$selected = "";
-								if (in_array($tag->id, $this->array_values)) { $selected="selected";}
+								if ($this->array_values && in_array($tag->id, $this->array_values)) { $selected="selected";}
 								echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
 							}
 						}

@@ -47,7 +47,7 @@ class Field_ContentPicker extends Field {
 						foreach ($content as $item) {
 							if ($item->state==1) {
 								$selected = "";
-								if (in_array($item->id, $this->array_values)) { $selected="selected";}
+								if ($this->array_values && in_array($item->id, $this->array_values)) { $selected="selected";}
 								echo "<option {$selected} value='{$item->id}'>{$item->title}</option>";
 							}
 						}

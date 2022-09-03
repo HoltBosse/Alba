@@ -328,7 +328,7 @@ table.dragging .before_after_wrap {
 								$propname = "f_{$content_list_field->name}"; 
 								$classname = "Field_" . $content_list_field->type;
 								$curfield = new $classname($content_item->$propname);
-								//CMS::pprint_r($curfield);
+								$curfield->default = $content_item->$propname;
 								echo $curfield->get_friendly_value();
 								?></td>
 						<?php endforeach; ?>

@@ -92,6 +92,7 @@ class Configuration {
 	}
 
 	public function save() {
+		$json_config = json_encode($this->configuration);
 		// update or insert new set of configuration options
 		$ok = DB::exec("INSERT INTO configurations (name,configuration) VALUES (?,?) ON DUPLICATE KEY UPDATE configuration=?", array($this->name, $json_config, $json_config));
 		if ($ok) {

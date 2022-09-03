@@ -146,7 +146,7 @@ class Widget_menu extends Widget {
 				$page = new Page();
 				if ($page->load_from_id($node->info->page_id)) {
 					$url = $page->get_url();
-					$classList.=" page ";
+					$classList.=" page ". $page->alias . " ";
 					if ($node->info->page_id == CMS::Instance()->page->id) {
 						$classList.=" current ";
 					}

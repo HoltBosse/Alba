@@ -43,8 +43,12 @@ class Field_Checkbox extends Field {
 		<?php 
 	}
 
-	public function designer_display() {
-
+	public function get_friendly_value() {
+		$checked="";
+		if ($this->default==1) {
+			$checked=" checked ";
+		}
+		return "<input type='checkbox' disabled {$checked}>";
 	}
 
 	public function load_from_config($config) {

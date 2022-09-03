@@ -128,7 +128,13 @@ class Field_Repeatable extends Field {
 		// create base repeatable form
 		$forms=[];
 		$repeatable_form = new Form(CMSPATH . $this->form_path, true); // must be true / repeatable
-		$repeat_count = sizeof (Input::getvar('form_' . $repeatable_form->id, 'ARRAYRAW'));
+		$form_arr = Input::getvar('form_' . $repeatable_form->id, 'ARRAYRAW');
+		if (is_array($form_arr)) {
+			$repeat_count = sizeof ($form_arr);
+		}
+		else {
+			$repeat_count=0;
+		}
 		// loop over this submitted repeatable and make sub-form for each element
 		for ($n=0; $n<$repeat_count; $n++) {
 			$repeatable_form = new Form(CMSPATH . $this->form_path, true);

@@ -38,6 +38,9 @@ class Page {
 		// TODO: save url in new column on page save/update
 		$segments = array($this->alias);
 		$parent = $this->parent;
+		if ($this->alias=='home' && $parent<0) {
+			return Config::$uripath . "/";
+		}
 		while ($parent>=0) {
 			$result = DB::fetch("select parent,alias from pages where id=?", array($parent));
 			$parent = $result->parent;
