@@ -353,26 +353,10 @@ div.position_tag_wrap.active {
 
 	// switch views based on content type
 	content_type.addEventListener('change',function(e){
-		content_type_value = e.target.value;
-		if (content_type_value) {
-			window.new_url = "<?php echo Config::$uripath;?>/admin/pages/edit/<?php echo $page->id;?>/" + content_type_value + '/-1';
-			serialize_form('page_form'); // save form to localstorage so user doesn't have to retype any main fields
-			window.location = window.new_url;
-			//alert(window.new_url);
-		}
+		// new: switch options in select dynamically, no page reload per previous versions
 	});
 
-	// switch options based on view choice if available
-	if (content_type_controller_view) {
-		content_type_controller_view.addEventListener('change',function(e){
-			view_value = e.target.value;
-			if (view_value) {
-				window.new_url = "<?php echo Config::$uripath;?>/admin/pages/edit/<?php echo $page->id;?>/" + content_type.value + '/' + view_value;
-				serialize_form('page_form'); // save form to localstorage so user doesn't have to retype any main fields
-				window.location = window.new_url;
-			}
-		});
-	}
+	
 
 
 	// TODO - fix multiselects for localstorage
