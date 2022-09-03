@@ -29,7 +29,34 @@ class Image {
     
     public function render($size="original", $class="") {
         // size should be original, web, or thumb 
-        //echo "<img loading='lazy' class='{$class}' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
-        echo "<img decode='async' width='{$this->width}' height='{$this->height}' loading='lazy' class='rendered_img {$class}' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
+        // get px width for srcset
+        $px = $size;
+        if (!is_numeric($px)) {
+            if ($px=='web') {
+                $px = 1920;
+            }
+            elseif ($px=='thumb') {
+                $px = 200;
+            }
+            else {
+                $px = $this->width;
+            }
+        }
+        $srcset_arr=[];
+        // will serve up src by default - useful breakpoints below
+        // depending on requested px size
+        if ($px>1200) {
+            $srcset_arr[] = Config::$uripath . "/image/{$this->id}/1200" . " 1200w"; 
+        }
+        if ($px>800) {
+            $srcset_arr[] = Config::$uripath . "/image/{$this->id}/800" . " 800w"; 
+        }
+        if ($px>400) {
+            $srcset_arr[] = Config::$uripath . "/image/{$this->id}/400" . " 400w"; 
+        }
+        
+        $srcset = implode(',',$srcset_arr);
+        // render
+        echo "<img srcset='$srcset' decode='async' width='{$this->width}' height='{$this->height}' loading='lazy' class='rendered_img {$class}' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
     }
 }
