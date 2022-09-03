@@ -241,59 +241,46 @@ div.position_tag_wrap.active {
 				</span> -->
 			</div>
 		</div>
-	<p class="help">Choose main content and presentation options.<br>Leaving this blank is fine, but all visible content on this page will just be widgets!</p> 
+	<p class="help">
+		Choose main content and presentation options.
+		<br>Leaving this blank is fine, but all visible content on this page will just be widgets!
+	</p> 
 	</div>
 
-	<?php if ($page->content_type):?>
+	
 
-		<div id="content_type_wrap" class="<?php echo $page->content_type . " "; if ($page->content_type>0) {echo " active ";}?>">
-			
-			<div id="content_type_controller_views">
-				<h6 class='heading title is-6'>CHOOSE VIEW</h6>
-				<div class='control'>
-					<div class='select'>
-						<select  id='content_type_controller_view' name='content_type_controller_view'>
-							<option value=''>Choose View:</option>
-							<?php
-							$all_views = DB::fetchall('select * from content_views where content_type_id=?',array($page->content_type));
-							foreach ($all_views as $view) {
-								$view_selected = "";
-								if ($page->view==$view->id) {
-									$view_selected = ' selected ';
-								}
-								echo "<option {$view_selected} value='".$view->id."' data-view_location=" . $view->location . " data-content_type_id=" . $view->content_type_id . ">" . $view->title . "</option>";
+	<div id="content_type_wrap" class="<?php echo $page->content_type . "  "; if ($page->content_type>0) {echo " active ";}?>">
+		
+		<div id="content_type_controller_views">
+			<h6 class='heading title is-6'>CHOOSE VIEW</h6>
+			<div class='control'>
+				<div class='select'>
+					<select  id='content_type_controller_view' name='content_type_controller_view'>
+						<option value=''>Choose View:</option>
+						<?php
+						$all_views = DB::fetchall('select * from content_views');
+						foreach ($all_views as $view) {
+							$view_selected = "";
+							if ($page->view==$view->id) {
+								$view_selected = ' selected ';
 							}
-							?>
-						</select>
-					</div>
+							echo "<option {$view_selected} value='".$view->id."' data-view_location=" . $view->location . " data-content_type_id=" . $view->content_type_id . ">" . $view->title . "</option>";
+						}
+						?>
+					</select>
 				</div>
 			</div>
-
-			<div id="content_type_controller_view_options">
-				<h6 class='heading title is-6'>VIEW OPTIONS</h6>
-				<?php 
-					if ($page->view>0) {
-						$content_loc = Content::get_content_location($page->content_type);
-						$view_loc = Content::get_view_location($page->view);
-						// OLD method
-						//include_once (CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options.php");
-						// NEW uses json forms
-						$options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
-						// set options form values from json stored in view_configuration
-						$options_form->deserialize_json($page->view_configuration);
-						$options_form->display_front_end();
-					}
-					else {
-						echo "<p>Choose a view first to see display options.</p>";
-					}
-				?>
-			</div>
-
-			
-
 		</div>
 
-	<?php endif; ?>
+		<div id="content_type_controller_view_options">
+			<h6 class='heading title is-6'>VIEW OPTIONS</h6>
+			<?php if ($page->content_type):?>
+				<a role='button' class='button is-primary'>Edit Options</a>
+			<?php else:?>
+				<a role='button' href='#' disabled class='button is-disabled'>Save First</a>
+			<?php endif; ?>
+		</div>
+	</div>
 
 </div> <!-- content_type_section -->
 	<hr>
@@ -354,6 +341,17 @@ div.position_tag_wrap.active {
 	// switch views based on content type
 	content_type.addEventListener('change',function(e){
 		// new: switch options in select dynamically, no page reload per previous versions
+		let content_type_controller_view = document.getElementById('content_type_controller_view');
+		// make view value null to force new choice
+		content_type_controller_view.value = null;
+		let content_id = e.target.value; 
+		// show hide options not for this id
+		let options = content_type_controller_view.querySelectorAll('option');
+		options.forEach(option => {
+			option.hidden = !(option.dataset.content_type_id==content_id);
+		});
+		// show content type 
+		document.getElementById('content_type_wrap').classList.add('active');
 	});
 
 	
