@@ -48,7 +48,7 @@ require_once (CMSPATH . "/core/cms.php");
 		if ($rc_sitekey):?>
 			<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 		<?php endif; ?>
-
+		
 		<?php Hook::execute_hook_actions('add_to_head'); ?>
 		</head>
 		<body>
