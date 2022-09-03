@@ -41,7 +41,7 @@ if ($submitted) {
 	$db_backup_ok = false;
 	
 	// DB BACKUP
-	$command='mysqldump --opt -h ' .Config::$dbhost .' -u' .Config::$dbuser .' -p' .Config::$dbpass .' ' .Config::$dbname .' > ' . $db_backup_file ;
+	$command='mysqldump --opt -h ' .Config::$dbhost .' -u' .Config::$dbuser ." -p'" .Config::$dbpass ."' " .Config::$dbname .' > ' . $db_backup_file ;
 	exec($command,$output,$db_backup_error);
 	/* CMS::pprint_r ($command);
 	CMS::pprint_r ($output);
