@@ -57,7 +57,7 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=65, $newmimety
 		imagejpeg($virtual_image, $dest, $quality);
 	}
 	elseif ($newmimetype=='image/webp') {
-		imagewebp($virtual_image, $dest);
+		imagewebp($virtual_image, $dest, $quality);
 	}
 	else {
 		imagepng($virtual_image, $dest);
