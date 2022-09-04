@@ -30,7 +30,11 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 }
 
 
-function make_thumb ($src, $dest, $desired_width, $file, $quality=65) {
+function make_thumb ($src, $dest, $desired_width, $file, $quality=65, $newmimetype=false) {
+	if (!$newmimetype) {
+		// no new format requested, simply use existing mimetype
+		$newmimetype = $image->mimetype;
+	}
 	if ($file->mimetype=='image/jpeg') {
 		$source_image = imagecreatefromjpeg($src);
 	}
@@ -49,10 +53,10 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=65) {
 	/* copy source image at a resized size */
 	imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
 	/* create the physical thumbnail image to its destination */
-	if ($file->mimetype=='image/jpeg') {
+	if ($newmimetype=='image/jpeg') {
 		imagejpeg($virtual_image, $dest, $quality);
 	}
-	elseif ($file->mimetype=='image/webp') {
+	elseif ($newmimetype=='image/webp') {
 		imagewebp($virtual_image, $dest);
 	}
 	else {
@@ -98,7 +102,8 @@ if ($segsize==2) {
 	exit(0);
 }
 
-if ($segsize==3) {
+if ($segsize==3||$segsize==4) {
+	// [2] = size, [3] = format
 	if (is_numeric($segments[1])) {
 		$image = get_image ($segments[1]);
 		if ($image) {
@@ -110,27 +115,66 @@ if ($segsize==3) {
 			if(File::$image_types[$image->mimetype]==2) {
 				serve_file ($image, $original_path);
 			}
-			// get size
-			if (!is_numeric($param)) {
-				// get size from array lookup (web/thumb) - if fails, assume 1920
-				$size = File::$image_sizes[$param] ?? 1920;
+			// check to see if format is og
+			// assume format is original mimetype
+			$mimetype = $image->mimetype;
+			if ($segsize==4) {
+				$format = $segments[3];
+				$mimetype = File::get_mimetype_by_format($format);
 			}
-			else {
-				$size = $param;
-			}
-			// got int size
-			// if original image size is less than requested, just serve original 
-			// NO UPSCALING
-			if ($image->width <= $size) {
-				serve_file ($image, $original_path); // exits script
-			}
-			else {
-				$newsize_path = CMSPATH . "/images/processed/" . $size . "w_" . $image->filename;
-				if (!file_exists($newsize_path)) {
-					make_thumb($original_path, $newsize_path, $size, $image, 80); // default to 80 for q
+			if ($mimetype) {
+				// get size
+				if (!is_numeric($param)) {
+					// get size from array lookup (web/thumb) - if fails, assume 1920
+					$size = File::$image_sizes[$param] ?? 1920;
 				}
-				// serve existing file or new thumb if created above
-				serve_file ($image, $newsize_path); // exist script
+				else {
+					$size = $param;
+				}
+				// got int size
+				// if original image size is less than requested, just serve original 
+				// NO UPSCALING - preserves quality
+				if ($image->width <= $size) {
+					if ($mimetype==$image->mimetype) {
+						serve_file ($image, $original_path); // exits script
+					}
+					else {
+						// need og size version of original
+						$newsize_path = CMSPATH . "/images/processed/" . $image->width . "w_" . $image->filename . "." . $format;
+						if (!file_exists($newsize_path)) {
+							make_thumb($original_path, $newsize_path, $size, $image, 80, $mimetype); // default to 80 for q
+						}
+						$image->mimetype = $mimetype; // switch native image mimetype to match requested
+						// serve existing file or new thumb if created above
+						serve_file ($image, $newsize_path); // exist script
+					}
+				}
+				else {
+					// need none-og size
+					if ($mimetype==$image->mimetype) {
+						// serve original format file
+						$newsize_path = CMSPATH . "/images/processed/" . $size . "w_" . $image->filename;
+						if (!file_exists($newsize_path)) {
+							make_thumb($original_path, $newsize_path, $size, $image, 80); // default to 80 for q
+						}
+						// serve existing file or new thumb if created above
+						serve_file ($image, $newsize_path); // exist script
+					}
+					else {
+						// need format shift
+						$newsize_path = CMSPATH . "/images/processed/" . $size . "w_" . $image->filename . "." . $format;
+						if (!file_exists($newsize_path)) {
+							make_thumb($original_path, $newsize_path, $size, $image, 80, $mimetype); // default to 80 for q
+						}
+						$image->mimetype = $mimetype; // switch native image mimetype to match requested
+						// serve existing file or new thumb if created above
+						serve_file ($image, $newsize_path); // exist script
+					}
+				}
+			}
+			else {
+				http_response_code(406); // not acceptable
+				exit(0);
 			}
 		}
 		else {

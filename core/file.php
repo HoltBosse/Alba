@@ -26,6 +26,17 @@ class File {
 		"image/gif" => 2
 	];
 
+	public static function get_mimetype_by_format($format) {
+		// return mimetype when passed partial match
+		// such as webp, jpeg or png
+		foreach (File::$image_types as $key => $value) {
+			if (strpos($key,$format)!==false) {
+				return $key;
+			}
+		}
+		return false;
+	}
+
 	function __construct($filepath="") {
 		$this->id = null;
 		$this->type = null;
