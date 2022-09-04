@@ -30,7 +30,7 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 }
 
 
-function make_thumb ($src, $dest, $desired_width, $file, $quality=65, $newmimetype=false) {
+function make_thumb ($src, $dest, $desired_width, $file, $quality=70, $newmimetype=false) {
 	if (!$newmimetype) {
 		// no new format requested, simply use existing mimetype
 		$newmimetype = $image->mimetype;
@@ -57,7 +57,7 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=65, $newmimety
 		imagejpeg($virtual_image, $dest, $quality);
 	}
 	elseif ($newmimetype=='image/webp') {
-		imagewebp($virtual_image, $dest, $quality);
+		imagewebp($virtual_image, $dest, floor($quality*0.75));
 	}
 	else {
 		imagepng($virtual_image, $dest);
