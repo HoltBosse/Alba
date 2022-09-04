@@ -117,10 +117,16 @@ if ($segsize==3||$segsize==4) {
 			}
 			// check to see if format is og
 			// assume format is original mimetype
+			// if format is given as original, then force mimetype to match og
 			$mimetype = $image->mimetype;
 			if ($segsize==4) {
 				$format = $segments[3];
-				$mimetype = File::get_mimetype_by_format($format);
+				if ($format=="original") {
+					$mimetype = $image->mimetype;
+				}
+				else {
+					$mimetype = File::get_mimetype_by_format($format);
+				}
 			}
 			if ($mimetype) {
 				// get size
