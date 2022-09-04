@@ -123,7 +123,6 @@ if ($segsize==3) {
 				serve_file ($image, $newsize_path);
 			}
 			elseif ($param=="web") {	
-				$original_path = CMSPATH . "/images/processed/" . $image->filename;
 				$newsize_path = CMSPATH . "/images/processed/web_" . $image->filename;
 				if ($image->width > 1920) {
 					if (!file_exists($newsize_path)) {

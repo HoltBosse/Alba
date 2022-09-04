@@ -9,6 +9,10 @@ class Image {
     public $title;
     public $alt;
     public $mimetype;
+    public static $image_sizes = [
+		"thumb"=>200,
+		"web"=>1920
+	];
     // modified also available, but almost certainly never needed front-end
     
     public function __construct($id) {

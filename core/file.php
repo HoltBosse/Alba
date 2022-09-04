@@ -11,8 +11,20 @@ class File {
 	public $alt;
 	public $filename;
 	public $mimetype;
-
 	
+	/*
+		state 0: invalid
+		state 1: valid+thumbnails
+		state 2: valid+no thumbnails
+	*/
+	public static $image_types = [
+		"image/jpeg" => 1,
+		"image/webp" => 1,
+		"image/png" => 1,
+		"image/svg+xml" => 2,
+		"image/svg" => 2,
+		"image/gif" => 2
+	];
 
 	function __construct($filepath="") {
 		$this->id = null;
@@ -40,7 +52,7 @@ class File {
 	}
 
 	public function is_image() {
-		if (File::get_image_types()[$this->mimetype] >= 0 ) {
+		if ($this->image_types[$this->mimetype] >= 0 ) {
 			return true;
 		}
 		else {
@@ -96,20 +108,10 @@ class File {
 	}
 
 	public static function get_image_types() {
-		/*
-			state 0: invalid
-			state 1: valid+thumbnails
-			state 2: valid+no thumbnails
-		*/
-		$image_types = [
-			"image/jpeg" => 1,
-			"image/webp" => 1,
-			"image/png" => 1,
-			"image/svg+xml" => 2,
-			"image/svg" => 2,
-			"image/gif" => 2
-		];
+		
+		// TODO: remove all trace of this function and use static variable instead 
+		// e.g. File::$image_types
 
-		return $image_types;
+		return $this->image_types;
 	}
 }
