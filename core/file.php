@@ -107,11 +107,4 @@ class File {
 	private function import_into_db() {
 	}
 
-	public static function get_image_types() {
-		
-		// TODO: remove all trace of this function and use static variable instead 
-		// e.g. File::$image_types
-
-		return $this->image_types;
-	}
 }

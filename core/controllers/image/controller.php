@@ -105,62 +105,39 @@ if ($segsize==3) {
 			$original_path = CMSPATH . "/images/processed/" . $image->filename;
 			$param = $segments[2];
 			$target_width = $image->width;
-			$newsize_path = "";
-
 			//even if a specific version of these types of files is requested,
 			//return the native image due to lack of php handling at this time
-			if(File::get_image_types()[$image->mimetype]==2) {
+			if(File::$image_types[$image->mimetype]==2) {
 				serve_file ($image, $original_path);
 			}
-			elseif ($param=="thumb") {	
-				$newsize_path = CMSPATH . "/images/processed/thumb_" . $image->filename;
-				if (!file_exists($newsize_path)) {
-					//CMS::log('Thumbnail generated for image ' . $image->filename);
-					$target_width = 200;
-					make_thumb($original_path, $newsize_path, $target_width, $image);
-				}
-				// serve existing file or new thumb if created above
-				serve_file ($image, $newsize_path);
-			}
-			elseif ($param=="web") {	
-				$newsize_path = CMSPATH . "/images/processed/web_" . $image->filename;
-				if ($image->width > 1920) {
-					if (!file_exists($newsize_path)) {
-						//CMS::log('Web version generated for image ' . $image->filename);
-						$target_width = 1920;
-						make_thumb($original_path, $newsize_path, $target_width, $image);
-					}
-					// serve web friendly version
-					serve_file ($image, $newsize_path); // exits script
-				}
-				else {
-					// serve original, it's already web friendly
-					serve_file ($image, $original_path); // exits script
-				}
-				// serve existing file or new thumb if created above
-			}
-			elseif (is_numeric($param)) {
-				// passed a width to show
-				$newsize_path = CMSPATH . "/images/processed/" . $param . "w_" . $image->filename;
-				if (!file_exists($newsize_path)) {
-					//CMS::log('User passed width generated for image ' . $image->filename);
-					$target_width = $param;
-					make_thumb($original_path, $newsize_path, $target_width, $image, 80); // default to 80 for q
-				}
-				// serve existing file or new thumb if created above
-				serve_file ($image, $newsize_path);
+			// get size
+			if (!is_numeric($param)) {
+				// get size from array lookup (web/thumb) - if fails, assume 1920
+				$size = File::$image_sizes[$param] ?? 1920;
 			}
 			else {
+				$size = $param;
+			}
+			// got int size
+			// if original image size is less than requested, just serve original 
+			// NO UPSCALING
+			if ($image->width <= $size) {
 				serve_file ($image, $original_path); // exits script
+			}
+			else {
+				$newsize_path = CMSPATH . "/images/processed/" . $size . "w_" . $image->filename;
+				if (!file_exists($newsize_path)) {
+					make_thumb($original_path, $newsize_path, $size, $image, 80); // default to 80 for q
+				}
+				// serve existing file or new thumb if created above
+				serve_file ($image, $newsize_path); // exist script
 			}
 		}
 		else {
-			echo "<h1>No image found.</h1>";
+			http_response_code(404); // was h1 echo before. not great.
 			exit(0);
 		}
 	}
 }
 exit(0);
-//$tags_controller = new Controller(realpath(dirname(__FILE__)),$view);
-//$tags_controller->load_view($view);
 

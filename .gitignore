@@ -50,5 +50,7 @@ admin/controllers/home/views
 admin/controllers/home/views/**
 #ignore non default controllers
 core/controllers/**
+!core/controllers/image/
+!core/controllers/image/**
 !controllers/image/
 !controllers/image/**
