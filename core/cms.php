@@ -425,6 +425,19 @@ final class CMS {
 		}
 	}
 
+	public function render_dev_banner() {
+		ob_start();
+		?> 
+			<div class='dev_banner' style='background-color:red; display:flex; justify-content:center; align-items:center; z-index:99999999; width:100%; height: 10rem; position:fixed; bottom:0;'>
+				<h1 style="font-weight: bold; font-size: 5rem; color: black;">DEV SITE</h1>
+			</div>
+		<?php
+		ob_start();
+		$dev_banner = ob_get_contents();
+		ob_end_clean();
+		return $dev_banner;
+	}
+
 
 	public function render() {
 		// main entry point for CMS after object is instantiated
@@ -519,6 +532,9 @@ final class CMS {
 				$template = $this->get_admin_template();
 			}
 			include_once (CURPATH . '/templates/' . $template . "/login.php");
+			if(Config::$dev_banner) {
+				echo $this->render_dev_banner();
+			}
 		}
 
 		else {
@@ -537,6 +553,9 @@ final class CMS {
 				ob_end_clean(); // clear and stop buffering
 				// perform content filtering / plugins on CMS::page_contents;
 				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
+				if(Config::$dev_banner) {
+					$this->page_contents .= $this->render_dev_banner();
+				}
 				echo $this->page_contents; // output
 			}
 			else {
@@ -610,6 +629,9 @@ final class CMS {
 					$cms_head .= $he;
 				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
+				if(Config::$dev_banner) {
+					$this->page_contents .= $this->render_dev_banner();
+				}
 				// output final content
 				echo $this->page_contents;
 			}	
