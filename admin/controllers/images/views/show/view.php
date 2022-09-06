@@ -20,6 +20,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </script>
 <div id='upload_space'><h1>Drag & Drop New Images Here</h1></div>
 
+<section class='section'>
+	<input id='regular_upload' type="file" multiple/>
+</section>
 
 
 <p>Available Tags</p>
