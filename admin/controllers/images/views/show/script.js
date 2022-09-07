@@ -291,43 +291,27 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 		xhr.send(window.formdata);
 	});
 
-
-  // GET THE DROP ZONE
-  var uploader = document.getElementById('upload_space');
-
-  // STOP THE DEFAULT BROWSER ACTION FROM OPENING THE FILE
-  uploader.addEventListener("dragover", function (e) {
-    e.preventDefault();
-	e.stopPropagation();
-	e.target.classList.add('ready');
-  });
-
-  uploader.addEventListener("dragleave", function (e) {
-    e.preventDefault();
-	e.stopPropagation();
-	e.target.classList.remove('ready');
-  });
-
-  // ADD OUR OWN UPLOAD ACTION
-  uploader.addEventListener("drop", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-
-	for (var i = 0; i < e.dataTransfer.files.length; i++) {
-		console.log(e.dataTransfer.files[i]);
+  // UPLOAD
+  function do_upload(e) {
+	// check method
+	if (e.type=="drop") {
+		var myfiles = e.dataTransfer.files;
 	}
-
+	else {
+		// assume file input 
+		var myfiles = e.target.files;
+	}
 	// RUN THROUGH THE DROPPED FILES + AJAX UPLOAD
 	window.formdata = new FormData();
 
 	// check against max upload size
 	var uploaded_size_total=0;
-	for (var i = 0; i < e.dataTransfer.files.length; i++) {
-        if (!valid_image_types[e.dataTransfer.files[i].type]) {
-			// skip non valid types
+	for (var i = 0; i < myfiles.length; i++) {
+		if (!valid_image_types[myfiles[i].type]) {
+            // skip anything but png or jpg
             continue;
         }
-		uploaded_size_total += e.dataTransfer.files[i].size;
+		uploaded_size_total += myfiles[i].size;
 	}
 	if (uploaded_size_total > max_upload_size_bytes) {
 		alert('Sorry, you must reduce the number of images or their sizes to all fit below the max upload limit shown.');
@@ -355,9 +339,9 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 	// empty form except for hidden submit button - this is clicked via js from the 'upload' modal button
 	// this allows browser html form checking to trigger
     upload_form.innerHTML = '<button style="display:none !important" class="button" id="image_upload_form_submit" type="submit">Upload</button>';
-    for (let i = 0; i < e.dataTransfer.files.length; i++) {
-        if (!valid_image_types[e.dataTransfer.files[i].type]) {
-            // skip non valid types
+    for (let i = 0; i < myfiles.length; i++) {
+		if (!valid_image_types[myfiles[i].type]) {
+            // skip anything but png or jpg
             continue;
         }
 		let id = "img_id_" + i;
@@ -375,7 +359,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
                         <label>Alt</label>
                         <input name='alt[]' required/>
                     </div>
-                    <div class='field' style='${(web_friendly_blacklist[e.dataTransfer.files[i].type] ? "display:none;" : "")}'>
+                    <div class='field' style='${(web_friendly_blacklist[myfiles[i].type] ? "display:none;" : "")}'>
                         <label>Web Friendly</label>
                         <select name='web_friendly[]'>
                             <option selected value='1'>Yes</option>
@@ -388,14 +372,44 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
             `;
         upload_form.innerHTML = upload_form.innerHTML + markup;
 	}
-	for (let i = 0; i < e.dataTransfer.files.length; i++) {
+	for (let i = 0; i < myfiles.length; i++) {
 		var reader = new FileReader();
 		reader.onload = function(e) {
             let src = e.target.result;
 			document.getElementById("img_id_"+i).src = src;
         }
-		reader.readAsDataURL(e.dataTransfer.files[i]);
-		window.formdata.append('file-upload[]', e.dataTransfer.files[i]);
+		reader.readAsDataURL(myfiles[i]);
+		window.formdata.append('file-upload[]', myfiles[i]);
 	}
+  }
+
+  // GET THE DROP ZONE
+  var uploader = document.getElementById('upload_space');
+
+  // STOP THE DEFAULT BROWSER ACTION FROM OPENING THE FILE
+  uploader.addEventListener("dragover", function (e) {
+    e.preventDefault();
+	e.stopPropagation();
+	e.target.classList.add('ready');
   });
+
+  uploader.addEventListener("dragleave", function (e) {
+    e.preventDefault();
+	e.stopPropagation();
+	e.target.classList.remove('ready');
+  });
+
+  // ADD OUR OWN UPLOAD ACTION
+  uploader.addEventListener("drop", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+	do_upload(e);
+  });
+
+  // handle regular file upload
+
+let regular_upload = document.getElementById('regular_upload');
+regular_upload.addEventListener('change',function(e){
+	do_upload(e);
+});
 
