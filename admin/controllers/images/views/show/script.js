@@ -307,7 +307,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 	// check against max upload size
 	var uploaded_size_total=0;
 	for (var i = 0; i < myfiles.length; i++) {
-        if (!(myfiles.type=='image/png' || myfiles[i].type=='image/jpeg')) {
+		if (!valid_image_types[myfiles[i].type]) {
             // skip anything but png or jpg
             continue;
         }
@@ -340,7 +340,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 	// this allows browser html form checking to trigger
     upload_form.innerHTML = '<button style="display:none !important" class="button" id="image_upload_form_submit" type="submit">Upload</button>';
     for (let i = 0; i < myfiles.length; i++) {
-        if (!(myfiles[i].type=='image/png' || myfiles[i].type=='image/jpeg')) {
+		if (!valid_image_types[myfiles[i].type]) {
             // skip anything but png or jpg
             continue;
         }
@@ -359,7 +359,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
                         <label>Alt</label>
                         <input name='alt[]' required/>
                     </div>
-                    <div class='field'>
+                    <div class='field' style='${(web_friendly_blacklist[myfiles[i].type] ? "display:none;" : "")}'>
                         <label>Web Friendly</label>
                         <select name='web_friendly[]'>
                             <option selected value='1'>Yes</option>
