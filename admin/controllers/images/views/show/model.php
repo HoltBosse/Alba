@@ -2,7 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 $valid_image_types = [];
-foreach(File::get_image_types() as $type => $value) {
+foreach(File::$image_types as $type => $value) {
     array_push($valid_image_types, "'$type'");
 }
 

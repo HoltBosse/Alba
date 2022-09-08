@@ -12,7 +12,7 @@ if (CMS::Instance()->user->username=="guest") {
 	state 1: valid+thumbnails
 	state 2: valid+no thumbnails
 */
-$image_types_data = File::get_image_types();
+$image_types_data = File::$image_types;
 
 $uploaded_files_array = $_FILES['file-upload'];
 $alts = Input::getvar('alt','ARRAYOFSTRING');
