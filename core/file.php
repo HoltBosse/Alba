@@ -11,8 +11,31 @@ class File {
 	public $alt;
 	public $filename;
 	public $mimetype;
-
 	
+	/*
+		state 0: invalid
+		state 1: valid+thumbnails
+		state 2: valid+no thumbnails
+	*/
+	public static $image_types = [
+		"image/jpeg" => 1,
+		"image/webp" => 1,
+		"image/png" => 1,
+		"image/svg+xml" => 2,
+		"image/svg" => 2,
+		"image/gif" => 2
+	];
+
+	public static function get_mimetype_by_format($format) {
+		// return mimetype when passed partial match
+		// such as webp, jpeg or png
+		foreach (File::$image_types as $key => $value) {
+			if (strpos($key,$format)!==false) {
+				return $key;
+			}
+		}
+		return false;
+	}
 
 	function __construct($filepath="") {
 		$this->id = null;
@@ -40,7 +63,7 @@ class File {
 	}
 
 	public function is_image() {
-		if (File::get_image_types()[$this->mimetype] >= 0 ) {
+		if ($this->image_types[$this->mimetype] >= 0 ) {
 			return true;
 		}
 		else {
@@ -95,21 +118,4 @@ class File {
 	private function import_into_db() {
 	}
 
-	public static function get_image_types() {
-		/*
-			state 0: invalid
-			state 1: valid+thumbnails
-			state 2: valid+no thumbnails
-		*/
-		$image_types = [
-			"image/jpeg" => 1,
-			"image/webp" => 1,
-			"image/png" => 1,
-			"image/svg+xml" => 2,
-			"image/svg" => 2,
-			"image/gif" => 2
-		];
-
-		return $image_types;
-	}
 }
