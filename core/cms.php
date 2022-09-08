@@ -30,6 +30,7 @@ final class CMS {
 	private $core_controller = false;
 	private $need_session = true;
 	public $hooks = [];
+	public $shortcodes = [];
 	public $head_entries = []; // array of string to be output during CMSHEAD replacement
 	public $version = "2.4.77";
 
