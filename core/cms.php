@@ -621,6 +621,10 @@ final class CMS {
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean();
+				// execute shortcodes - before plugins, expect plugins will usually want to affect code output by shortcodes not other way round...
+				//if ($this->shortcodes) {
+					$this->page_contents = Shortcode::exec_all($this->page_contents);
+				//}
 				// perform content filtering / plugins on CMS::page_contents;
 				$this->page_contents = Hook::execute_hook_filters('content_ready_frontend', $this->page_contents);
 				// render CMS header - can incorporate changes to page title/og/metatags from content controllers
