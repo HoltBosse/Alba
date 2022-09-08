@@ -12,6 +12,11 @@ $req_width = $_GET['w'] ?? $segments[2];
 $req_format = $_GET['fmt'] ?? $segments[3];
 $req_quality = $_GET['q'] ?? 75;
 
+// check quality param - size/width checked elsewhere
+if (!is_numeric($req_quality)) {
+	http_response_code(406); 
+	exit(0);
+}
 
 function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	$seconds_to_cache = $seconds_to_cache;
