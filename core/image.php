@@ -31,10 +31,36 @@ class Image {
         }       
     }
     
-    public function render($size="original", $class="", $format="original") {
-        // TODO: allow system-wide pref for default image encoding
-        // size should be original, web, or thumb 
-        //echo "<img loading='lazy' class='{$class}' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
-        echo "<img decode='async' width='{$this->width}' height='{$this->height}' loading='lazy' class='rendered_img {$class}' src='" . Config::$uripath . "/image/" . $this->id . "/" . $size . "' alt='{$this->alt}' title='{$this->title}'/>";
+    public function render($size="original", $class="", $output_immediately=true, $attributes=[]) {
+        // handle attributes
+        $class = $attributes['class'] ?? '';
+        $w = $attributes['w'] ?? null;
+        $q = $attributes['q'] ?? null;
+        $fmt = $attributes['fmt'] ?? null;
+        $width_param = $this->width;
+        $height_param = $this->height;
+        if ($w && is_numeric($w)) {
+            if ($w < $this->width) {
+                $width_param = $w;
+                // scale height
+                $height_param = floor(($w/$this->width)*$this->height);
+            }
+        }
+
+        // build url
+        $url_domain_path = Config::$uripath . "/image/" . $this->id . "?";
+        $url_params = [];
+        if ($w) {$url_params['w'] = $w; }
+        if ($q) {$url_params['q'] = $q; }
+        if ($fmt) {$url_params['fmt'] = $fmt; }
+        $url_params_string = http_build_query($url_params);
+        $url = $url_domain_path . $url_params_string;
+        $markup = "<img decode='async' width='{$width_param}' height='{$height_param}' loading='lazy' class='rendered_img {$class}' src='".$url."' alt='{$this->alt}' title='{$this->title}'/>";
+        if ($output_immediately) {
+            echo $markup;
+        }
+        else {
+            return $markup;
+        }
     }
 }
