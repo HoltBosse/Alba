@@ -116,7 +116,8 @@ if ($segsize>1 || ($req_width||$req_format||$req_quality<>75)) {
 			// get size
 			if (!is_numeric($req_width)) {
 				// get size from array lookup (web/thumb) - if fails, assume 1920
-				$size = File::$image_sizes[$req_width] ?? 1920;
+				$size = Image::$image_sizes[$req_width] ?? 1920;
+				CMS::log('Made image id ' . $image->id . ' with size: ' . $req_width . '(' . $size . ")");
 				if (!$size) {
 					http_response_code(406); // unknown size
 					exit(0);
