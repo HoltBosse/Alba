@@ -564,7 +564,7 @@ final class CMS {
 				ob_end_clean(); // clear and stop buffering
 				// perform content filtering / plugins on CMS::page_contents;
 				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
-				if(Config::$dev_banner) {
+				if(Config::$dev_banner ?? null) {
 					$this->page_contents .= $this->render_dev_banner();
 				}
 				echo $this->page_contents; // output
