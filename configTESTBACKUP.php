@@ -19,4 +19,5 @@ static $frontendlogin = false;
 static $environment = "dev"; // dev/staging/live
 static $channel = "stable"; // stable/alpha
 static $updatedomain = "alba.holtbosse.com";
+static $dev_banner = false;
 }
