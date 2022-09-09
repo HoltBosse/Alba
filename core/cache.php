@@ -10,7 +10,7 @@ class Cache {
     }
 
     private function gen_cache_filename($identifier, $type) {
-        return $type . "_" . hash('md4', $request);
+        return $type . "_" . hash('md4', $identifier);
     }
 
     public function url_cached($request) {
@@ -25,7 +25,7 @@ class Cache {
     }
 
     public function create_cache($identifier, $type, $content) {
-        $filename = $this->gen_cache_filename($request, 'url');
+        $filename = $this->gen_cache_filename($identifier, 'url');
         $fullpath = CMSPATH . "/cache/" . $filename;
         file_put_contents($fullpath, $content);
     }

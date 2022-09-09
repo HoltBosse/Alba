@@ -659,7 +659,7 @@ final class CMS {
 
 				// create full page cache if needed
 				if (Config::$caching ?? null) {
-					$this->cache->create_cache($request,'url',$this->page_contents);
+					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url',$this->page_contents);
 				}
 			}	
 			
