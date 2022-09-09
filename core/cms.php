@@ -643,7 +643,7 @@ final class CMS {
 					$cms_head .= $he;
 				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
-				if(Config::$dev_banner) {
+				if(Config::$dev_banner ?? null) {
 					$this->page_contents .= $this->render_dev_banner();
 				}
 				// output final content
