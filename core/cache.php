@@ -21,10 +21,9 @@ class Cache {
         $fullpath = CMSPATH . "/cache/" . $filename;
         if (file_exists($fullpath)) {
             $curtime = time();
-            $cache_stale_time = 
             $filetime = filemtime($fullpath);
-            if ($filetime && is_numeric($cache_stale_time)) {
-                $file_stale_time = $filetime + (Config::$cache['time'] * 60);
+            $file_stale_time = $filetime + (Config::$cache['time'] * 60);
+            if ($filetime && is_numeric($file_stale_time)) {
                 if ($file_stale_time <= $curtime) {
                     // cache not stale yet
                     return $fullpath;
