@@ -14,12 +14,22 @@ class Cache {
     }
 
     public function url_cached($request) {
-        // checks if cached page exists and is older than cache
-        // TODO time check based on Config::$caching_time
+        // checks if cached file for a request exists and isn't stale
+        // if it's good, returns full path to cache file
+        // otherwise returns false
         $filename = $this->gen_cache_filename($request, 'url');
         $fullpath = CMSPATH . "/cache/" . $filename;
         if (file_exists($fullpath)) {
-            return $fullpath;
+            $curtime = time();
+            $cache_stale_time = 
+            $filetime = filemtime($fullpath);
+            if ($filetime && is_numeric($cache_stale_time)) {
+                $file_stale_time = $filetime + (Config::$cache['time'] * 60);
+                if ($file_stale_time <= $curtime) {
+                    // cache not stale yet
+                    return $fullpath;
+                }
+            }
         }
         return false;
     }

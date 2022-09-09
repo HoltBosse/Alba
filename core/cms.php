@@ -215,7 +215,8 @@ final class CMS {
 			$this->need_session=false; // don't need session for image api
 		}
 
-		if (Config::$caching ?? null) {
+		if (Config::$caching ?? null && !ADMINPATH) {
+			// admin will never create caches, so no point in even checking
 			$this->cache = new Cache();
 			$page_file = $this->cache->url_cached($request);
 			if ($page_file) {
