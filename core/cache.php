@@ -17,6 +17,13 @@ class Cache {
         // checks if cached file for a request exists and isn't stale
         // if it's good, returns full path to cache file
         // otherwise returns false
+        // first check if path is ignored
+        foreach (Config::$caching['ignore'] as $partial_path) {
+            if (strpos($request, $partial_path)===0) {
+                // ignore
+                return false;
+            }
+        }
         $filename = $this->gen_cache_filename($request, 'url');
         $fullpath = CMSPATH . "/cache/" . $filename;
         if (file_exists($fullpath)) {
@@ -24,7 +31,7 @@ class Cache {
             $filetime = filemtime($fullpath);
             $file_stale_time = $filetime + (Config::$caching['time'] * 60);
             if ($filetime && is_numeric($file_stale_time)) {
-                if ($file_stale_time <= $curtime) {
+                if ($file_stale_time > $curtime) {
                     // cache not stale yet
                     return $fullpath;
                 }
@@ -45,7 +52,7 @@ class Cache {
 
     public function serve_page($filepath) {
         // todo: headers?
-        echo readfile($filepath);
+        readfile($filepath);
         exit();
     }
 }
