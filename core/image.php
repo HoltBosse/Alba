@@ -31,12 +31,26 @@ class Image {
         }       
     }
     
-    public function render($size="original", $class="", $output_immediately=true, $attributes=[]) {
+    public function render($size="", $class="", $output_immediately=true, $attributes=[]) {
         // size and class used in v <= 2.4.77
+        // $w attribute supercedes $size
         // kept for back compat - class param and class passed via attribute are combined
         // handle attributes
         $class = $class . " " . ($attributes['class'] ?? ''); 
         $w = $attributes['w'] ?? null;
+        if (!$w) {
+            if ($size && !is_numeric($size)) {
+                // no w attribute, string size - figure out or default to 1920
+                $w = $this->image_sizes[$size] ?? '1920';
+            }
+            elseif ($size) {
+                // no $w attr, but got numeric $size
+                $w = $size;
+            }
+            else {
+                $w = $this->width; // default to og size if no $size or $w attr
+            }
+        }
         $q = $attributes['q'] ?? null;
         $fmt = $attributes['fmt'] ?? null;
         $loading = $attributes['loading'] ?? "lazy"; // use eager for headings
