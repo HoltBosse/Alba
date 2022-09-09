@@ -32,11 +32,14 @@ class Image {
     }
     
     public function render($size="original", $class="", $output_immediately=true, $attributes=[]) {
+        // size and class used in v <= 2.4.77
+        // kept for back compat - class param and class passed via attribute are combined
         // handle attributes
-        $class = $attributes['class'] ?? '';
+        $class = $class . " " . ($attributes['class'] ?? ''); 
         $w = $attributes['w'] ?? null;
         $q = $attributes['q'] ?? null;
         $fmt = $attributes['fmt'] ?? null;
+        $loading = $attributes['loading'] ?? "lazy"; // use eager for headings
         $width_param = $this->width;
         $height_param = $this->height;
         if ($w && is_numeric($w)) {
@@ -55,7 +58,7 @@ class Image {
         if ($fmt) {$url_params['fmt'] = $fmt; }
         $url_params_string = http_build_query($url_params);
         $url = $url_domain_path . $url_params_string;
-        $markup = "<img decode='async' width='{$width_param}' height='{$height_param}' loading='lazy' class='rendered_img {$class}' src='".$url."' alt='{$this->alt}' title='{$this->title}'/>";
+        $markup = "<img decode='async' width='{$width_param}' height='{$height_param}' loading='{$loading}' class='rendered_img {$class}' src='".$url."' alt='{$this->alt}' title='{$this->title}'/>";
         if ($output_immediately) {
             echo $markup;
         }
