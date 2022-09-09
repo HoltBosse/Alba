@@ -543,7 +543,7 @@ final class CMS {
 				$template = $this->get_admin_template();
 			}
 			include_once (CURPATH . '/templates/' . $template . "/login.php");
-			if(Config::$dev_banner) {
+			if(Config::$dev_banner ?? null) {
 				echo $this->render_dev_banner();
 			}
 		}
