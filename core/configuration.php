@@ -23,7 +23,10 @@ class Configuration {
 		}
 
 		// fallback - get complete json and get property in PHP
-		$configuration = DB::fetch("select configuration from configurations where name=?", [$form_name]);
+		$query = "select configuration from configurations where name=?";
+		$stmt = $pdo->prepare($query);
+		$ok = $stmt->execute(array($form_name));
+		$configuration = $stmt->fetch();
 		if ($configuration) {
 			$config = json_decode($configuration->configuration);
 			if (property_exists($config, $setting_name)) {
@@ -70,7 +73,10 @@ class Configuration {
 
 	public function load_from_db() {
 		// set config and form fields from configurations table entry
-		$result = DB::fetch("select * from configurations where name=?", [$this->name]);
+		$query = "select * from configurations where name=?";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array($this->name));
+		$result = $stmt->fetch();
 		if ($result) {
 			// update object configuration
 			$this->configuration = json_decode($result->configuration);
@@ -94,7 +100,10 @@ class Configuration {
 	public function save() {
 		$json_config = json_encode($this->configuration);
 		// update or insert new set of configuration options
-		$ok = DB::exec("INSERT INTO configurations (name,configuration) VALUES (?,?) ON DUPLICATE KEY UPDATE configuration=?", array($this->name, $json_config, $json_config));
+		$query = "INSERT INTO configurations (name,configuration) VALUES (?,?) ON DUPLICATE KEY UPDATE configuration=?";
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$json_config = json_encode($this->configuration);
+		$ok = $stmt->execute(array($this->name, $json_config, $json_config));
 		if ($ok) {
 			return $this;
 		}
