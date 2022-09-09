@@ -22,7 +22,7 @@ class Cache {
         if (file_exists($fullpath)) {
             $curtime = time();
             $filetime = filemtime($fullpath);
-            $file_stale_time = $filetime + (Config::$cache['time'] * 60);
+            $file_stale_time = $filetime + (Config::$caching['time'] * 60);
             if ($filetime && is_numeric($file_stale_time)) {
                 if ($file_stale_time <= $curtime) {
                     // cache not stale yet
