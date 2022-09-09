@@ -29,6 +29,10 @@ class Cache {
                     // cache not stale yet
                     return $fullpath;
                 }
+                else {
+                    // cache is stale - delete file
+                    unlink($fullpath);
+                }
             }
         }
         return false;
