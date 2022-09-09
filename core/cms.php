@@ -215,6 +215,14 @@ final class CMS {
 			$this->need_session=false; // don't need session for image api
 		}
 
+		if (Config::$caching ?? null) {
+			$this->cache = new Cache();
+			$page_file = $this->cache->url_cached($request);
+			if ($page_file) {
+				$this->cache->serve_page($page_file);
+			}
+		}
+
 		// db
 		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
 		$dsn = "mysql:host=" . Config::$dbhost . ";dbname=" . Config::$dbname . ";charset=" . Config::$dbchar;
@@ -648,6 +656,11 @@ final class CMS {
 				}
 				// output final content
 				echo $this->page_contents;
+
+				// create full page cache if needed
+				if (Config::$caching ?? null) {
+					$this->cache->create_cache($request,'url',$this->page_contents);
+				}
 			}	
 			
 		}

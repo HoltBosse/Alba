@@ -54,3 +54,4 @@ core/controllers/**
 !core/controllers/image/**
 !controllers/image/
 !controllers/image/**
+cache/**
