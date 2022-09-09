@@ -15,13 +15,10 @@ class Shortcode {
         CMS::Instance()->shortcodes[$this->title] = $this;
     }
 
-    public static function get_shortcode_attributes_regex() {
-        return '/([\w-]+)\s*=\s*"([^"]*)"(?:\s|$)|([\w-]+)\s*=\s*\'([^\']*)\'(?:\s|$)|([\w-]+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|\'([^\']*)\'(?:\s|$)|(\S+)(?:\s|$)/'; 
-    }
-
     function shortcode_parse_attributes($attributes_text) {
         $attributes = [];
-        $pattern = Shortcode::get_shortcode_attributes_regex();
+        // regex @author: wordpress
+        $pattern = '/([\w-]+)\s*=\s*"([^"]*)"(?:\s|$)|([\w-]+)\s*=\s*\'([^\']*)\'(?:\s|$)|([\w-]+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|\'([^\']*)\'(?:\s|$)|(\S+)(?:\s|$)/'; 
         // remove zero width spaces if present 
         // see: http://stackoverflow.com/questions/11305797/remove-zero-width-space-characters-from-a-javascript-string
         $attributes_text = preg_replace( "/[\x{00a0}\x{200b}]+/u", ' ', $attributes_text);
