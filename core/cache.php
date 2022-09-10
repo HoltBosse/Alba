@@ -9,10 +9,14 @@ class Cache {
         }
     }
 
-    public function ignore($request) {
+    public function ignore($request, $type=null) {
         foreach (Config::$caching['ignore'] as $partial_path) {
             if (strpos($request, $partial_path)===0) {
                 // ignore
+                if ($type==='url') {
+                    // output nice message for full URL cache situation
+                    echo "<!-- Alba cache IGNORE -->\n";
+                }
                 return true;
             }
         } 
@@ -30,7 +34,7 @@ class Cache {
 
         // first check if path is ignored for urls
         if ($type=='url') {
-            if ($this->ignore($identifier)) {
+            if ($this->ignore($identifier, $type)) {
                 return false;
             }
         }
@@ -75,6 +79,7 @@ class Cache {
         if ($this->ignore($request)) {
             return false;
         }
+        echo "<!-- Alba cache: " . date('F j, Y, g:i a', filemtime($filepath)) . " -->\n";
         readfile($filepath);
         exit();
     }
