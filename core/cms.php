@@ -215,15 +215,6 @@ final class CMS {
 			$this->need_session=false; // don't need session for image api
 		}
 
-		if (Config::$caching ?? null && !ADMINPATH) {
-			// admin will never create caches, so no point in even checking
-			$this->cache = new Cache();
-			$cached_page_file = $this->cache->is_cached($request, 'url');
-			if ($cached_page_file) {
-				$this->cache->serve_page($cached_page_file);
-			}
-		}
-
 		// db
 		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
 		$dsn = "mysql:host=" . Config::$dbhost . ";dbname=" . Config::$dbname . ";charset=" . Config::$dbchar;
@@ -587,6 +578,7 @@ final class CMS {
 				
 				if (sizeof($this->uri_segments)==0) {
 					// TODO: work with user selected HOME page
+					$alias = 'home';
 					$query = "select * from pages where parent=-1 and alias='home' and state>0";
 					$page = $this->pdo->query($query)->fetch();
 				}
@@ -614,24 +606,17 @@ final class CMS {
 						}
 					}
 				}
-				
 				if (!$alias) {
-					// just load 'home' and hope controller can consume / 404 extra uri segments
-					$query = "select * from pages where parent=-1 and alias=? and state>0";
-					$stmt = $this->pdo->prepare($query);
-					$stmt->execute(['home']);
-					$page = $stmt->fetch(); 
+					$this->raise_404();
+				}
+				if (Config::$debug) {
+					echo "<h1>GOT ALIAS: {$alias}</h1>";
+					echo "<h5>Segments passed to controller:</h5>";
+					$this->pprint_r ($this->uri_segments);
 				}
 
 				$this->page = new Page();
 				$this->page->load_from_id($page->id); // also loads correct template obj into page obj
-
-				// if no controller/view, and 'home' is page because segment didn't match anything, raise 404
-				// widgets could potentially consume this, but safer to assume 404 for now - avoid joomla router
-				// scenario of allowing infinite pages random urls that don't result in 404
-				if (!$alias && $this->page->content_type<0 && !$this->page->view) {
-					$this->raise_404();
-				}
 
 				// check user has access
 				if (!Access::can_access(json_decode($this->page->get_page_option_value("access")))) {
@@ -663,11 +648,6 @@ final class CMS {
 				}
 				// output final content
 				echo $this->page_contents;
-
-				// create full page cache if needed
-				if (Config::$caching ?? null) {
-					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
-				}
 			}	
 			
 		}
