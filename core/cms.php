@@ -215,6 +215,15 @@ final class CMS {
 			$this->need_session=false; // don't need session for image api
 		}
 
+		if (Config::$caching ?? null && !ADMINPATH) {
+			// admin will never create caches, so no point in even checking
+			$this->cache = new Cache();
+			$cached_page_file = $this->cache->is_cached($request, 'url');
+			if ($cached_page_file) {
+				$this->cache->serve_page($cached_page_file);
+			}
+		}
+
 		// db
 		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
 		$dsn = "mysql:host=" . Config::$dbhost . ";dbname=" . Config::$dbname . ";charset=" . Config::$dbchar;
@@ -648,6 +657,11 @@ final class CMS {
 				}
 				// output final content
 				echo $this->page_contents;
+
+				// create full page cache if needed
+				if (Config::$caching ?? null) {
+					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
+				}
 			}	
 			
 		}
