@@ -54,6 +54,7 @@ core/controllers/**
 !core/controllers/image/**
 !controllers/image/
 !controllers/image/**
+cache/**
 # ignore custom templates - note: add future default templates here!
 templates/**
 !templates/basic/
