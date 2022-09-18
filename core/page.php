@@ -39,7 +39,7 @@ class Page {
 		$segments = array($this->alias);
 		$parent = $this->parent;
 		if ($this->alias=='home' && $parent<0) {
-			return Config::$uripath; 
+			return Config::$uripath . "/"; 
 		}
 		while ($parent>=0) {
 			$result = DB::fetch("select parent,alias from pages where id=?", array($parent));
