@@ -39,7 +39,7 @@ class Category {
 		return $result;
 	}
 
-	public function get_category_count($content_type, $search="") {
+	public static function get_category_count($content_type, $search="") {
 		if ($search) {
 			$like = '%' . $search . '%';
 			if (!$content_type) {
