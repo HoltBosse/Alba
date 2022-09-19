@@ -53,7 +53,7 @@ class db {
 		try {
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute($paramsarray);
-			$result = $stmt->fetchAll($options["mode"]);
+			$result = $stmt->fetchAll($options["mode"] ?? PDO::FETCH_OBJ);
 		}
 		catch (\PDOException $e) {
 			if (Config::$debug) {
@@ -78,7 +78,7 @@ class db {
 		try {
 			$stmt = CMS::Instance()->pdo->prepare($query);
 			$stmt->execute($paramsarray);
-			$result = $stmt->fetch($options["mode"]);
+			$result = $stmt->fetch($options["mode"] ?? PDO::FETCH_OBJ);
 		}
 		catch (\PDOException $e) {
 			if (Config::$debug) {
