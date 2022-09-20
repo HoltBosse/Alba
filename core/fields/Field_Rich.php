@@ -107,15 +107,14 @@ class Field_Rich extends Field {
 
 			document.addEventListener("DOMContentLoaded", function(){
 				
-				// move markup to hidden textarea on blur
-				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('blur',function(e){
-					//console.log('updating textarea for editor');
-					raw = e.target.innerHTML;
-					document.querySelector('#<?php echo $this->name;?>').innerText = raw;
+				// move markup to hidden textarea on input
+				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('input',function(e){
+					raw = e.target.innerHTML; 
+					textarea = document.querySelector('#<?php echo $this->name;?>');
+					textarea.value = raw; 
 				});
-				// move textarea to markup in editable on blur
-				document.querySelector('#<?php echo $this->id;?>').addEventListener('blur',function(e){
-					//console.log('updating textarea for editor');
+				// move textarea to markup in editable on any change
+				document.querySelector('#<?php echo $this->id;?>').addEventListener('input',function(e){
 					raw = e.target.value;
 					document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML = raw;
 				});
@@ -223,6 +222,12 @@ class Field_Rich extends Field {
 					modal.innerHTML = modal_html;
 					document.body.appendChild(modal);
 
+					// make first modal input focus
+					let first_input = modal.querySelector('input');
+					if (first_input) {
+						first_input.focus();
+					}
+
 					// listener for modal
 					modal.addEventListener('click', function(e){
 						e.preventDefault();
@@ -230,7 +235,10 @@ class Field_Rich extends Field {
 						function closeModal() {
 							modal = e.target.closest('.modal.is-active');
 							parent = modal.parentNode;
-							parent.removeChild(modal);							
+							parent.removeChild(modal);	
+							// update editor raw textarea with changes
+							let markup = document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML;
+							document.querySelector('#<?php echo $this->name;?>').value = markup;
 						}
 
 						switch (e.target.dataset.modalAction) {
