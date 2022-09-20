@@ -239,7 +239,7 @@ class User {
 			}
 			if ($result) {
 				// user tags
-				DB::exec("delete from tagged where content_id=?");
+				DB::exec("delete from tagged where content_id=?", [$this->id]);
 				foreach ($this->tags as $tag) {
 					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($this->id, $tag));
 				}
