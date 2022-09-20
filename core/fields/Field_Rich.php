@@ -111,7 +111,7 @@ class Field_Rich extends Field {
 				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('input',function(e){
 					raw = e.target.innerHTML; 
 					textarea = document.querySelector('#<?php echo $this->name;?>');
-					textarea.value = raw; console.log(textarea);
+					textarea.value = raw; 
 				});
 				// move textarea to markup in editable on any change
 				document.querySelector('#<?php echo $this->id;?>').addEventListener('input',function(e){
