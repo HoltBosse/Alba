@@ -109,13 +109,12 @@ class Field_Rich extends Field {
 				
 				// move markup to hidden textarea on input
 				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('input',function(e){
-					//console.log('updating textarea for editor');
-					raw = e.target.innerHTML;
-					document.querySelector('#<?php echo $this->name;?>').innerText = raw;
+					raw = e.target.innerHTML; 
+					textarea = document.querySelector('#<?php echo $this->name;?>');
+					textarea.value = raw; console.log(textarea);
 				});
 				// move textarea to markup in editable on any change
 				document.querySelector('#<?php echo $this->id;?>').addEventListener('input',function(e){
-					//console.log('updating textarea for editor');
 					raw = e.target.value;
 					document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML = raw;
 				});
@@ -230,7 +229,10 @@ class Field_Rich extends Field {
 						function closeModal() {
 							modal = e.target.closest('.modal.is-active');
 							parent = modal.parentNode;
-							parent.removeChild(modal);							
+							parent.removeChild(modal);	
+							// update editor raw textarea with changes
+							let markup = document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML;
+							document.querySelector('#<?php echo $this->name;?>').value = markup;
 						}
 
 						switch (e.target.dataset.modalAction) {
