@@ -222,6 +222,12 @@ class Field_Rich extends Field {
 					modal.innerHTML = modal_html;
 					document.body.appendChild(modal);
 
+					// make first model input focus
+					let first_input = modal.querySelector('input');
+					if (first_input) {
+						first_input.focus();
+					}
+
 					// listener for modal
 					modal.addEventListener('click', function(e){
 						e.preventDefault();
