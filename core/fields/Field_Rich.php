@@ -107,14 +107,14 @@ class Field_Rich extends Field {
 
 			document.addEventListener("DOMContentLoaded", function(){
 				
-				// move markup to hidden textarea on blur
-				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('blur',function(e){
+				// move markup to hidden textarea on input
+				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('input',function(e){
 					//console.log('updating textarea for editor');
 					raw = e.target.innerHTML;
 					document.querySelector('#<?php echo $this->name;?>').innerText = raw;
 				});
-				// move textarea to markup in editable on blur
-				document.querySelector('#<?php echo $this->id;?>').addEventListener('blur',function(e){
+				// move textarea to markup in editable on any change
+				document.querySelector('#<?php echo $this->id;?>').addEventListener('input',function(e){
 					//console.log('updating textarea for editor');
 					raw = e.target.value;
 					document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML = raw;
