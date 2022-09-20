@@ -31,7 +31,7 @@ final class CMS {
 	private $need_session = true;
 	public $hooks = [];
 	public $head_entries = []; // array of string to be output during CMSHEAD replacement
-	public $version = "2.4.8";
+	public $version = "2.4.81";
 
 	/* protected function __construct() {}
     protected function __clone() {}
