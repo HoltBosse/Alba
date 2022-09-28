@@ -286,7 +286,6 @@ class Content {
 					$field->default = implode(",",$field->default);
 				}
 			}
-			CMS::Instance()->log("Saving: " . $field->default);
 			$result = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$this->id, $field->name, $field->type, $field->default]);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
