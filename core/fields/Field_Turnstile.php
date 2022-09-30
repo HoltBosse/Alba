@@ -40,6 +40,8 @@ class Field_Turnstile extends Field {
 	}
 
 	public function validate() {
+		
+		$this->default = Input::getvar('cf-turnstile-response',"STRING",false);
 		if ($this->is_missing()) {
 			return false;
 		}
@@ -63,7 +65,7 @@ class Field_Turnstile extends Field {
 		$context  = stream_context_create($options);
 		$verify = file_get_contents($url, false, $context);
 		$captcha_success=json_decode($verify);
-		CMS::log(print_r($captcha_success, true));
+		//CMS::log(print_r($captcha_success, true));
 		if ($captcha_success->success==false) {
 			CMS::Instance()->queue_message('Failed Cloudflare test','danger');
 			return false;

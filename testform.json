@@ -3,13 +3,13 @@
 	"fields":[
 		{
 			"type":"Turnstile",
-			"id":"turnstile",
 			"name":"turnstile"
 		},
 		{
+			"name":"submit",
+			"id":"submit",
 			"type":"HTML",
-			"save":false,
-			"html":"<button type='submit'>test</button>"
+			"html":"<div><button type='submit btn'>Submit</button></div>"
 		}
 	]
 }
