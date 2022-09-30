@@ -5,7 +5,7 @@
 			"type":"Tab",
 			"mode":"tabs",
 			"id":"configtabs",
-			"tabs":["Site Options","Server Options","Google & SEO","Email/SMTP"]
+			"tabs":["Site Options","Server Options","Security & SEO","Email/SMTP"]
 		},
 		{
 			"type":"Tab",
@@ -158,6 +158,36 @@
 			"id":"rc_secretkey",
 			"type":"Text",
 			"label":"Google reCAPTCHA SECRET Key",
+			"input_type":"text",
+			"required":false,
+			"description":"Please keep this safe and never show it on the front-end.",
+			"maxlength":50,
+			"minlength":10,
+			"filter":"STRING",
+			"default":""
+		},
+		{
+			"type":"HTML",
+			"html":"<hr>"
+		},
+		{
+			"name":"cf_sitekey",
+			"id":"cf_sitekey",
+			"type":"Text",
+			"label":"Cloudflare Turnstile Site Key",
+			"input_type":"text",
+			"required":false,
+			"description":"If left blank, Turnstile will not be used on the site.",
+			"maxlength":50,
+			"minlength":10,
+			"filter":"STRING",
+			"default":""
+		},
+		{
+			"name":"cf_secretkey",
+			"id":"cf_secretkey",
+			"type":"Text",
+			"label":"Cloudflare Turnstyile SECRET Key",
 			"input_type":"text",
 			"required":false,
 			"description":"Please keep this safe and never show it on the front-end.",

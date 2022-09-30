@@ -1,15 +1,15 @@
 {
 	"id":"testform",
 	"fields":[
-		
 		{
-			"name":"repeater",
-			"id":"repeater",
-			"type":"Repeatable",
-			"label":"Testing Repeatable Form",
-			"required":false,
-			"form_path":"/testrepeatform.json",
-			"description":"Testing repeatable form."
+			"type":"Turnstile",
+			"id":"turnstile",
+			"name":"turnstile"
+		},
+		{
+			"type":"HTML",
+			"save":false,
+			"html":"<button type='submit'>test</button>"
 		}
 	]
 }
