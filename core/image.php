@@ -31,11 +31,53 @@ class Image {
         }       
     }
     
-    public function render($size="original", $class="", $format="original") {
-        $params = "?w=" . $size;
-        if ($format!=="original") {
-            $params .= "&fmt=" . $format;
+    public function render($size="", $class="", $output_immediately=true, $attributes=[]) {
+        // size and class used in v <= 2.4.77
+        // $w attribute supercedes $size
+        // kept for back compat - class param and class passed via attribute are combined
+        // handle attributes
+        $class = $class . " " . ($attributes['class'] ?? ''); 
+        $w = $attributes['w'] ?? null;
+        if (!$w) {
+            if ($size && !is_numeric($size)) {
+                // no w attribute, string size - figure out or default to 1920
+                $w = $this->image_sizes[$size] ?? '1920';
+            }
+            elseif ($size) {
+                // no $w attr, but got numeric $size
+                $w = $size;
+            }
+            else {
+                $w = $this->width; // default to og size if no $size or $w attr
+            }
         }
-        echo "<img decode='async' width='{$this->width}' height='{$this->height}' loading='lazy' class='rendered_img {$class}' src='" . Config::$uripath . "/image/" . $this->id . $params . "' alt='{$this->alt}' title='{$this->title}'/>";
+        $q = $attributes['q'] ?? null;
+        $fmt = $attributes['fmt'] ?? null;
+        $loading = $attributes['loading'] ?? "lazy"; // use eager for headings
+        $width_param = $this->width;
+        $height_param = $this->height;
+        if ($w && is_numeric($w)) {
+            if ($w < $this->width) {
+                $width_param = $w;
+                // scale height
+                $height_param = floor(($w/$this->width)*$this->height);
+            }
+        }
+
+        // build url
+        $url_domain_path = Config::$uripath . "/image/" . $this->id . "?";
+        $url_params = [];
+        if ($w) {$url_params['w'] = $w; }
+        if ($q) {$url_params['q'] = $q; }
+        if ($fmt) {$url_params['fmt'] = $fmt; }
+        $url_params_string = http_build_query($url_params);
+        $url = $url_domain_path . $url_params_string;
+        $markup = "<img decode='async' width='{$width_param}' height='{$height_param}' loading='{$loading}' class='rendered_img {$class}' src='".$url."' alt='{$this->alt}' title='{$this->title}'/>";
+        if ($output_immediately) {
+            echo $markup;
+        }
+        else {
+            return $markup;
+        }
     }
 }
