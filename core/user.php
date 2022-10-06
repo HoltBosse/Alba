@@ -43,7 +43,7 @@ class User {
 	}
 	
 	// $pdo->prepare($sql)->execute([$name, $id]);
-	public function get_all_users() {
+	public static function get_all_users() {
 		//echo "<p>Getting all users...</p>";
 		//$db = new db();
 		//$db = CMS::$pdo;
