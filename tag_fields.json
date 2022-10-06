@@ -1,0 +1,19 @@
+{
+	"id":"testform",
+	"fields":[
+		{
+			"type":"Text",
+			"name":"formtestfield",
+            "id":"formtestfield",
+            "required":true,
+            "default":"foobar"
+		},
+		{
+			"name":"test",
+			"id":"test",
+			"type":"HTML",
+            "save":false,
+			"html":"<p>test</p>"
+		}
+	]
+}

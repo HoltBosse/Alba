@@ -20,6 +20,10 @@ else {
 
 // prep forms
 $required_details_form = new Form(ADMINPATH . '/controllers/tags/views/edit/required_fields_form.json');
+$custom_fields_form = file_exists(CMSPATH . "/tag_fields.json");
+if ($custom_fields_form) {
+	$custom_fields_form = new Form (CMSPATH . "/tag_fields.json");
+}
 
 
 // check if submitted or show defaults/data from db
@@ -27,12 +31,19 @@ if ($required_details_form->is_submitted()) {
 
 	// update forms with submitted values
 	$required_details_form->set_from_submit();
-
+	if ($custom_fields_form) {
+		$custom_fields_form->set_from_submit();
+	}
 
 	// validate
 	if ($required_details_form->validate()) {
-		// forms are valid, save info
-		$tag->save($required_details_form);
+		if (!$custom_fields_form || ($custom_fields_form && $custom_fields_form->validate()) ) {
+			// forms are valid, save info
+			$tag->save($required_details_form, $custom_fields_form);
+		}
+		else {
+			CMS::Instance()->queue_message('Invalid field form','danger',$_SERVER['REQUEST_URI']);	
+		}
 	}
 	else {
 		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
@@ -53,6 +64,10 @@ else {
 		$required_details_form->get_field_by_name('contenttypes')->default = $tag->contenttypes;
 		$required_details_form->get_field_by_name('parent')->default = $tag->parent;
 		$required_details_form->get_field_by_name('category')->default = $tag->category;
+
+		if ($custom_fields_form) {
+			$custom_fields_form = $tag->custom_fields_form;
+		}
 	}
 	
 }
