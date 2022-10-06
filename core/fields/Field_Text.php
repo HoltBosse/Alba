@@ -92,9 +92,13 @@ class Field_Text extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->input_type = $config->input_type ?? 'text';
 		$this->pattern = $config->pattern ?? '';
-		if ($this->input_type=='range'||$this->input_type=='number') {
+		if ($this->input_type=='range') {
 			$this->min = $config->min ?? "0";
 			$this->max = $config->max ?? "100";
+		}
+		elseif ($this->input_type=='number') {
+			$this->min = $config->min ?? "";
+			$this->max = $config->max ?? "";
 		}
 		$this->default = $config->default ?? $this->default;
 		$this->attribute_list = $config->attribute_list ?? "";
