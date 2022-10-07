@@ -76,3 +76,19 @@ if ($tag_category_ok) {
 else {
 	show_message ('Tags Table Category Column','Tags table updated.','is-warning');
 }
+
+if ($custom_fields_category_ok) {
+	show_message ('Category Custom Fields Column','Category table OK.','is-success');
+}
+else {
+	show_message ('Category Custom Fields Column','Category table updated.','is-warning');
+}
+
+if ($custom_fields_tag_ok) {
+	show_message ('Tag Custom Fields Column','Tag table OK.','is-success');
+}
+else {
+	show_message ('Tag Custom Fields Column','Tag table updated.','is-warning');
+}
+
+
