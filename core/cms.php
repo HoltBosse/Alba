@@ -53,7 +53,6 @@ final class CMS {
 
 	public static function raise_404() {
 		ob_end_clean ();
-		http_response_code(404);
 		if (file_exists(CMSPATH . "/my_404.php")) {
 			include('my_404.php'); // provide your own HTML for the error page
 		}
@@ -155,11 +154,11 @@ final class CMS {
 		//CMS::pprint_r ($widgets);
 	}
 
-	public static function show_error($text, $http_code="") {
+	public static function show_error($text, $http_code="500") {
 		if (ob_get_length()) {
 			ob_end_clean();
 		}
-		http_response_code(500);
+		http_response_code($http_code);
 		?>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 			<div style="display:flex; justify-content:center; align-items:center; height: 100%;">
