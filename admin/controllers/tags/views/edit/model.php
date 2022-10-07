@@ -25,7 +25,6 @@ if ($custom_fields_form) {
 	$custom_fields_form = new Form (CMSPATH . "/tag_fields.json");
 }
 
-
 // check if submitted or show defaults/data from db
 if ($required_details_form->is_submitted()) {
 
@@ -66,7 +65,9 @@ else {
 		$required_details_form->get_field_by_name('category')->default = $tag->category;
 
 		if ($custom_fields_form) {
-			$custom_fields_form = $tag->custom_fields_form;
+			if ($tag->custom_fields) {
+				$custom_fields_form->deserialize_json($tag->custom_fields);
+			}
 		}
 	}
 	

@@ -27,6 +27,7 @@ class Tag {
 		$this->public = $info->public;
 		$this->parent = $info->parent;
 		$this->category = $info->category;
+		$this->custom_fields = $info->custom_fields;
 		$query = "select content_type_id from tag_content_type where tag_id=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($this->id));
@@ -123,7 +124,8 @@ class Tag {
 		$this->contenttypes = $required_details_form->get_field_by_name('contenttypes')->default;
 		$this->parent = $required_details_form->get_field_by_name('parent')->default;
 		$this->category = $required_details_form->get_field_by_name('category')->default;
-		$this->custom_fields = json_encode($custom_fields_form);
+		$this->custom_fields = $custom_fields_form ? $custom_fields_form->serialize_json() : "";
+
 		if ($this->parent=="0"||$this->parent=="") {
 			$this->parent = 0;
 		}
