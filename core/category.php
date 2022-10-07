@@ -8,6 +8,7 @@ class Category {
 	public $state;
 	public $content_type;
 	public $parent;
+	public $custom_fields;
 	public $content_location = null;
 
 	public function __construct($content_type) {
@@ -16,6 +17,7 @@ class Category {
 		$this->state = 1;
 		$this->parent = 0;
 		$this->content_type = $content_type;
+		$this->custom_fields = "";
 		if ($content_type) {
 			$this->content_location = Content::get_content_location($this->content_type);
 		}
@@ -81,6 +83,7 @@ class Category {
 			$this->state = $info->state;
 			$this->content_type = $info->content_type;
 			$this->parent = $info->parent;
+			$this->custom_fields = $info->custom_fields;
 			return true;
 		}
 		else {
@@ -88,7 +91,7 @@ class Category {
 		}
 	}
 
-	public function save($required_details_form, $content_form, $return_url='') {
+	public function save($required_details_form, $custom_fields_form = "", $return_url='') {
 		// return url will be used as passed, if left blank will use referral
 		// unless in ADMIN section, in which case admin content all page will be used
 		
@@ -97,14 +100,15 @@ class Category {
 		$this->state = $required_details_form->get_field_by_name('state')->default;
 		$this->parent = $required_details_form->get_field_by_name('parent')->default; 
 		$this->content_type = $required_details_form->get_field_by_name('content_type')->default; 
+		$this->custom_fields = $custom_fields_form ? $custom_fields_form->serialize_json() : "";
 
 		if ($this->id) {
 			// update
-			$required_result = DB::exec("update categories set state=?,  title=?, parent=? where id=?", [$this->state, $this->title, $this->parent, $this->id]);
+			$required_result = DB::exec("update categories set state=?,  title=?, parent=?, custom_fields=? where id=?", [$this->state, $this->title, $this->parent, $this->custom_fields, $this->id]);
 		}
 		else {
 			// new
-			$required_result = DB::exec("insert into categories (state,title,content_type, parent) values(?,?,?,?)", [$this->state, $this->title, $this->content_type, $this->parent]);
+			$required_result = DB::exec("insert into categories (state,title,content_type, parent, custom_fields) values(?,?,?,?,?)", [$this->state, $this->title, $this->content_type, $this->parent, $this->custom_fields]);
 			if ($required_result) {
 				// update object id with inserted id
 				$this->id = CMS::Instance()->pdo->lastInsertId();

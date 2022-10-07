@@ -82,6 +82,16 @@ if (!$content_category_ok) {
 	DB::exec("ALTER TABLE content ADD COLUMN `category` int(11) DEFAULT 0");
 }
 
+// ensure custom_fields col exist in category and tags tables
+$custom_fields_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'categories' AND COLUMN_NAME = 'custom_fields'");
+if (!$custom_fields_category_ok) {
+	DB::exec("ALTER TABLE categories ADD COLUMN `custom_fields` text");
+}
+$custom_fields_tag_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'custom_fields'");
+if (!$custom_fields_tag_ok) {
+	DB::exec("ALTER TABLE tags ADD COLUMN `custom_fields` int(11) DEFAULT 0");
+}
+
 
 // Perform update if required
 

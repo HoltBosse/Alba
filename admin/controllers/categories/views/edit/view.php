@@ -21,6 +21,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	</div>
 </div>
 
+<?php if ($custom_fields_form):?>
+	<div class='flex'>
+		<?php $custom_fields_form->display_front_end(); ?>
+	</div>
+<?php endif; ?>
+
 <hr>
 
 
