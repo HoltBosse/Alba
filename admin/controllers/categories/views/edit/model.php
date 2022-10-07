@@ -38,6 +38,11 @@ else {
 $required_details_form = new Form(ADMINPATH . '/controllers/categories/views/edit/required_fields_form.json');
 // set content_type for tag field based on content type of new/editing content
 
+$content_location = Content::get_content_location($cat->content_type);
+$custom_fields_form = file_exists(CMSPATH . "/controllers/" . $content_location . "/cat_fields.json");
+if ($custom_fields_form) {
+	$custom_fields_form = new Form (CMSPATH . "/controllers/" . $content_location . "/cat_fields.json");
+}
 
 // check if submitted or show defaults/data from db
 if ($required_details_form->is_submitted()) {
@@ -47,10 +52,19 @@ if ($required_details_form->is_submitted()) {
 	// update forms with submitted values
 	$required_details_form->set_from_submit();
 
+	if ($custom_fields_form) {
+		$custom_fields_form->set_from_submit();
+	}
+
 	// validate
 	if ($required_details_form->validate()) {
-		// forms are valid, save info
-		$cat->save($required_details_form, $content_form);
+		if (!$custom_fields_form || ($custom_fields_form && $custom_fields_form->validate()) ) {
+			// forms are valid, save info
+			$cat->save($required_details_form, $custom_fields_form);
+		}
+		else {
+			CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
+		}
 	}
 	else {
 		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
@@ -66,6 +80,12 @@ else {
 		$required_details_form->get_field_by_name('parent')->content_type = $cat->content_type;
 		$required_details_form->get_field_by_name('parent')->self_id = $cat->id; // set self_id so don't show in dropdown
 		$required_details_form->get_field_by_name('content_type')->default = $cat->content_type;
+
+		if ($custom_fields_form) {
+			if ($cat->custom_fields) {
+				$custom_fields_form->deserialize_json($cat->custom_fields);
+			}
+		}
 	}
 	else {
 		// always know for new cat what content type is

@@ -27,6 +27,7 @@ class Tag {
 		$this->public = $info->public;
 		$this->parent = $info->parent;
 		$this->category = $info->category;
+		$this->custom_fields = $info->custom_fields;
 		$query = "select content_type_id from tag_content_type where tag_id=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(array($this->id));
@@ -110,7 +111,7 @@ class Tag {
 
 
 
-	public function save($required_details_form) {
+	public function save($required_details_form, $custom_fields_form = "") {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->get_field_by_name('title')->default;
 		$this->state = $required_details_form->get_field_by_name('state')->default;
@@ -123,6 +124,8 @@ class Tag {
 		$this->contenttypes = $required_details_form->get_field_by_name('contenttypes')->default;
 		$this->parent = $required_details_form->get_field_by_name('parent')->default;
 		$this->category = $required_details_form->get_field_by_name('category')->default;
+		$this->custom_fields = $custom_fields_form ? $custom_fields_form->serialize_json() : "";
+
 		if ($this->parent=="0"||$this->parent=="") {
 			$this->parent = 0;
 		}
@@ -147,14 +150,14 @@ class Tag {
 			// reach here, parent is valid or empty
 			
 			// update
-			$query = "update tags set state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=? where id=?";
+			$query = "update tags set state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=?, custom_fields=? where id=?";
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
 			}
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->id) ;
+			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->custom_fields, $this->id ) ;
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// clear any content types applicable to this tag from tag_content_type
@@ -173,7 +176,7 @@ class Tag {
 		}
 		else {
 			// new
-			$query = "insert into tags (state,public,title,alias,note,filter,description,image,parent,category) values(?,?,?,?,?,?,?,?,?,?)";
+			$query = "insert into tags (state,public,title,alias,note,filter,description,image,parent,category,custom_fields) values(?,?,?,?,?,?,?,?,?,?,?)";
 			
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
@@ -181,7 +184,7 @@ class Tag {
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category);
+			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category, $this->custom_fields);
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// insert new tag content_type relationships if required
