@@ -18,7 +18,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </div>
 
 <?php if ($custom_fields_form):?>
-	<h5 class='is-5 title'>Custom Fields</h5>
 	<div class='flex'>
 		<?php $custom_fields_form->display_front_end(); ?>
 	</div>
