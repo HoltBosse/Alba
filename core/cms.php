@@ -159,6 +159,7 @@ final class CMS {
 		if (ob_get_length()) {
 			ob_end_clean();
 		}
+		http_response_code(500);
 		?>
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
 			<div style="display:flex; justify-content:center; align-items:center; height: 100%;">
