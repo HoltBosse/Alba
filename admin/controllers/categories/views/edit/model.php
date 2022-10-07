@@ -38,11 +38,11 @@ else {
 $required_details_form = new Form(ADMINPATH . '/controllers/categories/views/edit/required_fields_form.json');
 // set content_type for tag field based on content type of new/editing content
 
-$custom_fields_form = file_exists(CMSPATH . "/cat_fields.json");
+$content_location = Content::get_content_location($cat->content_type);
+$custom_fields_form = file_exists(CMSPATH . "/controllers/" . $content_location . "/cat_fields.json");
 if ($custom_fields_form) {
-	$custom_fields_form = new Form (CMSPATH . "/cat_fields.json");
+	$custom_fields_form = new Form (CMSPATH . "/controllers/" . $content_location . "/cat_fields.json");
 }
-
 
 // check if submitted or show defaults/data from db
 if ($required_details_form->is_submitted()) {
