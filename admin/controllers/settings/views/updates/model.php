@@ -89,7 +89,7 @@ if (!$custom_fields_category_ok) {
 }
 $custom_fields_tag_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'custom_fields'");
 if (!$custom_fields_tag_ok) {
-	DB::exec("ALTER TABLE tags ADD COLUMN `custom_fields` int(11) DEFAULT 0");
+	DB::exec("ALTER TABLE tags ADD COLUMN `custom_fields` text");
 }
 
 
