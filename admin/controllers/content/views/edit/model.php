@@ -53,7 +53,7 @@ if ($required_details_form->is_submitted()) {
 		// first save version if versions are turned on
 		
 		// TODO: make versions work with new fields
-		/* $content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
+		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
 		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
 			// save old version
 			//$old_version = new content();
@@ -66,7 +66,7 @@ if ($required_details_form->is_submitted()) {
 			else {
 				CMS::Instance()->queue_message('Unable to get all original content fields','danger',$_SERVER['REQUEST_URI']);
 			}
-		} */
+		}
 
 		$quicksave = Input::getvar('quicksave',"STRING");
 		if ($quicksave) {
