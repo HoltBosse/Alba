@@ -52,16 +52,15 @@ if ($required_details_form->is_submitted()) {
 		// forms are valid, save info
 		// first save version if versions are turned on
 		
-		// TODO: make versions work with new fields
 		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
 		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
 			// save old version
-			$old_content = Content::get_all_content_for_id ($id);
+			$old_content = Content::get_all_content_for_id ($content_id);
 			if ($old_content) {
 				Content::save_version($old_content);
 			}
 			else {
-				CMS::Instance()->queue_message('Error retrieving content to save - id: ' . $id,'danger',$_SERVER['REQUEST_URI']);
+				CMS::Instance()->queue_message('Error retrieving content to save - id: ' . $content_id, 'danger',$_SERVER['REQUEST_URI']);
 			}
 		}
 
