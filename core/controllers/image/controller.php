@@ -45,6 +45,8 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=75, $mimetype)
 	}
 	else {
 		$source_image = imagecreatefrompng($src);
+		imageAlphaBlending($source_image, false);
+		imageSaveAlpha($source_image, true);
 	}
 	$width = imagesx($source_image);
 	$height = imagesy($source_image);
@@ -53,6 +55,10 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=75, $mimetype)
 	/* create a new, "virtual" image */
 	$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
 	/* copy source image at a resized size */
+	if ($mimetype=='image/png') {
+		imageAlphaBlending($virtual_image, false);
+		imageSaveAlpha($virtual_image, true);
+	}
 	imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
 	/* create the physical thumbnail image to its destination */
 	if ($mimetype=='image/jpeg') {
