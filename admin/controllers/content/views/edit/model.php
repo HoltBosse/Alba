@@ -56,15 +56,12 @@ if ($required_details_form->is_submitted()) {
 		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
 		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
 			// save old version
-			//$old_version = new content();
-			$content_location = Content::get_content_location($content->content_type);
-			$old_content = Content::get_all_content("id", $content_location, $content_id); // 2nd param being passed gives enough info to get custom fields
-			
+			$old_content = Content::get_all_content_for_id ($id);
 			if ($old_content) {
-				Content::save_version($old_content[0]);
+				Content::save_version($old_content);
 			}
 			else {
-				CMS::Instance()->queue_message('Unable to get all original content fields','danger',$_SERVER['REQUEST_URI']);
+				CMS::Instance()->queue_message('Error retrieving content to save - id: ' . $id,'danger',$_SERVER['REQUEST_URI']);
 			}
 		}
 
