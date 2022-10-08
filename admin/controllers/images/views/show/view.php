@@ -1,6 +1,9 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 ?>
+
+<?php if (!$filter=='upload'):?>
+
 <h1 class='title sticky'>
 	All Images
 
@@ -13,6 +16,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	</div>
 </h1>
 
+<?php else :?>
+	<script>window.close_when_done = true;</script>
+	<style>nav {display:none !important;}</style>
+	<h1 class='title sticky'>Upload</h1>
+<?php endif; ?>
+
 <p class='help'>Max upload total size: <?php echo $max_upload_size; ?> (<?php echo $max_upload_size_bytes; ?> bytes)</p>
 <script>
 	window.max_upload_size_bytes = <?php echo $max_upload_size_bytes;?>;
@@ -24,47 +33,49 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<input id='regular_upload' type="file" multiple/>
 </section>
 
-
-<p>Available Tags</p>
-<?php
-//CMS::pprint_r ($image_tags);
-?>
-<div id="top_tags" class="field is-grouped is-grouped-multiline">
-	<?php foreach ($image_tags as $tag):?>
-	<div class="control">
-		<div data-title="<?php echo $tag->title;?>" data-id="<?php echo $tag->id;?>" class="tags has-addons">
-			<a href='#' class='tag_filter tag is-link is-light is-info'><?php echo $tag->title;?></a>
-			<a class="tag_add tag is-add is-primary">+</a>
+<?php if (!$filter=='upload'):?>
+	<p>Available Tags</p>
+	<?php
+	//CMS::pprint_r ($image_tags);
+	?>
+	<div id="top_tags" class="field is-grouped is-grouped-multiline">
+		<?php foreach ($image_tags as $tag):?>
+		<div class="control">
+			<div data-title="<?php echo $tag->title;?>" data-id="<?php echo $tag->id;?>" class="tags has-addons">
+				<a href='#' class='tag_filter tag is-link is-light is-info'><?php echo $tag->title;?></a>
+				<a class="tag_add tag is-add is-primary">+</a>
+			</div>
 		</div>
+		<?php endforeach; ?>
 	</div>
-	<?php endforeach; ?>
-</div>
 
-<div id='rename_image_modal' class="modal">
-  <div class="modal-background"></div>
-  <div class="modal-content">
-    <form class='form'>
-		<input type='hidden' value='' id='rename_image_id' name='rename_image_id'/>
-		<div class='field'>
-			<label class='label'  for='rename_title'>Title</label>
-			<div class='control'>
-				<input placeholder='Title Text' class='input' name='rename_title' id='rename_title' type='text' required/>
+	<div id='rename_image_modal' class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-content">
+		<form class='form'>
+			<input type='hidden' value='' id='rename_image_id' name='rename_image_id'/>
+			<div class='field'>
+				<label class='label'  for='rename_title'>Title</label>
+				<div class='control'>
+					<input placeholder='Title Text' class='input' name='rename_title' id='rename_title' type='text' required/>
+				</div>
 			</div>
-		</div>
-		<div class='field'>
-			<label class='label' for='rename_alt'>Alt Text</label>
-			<div class='control'>
-				<input placeholder='Alt Text' class='input' name='rename_alt' id='rename_alt' type='text' required/>
+			<div class='field'>
+				<label class='label' for='rename_alt'>Alt Text</label>
+				<div class='control'>
+					<input placeholder='Alt Text' class='input' name='rename_alt' id='rename_alt' type='text' required/>
+				</div>
 			</div>
-		</div>
-		<div class='field'>
-			<button id='update_image_values_trigger' onclick="rename_image_action();" type='button' class='btn button is-success'>Update</button>
-			<button id='close_image_modal' onclick='this.closest(".modal").classList.remove("is-active");' type='button' class='btn button is-danger'>Cancel</button>
-		</div>
-	</form>
-  </div>
-  <button class="modal-close is-large" aria-label="close"></button>
-</div>
+			<div class='field'>
+				<button id='update_image_values_trigger' onclick="rename_image_action();" type='button' class='btn button is-success'>Update</button>
+				<button id='close_image_modal' onclick='this.closest(".modal").classList.remove("is-active");' type='button' class='btn button is-danger'>Cancel</button>
+			</div>
+		</form>
+	</div>
+	<button class="modal-close is-large" aria-label="close"></button>
+	</div>
+
+<?php endif; ?>
 
 <style>
 
