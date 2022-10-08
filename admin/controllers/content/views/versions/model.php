@@ -8,8 +8,8 @@ $version_count = 0;
 function preview_field($field, $cur_field) {
 	?>
 	<tr>
-		<td><?php echo $field->label; ?></td>
-		<td><?php version_field_preview ( $field, 'default' );?></td>
+		<td><?php echo $field->name; ?></td>
+		<td><?php version_field_preview ( $field, 'value' );?></td>
 		<td><?php version_field_preview ( $cur_field, 'content' );?></td>
 	</tr>
 	<?php

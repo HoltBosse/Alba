@@ -24,7 +24,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<div class='version_comparison_wrap'>
 				<?php $fields = json_decode($version->fields_json);?>
 				
-				<table class='table version_comp_table'>
+				<table style='width:95%; min-width:60vw; max-width:100%; table-layout:fixed;' class='table version_comp_table'>
 					<thead>
 						<tr>
 							<th>Field</th>
@@ -39,7 +39,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 								$cur_field = get_field_by_name ($cur_content_fields, $field->name);
 								//CMS::pprint_r ($cur_field);
 								if ($cur_field) {
-									if ($cur_field->content!=$field->content) {
+									if ($cur_field->value !=$field->value) {
 										// not the same - show diff
 										preview_field($field, $cur_field); 
 									}

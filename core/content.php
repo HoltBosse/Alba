@@ -431,6 +431,8 @@ class Content {
 		//CMS::pprint_r ("Loading: " . CMSPATH . '/controllers/' . $location . "/custom_fields.json");
 		$content_form = new Form (CMSPATH . '/controllers/' . $location . "/custom_fields.json");
 		//CMS::pprint_r ($content_form);exit(0);
+		$version_json = $content_form->serialize_json();
+
 		foreach ($content_form->fields as $field) {
 			// insert field info
 			if (isset($field->save)) {
@@ -452,7 +454,7 @@ class Content {
 			$field_variable = "f_" . $field->name;
 			$field->default = $old_content->{$field_variable};
 		}
-		$version_json = json_encode($content_form->fields); // only saveable fields encoded :)
+		$version_json = $content_form->serialize_json();
 		
 		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
 		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
