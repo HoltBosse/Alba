@@ -2,18 +2,12 @@
 	"id":"general_options",
 	"fields":[
 		{
-			"type":"Tab",
-			"mode":"tabs",
-			"id":"configtabs",
-			"tabs":["Site Options","Server Options","Security & SEO","Email/SMTP"]
+			"type":"HTML",
+			"html":"<div class='tabs is-centered' role='navigation'><ul><li><a href='#site_options'>Site Options</a></li><li><a href='#server_options'>Server Options</a></li><li><a href='#seo'>Security & SEO</a></li><li><a href='#email'>Email & SMTP</a></li></ul></div>"
 		},
 		{
-			"type":"Tab",
-			"mode":"tabscontentstart"
-		},
-		{
-			"type":"Tab",
-			"mode":"tabstart"
+			"type":"HTML",
+			"html":"<a name='site_options'></a><br><br><br><h5 class='title is-5'>Site Options</h5>"
 		},
 		{
 			"name":"site_description",
@@ -49,12 +43,8 @@
 			"filter": "NUM"
 		},
 		{
-			"type":"Tab",
-			"mode":"tabend"
-		},
-		{
-			"type":"Tab",
-			"mode":"tabstart"
+			"type":"HTML",
+			"html":"<a name='server_options'></a><br><br><br><h5 class='title is-5'>Server Options</h5>"
 		},
 		{
 			"name":"signin_redirect",
@@ -106,12 +96,8 @@
 			"default":0
 		},
 		{
-			"type":"Tab",
-			"mode":"tabend"
-		},
-		{
-			"type":"Tab",
-			"mode":"tabstart"
+			"type":"HTML",
+			"html":"<a name='seo'></a><br><br><br><h5 class='title is-5'>SEO & Security</h5>"
 		},
 		{
 			"name":"ga_key",
@@ -197,12 +183,8 @@
 			"default":""
 		},
 		{
-			"type":"Tab",
-			"mode":"tabend"
-		},
-		{
-			"type":"Tab",
-			"mode":"tabstart"
+			"type":"HTML",
+			"html":"<a name='email'></a><br><br><br><h5 class='title is-5'>Email & SMTP</h5>"
 		},
 		{
 			"name":"smtp_name",
@@ -304,14 +286,6 @@
 				{"text":"SSL","value":"ssl"},
 				{"text":"None","value":"none"}
 			]
-		},
-		{
-			"type":"Tab",
-			"mode":"tabend"
-		},
-		{
-			"type":"Tab",
-			"mode":"tabscontentend"
 		}
 	
 	]
