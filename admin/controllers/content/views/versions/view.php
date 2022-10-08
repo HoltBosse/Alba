@@ -11,6 +11,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php echo "<script>var content_id=" . $content_id . "</script>"; ?>
 <h1 class='title'>Versions of &ldquo;<?php echo $content->title; ?>&rdquo; - <?php echo Content::get_content_type_title($content->content_type);?></h1>
 
+<?php //CMS::pprint_r ($content_form);  ?>
 
 <hr>
 <p>TODO: nice preview version of current content - will require loading form json etc. previews below work by virtue of label being stored in versions db</p>
@@ -36,9 +37,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						<?php  foreach ($fields as $field):?>
 							<?php 
 								//CMS::pprint_r ($field);
+								// get latest version of field
 								$cur_field = get_field_by_name ($cur_content_fields, $field->name);
-								//CMS::pprint_r ($cur_field);
-								if ($cur_field) {
+								// get field from current form fields - if not here, skip - field no longer in json
+								$field_in_json = $content_form->get_field_by_name($field->name);
+								if ($cur_field && $field_in_json) {
 									if ($cur_field->value !=$field->value) {
 										// not the same - show diff
 										preview_field($field, $cur_field); 
