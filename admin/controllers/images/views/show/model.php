@@ -6,7 +6,7 @@ foreach(File::$image_types as $type => $value) {
     array_push($valid_image_types, "'$type'");
 }
 
-$all_images = DB::fetchall("select * from media where mimetype in (" . implode(",", $valid_image_types) . ")");
+$all_images = DB::fetchall("select * from media where mimetype in (" . implode(",", $valid_image_types) . ") ORDER BY id DESC");
 
 $image_tags = Content::get_applicable_tags ("-1");
 

@@ -33,7 +33,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 
 
 	// top tag click handlers - filter and add
-	document.getElementById('top_tags').addEventListener('click',function(e){
+	document.getElementById('top_tags')?.addEventListener('click',function(e){
 		e.preventDefault();
 		if (e.target.classList.contains('tag_filter')) {
 			tag_id = e.target.closest('.tags').dataset.id;
@@ -273,7 +273,14 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 				if (xhr.status === 200) {
 					// OK - Do something
 					//console.logconsole.log(xhr.responseText);
-					window.location.reload();
+
+					// close when done injected in view when filter=upload in place
+					if (window.hasOwnProperty('close_when_done')) {
+						window.close();
+					}
+					else {
+						window.location.reload();
+					}
 				} else {
 					// ERROR - Do something
 					// console.error(xhr.statusText);
