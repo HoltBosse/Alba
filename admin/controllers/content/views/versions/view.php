@@ -21,7 +21,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <section id='version_comparisons'>
 	<?php foreach ($versions as $version):?>
 		<aside class='version_overview'>
-			<div id='version_date'><?php echo $version->created;?></div>
+			<div id='version_date'><?php echo Output::timeago($version->created);?></div>
 			<p class='help' id='version_created_by'><?php echo $version->username; ?></p>
 			<div class='version_comparison_wrap'>
 				<?php $fields = json_decode($version->fields_json);?>

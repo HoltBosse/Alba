@@ -48,7 +48,7 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 
 	$cur_content_fields = DB::fetchAll('select * from content_fields where content_id=?',array($content_id));
 	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?',array($content_id))->c;
-	$versions = DB::fetchAll('select v.*, u.username from content_versions v, users u where content_id=? and u.id=v.created_by order by created desc',array($content_id));
+	$versions = DB::fetchAll('select v.*, u.username from content_versions v, users u where content_id=? and u.id=v.created_by order by v.created desc',array($content_id));
 }
 elseif (sizeof($segments)==4 && $segments[2]=='restore' && is_numeric($segments[3])) {
 	$version_id = $segments[3];
