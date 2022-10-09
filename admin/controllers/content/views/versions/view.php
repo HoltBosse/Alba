@@ -25,8 +25,16 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<p class='help' id='version_created_by'><?php echo $version->username; ?></p>
 			<div class='version_comparison_wrap'>
 				<?php $fields = json_decode($version->fields_json);?>
-				
-				<table style='width:95%; min-width:60vw; max-width:100%; table-layout:fixed;' class='table version_comp_table'>
+				<style>
+					.version_comp_table xmp {
+						overflow-wrap: anywhere;
+    					white-space: pre-wrap;
+					}
+					.version_comp_table :is(th,td) {
+						/* max-width:120ch; */
+					}
+				</style>
+				<table class='table version_comp_table'>
 					<thead>
 						<tr>
 							<th>Field</th>
