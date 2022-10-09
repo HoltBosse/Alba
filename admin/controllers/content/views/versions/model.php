@@ -54,6 +54,11 @@ elseif (sizeof($segments)==4 && $segments[2]=='restore' && is_numeric($segments[
 			// THIS WILL REPLACE ALL DATA WITH VERSION INFORMATION 
 			// OR FIELD DEFAULT IF SET
 			// IF A VERSION LACKS A NEW FIELD, THE PREVIOUSLY SAVED DATA WILL BE LOST!!!
+			// TODO: while looping through form fields, check if field name exists in
+			// version json - if it does, delete just this content field - not everything 
+			// this will preserve existing/current fields that may have been
+			// missing at the time the versioned data was saved
+			// Discuss: only show/allow versions where custom fields match completely?
 
 			// delete existing content fields
 			DB::exec("delete from content_fields where content_id=?", $content_id);
