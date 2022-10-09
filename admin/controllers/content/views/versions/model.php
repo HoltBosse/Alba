@@ -42,17 +42,44 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$versions = DB::fetchAll('select v.*, u.username from content_versions v, users u where content_id=? and u.id=v.created_by order by created desc',array($content_id));
 }
 elseif (sizeof($segments)==4 && $segments[2]=='restore' && is_numeric($segments[3])) {
-	$content_id = $segments[3];
-	
-	$content = new content();
-	$content->load($content_id);
-	$new_content = false;
+	$version_id = $segments[3];
+	$content_id = DB::fetch('select content_id from content_versions where id=?',[$version_id])->content_id ?? false;
+	if ($content_id) {
+		$content_location = DB::fetch('select ct.controller_location from content_types ct, content c where c.id=? and c.content_type = ct.id', $content_id)->controller_location ?? "";
+		if ($content_location) {
+			$content_form = new Form (CMSPATH . '/controllers/' . $content_location . "/custom_fields.json");
+			$version_json = DB::fetch('select fields_json from content_versions where id=?', $version_id)->fields_json;
+			$content_form->deserialize_json($version_json);
 
-	$cur_content_fields = DB::fetchAll('select * from content_fields where content_id=?',array($content_id));
-	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?',array($content_id))->c;
-	$versions = DB::fetchAll('select v.*, u.username from content_versions v, users u where content_id=? and u.id=v.created_by order by created desc',array($content_id));
+			// THIS WILL REPLACE ALL DATA WITH VERSION INFORMATION 
+			// OR FIELD DEFAULT IF SET
+			// IF A VERSION LACKS A NEW FIELD, THE PREVIOUSLY SAVED DATA WILL BE LOST!!!
 
-	CMS::Instance()->queue_message('Restore not implemented as yet :)','warning',Config::$uripath.'/admin/content/all');
+			// delete existing content fields
+			DB::exec("delete from content_fields where content_id=?", $content_id);
+			// replace with old version data
+			foreach ($content_form->fields as $field) {
+				// insert field info
+				if (isset($field->save)) {
+					if ($field->save===false) {
+						continue;
+					}
+				}
+				if ($field->filter=="ARRAYOFINT") {
+					if (is_array($field->default)) {
+						$field->default = implode(",",$field->default);
+					}
+				}
+				$result = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$content_id, $field->name, $field->type, $field->default]);
+				if (!$result) {
+					CMS::Instance()->log("Error saving: " . $field->name);
+					CMS::Instance()->queue_message('Error restoring data','warning',Config::$uripath.'/admin/content/all');
+				}
+			}
+			CMS::Instance()->queue_message('Version restored','success', Config::$uripath.'/admin/content/all');
+		}
+	}
+	CMS::Instance()->queue_message('Error restoring data','warning',Config::$uripath.'/admin/content/all');
 }
 else {
 	CMS::Instance()->queue_message('Unknown content version operation','danger',Config::$uripath.'/admin/content/all');

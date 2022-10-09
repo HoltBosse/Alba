@@ -14,7 +14,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php //CMS::pprint_r ($content_form);  ?>
 
 <hr>
-<p>TODO: nice preview version of current content - will require loading form json etc. previews below work by virtue of label being stored in versions db</p>
+<p>A nicer preview will be coming soon!</p>
+<!--TODO: nice preview version of current content - will require loading form json etc. previews below work by virtue of label being stored in versions db-->
 <hr>
 
 <section id='version_comparisons'>
