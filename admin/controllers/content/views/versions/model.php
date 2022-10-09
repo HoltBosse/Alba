@@ -15,6 +15,15 @@ function preview_field($field, $cur_field) {
 	<?php
 }
 
+function name_exists_in_serialied_obj ($fields, $name) {
+	foreach ($fields as $field) {
+		if ($field->name==$name) {
+			return $field;
+		}
+	}
+	return false;
+}
+
 function get_field_by_name ($fields, $name) {
 	foreach ($fields as $field) {
 		if ($field->name==$name) {
@@ -44,25 +53,17 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 elseif (sizeof($segments)==4 && $segments[2]=='restore' && is_numeric($segments[3])) {
 	$version_id = $segments[3];
 	$content_id = DB::fetch('select content_id from content_versions where id=?',[$version_id])->content_id ?? false;
-	if ($content_id) {
+	$content_type = DB::fetch('select content_type from content where id=?', $content_id)->content_type ?? false;
+	if ($content_id && $content_type) {
 		$content_location = DB::fetch('select ct.controller_location from content_types ct, content c where c.id=? and c.content_type = ct.id', $content_id)->controller_location ?? "";
 		if ($content_location) {
 			$content_form = new Form (CMSPATH . '/controllers/' . $content_location . "/custom_fields.json");
 			$version_json = DB::fetch('select fields_json from content_versions where id=?', $version_id)->fields_json;
+			$version_fields_obj = json_decode($version_json);
 			$content_form->deserialize_json($version_json);
 
-			// THIS WILL REPLACE ALL DATA WITH VERSION INFORMATION 
-			// OR FIELD DEFAULT IF SET
-			// IF A VERSION LACKS A NEW FIELD, THE PREVIOUSLY SAVED DATA WILL BE LOST!!!
-			// TODO: while looping through form fields, check if field name exists in
-			// version json - if it does, delete just this content field - not everything 
-			// this will preserve existing/current fields that may have been
-			// missing at the time the versioned data was saved
-			// Discuss: only show/allow versions where custom fields match completely?
-
-			// delete existing content fields
-			DB::exec("delete from content_fields where content_id=?", $content_id);
 			// replace with old version data
+			// loop over every current custom form field
 			foreach ($content_form->fields as $field) {
 				// insert field info
 				if (isset($field->save)) {
@@ -75,16 +76,24 @@ elseif (sizeof($segments)==4 && $segments[2]=='restore' && is_numeric($segments[
 						$field->default = implode(",",$field->default);
 					}
 				}
-				$result = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$content_id, $field->name, $field->type, $field->default]);
-				if (!$result) {
-					CMS::Instance()->log("Error saving: " . $field->name);
-					CMS::Instance()->queue_message('Error restoring data','warning',Config::$uripath.'/admin/content/all');
+				// check version has field data before deleting/inserting 
+				// this will preserve any new data added to content since
+				// new fields have been added
+				if (name_exists_in_serialied_obj($version_fields_obj, $field->name)) {
+					// field exists in version - delete this field for current live content
+					DB::exec("delete from content_fields where content_id=? and name=?", [$content_id, $field->name]);
+					// insert version information from form created from saved version data
+					$result = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$content_id, $field->name, $field->type, $field->default]);
+					if (!$result) {
+						CMS::Instance()->log("Error saving version field: " . $field->name);
+						CMS::Instance()->queue_message('Error restoring data','warning',Config::$uripath.'/admin/content/all/' . $content_type);
+					}
 				}
 			}
-			CMS::Instance()->queue_message('Version restored','success', Config::$uripath.'/admin/content/all');
+			CMS::Instance()->queue_message('Version restored','success', Config::$uripath.'/admin/content/all/' . $content_type);
 		}
 	}
-	CMS::Instance()->queue_message('Error restoring data','warning',Config::$uripath.'/admin/content/all');
+	CMS::Instance()->queue_message('Error restoring data','warning',Config::$uripath.'/admin/content/all/' . $content_type);
 }
 else {
 	CMS::Instance()->queue_message('Unknown content version operation','danger',Config::$uripath.'/admin/content/all');
