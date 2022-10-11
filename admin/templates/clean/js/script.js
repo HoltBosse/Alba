@@ -114,10 +114,14 @@ let alltabs = document.querySelectorAll('.tabs');
 alltabs.forEach(tabs => {
 	let closest_wrap = tabs.closest('.tabs-wrap');
 	let content_wrap = closest_wrap.querySelector('.tab-content-start');
-	// set first tab active
-	tabs.querySelector('li').classList.add('is-active');
-	// set first content active
-	content_wrap.querySelector('.tab-content').classList.add('is-active');
+	// set first tab active - check to make sure no existing active items from invalid checks
+	if(!tabs.querySelector(".is-active")) {
+		tabs.querySelector('li').classList.add('is-active');
+	}
+	// set first content active - check to make sure no existing active items from invalid checks
+	if(!content_wrap.querySelector('.is-active')) {
+		content_wrap.querySelector('.tab-content').classList.add('is-active');
+	}
 	
 	// click event handler for tab headings
 	tabs.querySelectorAll('li').forEach(tab => {
