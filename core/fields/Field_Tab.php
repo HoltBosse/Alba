@@ -27,7 +27,35 @@ class Field_Tab extends Field {
 				<div  class='tab-content-start'>
 			<?php elseif ($this->mode=="tabscontentend"):?>
 				</div> <!-- end tabs -->
+				<div class="<?php $tabidentiferpoint="tabidentiferpoint_" . uniqid(); echo $tabidentiferpoint; ?>"></div>
 				</div> <!-- end tabs-wrap -->
+				<script>
+					//handle page load
+					let tabidentiferpoint = document.querySelector(".<?php echo $tabidentiferpoint; ?>").previousElementSibling;
+					let tabheader = tabidentiferpoint.previousElementSibling;
+					let invalidelement = tabidentiferpoint.querySelector(':invalid');
+					if(invalidelement) {
+						//set tab content to active
+						invalidelement.closest(".tab-content").classList.add("is-active");
+						//set tab header to active
+						let index = Array.prototype.indexOf.call(tabidentiferpoint.querySelectorAll(".tab-content"), invalidelement.closest(".tab-content"));
+						tabheader.querySelectorAll("li")[index].classList.add("is-active");
+					}
+
+					//handle users invalid fields they set
+					tabidentiferpoint.addEventListener("invalid", (e)=>{
+						if(!e.target.closest(".tab-content").classList.contains("is-active")) { //we only care about non visible invalids
+							//handle tab
+							tabidentiferpoint.querySelector(".is-active").classList.remove("is-active");
+							e.target.closest(".tab-content").classList.add("is-active");
+
+							//handle header
+							tabheader.querySelector(".is-active").classList.remove("is-active");
+							let index = Array.prototype.indexOf.call(tabidentiferpoint.querySelectorAll(".tab-content"), e.target.closest(".tab-content"));
+							tabheader.querySelectorAll("li")[index].classList.add("is-active");
+						}
+					}, true);
+				</script>
 			<?php elseif ($this->mode=="tabstart"):?>
 				<div  class='<?php echo $this->tabsid;?>-tab-content tab-content'>
 			<?php elseif ($this->mode=="tabend"):?>
