@@ -16,11 +16,43 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	</div>
 </h1>
 
+
+<section>
+
+	<form id="searchform" method="GET">
+		<div id="content_search_controls" class="flex">
+			<div class="field">
+				<label class="label">Search Title/Alt/Filename</label>
+				<div class="control">
+					<input value="<?=$searchtext?>" name="searchtext" form="searchform" class="input" type="text" placeholder="">
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">&nbsp;</label>
+				<div class="control">
+					<button form="searchform" type="submit" class="button is-info">
+						Search
+					</button>
+				</div>
+			</div>
+			<div class="field">
+				<label class="label">&nbsp;</label>
+				<div class="control">
+					<button form="searchform" type="button" value="" onclick="window.location = window.location.href.split(&quot;?&quot;)[0]; return false;" class="button is-default">
+						Clear
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+</section>
+
 <?php else :?>
 	<script>window.close_when_done = true;</script>
 	<style>nav {display:none !important;}</style>
 	<h1 class='title sticky'>Upload</h1>
 <?php endif; ?>
+
 
 <p class='help'>Max upload total size: <?php echo $max_upload_size; ?> (<?php echo $max_upload_size_bytes; ?> bytes)</p>
 <script>
