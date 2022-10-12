@@ -6,6 +6,7 @@ foreach(File::$image_types as $type => $value) {
     array_push($valid_image_types, "'$type'");
 }
 
+
 $searchtext = Input::getvar('searchtext','TEXT',null);
 
 $query = "select * from media where mimetype in (" . implode(",", $valid_image_types) . ") ";
@@ -16,6 +17,7 @@ if ($searchtext) {
 else {
     $all_images = DB::fetchall($query);
 }
+
 
 $image_tags = Content::get_applicable_tags ("-1");
 
