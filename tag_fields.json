@@ -1,0 +1,12 @@
+{
+	"id":"testform",
+	"fields":[
+		{
+			"type":"Text",
+			"name":"test",
+            "id":"test",
+            "required":true,
+            "label":"Test Field"
+		}
+	]
+}

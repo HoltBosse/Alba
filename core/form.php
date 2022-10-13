@@ -125,12 +125,13 @@ class Form {
 	public function deserialize_json($json) {
 		$json_obj = json_decode($json);
 		if ($json_obj) {
-			foreach ($json_obj as $key => $value) {
+			foreach ($json_obj as $pair) {
+				$key = key((array)$pair);
+				$val = $pair->{$key};
 				if ($key!=='error!!!') {
-					//$field = $this->get_field_by_name($option->name); 
-					$field = $this->fields->{$key};
+					$field = $this->fields[$key];
 					if (is_object($field)) {
-						$field->default = $json_obj[$key];
+						$field->default = $pair->{$key};
 					}
 				}
 				else {
