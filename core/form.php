@@ -130,12 +130,28 @@ class Form {
 				$val = $pair->{$key};
 				if ($key!=='error!!!') {
 					$field = $this->fields[$key];
-					if (is_object($field)) {
+					//CMS::pprint_r ($field);
+					if (is_object($val)) {
 						$field->default = $pair->{$key};
 					}
-					elseif (is_array($field)) {
+					elseif (is_array($val)) {
 						// repeatable
-						$field->default = $pair->{$key}; // for now
+						$field->default = [];
+						//CMS::pprint_r ($field);
+						//CMS::pprint_r ($val);
+						foreach ($val as $rep_val) {
+							$rep_form = $repeatable_form = new Form(CMSPATH . $field->form_path, true); // boolean true = repeatable form
+							$rep_form_id = key((array)$rep_val);
+							foreach ($rep_val->{$rep_form_id} as $pair_arr) {
+								$rep_field_key = key((array)$pair_arr);
+								$rep_field_val = $pair->{$rep_field_key};
+								$rep_entry = new stdClass();
+								if ($rep_field_key!=='error!!!') {
+									$rep_entry->{$rep_field_key} = $rep_field_val;
+									$field->default[] = $rep_entry;
+								}
+							}
+						}
 					}
 				}
 				else {
@@ -143,8 +159,8 @@ class Form {
 					continue;
 				}
 			}
-			CMS::pprint_r ($this);
 		}
+		CMS::pprint_r ($this);
 	}
 
 	public function display_front_end($repeatable_template=false) {
