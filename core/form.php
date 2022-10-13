@@ -91,28 +91,31 @@ class Form {
 		$name_value_pairs = array();
 		foreach ($this->fields as $field) {
 			$pair = new stdClass();
-			$pair->name = $field->name;
+			
 			if ($field->type=="Repeatable") {
 				// loop through each repeatable form and each field inside each form
 				// creating tuples for each
 				$sub_form_value_array=[];
 				foreach ($field->forms as $sub_form) {
 					$sub_pair = new stdClass();
-					$sub_pair->name = $sub_form->id;
+					//$sub_pair->name = $sub_form->id;
 					$sub_values = [];
 					foreach ($sub_form->fields as $sub_form_field) {
 						$sub_field_pair = new stdClass();
-						$sub_field_pair->name = $sub_form_field->name;
-						$sub_field_pair->value = $sub_form_field->default;
+						//$sub_field_pair->name = $sub_form_field->name;
+						$sub_field_pair->{$sub_form_field->name} = $sub_form_field->default;
 						$sub_values[] = $sub_field_pair;
 					}
-					$sub_pair->value = $sub_values;
+					//$sub_pair->value = $sub_values;
+					$sub_pair->{$sub_form->id} = $sub_values;
 					$sub_form_value_array[] = $sub_pair;
 				}
-				$pair->value = $sub_form_value_array;
+				//$pair->value = $sub_form_value_array;
+				$pair->{$field->name} = $sub_form_value_array;
 			}
 			else {
-				$pair->value = $field->default;
+				//$pair->value = $field->default;
+				$pair->{$field->name} = $field->default;
 			}
 			$name_value_pairs[] = $pair;
 		}
@@ -122,11 +125,12 @@ class Form {
 	public function deserialize_json($json) {
 		$json_obj = json_decode($json);
 		if ($json_obj) {
-			foreach ($json_obj as $option) {
-				if ($option->name!=='error!!!') {
-					$field = $this->get_field_by_name($option->name); 
+			foreach ($json_obj as $key => $value) {
+				if ($key!=='error!!!') {
+					//$field = $this->get_field_by_name($option->name); 
+					$field = $this->fields->{$key};
 					if (is_object($field)) {
-						$field->default = $option->value;
+						$field->default = $json_obj[$key];
 					}
 				}
 				else {
