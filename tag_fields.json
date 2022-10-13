@@ -1,12 +1,24 @@
 {
-	"id":"testform",
+	"title":"HB Page Intro",
+	"location":"hbpageintro",
+	"id":"widget_html_options",
 	"fields":[
 		{
-			"type":"Text",
-			"name":"test",
-            "id":"test",
-            "required":true,
-            "label":"Test Field"
+			"name":"introtext",
+			"id":"introtext",
+			"type":"Rich",
+			"label":"Introtext",
+			"required":true,
+			"minlength":3,
+			"filter":"RAW"
+		},
+		{
+			"name":"crazyh2",
+			"id":"crazyh2",
+			"type":"Repeatable",
+			"label":"H2 Designer",
+			"required":true,
+			"form_path":"/testrepeatform.json"
 		}
 	]
 }

@@ -133,12 +133,17 @@ class Form {
 					if (is_object($field)) {
 						$field->default = $pair->{$key};
 					}
+					elseif (is_array($field)) {
+						// repeatable
+						$field->default = $pair->{$key}; // for now
+					}
 				}
 				else {
 					// keep going - other fields exist maybe :)
 					continue;
 				}
 			}
+			CMS::pprint_r ($this);
 		}
 	}
 
