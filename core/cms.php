@@ -1,10 +1,47 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+if(file_exists(CMSPATH . "/config.php")) {
+	// load config
+	require_once (CMSPATH . "/config.php");
+} else {
+	//config from env vars
+	class Config {
+		static $dbhost;
+		static $dbname;
+		static $dbuser;
+		static $dbpass;
+		static $dbchar;
+		static $uripath;
+		static $sitename;
+		static $template;
+		static $frontendlogin;
+		static $domain;
+		static $debug;
+		static $env_custom1;
+		static $env_custom2;
+		static $env_custom3;
 
+		public static function init() {
+			self::$dbhost = getenv("alba_dbhost");
+			self::$dbname = getenv("alba_dbname");
+			self::$dbuser = getenv("alba_dbuser");
+			self::$dbpass = getenv("alba_dbpass");
+			self::$dbchar = getenv("alba_dbchar");
+			self::$uripath = getenv("alba_uripath");
+			self::$sitename = getenv("alba_sitename");
+			self::$template = getenv("alba_template");
+			self::$frontendlogin = getenv("alba_frontendlogin");
+			self::$domain = getenv("alba_domain");
+			self::$debug = getenv("alba_debug");
+			self::$env_custom1 = getenv("alba_custom1");
+			self::$env_custom2 = getenv("alba_custom2");
+			self::$env_custom3 = getenv("alba_custom3");
+		}
+	}
 
-// load config
-require_once (CMSPATH . "/config.php");
+	Config::init();
+}
 require_once (CMSPATH . "/admin/admin_config.php");
 
 if (Config::$debug) {
@@ -12,9 +49,6 @@ if (Config::$debug) {
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
 }
-
-
-
 
 final class CMS {
 	public $domain;
