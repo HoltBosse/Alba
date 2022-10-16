@@ -93,28 +93,12 @@ class Form {
 			$pair = new stdClass();
 			
 			if ($field->type=="Repeatable") {
-				// loop through each repeatable form and each field inside each form
-				// creating tuples for each
-				$sub_form_value_array=[];
-				foreach ($field->forms as $sub_form) {
-					$sub_pair = new stdClass();
-					//$sub_pair->name = $sub_form->id;
-					$sub_values = [];
-					foreach ($sub_form->fields as $sub_form_field) {
-						$sub_field_pair = new stdClass();
-						//$sub_field_pair->name = $sub_form_field->name;
-						$sub_field_pair->{$sub_form_field->name} = $sub_form_field->default;
-						$sub_values[] = $sub_field_pair;
-					}
-					//$sub_pair->value = $sub_values;
-					$sub_pair->{$sub_form->id} = $sub_values;
-					$sub_form_value_array[] = $sub_pair;
-				}
-				//$pair->value = $sub_form_value_array;
+				// encode repeatable field as raw json
+				CMS::pprint_r ($field); exit();
+				$sub_form_value_array = json_encode($field->default);
 				$pair->{$field->name} = $sub_form_value_array;
 			}
 			else {
-				//$pair->value = $field->default;
 				$pair->{$field->name} = $field->default;
 			}
 			$name_value_pairs[] = $pair;
@@ -131,27 +115,12 @@ class Form {
 				if ($key!=='error!!!') {
 					$field = $this->fields[$key];
 					//CMS::pprint_r ($field);
-					if (is_object($val)) {
+					if (!is_array($val)) {
 						$field->default = $pair->{$key};
 					}
-					elseif (is_array($val)) {
+					else  {
 						// repeatable
-						$field->default = [];
-						//CMS::pprint_r ($field);
-						//CMS::pprint_r ($val);
-						foreach ($val as $rep_val) {
-							$rep_form = $repeatable_form = new Form(CMSPATH . $field->form_path, true); // boolean true = repeatable form
-							$rep_form_id = key((array)$rep_val);
-							foreach ($rep_val->{$rep_form_id} as $pair_arr) {
-								$rep_field_key = key((array)$pair_arr);
-								$rep_field_val = $pair->{$rep_field_key};
-								$rep_entry = new stdClass();
-								if ($rep_field_key!=='error!!!') {
-									$rep_entry->{$rep_field_key} = $rep_field_val;
-									$field->default[] = $rep_entry;
-								}
-							}
-						}
+						$field->default - json_decode($pair->{$key});
 					}
 				}
 				else {
