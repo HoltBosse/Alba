@@ -88,20 +88,29 @@ class Form {
 	}
 
 	public function serialize_json() {
-		$name_value_pairs = array();
+		//$name_value_pairs = array();
+		$name_value_pairs = new stdClass();
 		foreach ($this->fields as $field) {
 			$pair = new stdClass();
-			
 			if ($field->type=="Repeatable") {
 				// encode repeatable field as raw json
-				CMS::pprint_r ($field); exit();
-				$sub_form_value_array = json_encode($field->default);
-				$pair->{$field->name} = $sub_form_value_array;
+				// loop over rep forms and create key value list for each
+				$pair->{$field->name} = [];
+				$rep_name_value_pairs = array();
+				$rep_fields_arr = json_decode($field->default);
+				foreach ($rep_fields_arr as $rep) {
+					$this_field_obj = new stdClass();
+					foreach ($rep->fields as $rep_field) {
+						$key = $rep_field->name;
+						$this_field_obj->{$key} = $rep_field->default;
+					}
+					$rep_name_value_pairs[] = $this_field_obj;
+				}
+				$name_value_pairs->{$field->name} = $rep_name_value_pairs;
 			}
 			else {
-				$pair->{$field->name} = $field->default;
+				$name_value_pairs->{$field->name} = $field->default;
 			}
-			$name_value_pairs[] = $pair;
 		}
 		return json_encode ($name_value_pairs);
 	}
@@ -109,18 +118,28 @@ class Form {
 	public function deserialize_json($json) {
 		$json_obj = json_decode($json);
 		if ($json_obj) {
-			foreach ($json_obj as $pair) {
-				$key = key((array)$pair);
-				$val = $pair->{$key};
+			foreach ($json_obj as $key=>$val) {
 				if ($key!=='error!!!') {
 					$field = $this->fields[$key];
-					//CMS::pprint_r ($field);
 					if (!is_array($val)) {
-						$field->default = $pair->{$key};
+						$field->default = $json_obj->{$key};
 					}
 					else  {
 						// repeatable
-						$field->default - json_decode($pair->{$key});
+						$rep_forms = [];
+						foreach ($val as $rep) {
+							$rep_form = $repeatable_form = new Form(CMSPATH . $field->form_path, true); // boolean true = repeatable form
+							foreach ($rep as $repkey=>$repval) {
+								$rep_field = $rep_form->get_field_by_name($repkey);
+								if ($rep_field) {
+									$rep_field->default = $repval;
+								}
+							}
+							$rep_form->form_path = $field->form_path;
+							$rep_forms[] = $rep_form;
+						}
+						$field->forms = $rep_forms; // not used for display, but useful to have OG forms available
+						$field->default = json_encode($field->forms); // set to value repeatable understands
 					}
 				}
 				else {
@@ -129,7 +148,6 @@ class Form {
 				}
 			}
 		}
-		CMS::pprint_r ($this);
 	}
 
 	public function display_front_end($repeatable_template=false) {
