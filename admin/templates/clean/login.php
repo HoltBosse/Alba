@@ -89,14 +89,11 @@ if ($protocol=="http") {
 	<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/bulma.min.css"></link>
 <link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/dashboard.css"></link>
 <link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/layout.css"></link>
+<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/darkmode.css"></link>
 
 <script src="https://kit.fontawesome.com/e73dd5d55b.js" crossorigin="anonymous"></script>
 
 		<style>
-		body {
-			background:#fff;
-			color:#333;
-		}
 		#login.container {
 			height:100vh;
 			display:flex;
