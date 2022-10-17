@@ -121,6 +121,9 @@ class Form {
 			foreach ($json_obj as $key=>$val) {
 				if ($key!=='error!!!') {
 					$field = $this->fields[$key];
+					if (!$field) {
+						continue;
+					}
 					if (!is_array($val)) {
 						$field->default = $json_obj->{$key};
 					}
