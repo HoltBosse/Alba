@@ -1,8 +1,4 @@
 @media (prefers-color-scheme: dark) {
-    /* general */
-    :root {
-        color-scheme: dark;
-    }
 
     /* scrollbar */
     ::-webkit-scrollbar { width: 0.5rem;}
