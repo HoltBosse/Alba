@@ -251,7 +251,11 @@ table.dragging .before_after_wrap {
 		</div>
 	</div>
 
-	
+	<?php $custom_content_search_markup = Hook::execute_hook_filters('render_custom_content_search_filters'); ?>
+	<?php if ($custom_content_search_markup):?>
+		<div id='custom_content_search_controls' class='flex'>	
+		<?php echo $custom_content_search_markup; ?>
+	<?php endif; ?>
 	
 
 
