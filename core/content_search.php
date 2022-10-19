@@ -128,6 +128,9 @@ class Content_Search {
 			}
 		}
 		$count_select = " count(*) as c ";
+
+		$select = Hook::execute_hook_filters('custom_content_search_select', $select); 
+
 		$from = " from ( content c ";
 
 		// if custom field exists as filter - needs to be added in from/where not as left join
@@ -141,6 +144,8 @@ class Content_Search {
 		}
 
 		$from .= " ) left join categories cat on c.category=cat.id ";
+
+		$from = Hook::execute_hook_filters('custom_content_search_from', $from); 
 
 		// left join custom field fields
 		// ONLY where not in filters
@@ -214,8 +219,12 @@ class Content_Search {
 			$where .= " AND created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
 		}
 
+		$where = Hook::execute_hook_filters('custom_content_search_where', $where); 
+
 		$count_query = $query . $count_select . $from . $where;
 		$query = $query . $select . $from . $where;
+
+		
 		
 
 		if ($this->order_by) {

@@ -226,11 +226,14 @@ table.dragging .before_after_wrap {
 				</div>
 			</div>
 		</div>
+
 		<script>
 		new SlimSelect({
 			select:'#content_search_tags'
 		});
 		</script>
+
+		<?php Hook::execute_hook_actions('render_custom_content_search_filters'); ?>
 		
 		<div class='field'>
 			<label class="label">&nbsp;</label>
@@ -249,13 +252,12 @@ table.dragging .before_after_wrap {
 				</button>
 			</div>
 		</div>
+
+		
 	</div>
 
-	<?php $custom_content_search_markup = Hook::execute_hook_filters('render_custom_content_search_filters'); ?>
-	<?php if ($custom_content_search_markup):?>
-		<div id='custom_content_search_controls' class='flex'>	
-		<?php echo $custom_content_search_markup; ?>
-	<?php endif; ?>
+
+	
 	
 
 
