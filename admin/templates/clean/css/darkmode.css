@@ -2,20 +2,20 @@
 
     /* scrollbar */
     ::-webkit-scrollbar { width: 0.5rem;}
-    ::-webkit-scrollbar-button { background-color: #555; height: 0.5rem; }
-    ::-webkit-scrollbar-track {  background-color: #555;}
-    ::-webkit-scrollbar-track-piece { background-color: #333;}
-    ::-webkit-scrollbar-thumb { height: 50px; background-color: #555; border-radius: 3px;}
-    ::-webkit-scrollbar-corner { background-color: #555;}
-    ::-webkit-resizer { background-color: #666;}
+    ::-webkit-scrollbar-button { background-color: rgb(255 255 255 / 15%); height: 0.5rem; }
+    ::-webkit-scrollbar-track {  background-color: rgb(255 255 255 / 15%);}
+    ::-webkit-scrollbar-track-piece { background-color: rgb(255 255 255 / 5%);}
+    ::-webkit-scrollbar-thumb { height: 50px; background-color: rgb(255 255 255 / 15%); border-radius: 3px;}
+    ::-webkit-scrollbar-corner { background-color: rgb(255 255 255 / 15%);}
+    ::-webkit-resizer { background-color: rgb(255 255 255 / 20%);}
 
     /* core color */
-    body,html{background:#222; color:#aaa;}
+    body,html{background:#121212; color:#aaa;}
 
     /* sepcific overrides */
-    pre{background:#444; color:white;}
+    pre{background:rgb(255 255 255 / 10%); color:white;}
     .container {
-        background-color: #111;
+        background-color: rgb(255 255 255 / 5%);
         color: #aaa;
         padding: 1rem;
         border-radius: 1rem;
@@ -38,23 +38,27 @@
     .title, strong {
         color: white;
     }
-    .navbar-item:hover, .navbar-item.has-dropdown:hover .navbar-link, a.navbar-item:hover, .navbar-dropdown, .input, .select select, .table, .modal-card-body {
-        background-color: #222;
+    .table {
+        background-color: rgb(255 255 255 / 0%);
+        color: #aaa;
+    }
+    .navbar-item:hover, .navbar-item.has-dropdown:hover .navbar-link, a.navbar-item:hover, .navbar-dropdown, .input, .select select, /* .table, */ .modal-card-body {
+        background-color: #121212;
         color: white
     }
     .navbar-link, .navbar-item, .label, .tabs.is-toggle a, label, .table thead th {
         color: #aaa;
     }
     .navbar-dropdown a.navbar-item:hover, .dropdown-divider, .modal-card-head, .modal-card-foot, .modal-card-title {
-        background-color: #333;
+        background-color: rgb(255 255 255 / 5%);
         color: white;
     }
     .button, .button.is-light {
-        background-color: #333;
+        background-color: rgb(255 255 255 / 5%);
         color: #aaa;
     }
     .button:hover, .button.is-light:hover, .tabs.is-toggle a:hover {
-        background-color: #444;
+        background-color: rgb(255 255 255 / 10%);
         color: white;
     }
     .navbar-end .navbar-item:hover, .tag:not(body), .fixed-control-bar, .tag:not(body).is-info.is-light, h1.title.sticky {
@@ -64,10 +68,10 @@
 
     /* buttons */
     .button.is-primary {
-        background-color: #009688;
+        background-color: #018786;
     }
     .button.is-primary:hover {
-        background-color: #26A69A;
+        background-color: #01878699;
     }
     .button.is-warning {
         background-color: #FFEB3B;
@@ -76,30 +80,30 @@
         background-color: #FFEE58;
     }
     .button.is-info {
-        background-color: #0288D1;
+        background-color: #6200EE;
     }
     .button.is-info:hover {
-        background-color: #039BE5;
+        background-color: #6200EE99;
     }
     .button.is-danger {
-        background-color: #D32F2F;
+        background-color: #b00020;
     }
     .button.is-danger:hover {
-        background-color: #E53935;
+        background-color: #b0002099;
     }
     .button.is-primary.is-outlined {
-        border-color: #009688;
+        border-color: #018786;
     }
     .button.is-primary.is-outlined:hover {
-        background-color: #009688;
+        background-color: #018786;
     }
 
     /* random bulma */
     .notification.is-success {
-        background-color: #009688;
+        background-color: #018786;
     }
     .message.is-success .message-header {
-        background-color: #009688;
+        background-color: #018786;
     }
     .navbar-link:not(.is-arrowless)::after {
         border-color: #aaa;
@@ -107,11 +111,11 @@
 
     /* slim select */
     .ss-main .ss-multi-selected, .ss-main .ss-single-selected {
-        background-color: #222 !important;
+        background-color: #121212 !important;
         color: white;
     }
     .ss-content {
-        background-color: #222 !important;
+        background-color: #121212 !important;
         color: white !important;
     }
     .ss-search input {
@@ -119,10 +123,10 @@
         color: white !important;
     }
     .ss-content .ss-list .ss-option.ss-disabled {
-        background-color: #555 !important;
+        background-color: rgb(255 255 255 / 15%) !important;
         color: black !important;
     }
     .ss-main .ss-multi-selected .ss-values .ss-value {
-        background-color: #0288D1 !important;
+        background-color: #6200EE !important;
     }
 }
