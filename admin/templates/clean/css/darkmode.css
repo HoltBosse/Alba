@@ -69,6 +69,14 @@
         background-color: transparent;
     }
 
+    /* anchors */
+    a {
+        color: #6200EE;
+    }
+    a:hover {
+        color: #6200EE99;
+    }
+
     /* buttons */
     .button.is-primary {
         background-color: #018786;
