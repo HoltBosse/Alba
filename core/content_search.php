@@ -131,7 +131,7 @@ class Content_Search {
 		}
 		$count_select = " count(*) as c ";
 
-		$select = Hook::execute_hook_filters('custom_content_search_select', $select); 
+		$select = Hook::execute_hook_filters('custom_content_search_select', $select, $this->type_filter); 
 
 		$from = " from ( content c ";
 
@@ -147,7 +147,7 @@ class Content_Search {
 
 		$from .= " ) left join categories cat on c.category=cat.id ";
 
-		$from = Hook::execute_hook_filters('custom_content_search_from', $from); 
+		$from = Hook::execute_hook_filters('custom_content_search_from', $from, $this->type_filter); 
 
 		// left join custom field fields
 		// ONLY where not in filters
@@ -221,9 +221,9 @@ class Content_Search {
 			$where .= " AND created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
 		}
 
-		$where = Hook::execute_hook_filters('custom_content_search_where', $where); 
+		$where = Hook::execute_hook_filters('custom_content_search_where', $where, $this->type_filter); 
 		
-		$this->custom_search_params = Hook::execute_hook_filters('custom_content_search_params', $this->custom_search_params); 
+		$this->custom_search_params = Hook::execute_hook_filters('custom_content_search_params', $this->custom_search_params, $this->type_filter); 
 
 		$count_query = $query . $count_select . $from . $where;
 		$query = $query . $select . $from . $where;

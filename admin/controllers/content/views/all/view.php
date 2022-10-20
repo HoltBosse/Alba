@@ -233,7 +233,7 @@ table.dragging .before_after_wrap {
 		});
 		</script>
 
-		<?php Hook::execute_hook_actions('render_custom_content_search_filters'); ?>
+		<?php Hook::execute_hook_actions('render_custom_content_search_filters', $content_type_filter); ?>
 		
 		<div class='field'>
 			<label class="label">&nbsp;</label>
