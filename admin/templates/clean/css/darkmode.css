@@ -65,6 +65,9 @@
         background-color: #111;
         color: #aaa;
     }
+    .navbar-end .navbar-item:hover {
+        background-color: transparent;
+    }
 
     /* buttons */
     .button.is-primary {
