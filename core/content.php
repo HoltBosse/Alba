@@ -376,12 +376,13 @@ class Content {
 
 	public static function get_config_value ($config, $key) {
 		// $config is array of {name:"",value:""} pairs
-		foreach ($config as $config_pair) {
+		/* foreach ($config as $config_pair) {
 			if ($config_pair->name==$key) {
 				return $config_pair->value;
 			}
 		}
-		return null;
+		return null; */
+		return $config->{$key} ?? null;
 	}
 
 	public static function get_applicable_tags ($content_type_id) {

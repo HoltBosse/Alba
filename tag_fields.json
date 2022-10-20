@@ -1,0 +1,24 @@
+{
+	"title":"HB Page Intro",
+	"location":"hbpageintro",
+	"id":"widget_html_options",
+	"fields":[
+		{
+			"name":"introtext",
+			"id":"introtext",
+			"type":"Rich",
+			"label":"Introtext",
+			"required":true,
+			"minlength":3,
+			"filter":"RAW"
+		},
+		{
+			"name":"crazyh2",
+			"id":"crazyh2",
+			"type":"Repeatable",
+			"label":"H2 Designer",
+			"required":true,
+			"form_path":"/testrepeatform.json"
+		}
+	]
+}

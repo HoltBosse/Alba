@@ -88,33 +88,29 @@ class Form {
 	}
 
 	public function serialize_json() {
-		$name_value_pairs = array();
+		//$name_value_pairs = array();
+		$name_value_pairs = new stdClass();
 		foreach ($this->fields as $field) {
 			$pair = new stdClass();
-			$pair->name = $field->name;
 			if ($field->type=="Repeatable") {
-				// loop through each repeatable form and each field inside each form
-				// creating tuples for each
-				$sub_form_value_array=[];
-				foreach ($field->forms as $sub_form) {
-					$sub_pair = new stdClass();
-					$sub_pair->name = $sub_form->id;
-					$sub_values = [];
-					foreach ($sub_form->fields as $sub_form_field) {
-						$sub_field_pair = new stdClass();
-						$sub_field_pair->name = $sub_form_field->name;
-						$sub_field_pair->value = $sub_form_field->default;
-						$sub_values[] = $sub_field_pair;
+				// encode repeatable field as raw json
+				// loop over rep forms and create key value list for each
+				$pair->{$field->name} = [];
+				$rep_name_value_pairs = array();
+				$rep_fields_arr = json_decode($field->default);
+				foreach ($rep_fields_arr as $rep) {
+					$this_field_obj = new stdClass();
+					foreach ($rep->fields as $rep_field) {
+						$key = $rep_field->name;
+						$this_field_obj->{$key} = $rep_field->default;
 					}
-					$sub_pair->value = $sub_values;
-					$sub_form_value_array[] = $sub_pair;
+					$rep_name_value_pairs[] = $this_field_obj;
 				}
-				$pair->value = $sub_form_value_array;
+				$name_value_pairs->{$field->name} = $rep_name_value_pairs;
 			}
 			else {
-				$pair->value = $field->default;
+				$name_value_pairs->{$field->name} = $field->default;
 			}
-			$name_value_pairs[] = $pair;
 		}
 		return json_encode ($name_value_pairs);
 	}
@@ -122,11 +118,31 @@ class Form {
 	public function deserialize_json($json) {
 		$json_obj = json_decode($json);
 		if ($json_obj) {
-			foreach ($json_obj as $option) {
-				if ($option->name!=='error!!!') {
-					$field = $this->get_field_by_name($option->name); 
-					if (is_object($field)) {
-						$field->default = $option->value;
+			foreach ($json_obj as $key=>$val) {
+				if ($key!=='error!!!') {
+					$field = $this->fields[$key];
+					if (!$field) {
+						continue;
+					}
+					if (!is_array($val)) {
+						$field->default = $json_obj->{$key};
+					}
+					else  {
+						// repeatable
+						$rep_forms = [];
+						foreach ($val as $rep) {
+							$rep_form = $repeatable_form = new Form(CMSPATH . $field->form_path, true); // boolean true = repeatable form
+							foreach ($rep as $repkey=>$repval) {
+								$rep_field = $rep_form->get_field_by_name($repkey);
+								if ($rep_field) {
+									$rep_field->default = $repval;
+								}
+							}
+							$rep_form->form_path = $field->form_path;
+							$rep_forms[] = $rep_form;
+						}
+						$field->forms = $rep_forms; // not used for display, but useful to have OG forms available
+						$field->default = json_encode($field->forms); // set to value repeatable understands
 					}
 				}
 				else {
