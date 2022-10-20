@@ -243,23 +243,24 @@ class Content_Search {
 		//CMS::pprint_r ($this->filter_pdo_params);
 		//CMS::pprint_r ($query); die(); 
 
-		/* CMS::pprint_r ($this->filters);
+		/* CMS::pprint_r ($this->custom_search_params);
+		CMS::pprint_r ($this->filters);
 		CMS::pprint_r ($this->list_fields);
 		if ($this->filters) {
 			CMS::pprint_r ($query); die(); 
 		}
-		CMS::pprint_r ($query); die();  */
+		CMS::pprint_r ($query); die(); */ 
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
 			$result = DB::fetchall($query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? [])); // title and note
 			// set count
-			$this->count = DB::fetch($count_query,array_merge([$like,$like],$this->filter_pdo_params ?? [], $this->custom_search_params ?? []))->c ?? 0;
+			$this->count = DB::fetch($count_query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? []))->c ?? 0;
 		}
 		else {
-			$result = DB::fetchall($query,$this->filter_pdo_params ?? []);
+			$result = DB::fetchall($query, array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []) );
 			// set count
-			$this->count = DB::fetch($count_query,$this->filter_pdo_params ?? [])->c ?? 0;
+			$this->count = DB::fetch($count_query, array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []) )->c ?? 0;
 		}
 		return $result;
 	}
