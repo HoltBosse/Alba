@@ -24,6 +24,7 @@ class Content_Search {
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $search_pdo_params;
 	private $filter_pdo_params;
+	private $custom_search_params;
 
 	public function __construct() {
 		$this->order_by = "id";
@@ -40,6 +41,7 @@ class Content_Search {
 		$this->tags=[];
 		$this->filter_pdo_params = [];
 		$this->search_pdo_params = [];
+		$this->custom_search_params = [];
 		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
@@ -220,6 +222,8 @@ class Content_Search {
 		}
 
 		$where = Hook::execute_hook_filters('custom_content_search_where', $where); 
+		
+		$this->custom_search_params = Hook::execute_hook_filters('custom_content_search_params', $this->custom_search_params); 
 
 		$count_query = $query . $count_select . $from . $where;
 		$query = $query . $select . $from . $where;
@@ -248,9 +252,9 @@ class Content_Search {
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
-			$result = DB::fetchall($query,array_merge([$like,$like],$this->filter_pdo_params ?? [])); // title and note
+			$result = DB::fetchall($query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? [])); // title and note
 			// set count
-			$this->count = DB::fetch($count_query,array_merge([$like,$like],$this->filter_pdo_params ?? []))->c ?? 0;
+			$this->count = DB::fetch($count_query,array_merge([$like,$like],$this->filter_pdo_params ?? [], $this->custom_search_params ?? []))->c ?? 0;
 		}
 		else {
 			$result = DB::fetchall($query,$this->filter_pdo_params ?? []);
