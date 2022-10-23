@@ -22,9 +22,12 @@ images/upload/*
 !images/upload/index.html
 # misc testing scripts
 testing/
-plugins/content_save_test/
-plugins/user_fields/
-plugins/custom_content_search_controls/
+# plugins
+/plugins/**
+!/core_autoyear/**
+!/core_google_login/**
+!/core_google_login_jwt/**
+!/core_widget/**
 # testing admin templates
 admin/templates/testadmintemplate/**
 # ignore custom controllers - note: add future default controllers here!
