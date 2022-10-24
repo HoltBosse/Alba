@@ -168,6 +168,7 @@ class Tag {
 				foreach ($this->contenttypes as $contenttype) {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($this->id, $contenttype));
 				}
+				Hook::execute_hook_actions('on_tag_save', $this);
 				CMS::Instance()->queue_message('Tag updated','success',Config::$uripath . '/admin/tags/show');	
 			}
 			else {
@@ -192,6 +193,8 @@ class Tag {
 				foreach ($this->contenttypes as $contenttype) {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($new_id, $contenttype));
 				}
+				$this->id = $new_id;
+				Hook::execute_hook_actions('on_tag_save', $this);
 				CMS::Instance()->queue_message('New tag saved','success',Config::$uripath . '/admin/tags/');	
 			}
 			else {

@@ -131,6 +131,7 @@ class Category {
 			CMS::Instance()->queue_message($error_text,'danger', $return_url);
 		}
 		else {
+			Hook::execute_hook_actions('on_category_save', $this);
 			CMS::Instance()->queue_message('Saved category','success', $return_url);
 		}
 	}
