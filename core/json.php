@@ -8,7 +8,7 @@ class JSON {
 				$json = file_get_contents($file);
 				$obj = json_decode($json);
 				if (!$obj) {
-					if (Config::$debug) {
+					if (Config::debug()) {
 						CMS::show_error('Error decoding JSON in file &ldquo;' . $file . '&rdquo;');
 					}
 					else {
@@ -19,14 +19,14 @@ class JSON {
 					return $obj;
 				}
 			}
-			if (Config::$debug) {
+			if (Config::debug()) {
 				CMS::show_error('Cannot read JSON file &ldquo;' . $file . '&rdquo;');
 			}
 			else {
 				CMS::show_error('JSON decode error');
 			}
 		}
-		if (Config::$debug) {
+		if (Config::debug()) {
 			CMS::show_error('Cannot find JSON file &ldquo;' . $file . '&rdquo;');
 		}
 		else {

@@ -20,7 +20,7 @@ class Form {
 			$obj = json_decode($json);
 		} else {
 			echo "<h5>File {$path} not found or invalid data passed</h5>";
-			if (Config::$debug) {
+			if (Config::debug()) {
 				echo "<p class='help'>Called from /core/form.php load_json function</p>";
 			}
 		}
@@ -59,7 +59,7 @@ class Form {
 			return $this->fields[$field_name];
 		}
 		else {
-			if (Config::$debug) {
+			if (Config::debug()) {
 				CMS::log('Unable to load form field ' . $field_name);
 			}
 		}

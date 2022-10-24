@@ -49,7 +49,7 @@ class Field_ContentPickerOrdered extends Field {
 		}
 		if (!$options_all_articles) {
 			// content type was not able to be established
-			if (Config::$debug) {
+			if (Config::debug()) {
 				echo "<h5>Error determining content type</h5>";
 				return false;
 			}

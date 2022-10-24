@@ -27,13 +27,13 @@ $db_backup_file = CMSPATH . "/temp/" . "db.sql";
 
 if ($submitted) { 
 	if (!function_exists('exec')) {
-		CMS::Instance()->queue_message('Error creating backup - exec not available','danger',Config::$uripath."/admin");
+		CMS::Instance()->queue_message('Error creating backup - exec not available','danger',Config::uripath()."/admin");
 	}
 	if (!`which mysqldump`) {
-		CMS::Instance()->queue_message('Error creating backup - mysqldump not available','danger',Config::$uripath."/admin");
+		CMS::Instance()->queue_message('Error creating backup - mysqldump not available','danger',Config::uripath()."/admin");
 	}
 	if (!class_exists('ZipArchive',false)) {
-		CMS::Instance()->queue_message('Error creating backup - native PHP ZIP not available','danger',Config::$uripath."/admin");
+		CMS::Instance()->queue_message('Error creating backup - native PHP ZIP not available','danger',Config::uripath()."/admin");
 	}
 
 	// DO BACKUP
@@ -41,14 +41,14 @@ if ($submitted) {
 	$db_backup_ok = false;
 	
 	// DB BACKUP
-	$command='mysqldump --opt -h ' .Config::$dbhost .' -u' .Config::$dbuser ." -p'" .Config::$dbpass ."' " .Config::$dbname .' > ' . $db_backup_file ;
+	$command='mysqldump --opt -h ' .Config::dbhost() .' -u' .Config::dbuser() ." -p'" .Config::dbpass() ."' " .Config::dbname() .' > ' . $db_backup_file ;
 	exec($command,$output,$db_backup_error);
 	/* CMS::pprint_r ($command);
 	CMS::pprint_r ($output);
 	CMS::pprint_r ($db_backup_ok);
 	exit(0); */
 	if ($db_backup_error) {
-		CMS::Instance()->queue_message('Error creating db backup','danger',Config::$uripath."/admin/settings/backups");
+		CMS::Instance()->queue_message('Error creating db backup','danger',Config::uripath()."/admin/settings/backups");
 	}
 
 	// create zip
@@ -96,5 +96,5 @@ if ($submitted) {
 	// delete temp db file
 	unlink($db_backup_file);
 
-	CMS::Instance()->queue_message('Backup created','success', Config::$uripath."/admin/settings/backups");
+	CMS::Instance()->queue_message('Backup created','success', Config::uripath()."/admin/settings/backups");
 }

@@ -45,11 +45,11 @@ class Field_Image extends Field {
 		else {
 			$active = '';
 		}
-		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img  src='".Config::$uripath . '/image/' . $this->default ."/thumb' id='image_selector_chosen_preview_{$this->id}'?></div>";
+		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img  src='".Config::uripath() . '/image/' . $this->default ."/thumb' id='image_selector_chosen_preview_{$this->id}'?></div>";
 		
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
-		echo "&nbsp;<a href='" . Config::$uripath . "/admin/images/show?filter=upload' target='_blank' type='button' id='trigger_image_upload_{$this->id}' class='button btn is-small is-info is-light'>Upload New Image</a>";
+		echo "&nbsp;<a href='" . Config::uripath() . "/admin/images/show?filter=upload' target='_blank' type='button' id='trigger_image_upload_{$this->id}' class='button btn is-small is-info is-light'>Upload New Image</a>";
 		echo "<button type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";	
 		
 		
@@ -126,7 +126,7 @@ class Field_Image extends Field {
 			function fetch_images(searchtext, taglist) {
 			
 				// fetch images
-				postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
+				postAjax('<?php echo Config::uripath();?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
 					var image_list = JSON.parse(data);
 					var image_list_markup = "<ul class='media_selector_list single'>";
 					if (image_list.images.length==0) {
@@ -136,7 +136,7 @@ class Field_Image extends Field {
 						image_list_markup += `
 						<li>
 							<a class='media_selector_selection' data-id='${image.id}'>
-							<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::$uripath;?>/image/${image.id}/thumb'>
+							<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::uripath();?>/image/${image.id}/thumb'>
 							<span>${image.title}</span>
 							</a>
 						</li>`;
@@ -157,7 +157,7 @@ class Field_Image extends Field {
 						var selected_image = e.target.closest('.media_selector_selection');
 						if (selected_image!==null) {
 							var media_id = selected_image.dataset.id;
-							var url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
+							var url = `<?php echo Config::uripath();?>/image/${media_id}/web`;
 							var image_markup = `<img class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
 							console.log(image_markup);
 							// this is only for rich editor
@@ -167,7 +167,7 @@ class Field_Image extends Field {
 
 							// this is only for image field class
 							var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
-							preview.src = '<?php echo Config::$uripath . '/image/';?>' + media_id + '/thumb/';
+							preview.src = '<?php echo Config::uripath() . '/image/';?>' + media_id + '/thumb/';
 							preview.closest('.selected_image_wrap').classList.add('active');
 
 							hidden_input = document.getElementById('<?php echo $this->id;?>');

@@ -142,7 +142,7 @@ class Tag {
 					if ($parent_tag->parent) {
 						if ($parent_id==$this->parent) {
 							// can't be child of itself
-							CMS::Instance()->queue_message('Tag cannot be child of itself','danger',Config::$uripath . "/admin/tags");
+							CMS::Instance()->queue_message('Tag cannot be child of itself','danger',Config::uripath() . "/admin/tags");
 						}
 					}
 				}
@@ -168,7 +168,7 @@ class Tag {
 				foreach ($this->contenttypes as $contenttype) {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($this->id, $contenttype));
 				}
-				CMS::Instance()->queue_message('Tag updated','success',Config::$uripath . '/admin/tags/show');	
+				CMS::Instance()->queue_message('Tag updated','success',Config::uripath() . '/admin/tags/show');	
 			}
 			else {
 				CMS::Instance()->queue_message('Tag failed to save','danger', $_SERVER['REQUEST_URI']);	
@@ -192,7 +192,7 @@ class Tag {
 				foreach ($this->contenttypes as $contenttype) {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($new_id, $contenttype));
 				}
-				CMS::Instance()->queue_message('New tag saved','success',Config::$uripath . '/admin/tags/');	
+				CMS::Instance()->queue_message('New tag saved','success',Config::uripath() . '/admin/tags/');	
 			}
 			else {
 				CMS::Instance()->queue_message('New tag failed to save','danger', $_SERVER['REQUEST_URI']);	

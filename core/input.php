@@ -80,7 +80,7 @@ class Input {
 		}
 		elseif ($filter=="ARRAYRAW") {
 			if (!is_array($foo)) {
-				CMS::Instance()->queue_message('ARRAYRAW cannot return a non-array','danger',Config::$uripath . '/admin');
+				CMS::Instance()->queue_message('ARRAYRAW cannot return a non-array','danger',Config::uripath() . '/admin');
 				return false;
 			}
 			return $foo;
@@ -90,7 +90,7 @@ class Input {
 			$ok = true;
 			foreach ($temparr as $temp) {
 				if (!is_numeric($temp)) {
-					CMS::Instance()->queue_message('CSVINT can only contains INTS','danger',Config::$uripath . '/admin');
+					CMS::Instance()->queue_message('CSVINT can only contains INTS','danger',Config::uripath() . '/admin');
 					return false;
 				}
 			}
@@ -98,7 +98,7 @@ class Input {
 		}
 		elseif ($filter=="ARRAYTOJSON"||$filter=="ARRAY") {
 			if (!is_array($foo)) {
-				CMS::Instance()->queue_message('Cannot convert non-array to json in ARRAYTOJSON','danger',Config::$uripath . '/admin');
+				CMS::Instance()->queue_message('Cannot convert non-array to json in ARRAYTOJSON','danger',Config::uripath() . '/admin');
 				//echo "<h5>Variable is not array, cannot perform ARRAYTOJSON filter</h5>";
 				return false;
 			}
@@ -126,12 +126,12 @@ class Input {
 					return $foo;
 				}
 				else {
-					CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::$uripath . '/admin');
+					CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
 					return false;
 				}
 			}
 			else {
-				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::$uripath . '/admin');
+				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
 				return false;
 			}
 		}
@@ -154,7 +154,7 @@ class Input {
 				}
 			}
 			else {
-				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::$uripath . '/admin');
+				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
 				return false;
 			}
 		}

@@ -52,10 +52,10 @@ elseif (sizeof($segments)==4 && $segments[2]=='restore' && is_numeric($segments[
 	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?',array($content_id))->c;
 	$versions = DB::fetchAll('select v.*, u.username from content_versions v, users u where content_id=? and u.id=v.created_by order by created desc',array($content_id));
 
-	CMS::Instance()->queue_message('Restore not implemented as yet :)','warning',Config::$uripath.'/admin/content/all');
+	CMS::Instance()->queue_message('Restore not implemented as yet :)','warning',Config::uripath().'/admin/content/all');
 }
 else {
-	CMS::Instance()->queue_message('Unknown content version operation','danger',Config::$uripath.'/admin/content/all');
+	CMS::Instance()->queue_message('Unknown content version operation','danger',Config::uripath().'/admin/content/all');
 	exit(0);
 }
 

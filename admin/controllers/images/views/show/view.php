@@ -57,7 +57,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <p class='help'>Max upload total size: <?php echo $max_upload_size; ?> (<?php echo $max_upload_size_bytes; ?> bytes)</p>
 <script>
 	window.max_upload_size_bytes = <?php echo $max_upload_size_bytes;?>;
-	window.uripath = "<?php echo Config::$uripath; ?>";
+	window.uripath = "<?php echo Config::uripath(); ?>";
 </script>
 <div id='upload_space'><h1>Drag & Drop New Images Here</h1></div>
 
@@ -222,7 +222,7 @@ dialog::backdrop {
 <div id='all_images'>
 	<?php foreach ($all_images as $image):?>
 		<div id="media_item_id_<?php echo $image->id;?>" data-id='<?php echo $image->id;?>' class='all_images_image_container'>
-			<img title="<?php echo $image->title;?>" alt="<?php echo $image->alt;?>" src="<?php echo Config::$uripath . '/image/' . $image->id;?>/thumb">
+			<img title="<?php echo $image->title;?>" alt="<?php echo $image->alt;?>" src="<?php echo Config::uripath() . '/image/' . $image->id;?>/thumb">
 			<div class='image_info_wrap'>
 				<div class='image_info'>
 					<span class='bigger imgtitle'><?php echo $image->title; ?></span><br><span class='imgalt'><?php echo $image->alt; ?></span><br>
@@ -257,7 +257,7 @@ dialog::backdrop {
       <button class="delete" aria-label="close"></button>
     </header>
     <section class="modal-card-body">
-      <form id='image_upload_form' action='<?php echo Config::$uripath;?>/admin/images/uploadv2' method="POST" enctype="multipart/form-data">
+      <form id='image_upload_form' action='<?php echo Config::uripath();?>/admin/images/uploadv2' method="POST" enctype="multipart/form-data">
 	  </form>
     </section>
     <footer class="modal-card-foot">
@@ -278,4 +278,4 @@ dialog::backdrop {
 <?php else: ?>
 	<script>window.autoclose = false;</script>
 <?php endif; ?>
-<script src='<?php echo Config::$uripath;?>/admin/controllers/images/views/show/script.js'></script>
+<script src='<?php echo Config::uripath();?>/admin/controllers/images/views/show/script.js'></script>

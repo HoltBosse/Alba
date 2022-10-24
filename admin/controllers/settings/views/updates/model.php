@@ -14,7 +14,7 @@ $latest->version = null;
 $update_domain = Config::$updatedomain ?? "alba.holtbosse.com";
 $latest_json = file_get_contents("https://" . $update_domain . "/version.json");
 
-if (Config::$debug) {
+if (Config::debug()) {
 	CMS::pprint_r ($latest_json);
 }
 if ($latest_json) {
@@ -106,13 +106,13 @@ if ($submitted) {
 		$saved = $zip->extractTo(CMSPATH);
 		$zip->close();
 		if ($saved && $ok) {
-			CMS::Instance()->queue_message('System updated','success',Config::$uripath."/admin/settings/updates");
+			CMS::Instance()->queue_message('System updated','success',Config::uripath()."/admin/settings/updates");
 		}
 		else {
-			CMS::Instance()->queue_message('Error updating','danger',Config::$uripath."/admin/settings/updates");
+			CMS::Instance()->queue_message('Error updating','danger',Config::uripath()."/admin/settings/updates");
 		}
 	}
 	else {
-		CMS::Instance()->queue_message('Error fetching latest update file (no fopen?) - Channel: ' . $channel, 'danger',Config::$uripath."/admin/settings/updates");
+		CMS::Instance()->queue_message('Error fetching latest update file (no fopen?) - Channel: ' . $channel, 'danger',Config::uripath()."/admin/settings/updates");
 	}
 }

@@ -10,7 +10,7 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$plugin = new $plugin_class_name($plugin_info);
 }
 else {
-	CMS::Instance()->queue_message('Unkown plugin  operation','danger',Config::$uripath.'/admin/plugins/show');
+	CMS::Instance()->queue_message('Unkown plugin  operation','danger',Config::uripath().'/admin/plugins/show');
 	exit(0);
 }
 

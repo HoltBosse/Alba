@@ -65,7 +65,7 @@ class Image {
         }
 
         // build url
-        $url_domain_path = Config::$uripath . "/image/" . $this->id . "?";
+        $url_domain_path = Config::uripath() . "/image/" . $this->id . "?";
         $url_params = [];
         if ($w) {$url_params['w'] = $w; }
         if ($q) {$url_params['q'] = $q; }

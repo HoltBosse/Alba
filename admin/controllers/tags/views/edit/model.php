@@ -14,7 +14,7 @@ elseif(sizeof($segments)==3 && $segments[2]=='new') {
 	$new_tag = true;
 }
 else {
-	CMS::Instance()->queue_message('Unkown tag operation','danger',Config::$uripath.'/admin/tags/show');
+	CMS::Instance()->queue_message('Unkown tag operation','danger',Config::uripath().'/admin/tags/show');
 	exit(0);
 }
 
@@ -47,7 +47,7 @@ if ($required_details_form->is_submitted()) {
 	else {
 		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
 	}
-	//CMS::Instance()->queue_message('tag saved','success',Config::$uripath . '/admin/tags/show');
+	//CMS::Instance()->queue_message('tag saved','success',Config::uripath() . '/admin/tags/show');
 }
 else {
 	// set defaults if needed

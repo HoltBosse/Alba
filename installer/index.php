@@ -122,7 +122,7 @@ include_once ($config_path);
 
 // config loaded
 // check db from config
-$pdo = get_pdo (Config::$dbhost, Config::$dbname, Config::$dbuser, Config::$dbpass, Config::$dbchar);
+$pdo = get_pdo (Config::dbhost(), Config::dbname(), Config::dbuser(), Config::dbpass(), Config::dbchar());
 
 if (!$pdo) {
 	// config pdo not working, see if we got new credentials from user and if so try those
@@ -417,24 +417,24 @@ else {
 					<h2>Database Setup</h2>
 					<div class='input-group'>
 						<label for='dbhost'>Database Hostname</label>
-						<input type='text' maxlength=255 required value='<?php echo Config::$dbhost;?>' name='dbhost' placeholder='localhost'>
+						<input type='text' maxlength=255 required value='<?php echo Config::dbhost();?>' name='dbhost' placeholder='localhost'>
 						<p class='help'>Usually localhost or 127.0.0.1</p>
 					</div>
 					<div class='input-group'>
 						<label for='dbname'>Database Name</label>
-						<input type='text' maxlength=255 required value='<?php echo Config::$dbname;?>' name='dbname' placeholder='dbname'>
+						<input type='text' maxlength=255 required value='<?php echo Config::dbname();?>' name='dbname' placeholder='dbname'>
 					</div>
 					<div class='input-group'>
 						<label for='dbuser'>Database Username</label>
-						<input type='text' maxlength=255 required value='<?php echo Config::$dbuser;?>' name='dbuser' placeholder='username'>
+						<input type='text' maxlength=255 required value='<?php echo Config::dbuser();?>' name='dbuser' placeholder='username'>
 					</div>
 					<div class='input-group'>
 						<label for='dbpass'>Database Password</label>
-						<input type='password' maxlength=255 required value='<?php echo Config::$dbpass;?>' name='dbpass' placeholder='password'>
+						<input type='password' maxlength=255 required value='<?php echo Config::dbpass();?>' name='dbpass' placeholder='password'>
 					</div>
 					<div class='input-group'>
 						<label for='dbchar'>Database Character Set</label>
-						<input type='text' maxlength=255 required value='<?php echo Config::$dbchar;?>' name='dbchar' placeholder='character set'>
+						<input type='text' maxlength=255 required value='<?php echo Config::dbchar();?>' name='dbchar' placeholder='character set'>
 						<p class='help'>If in any doubt, leave it as 'utf8mb4'</p>
 					</div>
 					
@@ -461,11 +461,11 @@ else {
 					<h2>Site Information</h2>
 					<div class='input-group'>
 						<label for='sitename'>Site Name</label>
-						<input type='text' maxlength=255 required name='sitename' value='<?php echo Config::$sitename;?>' placeholder='Site Name'>
+						<input type='text' maxlength=255 required name='sitename' value='<?php echo Config::sitename();?>' placeholder='Site Name'>
 					</div>
 					<div class='input-group'>
 						<label for='name'>Site Sub-Folder</label>
-						<input type='text' maxlength=255  value='<?php echo Config::$uripath;?>' name='uripath' placeholder=''>
+						<input type='text' maxlength=255  value='<?php echo Config::uripath();?>' name='uripath' placeholder=''>
 						<p class='help'>Path relative to root of webfolder. For most sites should be left empty.</p>
 						<p class='help'>Note, no trailing slash. e.g. /foldername</p>
 					</div>
