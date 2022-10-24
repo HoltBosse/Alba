@@ -90,9 +90,9 @@ final class CMS {
 
 	public static function get_admin_template() {
 		$template="clean";
-		if (property_exists('Config','admintemplate') && Config::$admintemplate) {
-			if (file_exists(CURPATH . '/templates/' . Config::$admintemplate . "/index.php")) {
-				$template = Config::$admintemplate;
+		if (property_exists('Config','admintemplate') && config::admintemplate()) {
+			if (file_exists(CURPATH . '/templates/' . config::admintemplate() . "/index.php")) {
+				$template = config::admintemplate();
 			}
 		}
 		return $template;
