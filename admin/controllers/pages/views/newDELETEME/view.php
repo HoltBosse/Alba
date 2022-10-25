@@ -13,7 +13,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <h1 class='title is-1'>
 	New Page
 </h1>
-<form method="POST" action="<?php echo Config::$uripath . "/admin/users/save";?>" id="new_user_form">
+<form method="POST" action="<?php echo Config::uripath() . "/admin/users/save";?>" id="new_user_form">
 	<div class="field">
 		<label class="label">Title</label>
 		<div class="control has-icons-left has-icons-right">

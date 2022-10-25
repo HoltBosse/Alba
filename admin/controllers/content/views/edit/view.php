@@ -8,7 +8,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php else:?>
 	<?php echo "<script>var content_id=" . $content_id . "</script>"; ?>
 	<?php if ($version_count>0):?>
-		<a href='<?php echo Config::$uripath;?>/admin/content/versions/<?php echo $content_id;?>' class='btn button cta pull-right'>Versions</a>
+		<a href='<?php echo Config::uripath();?>/admin/content/versions/<?php echo $content_id;?>' class='btn button cta pull-right'>Versions</a>
 	<?php endif; ?>
 	<h1 class='title'>Editing &ldquo;<?php echo $content->title; ?>&rdquo; - <?php echo Content::get_content_type_title($content->content_type);?></h1>
 	

@@ -3,7 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 <h1 class='title is-1'>
 	All Content Types
-	<a href='<?php echo Config::$uripath . "/admin/content/new_type"?>' class="button is-primary pull-right">
+	<a href='<?php echo Config::uripath() . "/admin/content/new_type"?>' class="button is-primary pull-right">
 		<span class="icon is-small">
       		<i class="fas fa-check"></i>
     	</span>

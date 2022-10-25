@@ -33,7 +33,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <h1 class='title is-1'>New Content Type</h1>
 <p class='help'>Note: This section is not yet functional in any real sense. :) All new content types must be added in the DB and /controllers folder respectively.</p>
 
-<form method="POST" action="<?php echo Config::$uripath . "/admin/content/save_type";?>" id="new_content_type_form">
+<form method="POST" action="<?php echo Config::uripath() . "/admin/content/save_type";?>" id="new_content_type_form">
 	<div class="field">
 		<label class="label">Title</label>
 		<div class="control has-icons-left has-icons-right">

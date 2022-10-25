@@ -9,7 +9,7 @@ $page = new Page();
 //$template = new Template();
 $all_templates = Template::get_all_templates();
 if (!$all_templates) {
-	CMS::Instance()->queue_message('No templates installed - please install at least one template','danger',Config::$uripath.'/admin');
+	CMS::Instance()->queue_message('No templates installed - please install at least one template','danger',Config::uripath().'/admin');
 	exit(0);
 }
 

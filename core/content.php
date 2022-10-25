@@ -189,10 +189,10 @@ class Content {
 			foreach ($cur_content_fields as $f) {
 				DB::exec('insert into content_fields (content_id, name, field_type, content) values(?,?,?,?)', array($this->id, $f->name, $f->field_type, $f->content));
 			}
-			CMS::Instance()->queue_message('Content duplicated','success', Config::$uripath . "/admin/content/all");
+			CMS::Instance()->queue_message('Content duplicated','success', Config::uripath() . "/admin/content/all");
 		}
 		else {
-			CMS::Instance()->queue_message('Error duplicating content','danger', Config::$uripath . "/admin/content/all");
+			CMS::Instance()->queue_message('Error duplicating content','danger', Config::uripath() . "/admin/content/all");
 		}
 	}
 
@@ -295,7 +295,7 @@ class Content {
 
 		if (!$return_url) {
 			if (ADMINPATH) {
-				$return_url = Config::$uripath . '/admin/content/all/' . $this->content_type;
+				$return_url = Config::uripath() . '/admin/content/all/' . $this->content_type;
 			}
 			else {
 				$return_url = $_SERVER['HTTP_REFERER'];

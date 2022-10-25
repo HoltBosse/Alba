@@ -9,7 +9,7 @@ $edit_page_id = CMS::Instance()->edit_page_id;
 //$template->positions = json_decode(file_get_contents(__DIR__ . '/positions.json'));
 $template->positions = JSON::load_obj_from_file(__DIR__ . '/positions.json');
 
-if (Config::$debug) {
+if (Config::debug()) {
 	CMS::pprint_r ($template->positions);
 }
 

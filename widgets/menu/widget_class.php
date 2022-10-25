@@ -115,7 +115,7 @@ class Widget_menu extends Widget {
 		<?php } ?>
 		</script>
 
-		<script src='<?php echo Config::$uripath;?>/admin/js/menu_widget_admin.js'></script>
+		<script src='<?php echo Config::uripath();?>/admin/js/menu_widget_admin.js'></script>
 		<?php
 	}
 

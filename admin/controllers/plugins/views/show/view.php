@@ -46,9 +46,9 @@ div.pull-right {
 		
 		<!-- plugin operation toolbar -->
 		<div id="plugin_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::$uripath;?>/admin/plugins/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/plugins/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/plugins/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/plugins/action/publish' class='button is-primary' type='submit'>Publish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/plugins/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/plugins/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 		</div>
 	</h1>
 
@@ -66,7 +66,7 @@ div.pull-right {
 			<tr class='plugin_admin_row'>
 				<td>
 					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $a_plugin->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/plugins/action/toggle' name='id[]' value='<?php echo $a_plugin->id; ?>'>
+					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/plugins/action/toggle' name='id[]' value='<?php echo $a_plugin->id; ?>'>
 						<?php 
 						if ($a_plugin->state==1) { 
 							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -76,7 +76,7 @@ div.pull-right {
 						} ?>
 					</button>
 				</td>
-				<td><a href="<?php echo Config::$uripath; ?>/admin/plugins/edit/<?php echo $a_plugin->id;?>"><?php echo $a_plugin_config->title; ?></a></td>
+				<td><a href="<?php echo Config::uripath(); ?>/admin/plugins/edit/<?php echo $a_plugin->id;?>"><?php echo $a_plugin_config->title; ?></a></td>
 				<td><?php echo $a_plugin_config->description; ?></td>
 				<td><?php echo $a_plugin_config->version; ?></td>
 				<td><?php echo $a_plugin_config->author; ?></td>

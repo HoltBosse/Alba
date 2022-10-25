@@ -4,7 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
 
 if (CMS::Instance()->user->username=="guest") {
-	CMS::Instance()->queue_message("Must be logged in to upload media",Config::$uripath . '/admin');
+	CMS::Instance()->queue_message("Must be logged in to upload media",Config::uripath() . '/admin');
 }
 
 $uploaded_files_array = $_FILES['file-upload'];

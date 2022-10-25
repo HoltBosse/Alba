@@ -120,7 +120,7 @@ class Category {
 
 		if (!$return_url) {
 			if (ADMINPATH) {
-				$return_url = Config::$uripath . '/admin/categories/all/' . $this->content_type;
+				$return_url = Config::uripath() . '/admin/categories/all/' . $this->content_type;
 			}
 			else {
 				$return_url = $_SERVER['HTTP_REFERER'];

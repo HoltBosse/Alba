@@ -51,7 +51,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				</table>
 			</div>
 			<br><br>
-			<div><a class='btn button cta' href='<?php Config::$uripath;?>/admin/content/versions/restore/<?php echo $version->id;?>'>Restore</a></div>
+			<div><a class='btn button cta' href='<?php Config::uripath();?>/admin/content/versions/restore/<?php echo $version->id;?>'>Restore</a></div>
 		</aside>
 	<?php endforeach; ?>
 </section>

@@ -142,7 +142,7 @@ class Tag {
 					if ($parent_tag->parent) {
 						if ($parent_id==$this->parent) {
 							// can't be child of itself
-							CMS::Instance()->queue_message('Tag cannot be child of itself','danger',Config::$uripath . "/admin/tags");
+							CMS::Instance()->queue_message('Tag cannot be child of itself','danger',Config::uripath() . "/admin/tags");
 						}
 					}
 				}

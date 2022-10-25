@@ -32,7 +32,7 @@ if (array_key_exists(2, CMS::Instance()->uri_segments)) {
 		// existing page - override view and content based on uri parameters if required
 		if (!$page->load_from_id($uri_id)) {
 			// page load from id also loads correct template for page
-			CMS::Instance()->queue_message('Failed to load Page id: ' . $uri_id, 'danger',Config::$uripath.'/admin/pages');
+			CMS::Instance()->queue_message('Failed to load Page id: ' . $uri_id, 'danger',Config::uripath().'/admin/pages');
 			exit(0);
 		}
 		// set CMS property edit_page_id for template layout.php file to access
@@ -68,12 +68,12 @@ if (array_key_exists(2, CMS::Instance()->uri_segments)) {
 	
 }
 else {
-	CMS::Instance()->queue_message('Unknown operation - no parameters available' . $uri_id, 'danger',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Unknown operation - no parameters available' . $uri_id, 'danger',Config::uripath().'/admin/pages');
 	exit(0);
 }
 
 
 $layout_path = CMSPATH . '/templates/' . $page->template->folder . "/layout.php";
 if (!file_exists($layout_path)) {
-	CMS::Instance()->queue_message('Failed to locate layout for template: ' . $page->template->title, 'danger',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Failed to locate layout for template: ' . $page->template->title, 'danger',Config::uripath().'/admin/pages');
 }

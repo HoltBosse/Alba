@@ -5,20 +5,20 @@ class db {
 	public $pdo;
 
 	public function __construct() {
-		$dsn = "mysql:host=" . Config::$dbhost . ";dbname=" . Config::$dbname . ";charset=" . Config::$dbchar;
+		$dsn = "mysql:host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";charset=" . Config::dbchar();
 		$options = [
 			PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
 			PDO::ATTR_EMULATE_PREPARES   => false,
 		];
 		try {
-			$this->pdo = new PDO($dsn, Config::$dbuser, Config::$dbpass, $options);
+			$this->pdo = new PDO($dsn, Config::dbuser(), Config::dbpass(), $options);
 		} catch (\PDOException $e) {
-			if (Config::$debug) {
+			if (Config::debug()) {
 				throw new \PDOException($e->getMessage(), (int)$e->getCode());
 			}
 			else {
-				CMS::show_error("Failed to connect to database: " . Config::$dbname);
+				CMS::show_error("Failed to connect to database: " . Config::dbname());
 			}
 		}
 	}	
@@ -32,7 +32,7 @@ class db {
 			$success = $stmt->execute($paramsarray);
 		}
 		catch (\PDOException $e) {
-			if (Config::$debug) {
+			if (Config::debug()) {
 				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
 			}
 			else {
@@ -56,7 +56,7 @@ class db {
 			$result = $stmt->fetchAll($options["mode"] ?? PDO::FETCH_OBJ);
 		}
 		catch (\PDOException $e) {
-			if (Config::$debug) {
+			if (Config::debug()) {
 				//print_r (debug_backtrace()); exit(0);
 				CMS::show_error("Error performing query: " . $e->getMessage());
 			}
@@ -81,7 +81,7 @@ class db {
 			$result = $stmt->fetch($options["mode"] ?? PDO::FETCH_OBJ);
 		}
 		catch (\PDOException $e) {
-			if (Config::$debug) {
+			if (Config::debug()) {
 				CMS::show_error("Error performing query: " . $e->getMessage());
 			}
 			else {

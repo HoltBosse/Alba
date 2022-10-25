@@ -30,7 +30,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<tbody>
 		<?php foreach ($backup_files as $backup_file):?>
 			<tr>
-				<td><a href='<?php echo Config::$uripath;?>/backups/<?php echo $backup_file;?>'><?php echo $backup_file;?></a></td>
+				<td><a href='<?php echo Config::uripath();?>/backups/<?php echo $backup_file;?>'><?php echo $backup_file;?></a></td>
 				<td><?php echo human_filesize(filesize(CMSPATH . "/backups/" . $backup_file));?></td>
 			</tr>
 		<?php endforeach; ?>

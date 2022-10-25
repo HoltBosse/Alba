@@ -63,7 +63,7 @@ div.pull-right {
 
 	<h1 class='title is-1'>
 		All Pages
-		<a href='<?php echo Config::$uripath . "/admin/pages/edit/0"?>' class="button is-primary pull-right">
+		<a href='<?php echo Config::uripath() . "/admin/pages/edit/0"?>' class="button is-primary pull-right">
 			<span class="icon is-small">
 				<i class="fas fa-check"></i>
 			</span>
@@ -71,9 +71,9 @@ div.pull-right {
 		</a>
 		<!-- page operation toolbar -->
 		<div id="page_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::$uripath;?>/admin/pages/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/pages/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/pages/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/pages/action/publish' class='button is-primary' type='submit'>Publish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/pages/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/pages/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 		</div>
 	</h1>
 
@@ -95,7 +95,7 @@ div.pull-right {
 			<tr class='page_admin_row'>
 				<td>
 					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $page->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/pages/action/toggle' name='id[]' value='<?php echo $page->id; ?>'>
+					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/pages/action/toggle' name='id[]' value='<?php echo $page->id; ?>'>
 						<?php 
 						if ($page->state==1) { 
 							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -111,7 +111,7 @@ div.pull-right {
 						echo "<span class='child_indicator'>-&nbsp;</span>";
 					}
 					?>
-					<a href='<?php echo Config::$uripath . "/admin/pages/edit/" . $page->id . "/" . $page->content_type . "/" . $page->content_view;?>'><?php echo $page->title; ?></a>
+					<a href='<?php echo Config::uripath() . "/admin/pages/edit/" . $page->id . "/" . $page->content_type . "/" . $page->content_view;?>'><?php echo $page->title; ?></a>
 					<br>
 					<?php 
 					if ($page->content_type > 0) {

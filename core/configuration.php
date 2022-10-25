@@ -43,7 +43,7 @@ class Configuration {
 				if (property_exists($field,"name")) { 
 					if ($field->name==$setting_name) {
 						if (property_exists($field, "default")) { 
-							if (Config::$debug) {
+							if (Config::debug()) {
 								CMS::log('Default value retrieved from form file for: ' . $setting_name . " from " . $form_name . " [{$field->default}]");
 							}
 							return $field->default;

@@ -36,7 +36,7 @@ foreach ($all_image_files as $image_file) {
 				//CMS::pprint_r ($file);
 				?>
 				<tr>
-					<td><img src='<?php echo Config::$uripath . "/images/upload/" . $image_filename?>' style='max-width:250px;'></td>
+					<td><img src='<?php echo Config::uripath() . "/images/upload/" . $image_filename?>' style='max-width:250px;'></td>
 					<td style="word-break:break-all;"><?php echo $file->filename; ?></td>
 					<td><?php echo $file->width . "/" . $file->height;?></td>
 					<td><?php echo $file->mimetype;?></td>

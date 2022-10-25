@@ -102,7 +102,7 @@ class Template {
 					$state_class='is-danger is-light';
 					$publish_note="<span class='lighter_note'> (unpublished)</span></a>";
 				}
-				echo "<a href='".Config::$uripath."/admin/widgets/edit/".$widget->id."'><span class='tag {$state_class}'>" . $widget->title .  $publish_note . "</span></a>"  ;
+				echo "<a href='".Config::uripath()."/admin/widgets/edit/".$widget->id."'><span class='tag {$state_class}'>" . $widget->title .  $publish_note . "</span></a>"  ;
 			}
 			echo "</div>";
 			echo "<div class='{$override_active} position_tag_wrap override_tags_wrap'>";

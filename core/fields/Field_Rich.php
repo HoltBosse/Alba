@@ -601,7 +601,7 @@ class Field_Rich extends Field {
 								let media_id = selected_image.dataset.id;
 								let alt = selected_image.querySelector('img').alt;
 								let title = selected_image.querySelector('img').title;
-								let url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
+								let url = `<?php echo Config::uripath();?>/image/${media_id}/web`;
 								let image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
 								console.log(image_markup);
 								// refocus editor
@@ -626,14 +626,14 @@ class Field_Rich extends Field {
 						function fetch_images(searchtext, taglist) {
 						
 							// fetch images
-							postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
+							postAjax('<?php echo Config::uripath();?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
 								let image_list = JSON.parse(data);
 								let image_list_markup = "<ul class='media_selector_list single'>";
 								image_list.images.forEach(image => {
 									image_list_markup += `
 									<li>
 										<a class='media_selector_selection' data-id='${image.id}'>
-										<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::$uripath;?>/image/${image.id}/thumb'>
+										<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::uripath();?>/image/${image.id}/thumb'>
 										<span>${image.title}</span>
 										</a>
 									</li>`;
@@ -709,7 +709,7 @@ class Field_Rich extends Field {
 			});
 		</script>
 		<?php
-		if (!Config::$debug) {
+		if (!Config::debug()) {
 			echo "<style>.editor_raw {display:none;}</style>";
 		}
 		echo "<div class='field'>";

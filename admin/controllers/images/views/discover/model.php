@@ -2,7 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 if (CMS::Instance()->user->username=="guest") {
-	CMS::Instance()->queue_message("Must be logged in to upload media",Config::$uripath.'/admin');
+	CMS::Instance()->queue_message("Must be logged in to upload media",Config::uripath().'/admin');
 }
 
 $directory = CMSPATH . '/images/upload';
@@ -94,7 +94,7 @@ if ($titles_array) {
 	if ($failed) {
 		CMS::Instance()->queue_message('Skipped ' . sizeof($failed) . ' FTP images - missing title/alt.','warning');
 	}
-	CMS::Instance()->queue_message('FTP Images Import Complete (' . sizeof($processed) . ' images)','success',Config::$uripath.'/admin/images/discover');
+	CMS::Instance()->queue_message('FTP Images Import Complete (' . sizeof($processed) . ' images)','success',Config::uripath().'/admin/images/discover');
 }
 
 
@@ -115,6 +115,6 @@ function image_in_db($filename) {
 
 // TODO: add to file class - upload function
 if(!function_exists('mime_content_type')) {
-	CMS::Instance()->queue_message('Function "mime_content_type" is not available. Cannot upload files safely.','danger',Config::$uripath.'/admin');
+	CMS::Instance()->queue_message('Function "mime_content_type" is not available. Cannot upload files safely.','danger',Config::uripath().'/admin');
 }
 

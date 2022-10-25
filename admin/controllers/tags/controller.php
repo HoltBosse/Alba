@@ -7,7 +7,7 @@ $segments = CMS::Instance()->uri_segments;
 
 
 if (sizeof($segments)==0) {
-	CMS::Instance()->queue_message('Unknown widget view','danger',Config::$uripath.'/admin/');
+	CMS::Instance()->queue_message('Unknown widget view','danger',Config::uripath().'/admin/');
 }
 if (sizeof($segments)==1) {
 	$view = 'show';
