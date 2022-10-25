@@ -143,7 +143,8 @@ class Field_Rich extends Field {
 					if (!found_image) {
 						// assume text / rich or otherwise
 						console.log('not image - cleaning paste');
-						let text = pasteEvent.clipboardData.getData("text/plain");
+						var text = pasteEvent.clipboardData.getData("text/html");
+						text = text.replace(/style="[^"]*"/gi,"");
 						document.execCommand("insertHTML", false, text);
 					}
 				});
