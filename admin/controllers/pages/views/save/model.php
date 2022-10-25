@@ -8,7 +8,7 @@ $page_options_form = new Form(ADMINPATH . '/controllers/pages/page_options.json'
 $success=$page->load_from_post();
 
 if (!$success) {
-	CMS::Instance()->queue_message('Failed to create page object from form data','danger',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Failed to create page object from form data','danger',Config::uripath().'/admin/pages');
 }
 
 
@@ -24,7 +24,7 @@ if ($page->content_type && $page->view) {
 	$options_form->set_from_submit();
 	$is_valid = $options_form->validate();
 	if (!$is_valid) {
-		CMS::Instance()->queue_message('Page creation/update failed - invalid view options form','danger',Config::$uripath.'/admin/pages');
+		CMS::Instance()->queue_message('Page creation/update failed - invalid view options form','danger',Config::uripath().'/admin/pages');
 	}
 	// get name/value pairs json from form to add to view_configuration of page
 	$page->view_configuration = $options_form->serialize_json();
@@ -34,7 +34,7 @@ if ($page->content_type && $page->view) {
 $page->page_options = $page->page_options_form->serialize_json(); // not view options, page seo/og options :)
 $is_valid = $page_options_form->validate();
 if (!$is_valid) {
-	CMS::Instance()->queue_message('Page creation/update failed - invalid page options form','danger',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Page creation/update failed - invalid page options form','danger',Config::uripath().'/admin/pages');
 }
 
 $success = $page->save();
@@ -49,8 +49,8 @@ if ($success) {
 	
 	
 
-	CMS::Instance()->queue_message('Page created/updated','success',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Page created/updated','success',Config::uripath().'/admin/pages');
 }
 else {
-	CMS::Instance()->queue_message('Page creation/update failed','danger',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Page creation/update failed','danger',Config::uripath().'/admin/pages');
 }

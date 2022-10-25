@@ -43,12 +43,12 @@ div.pull-right {
 <form action='' method='post' name='tag_action' id='tag_action_form'>
 
 	<h1 class='title'>All Tags
-		<a class='pull-right button is-primary' href='<?php echo Config::$uripath;?>/admin/tags/edit/new'>New Tag</a>
+		<a class='pull-right button is-primary' href='<?php echo Config::uripath();?>/admin/tags/edit/new'>New Tag</a>
 		<!-- tag operation toolbar -->
 		<div id="tag_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::$uripath;?>/admin/tags/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/tags/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/tags/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/tags/action/publish' class='button is-primary' type='submit'>Publish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/tags/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/tags/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 		</div>
 	</h1>
 
@@ -61,7 +61,7 @@ div.pull-right {
 			<tr class='tag_admin_row'>
 				<td>
 					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $tag->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/tags/action/toggle' name='id[]' value='<?php echo $tag->id; ?>'>
+					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/tags/action/toggle' name='id[]' value='<?php echo $tag->id; ?>'>
 						<?php 
 						if ($tag->state==1) { 
 							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -79,7 +79,7 @@ div.pull-right {
 						echo "&nbsp-&nbsp";
 					}
 					?>
-					<a href="<?php echo Config::$uripath; ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo $tag->title; ?></a>
+					<a href="<?php echo Config::uripath(); ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo $tag->title; ?></a>
 				</td>
 			
 				<td class='usage'>

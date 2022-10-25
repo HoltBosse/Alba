@@ -39,7 +39,7 @@ class Page {
 		$segments = array($this->alias);
 		$parent = $this->parent;
 		if ($this->alias=='home' && $parent<0) {
-			return Config::$uripath . "/"; 
+			return Config::uripath() . "/"; 
 		}
 		while ($parent>=0) {
 			$result = DB::fetch("select parent,alias from pages where id=?", array($parent));
@@ -47,7 +47,7 @@ class Page {
 			array_unshift ($segments, $result->alias);
 			//$segments[] = $result->alias;
 		}
-		$url = Config::$uripath . '/' . implode('/',$segments);
+		$url = Config::uripath() . '/' . implode('/',$segments);
 		return $url;
 	}
 
@@ -120,7 +120,7 @@ class Page {
 			return  $result;
 		}
 		else {
-			CMS::Instance()->queue_message('Expected array in function get_pages_from_id_array', 'danger', Config::$uripath . "/admin");
+			CMS::Instance()->queue_message('Expected array in function get_pages_from_id_array', 'danger', Config::uripath() . "/admin");
 		}
 	}
 
@@ -231,7 +231,7 @@ class Page {
 				return true;
 			}
 			else {
-				if (Config::$debug) {
+				if (Config::debug()) {
 					echo "<code>" . $e->getMessage() . "</code>";
 					exit(0);
 				}
@@ -256,9 +256,9 @@ class Page {
 				));	
 			}
 			catch (PDOException $e) {
-				//CMS::Instance()->queue_message('Error saving page','danger',Config::$uripath.'/admin/pages/');
-				if (Config::$debug) {
-					CMS::Instance()->queue_message('Error saving page: ' . $e->getMessage(),'danger',Config::$uripath.'/admin/pages/');
+				//CMS::Instance()->queue_message('Error saving page','danger',Config::uripath().'/admin/pages/');
+				if (Config::debug()) {
+					CMS::Instance()->queue_message('Error saving page: ' . $e->getMessage(),'danger',Config::uripath().'/admin/pages/');
 					//echo "<code>" . $e->getMessage() . "</code>";
 				}
 				$result = false;
@@ -271,7 +271,7 @@ class Page {
 			}
 			else {
 				// todo - check for username/email already existing and clarify
-				CMS::Instance()->queue_message('Unable to create page.' . $query ,'danger',Config::$uripath.'/admin/pages');
+				CMS::Instance()->queue_message('Unable to create page.' . $query ,'danger',Config::uripath().'/admin/pages');
 				return false;
 			}
 		}

@@ -84,10 +84,10 @@ class Plugin {
 			$result = DB::exec("update plugins set options=? where id=?", [$options_json, $this->id]);
 			
 			if ($result) {
-				CMS::Instance()->queue_message('Plugin options updated','success',Config::$uripath . '/admin/plugins/show');	
+				CMS::Instance()->queue_message('Plugin options updated','success',Config::uripath() . '/admin/plugins/show');	
 			}
 			else {
-				CMS::Instance()->queue_message('Plugin failed to save','danger',Config::$uripath . $_SERVER['REQUEST_URI']);	
+				CMS::Instance()->queue_message('Plugin failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	
 			}
         }
         else {

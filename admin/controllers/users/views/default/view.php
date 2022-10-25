@@ -44,7 +44,7 @@ div.pull-right {
 <form action='' method='post' name='user_action' id='user_action_form'>
 	<h1 class='title is-1'>
 		Users: <?php echo $group_name; ?>
-		<a href='<?php echo Config::$uripath . "/admin/users/edit"?>' class="button is-primary pull-right">
+		<a href='<?php echo Config::uripath() . "/admin/users/edit"?>' class="button is-primary pull-right">
 			<span class="icon is-small">
 				<i class="fas fa-check"></i>
 			</span>
@@ -52,9 +52,9 @@ div.pull-right {
 		</a>
 		<!-- user operation toolbar -->
 		<div id="user_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::$uripath;?>/admin/users/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/users/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/users/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/users/action/publish' class='button is-primary' type='submit'>Publish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/users/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/users/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 		</div>
 	</h1>
 
@@ -154,7 +154,7 @@ div.pull-right {
 			<tr class='user_admin_row'>
 				<td>
 					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $user->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/users/action/toggle' name='id[]' value='<?php echo $user->id; ?>'>
+					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/users/action/toggle' name='id[]' value='<?php echo $user->id; ?>'>
 						<?php 
 						if ($user->state==1) { 
 							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -165,7 +165,7 @@ div.pull-right {
 					</button>
 				</td>
 				<td>
-					<a class='edit_user' href='<?php echo Config::$uripath;?>/admin/users/edit/<?php echo $user->id;?>'><?php echo $user->username; ?></a>
+					<a class='edit_user' href='<?php echo Config::uripath();?>/admin/users/edit/<?php echo $user->id;?>'><?php echo $user->username; ?></a>
 				</td>
 				<td>
 					<?php echo $user->email; ?>

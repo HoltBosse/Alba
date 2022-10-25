@@ -15,7 +15,7 @@ function in_group ($group_id, $edit_user) {
 	<?php if (!$edit_user->email):?>New User
 	<?php else:?>Edit &ldquo;<?php echo $edit_user->username;?>&rdquo;<?php endif; ?>
 </h1>
-<form method="POST" action="<?php echo Config::$uripath . "/admin/users/save";?>" id="new_user_form">
+<form method="POST" action="<?php echo Config::uripath() . "/admin/users/save";?>" id="new_user_form">
 	<?php if ($edit_user->email):?>
 		<input type='hidden' name='id' value='<?php echo $edit_user->id;?>'/>
 	<?php endif; ?>

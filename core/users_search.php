@@ -170,7 +170,7 @@ class Users_Search {
 			}
 		}
 
-		if (Config::$debug) {
+		if (Config::debug()) {
 			CMS::pprint_r ($query);
 		}
 

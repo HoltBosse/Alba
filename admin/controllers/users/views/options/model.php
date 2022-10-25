@@ -21,9 +21,9 @@ if ($submitted) {
 	
 	$saved = $user_options_config->save();
 	if ($saved) {
-		CMS::Instance()->queue_message('Options saved','success',Config::$uripath."/admin/users/options");
+		CMS::Instance()->queue_message('Options saved','success',Config::uripath()."/admin/users/options");
 	}
 	else {
-		CMS::Instance()->queue_message('Error saving user options','danger',Config::$uripath."/admin/users/options");
+		CMS::Instance()->queue_message('Error saving user options','danger',Config::uripath()."/admin/users/options");
 	}
 }

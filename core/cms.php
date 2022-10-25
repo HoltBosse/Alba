@@ -3,11 +3,20 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 
 
-// load config
-require_once (CMSPATH . "/config.php");
+if(file_exists(CMSPATH . "/config.php")) {
+	// load config
+	require_once (CMSPATH . "/config.php");
+} else {
+	//config from env vars
+	class Config {
+		public static function __callStatic($name, $args) {
+			return getenv("alba_" . $name);
+		}
+	}
+}
 require_once (CMSPATH . "/admin/admin_config.php");
 
-if (Config::$debug) {
+if (Config::debug()) {
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 	error_reporting(E_ALL);
@@ -31,7 +40,7 @@ final class CMS {
 	private $need_session = true;
 	public $hooks = [];
 	public $head_entries = []; // array of string to be output during CMSHEAD replacement
-	public $version = "2.4.85";
+	public $version = "2.5.0";
 
 	/* protected function __construct() {}
     protected function __clone() {}
@@ -81,9 +90,9 @@ final class CMS {
 
 	public static function get_admin_template() {
 		$template="clean";
-		if (property_exists('Config','admintemplate') && Config::$admintemplate) {
-			if (file_exists(CURPATH . '/templates/' . Config::$admintemplate . "/index.php")) {
-				$template = Config::$admintemplate;
+		if (null !== config::admintemplate() && config::admintemplate()) {
+			if (file_exists(CURPATH . '/templates/' . config::admintemplate() . "/index.php")) {
+				$template = config::admintemplate();
 			}
 		}
 		return $template;
@@ -98,7 +107,7 @@ final class CMS {
 		// injects page title, opengraph, analytics js etc...
 		ob_start();
 		?>
-		<title><?php echo $this->page->title;?> | <?php echo Config::$sitename; ?></title>
+		<title><?php echo $this->page->title;?> | <?php echo Config::sitename(); ?></title>
 		<?php if (Configuration::get_configuration_value ('general_options', 'og_enabled')):?>
 			<?php 
 			$og_title = $this->page->get_page_option_value("og_title") ? $this->page->get_page_option_value("og_title") : $this->page->title; 
@@ -114,13 +123,13 @@ final class CMS {
 			<meta name="description" content="<?php echo $og_description; ?>">
 			<?php if ($og_image):?>
 				<?php $og_image_dimensions = $this->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
-				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::$uripath . "/image/" . $og_image ; ?>/web" />
+				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::uripath() . "/image/" . $og_image ; ?>/web" />
 				<meta property="og:image:width" content="<?php echo $og_image_dimensions->width ; ?>" />
 				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
 			<?php endif; ?>
 		<?php endif; ?>
 
-		<?php echo "<script>window.uripath='" . Config::$uripath . "';</script>" ?>
+		<?php echo "<script>window.uripath='" . Config::uripath() . "';</script>" ?>
 
 		<?php 
 		$cms_head = ob_get_contents();
@@ -166,7 +175,7 @@ final class CMS {
 					<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
 						<?php 
 							$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
-							$logo_src = $logo_image_id ? Config::$uripath . "/image/" . $logo_image_id : Config::$uripath . "/admin/templates/clean/alba_logo.webp";
+							$logo_src = $logo_image_id ? Config::uripath() . "/image/" . $logo_image_id : Config::uripath() . "/admin/templates/clean/alba_logo.webp";
 						?>
 						<img src="<?php echo $logo_src;?>" >
 						<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
@@ -185,11 +194,11 @@ final class CMS {
 	private function __construct() {
 
 		// setup domain
-		if (Config::$domain=='auto') {
+		if (Config::domain()=='auto') {
 			$this->domain = $_SERVER['HTTP_HOST'];
 		}
 		else {
-			$this->domain = Config::$domain;
+			$this->domain = Config::domain();
 		}
 		// protocol
 		if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) &&$_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
@@ -202,7 +211,7 @@ final class CMS {
 		// routing and session checking
 		// first strip base uri path (from config) out of path
 		$request = $_SERVER['REQUEST_URI'];
-		$to_remove = Config::$uripath;
+		$to_remove = Config::uripath();
 		if (ADMINPATH) {
 			$to_remove .= "/admin/";
 		}
@@ -226,20 +235,20 @@ final class CMS {
 
 		// db
 		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
-		$dsn = "mysql:host=" . Config::$dbhost . ";dbname=" . Config::$dbname . ";charset=" . Config::$dbchar;
+		$dsn = "mysql:host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";charset=" . Config::dbchar();
 		$options = [
 			PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
 			PDO::ATTR_EMULATE_PREPARES   => false,
 		];
 		try {
-			$this->pdo = new PDO($dsn, Config::$dbuser, Config::$dbpass, $options);
+			$this->pdo = new PDO($dsn, Config::dbuser(), Config::dbpass(), $options);
 		} catch (\PDOException $e) {
-			if (Config::$debug) {
+			if (Config::debug()) {
 				throw new \PDOException($e->getMessage(), (int)$e->getCode());
 			}
 			else {
-				$this->show_error("Failed to connect to database: " . Config::$dbname . "<br>Update config file or run installer and try again.");
+				$this->show_error("Failed to connect to database: " . Config::dbname() . "<br>Update config file or run installer and try again.");
 			}
 		}
 
@@ -303,10 +312,10 @@ final class CMS {
 					// needs to be instance as messages not invoked yet
 					if (ADMINPATH) {
 						$_SESSION['redirect_url'] = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/admin');
+						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::uripath() . '/admin');
 					}
-					elseif (Config::$frontendlogin) {
-						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::$uripath . '/');
+					elseif (Config::frontendlogin()) {
+						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::uripath() . '/');
 					}
 					else {
 						// user login timed out, but we're on front-end so let CMS continue to bootstrap
@@ -317,7 +326,7 @@ final class CMS {
 			if (!$session_time) {
 				$session_time = 10; // 10 min if config is missing
 			}
-			//$_SESSION['discard_after'] = $now + (Config::$session_length * 60); // using configuration option now not config.php file
+			//$_SESSION['discard_after'] = $now + (Config::session_length() * 60); // using configuration option now not config.php file
 			$_SESSION['discard_after'] = $now + ($session_time * 60);
 		}
 		//CMS::pprint_r ($_SESSION);
@@ -343,10 +352,10 @@ final class CMS {
 		echo "<style>#cmsinfo {border:1px solid black;box-shadow:0 0 10px rgba(0,0,0,0.5);margin:1rem;} #cmsinfo p, #cmsinfo pre {font-size:1rem; font-family:sans-serif;}</style>";
 		echo "<div id='info'>";
 		echo "<p>Domain: {$this->domain}</p>";
-		echo "<p>Base Path (subfolder): " . Config::$uripath . "</p>";
+		echo "<p>Base Path (subfolder): " . Config::uripath() . "</p>";
 		echo "<p>CMSPATH: " . CMSPATH . "</p>";
 		echo "<p>ADMINPATH: " . ADMINPATH . "</p>";
-		echo "<p>Default template: " . Config::$template . "</p>";
+		echo "<p>Default template: " . Config::template() . "</p>";
 		echo "<p>User:<p>";
 		$this->pprint_r($this->user);
 		echo "<p>Segments:</p>";
@@ -439,7 +448,7 @@ final class CMS {
 		else {
 			// no controller - pages don't require one, just means that
 			// only widgets will be rendered on page
-			if (Config::$debug) {
+			if (Config::debug()) {
 				echo "<h5>No controller found for URL. (normal!)</h5>";
 			}
 		}
@@ -492,14 +501,14 @@ final class CMS {
 		//$this->include_once_content (CMSPATH .'/templates/' . $template . '/index.php');
 		// if ADMIN but guest, show login
 	
-		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::$frontendlogin) ) {
+		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::frontendlogin()) ) {
 			// check for login attempt
 			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
 			$password = Input::getvar('password','RAW');
 			$login_user = new User();
-			$redirect_path = Config::$uripath . "/";
+			$redirect_path = Config::uripath() . "/";
 			if (ADMINPATH) {
-				$redirect_path = Config::$uripath . '/admin';
+				$redirect_path = Config::uripath() . '/admin';
 			}
 
 			// authenticate plugins hook
@@ -552,7 +561,7 @@ final class CMS {
 				$template = $this->get_admin_template();
 			}
 			include_once (CURPATH . '/templates/' . $template . "/login.php");
-			if(Config::$dev_banner ?? null) {
+			if(Config::dev_banner() ?? null) {
 				echo $this->render_dev_banner();
 			}
 		}
@@ -561,7 +570,7 @@ final class CMS {
 			if (ADMINPATH) {
 				//check the users access rights
 				if (sizeof($this->uri_segments) >= 1 && !Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
-					$this->queue_message('You do not have access to this page','danger', Config::$uripath . "/admin");
+					$this->queue_message('You do not have access to this page','danger', Config::uripath() . "/admin");
 				}
 
 				ob_start();
@@ -573,7 +582,7 @@ final class CMS {
 				ob_end_clean(); // clear and stop buffering
 				// perform content filtering / plugins on CMS::page_contents;
 				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
-				if(Config::$dev_banner ?? null) {
+				if(Config::dev_banner() ?? null) {
 					$this->page_contents .= $this->render_dev_banner();
 				}
 				echo $this->page_contents; // output
@@ -618,7 +627,7 @@ final class CMS {
 				if (!$alias) {
 					$this->raise_404();
 				}
-				if (Config::$debug) {
+				if (Config::debug()) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
 					echo "<h5>Segments passed to controller:</h5>";
 					$this->pprint_r ($this->uri_segments);
@@ -634,7 +643,7 @@ final class CMS {
 					// make requested page available via session for login redirect if needed
 					$smart_redirect = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 					$_SESSION['smart_redirect'] = $smart_redirect;
-					$this->queue_message('You do not have access to this page','danger', Config::$uripath . $redirect_uri);
+					$this->queue_message('You do not have access to this page','danger', Config::uripath() . $redirect_uri);
 				}
 
 				// front end buffering for plugin functionality
@@ -652,7 +661,7 @@ final class CMS {
 					$cms_head .= $he;
 				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
-				if(Config::$dev_banner ?? null) {
+				if(Config::dev_banner() ?? null) {
 					$this->page_contents .= $this->render_dev_banner();
 				}
 				// output final content

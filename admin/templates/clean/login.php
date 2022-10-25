@@ -16,18 +16,18 @@ if ($resetemail) {
 		$link = $domain_url . "admin/?resetkey=" . $key;
 		$markup = "
 		<h5>Hi {$reset_user->username}</h5>
-		<p>A password reset has been request on " . Config::$sitename . "</p>
+		<p>A password reset has been request on " . Config::sitename() . "</p>
 		<p>Click <a target='_blank' href='{$link}'>here</a> to choose a new password.</p>
 		<p>If you did not initiate this request, please ignore this email.</p>
 		";
 		$mail = new Mail();	
-		$mail->addAddress($resetemail,Config::$sitename . - " User");
-		$mail->subject = 'Reset Email for ' . Config::$sitename;
+		$mail->addAddress($resetemail,Config::sitename() . - " User");
+		$mail->subject = 'Reset Email for ' . Config::sitename();
 		$mail->html = $markup;
 		$mail->send();
 	}
 	// either sent or not, show same message
-	CMS::Instance()->queue_message('If your email was associated with a user, you should receive a message with further instructions shortly.','success',Config::$uripath . '/admin');
+	CMS::Instance()->queue_message('If your email was associated with a user, you should receive a message with further instructions shortly.','success',Config::uripath() . '/admin');
 }
 
 $resetkey = Input::getvar('resetkey','RAW'); 
@@ -38,7 +38,7 @@ if ($resetkey) {
 	$password2 = Input::getvar('newpassword2','RAW'); 
 	if ($password1 && $password2) {
 		if ($password1 != $password2) {
-			CMS::Instance()->queue_message('Passwords did not match.','danger', Config::$uripath . '/admin?resetkey=' . $resetkey);	
+			CMS::Instance()->queue_message('Passwords did not match.','danger', Config::uripath() . '/admin?resetkey=' . $resetkey);	
 		}
 		else {
 			// check resetkey matches a valid and current resetkey in user table
@@ -47,18 +47,18 @@ if ($resetkey) {
 			if ($reset_user_exists) {
 				// remove resetkey from user, update password and redirect to admin login
 				if (!$reset_user->remove_reset_key()) {
-					CMS::Instance()->queue_message('Error removing reset key.', 'error', Config::$uripath."/admin");
+					CMS::Instance()->queue_message('Error removing reset key.', 'error', Config::uripath()."/admin");
 				}
 				if ($reset_user->update_password ($password1)) {
-					CMS::Instance()->queue_message('Password changed for ' . $reset_user->username,'success', Config::$uripath . '/admin');	
+					CMS::Instance()->queue_message('Password changed for ' . $reset_user->username,'success', Config::uripath() . '/admin');	
 				}
 				else {
-					CMS::Instance()->queue_message('Unable to reset password. Please contact the system administrator.','danger', Config::$uripath . '/admin?resetkey=' . $resetkey);		
+					CMS::Instance()->queue_message('Unable to reset password. Please contact the system administrator.','danger', Config::uripath() . '/admin?resetkey=' . $resetkey);		
 				}
 			}
 			else {
 				// no matching user for resetkey found or resetkey is outdated
-				CMS::Instance()->queue_message('Invalid reset key or reset key is too old.','danger', Config::$uripath . '/admin?resetkey=' . $resetkey);	
+				CMS::Instance()->queue_message('Invalid reset key or reset key is too old.','danger', Config::uripath() . '/admin?resetkey=' . $resetkey);	
 			}
 		}
 	}
@@ -86,10 +86,10 @@ if ($protocol=="http") {
 <html>
 <meta name="viewport" content="width=device-width, user-scalable=no" />
 	<head><!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/bulma.min.css"></link>
-<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/dashboard.css"></link>
-<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/layout.css"></link>
-<link rel="stylesheet" href="<?php echo Config::$uripath;?>/admin/templates/clean/css/darkmode.css"></link>
+	<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/bulma.min.css"></link>
+<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/dashboard.css"></link>
+<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/layout.css"></link>
+<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/darkmode.css"></link>
 
 <script src="https://kit.fontawesome.com/e73dd5d55b.js" crossorigin="anonymous"></script>
 
@@ -127,7 +127,7 @@ if ($protocol=="http") {
 		
 				<form class="" submit="" method="POST">
 
-					<h1 class='title is-1'><?php echo Config::$sitename . " Admin Login";?></h1>
+					<h1 class='title is-1'><?php echo Config::sitename() . " Admin Login";?></h1>
 					<?php echo $protocalwarning; ?>
 					<div class='field'>
 						<label class="label" for='email'>Email</label>
@@ -181,11 +181,11 @@ if ($protocol=="http") {
 
 					<button class="button is-primary" type="submit">Request Reset</button>
 
-					<p class="help"><a href='<?php echo Config::$uripath;?>/admin'>Login</a></p>
+					<p class="help"><a href='<?php echo Config::uripath();?>/admin'>Login</a></p>
 
 				</form>
 			<?php elseif ($view=='newpassword'):?>
-				<form class='' submit='<?php echo Config::$uripath . '/admin?view=newpassword>resetkey=' . $resetkey?>' action='' method="POST">
+				<form class='' submit='<?php echo Config::uripath() . '/admin?view=newpassword>resetkey=' . $resetkey?>' action='' method="POST">
 					<h1 class='title is-1'>Enter New Password</h1>
 
 					<div class='field'>
@@ -211,7 +211,7 @@ if ($protocol=="http") {
 
 					<button class="button is-primary" type="submit">Change Password</button>
 
-					<p class="help"><a href='<?php echo Config::$uripath;?>/admin'>Login</a></p>
+					<p class="help"><a href='<?php echo Config::uripath();?>/admin'>Login</a></p>
 
 				</form>
 			<?php endif; ?>

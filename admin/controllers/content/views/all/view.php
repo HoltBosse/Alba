@@ -126,7 +126,7 @@ table.dragging .before_after_wrap {
 
 <h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
 	<?php if ($content_type_filter):?>
-	<a class='is-primary pull-right button btn' href='<?php echo Config::$uripath;?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
+	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
 	<span class='unimportant subheading'><?php $content_type_fields = Content::get_content_type_fields($content_type_filter);  echo $content_type_fields->description; ?></span>
 	<?php else: ?>
 		<div class='field pull-right'>
@@ -142,7 +142,7 @@ table.dragging .before_after_wrap {
 					<script>
 					function choose_new_content_type() {
 						new_id = document.getElementById("new_content_type_selector").value;
-						window.location.href = "<?php echo Config::$uripath;?>/admin/content/edit/new/" + new_id;
+						window.location.href = "<?php echo Config::uripath();?>/admin/content/edit/new/" + new_id;
 					}
 					</script>
 				</div>
@@ -151,10 +151,10 @@ table.dragging .before_after_wrap {
 	<?php endif; ?>
 	<!-- content operation toolbar -->
 	<div id="content_operations" class="pull-right buttons has-addons">
-		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/publish' class='button is-primary' type='submit'>Publish</button>
-		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/duplicate' class='button is-info' type='submit'>Duplicate</button>
-		<button formaction='<?php echo Config::$uripath;?>/admin/content/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/content/action/publish' class='button is-primary' type='submit'>Publish</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/content/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/content/action/duplicate' class='button is-info' type='submit'>Duplicate</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/content/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 	</div>
 </h1>
 
@@ -313,7 +313,7 @@ table.dragging .before_after_wrap {
 							<span droppable='true' class='drop_after order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">After</span>
 						</div>
 						<?php endif; ?>
-						<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/content/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
+						<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
 							<?php 
 							if ($content_item->state==1) { 
 								echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -324,7 +324,7 @@ table.dragging .before_after_wrap {
 						</button>
 					</td>
 					<td>
-						<a href="<?php echo Config::$uripath; ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
+						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
 						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
 					</td>
 
@@ -466,7 +466,7 @@ if ($cur_page) {
 		//console.log('Insert',source_id, insert_position, dest_id);
 		// perform ajax action silently
 		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position};
-		postAjax('<?php echo Config::$uripath;?>/admin/content/api', api_data, function(data){
+		postAjax('<?php echo Config::uripath();?>/admin/content/api', api_data, function(data){
 			response = JSON.parse(data);
 			if (response.success=='1') {
 				// do nothing - assume it worked

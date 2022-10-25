@@ -44,7 +44,7 @@ div.pull-right {
 
 	<h1 class='title'><?php echo $widget_type_title; ?> Widgets
 		<?php if ($widget_type_id):?>
-			<a class='is-primary pull-right button btn' href='<?php echo Config::$uripath;?>/admin/widgets/edit/new/<?php echo $widget_type_id;?>'>New &ldquo;<?php echo $widget_type_title;?>&rdquo; Widget</a>
+			<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/widgets/edit/new/<?php echo $widget_type_id;?>'>New &ldquo;<?php echo $widget_type_title;?>&rdquo; Widget</a>
 		<?php else: ?>
 			<div class='field pull-right'>
 				<label class='label'>New Widget</label>
@@ -59,7 +59,7 @@ div.pull-right {
 						<script>
 						function choose_new_widget_type() {
 							new_id = document.getElementById("new_widget_type_selector").value;
-							window.location.href = "<?php echo Config::$uripath;?>/admin/widgets/edit/new/" + new_id;
+							window.location.href = "<?php echo Config::uripath();?>/admin/widgets/edit/new/" + new_id;
 						}
 						</script>
 					</div>
@@ -68,9 +68,9 @@ div.pull-right {
 		<?php endif; ?>
 		<!-- widget operation toolbar -->
 		<div id="widget_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::$uripath;?>/admin/widgets/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/widgets/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::$uripath;?>/admin/widgets/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/widgets/action/publish' class='button is-primary' type='submit'>Publish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/widgets/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+			<button formaction='<?php echo Config::uripath();?>/admin/widgets/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 		</div>
 	</h1>
 
@@ -83,7 +83,7 @@ div.pull-right {
 			<tr class='widget_admin_row'>
 				<td>
 					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $widget->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::$uripath;?>/admin/widgets/action/toggle' name='id[]' value='<?php echo $widget->id; ?>'>
+					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/widgets/action/toggle' name='id[]' value='<?php echo $widget->id; ?>'>
 						<?php 
 						if ($widget->state==1) { 
 							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -93,7 +93,7 @@ div.pull-right {
 						} ?>
 					</button>
 				</td>
-				<td><a href="<?php echo Config::$uripath; ?>/admin/widgets/edit/<?php echo $widget->id;?>"><?php echo $widget->title; ?></a></td>
+				<td><a href="<?php echo Config::uripath(); ?>/admin/widgets/edit/<?php echo $widget->id;?>"><?php echo $widget->title; ?></a></td>
 				<td><?php echo Widget::get_widget_type_title($widget->type); ?></td>
 				<td>
 				<?php 

@@ -21,9 +21,9 @@ if ($submitted) {
 	
 	$saved = $general_options_config->save();
 	if ($saved) {
-		CMS::Instance()->queue_message('Options saved','success',Config::$uripath."/admin/settings/general");
+		CMS::Instance()->queue_message('Options saved','success',Config::uripath()."/admin/settings/general");
 	}
 	else {
-		CMS::Instance()->queue_message('Error saving general options','danger',Config::$uripath."/admin/settings/general");
+		CMS::Instance()->queue_message('Error saving general options','danger',Config::uripath()."/admin/settings/general");
 	}
 }

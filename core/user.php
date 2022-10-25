@@ -195,7 +195,7 @@ class User {
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
 		$ok = DB::exec($query, array($key, $this->id));
 		if (!$ok) {
-			CMS::Instance()->queue_message('Error creating password reset key for ' . $this->username, 'error', Config::$uripath."/admin");
+			CMS::Instance()->queue_message('Error creating password reset key for ' . $this->username, 'error', Config::uripath()."/admin");
 			// should not get here
 		}
 		return $key;
@@ -259,7 +259,7 @@ class User {
 				return true;
 			}
 			else {
-				if (Config::$debug) {
+				if (Config::debug()) {
 					echo "<code>" . $e->getMessage() . "</code>";
 					exit(0);
 				}
@@ -273,8 +273,8 @@ class User {
 				$result = CMS::Instance()->pdo->prepare($query)->execute(array($this->username, $this->email, $this->password));	
 			}
 			catch (PDOException $e) {
-				CMS::Instance()->queue_message('Username and/or email already exists','danger',Config::$uripath.'/admin/users/');
-				if (Config::$debug) {
+				CMS::Instance()->queue_message('Username and/or email already exists','danger',Config::uripath().'/admin/users/');
+				if (Config::debug()) {
 					echo "<code>" . $e->getMessage() . "</code>";
 				}
 				$result = false;
@@ -300,7 +300,7 @@ class User {
 			else {
 				// todo - check for username/email already existing and clarify
 				// todo: remove queue message? this function could be called from frontend too one day...
-				CMS::Instance()->queue_message('Unable to create user','danger',Config::$uripath.'/admin/users');
+				CMS::Instance()->queue_message('Unable to create user','danger',Config::uripath().'/admin/users');
 				return false;
 			}
 		}

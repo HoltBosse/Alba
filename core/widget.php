@@ -142,10 +142,10 @@ class Widget {
 			$result = DB::exec("update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=? where id=?", $params);
 			
 			if ($result) {
-				CMS::Instance()->queue_message('Widget updated','success',Config::$uripath . '/admin/widgets/show');	
+				CMS::Instance()->queue_message('Widget updated','success',Config::uripath() . '/admin/widgets/show');	
 			}
 			else {
-				CMS::Instance()->queue_message('Widget failed to save','danger',Config::$uripath . $_SERVER['REQUEST_URI']);	
+				CMS::Instance()->queue_message('Widget failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	
 			}
 		}
 		else {
@@ -153,10 +153,10 @@ class Widget {
 			$params = array($this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)) ;
 			$result = DB::exec("insert into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)", $params);
 			if ($result) {
-				CMS::Instance()->queue_message('New widget saved','success',Config::$uripath . '/admin/widgets/show');	
+				CMS::Instance()->queue_message('New widget saved','success',Config::uripath() . '/admin/widgets/show');	
 			}
 			else {
-				CMS::Instance()->queue_message('New widget failed to save','danger',Config::$uripath . $_SERVER['REQUEST_URI']);	
+				CMS::Instance()->queue_message('New widget failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	
 			}
 		}
 	}

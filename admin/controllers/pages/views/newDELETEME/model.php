@@ -15,5 +15,5 @@ $template = new Template(1);
 
 $layout_path = CMSPATH . '/templates/' . $template->folder . "/layout.php";
 if (!file_exists($layout_path)) {
-	CMS::Instance()->queue_message('Failed to locate layout for template ' . $template->title, 'danger',Config::$uripath.'/admin/pages');
+	CMS::Instance()->queue_message('Failed to locate layout for template ' . $template->title, 'danger',Config::uripath().'/admin/pages');
 }

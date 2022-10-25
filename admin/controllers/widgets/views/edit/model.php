@@ -26,7 +26,7 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 	$widget->get_type_object();
 }
 else {
-	CMS::Instance()->queue_message('Unkown widget operation','danger',Config::$uripath.'/admin/widgets/show');
+	CMS::Instance()->queue_message('Unkown widget operation','danger',Config::uripath().'/admin/widgets/show');
 	exit(0);
 }
 
@@ -59,7 +59,7 @@ if ($required_details_form->is_submitted()) {
 	else {
 		CMS::Instance()->queue_message('Error saving widget','danger',$_SERVER['REQUEST_URI']);	
 	}
-	//CMS::Instance()->queue_message('Widget saved','success',Config::$uripath . '/admin/widgets/show');
+	//CMS::Instance()->queue_message('Widget saved','success',Config::uripath() . '/admin/widgets/show');
 }
 else {
 	// set defaults if needed
