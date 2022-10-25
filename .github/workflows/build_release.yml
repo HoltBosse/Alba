@@ -1,0 +1,24 @@
+name: build_release
+on: push
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get repo
+        uses: actions/checkout@v3
+
+      - name: update script perms
+        run: |
+          chmod +x ./.github/scripts/build.sh
+        shell: bash
+
+      - name: run build script
+        run: ./.github/scripts/build.sh
+        shell: bash
+
+      - name: Upload output file
+        uses: actions/upload-artifact@v3
+        with:
+          name: latest.zip
+          path: latest.zip
