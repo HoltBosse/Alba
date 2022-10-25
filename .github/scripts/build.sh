@@ -14,6 +14,7 @@ rm -rf htaccess.txt
 rm -rf index.php
 rm -rf testform.json
 rm -rf testrepeatform.json
+rm -rf setupfiles.sh
 rm -rf .git
 rm -rf .github
 echo "finished removing fluff"
