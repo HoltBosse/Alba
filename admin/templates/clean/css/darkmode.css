@@ -71,10 +71,10 @@
 
     /* anchors */
     a {
-        color: #6200EE;
+        color: #0a8dd1;
     }
     a:hover {
-        color: #6200EE99;
+        color: #0a8dd199;
     }
 
     /* buttons */
@@ -88,13 +88,13 @@
         background-color: #FFEB3B;
     }
     .button.is-warning:hover {
-        background-color: #FFEE58;
+        background-color: #e6d437;
     }
     .button.is-info {
-        background-color: #6200EE;
+        background-color: #0a8dd1;
     }
     .button.is-info:hover {
-        background-color: #6200EE99;
+        background-color: #0a8dd199;
     }
     .button.is-danger {
         background-color: #b00020;
@@ -138,6 +138,14 @@
         color: black !important;
     }
     .ss-main .ss-multi-selected .ss-values .ss-value {
-        background-color: #6200EE !important;
+        background-color: #0a8dd1 !important;
+    }
+
+    /* modals */
+    .modal-content .box, .modal-card, input {
+        background-color: #222;
+    }
+    .modal-card-title, h1.title.sticky {
+        background-color: rgba(0,0,0,0);
     }
 }
