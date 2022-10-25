@@ -290,6 +290,9 @@ class Field_Rich extends Field {
 					else if (command == 'createlink') {
 
 						var selection = window.getSelection().toString();
+						if (window.getSelection().anchorOffset==0) {
+							return false;
+						}
 
 						let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 						
