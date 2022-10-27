@@ -42,6 +42,8 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=75, $mimetype)
 	}
 	elseif ($file->mimetype=='image/webp') {
 		$source_image = imagecreatefromwebp($src);
+		imageAlphaBlending($source_image, false);
+		imageSaveAlpha($source_image, true);
 	}
 	else {
 		$source_image = imagecreatefrompng($src);
@@ -55,7 +57,7 @@ function make_thumb ($src, $dest, $desired_width, $file, $quality=75, $mimetype)
 	/* create a new, "virtual" image */
 	$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
 	/* copy source image at a resized size */
-	if ($mimetype=='image/png') {
+	if ($mimetype=='image/png'||$mimetype=='image/webp') {
 		imageAlphaBlending($virtual_image, false);
 		imageSaveAlpha($virtual_image, true);
 	}
