@@ -22,6 +22,6 @@ static $updatedomain = "alba.holtbosse.com";
 static $dev_banner = false;
 
 public static function __callStatic($name, $args) {
-    return Config::$$name;
+    return property_exists('Config',$name) ? Config::$$name : null;
 }
 }
