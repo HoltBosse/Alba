@@ -1,0 +1,109 @@
+{
+	"id": "required_tag_fields",
+	"fields": [
+		
+		{
+			"label": "Tag Title",
+			"name": "title",
+			"id": "title",
+			"type": "Text",
+			"required": true,
+			"filter": "STRING",
+			"maxlength": 255
+		},
+		{
+			"label":"URL Friendly Title",
+			"name":"alias",
+			"id":"alias",
+			"type":"Text",
+			"description":"A URL friendly version of your title - only letters/numbers and underscores allowed.",
+			"required":true,
+			"filter":"ALIAS",
+			"maxlength":255
+		},
+		{
+			"name": "filter",
+			"id": "filter",
+			"type": "Select",
+			"label": "Tag Applies To",
+			"description": "",
+			"filter": "NUMBER",
+			"default": 1,
+			"required":true,
+			"select_options": [
+				{ "value": 1, "text": "Everything except selected content types" },
+				{ "value": 2, "text": "Only selected content types"}
+			]
+		},
+		{
+			"label":"Applicable Content Types",
+			"name":"contenttypes",
+			"id":"contenttypes",
+			"type":"ContentTypeselector",
+			"description":"",
+			"filter":"ARRAYOFINT",
+			"showmedia":true,
+			"default":null
+		},
+		{
+			"name": "public",
+			"id": "public",
+			"type": "Select",
+			"label": "Visibility",
+			"description": "Note - invisible tags will, by default, by hidden from search results.<br>They are largely used for organizing items in ways that aren't useful for the end-user to see.",
+			"filter": "NUMBER",
+			"default": 1,
+			"required":true,
+			"select_options": [
+				{ "value": 1, "text": "Visible on front-end" },
+				{ "value": 0, "text": "Not shown on front-end"}
+			]
+		},
+		{
+			"name": "state",
+			"id": "state",
+			"type": "Select",
+			"label": "State",
+			"description": "",
+			"filter": "NUMBER",
+			"default": 1,
+			"select_options": [
+				{ "value": 1, "text": "Published" },
+				{ "value": 0, "text": "Unpublished" }
+			]
+		},
+		{
+			"label": "Note",
+			"name": "note",
+			"id": "note",
+			"type": "Text",
+			"required": false,
+			"filter": "STRING",
+			"maxlength": 255,
+			"description": "Not required, but may be useful.",
+			"default": ""
+		},
+		{
+			"label": "Description",
+			"name": "description",
+			"id": "description",
+			"type": "Rich",
+			"required": false,
+			"filter": "RAW",
+			"maxlength": 255,
+			"description": "",
+			"default": ""
+		},
+		{
+			"label": "Image",
+			"name": "image",
+			"id": "image",
+			"type": "Text",
+			"required": false,
+			"filter": "STRING",
+			"maxlength": 255,
+			"description": "TODO: Create and change this to MEDIA field type",
+			"default": ""
+		}
+	]
+}
