@@ -8,7 +8,7 @@ class Admin_Config {
         "content" => [1, 2],
         "tags" => [1, 2],
         "categories" => [1, 2],
-        "images" => [1, 2]
+        "media" => [1, 2]
     ];
 
 }

@@ -150,11 +150,19 @@ require_once (CMSPATH . "/core/cms.php");
 
 						<?php if (Access::can_access(Admin_Config::$access["tags"])):?>
 						<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/tags">Tags</a>
+						<?php
+							endif;
+							if (Access::can_access(Admin_Config::$access["media"])):
+						?>
 						<div class="navbar-item has-dropdown is-hoverable">
 							<a class="navbar-link">Media</a>
 							<div class="navbar-dropdown">
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/images/show/">Manage Images</a>
-								
+								<?php
+									if(Config::vimeo_key()) {
+										echo "<a class='navbar-item' href='" . Config::uripath() . "/admin/videos/show/'>Manage Videos</a>";
+									}
+								?>
 								<hr class="dropdown-divider">
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/images/discover">Process FTP/Uploaded Images</a>
 								
