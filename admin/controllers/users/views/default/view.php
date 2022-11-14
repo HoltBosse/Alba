@@ -226,7 +226,7 @@ if ($cur_page) {
 	<?php if ($cur_page>1):?>
 		<a href='<?=$url_path . "?" . $prev_url_params;?>' class="pagination-previous">Previous</a>
 	<?php endif;?>
-	<?php if ( ($user_count>sizeof($all_content)) && !$order_by && ( ($cur_page*$pagination_size)<$user_count ) ):?>
+	<?php if ( ($user_count>sizeof($all_users)) && !$order_by && ( ($cur_page*$pagination_size)<$user_count ) ):?>
 		<a href='<?=$url_path . "?" . $next_url_params;?>' class="pagination-next">Next page</a>
 	<?php endif; ?>
 	<ul class="pagination-list">
