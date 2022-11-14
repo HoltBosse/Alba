@@ -27,6 +27,10 @@ h1 span.subheading {
   gap:2rem;
 }
 
+img.rendered_img.backend {
+    max-width: 15rem;
+}
+
 /* tabs */
 
 .tabs-wrap {
