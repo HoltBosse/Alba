@@ -102,6 +102,9 @@ class Field_Rich extends Field {
 			border: 2px solid rgba(0,0,0,0.1);
 			display: inline-block;
 		}
+		.editor [aria-hidden="true"] {
+			pointer-events:none;
+		}
 		</style>
 		<script>
 
@@ -167,6 +170,12 @@ class Field_Rich extends Field {
 						all_editor_active_images.forEach(img => {
 							img.classList.remove('rich_image_active');
 						});
+					}
+					if (e.target.classList.contains('internal_anchor')) {
+						let kill_anchor = window.confirm('Remove anchor?');
+						if (kill_anchor) {
+							e.target.remove();
+						}
 					}
 				});
 
@@ -289,17 +298,32 @@ class Field_Rich extends Field {
 					
 					else if (command == 'createlink') {
 
-						var selection = window.getSelection().toString();
-						if (window.getSelection().anchorOffset==0) {
-							return false;
+						window.anchor_choice = function(e) {
+							let id = e.dataset.id;
+							let url_for_markup_input = document.getElementById('url_for_markup');
+							if (url_for_markup_input) {
+								url_for_markup_input.value = id;
+							}
 						}
+
+						var selection = window.getSelection().toString();
 
 						let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 						
 						let iL = ["URL", "Display Text"];
 						let iI = [`url_for_${uniq}`, `display_text_for_${uniq}`];
 						let cV = ["", selection];
-						let hL = ["Enter full link including https://", ""];
+						var helptext = "Enter full link including https:// <br>";
+						let anchors = document.querySelectorAll('a.internal_anchor');
+						if (anchors.length>0) {
+							console.log('Found anchors: ',anchors);
+							helptext += "<strong>or</strong> one of the following anchors: <ul>";
+							anchors.forEach(a => {
+								helptext += "<li onClick='anchor_choice(this)' class='insert_anchor' data-id='#"+a.id+"' >#" + a.id + "</li>";
+							});
+							helptext += "</ul>";
+						}
+						let hL = [helptext, ""];
 
 						function onCreate() {
 							// insert link html at anchor location
@@ -331,10 +355,15 @@ class Field_Rich extends Field {
 					else if (command == 'createanchor') {
 						window.sel = document.getSelection();
 						anchorid = prompt('Anchor ID: ','');
-						if (window.sel.getRangeAt && window.sel.rangeCount) {
-							range = window.sel.getRangeAt(0);
-							var frag = range.createContextualFragment("<a title='#"+anchorid+"' class='internal_anchor' id='"+anchorid+"' ><i class='fa fa-anchor' aria-hidden='true'></i></a>");
-							range.insertNode(frag);
+						if (anchorid) {
+							if (window.sel.getRangeAt && window.sel.rangeCount) {
+								range = window.sel.getRangeAt(0);
+								var frag = range.createContextualFragment("<a title='#"+anchorid+"' class='internal_anchor' id='"+anchorid+"' ><i class='fa fa-anchor' aria-hidden='true'></i></a>");
+								range.insertNode(frag);
+							}
+							// force update of editor contents
+							let markup = document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML;
+							document.querySelector('#<?php echo $this->id;?>').value = markup;
 						}
 					}
 
@@ -605,7 +634,7 @@ class Field_Rich extends Field {
 								let media_id = selected_image.dataset.id;
 								let alt = selected_image.querySelector('img').alt;
 								let title = selected_image.querySelector('img').title;
-								let url = `<?php echo Config::uripath();?>/image/${media_id}/web`;
+								let url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
 								let image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
 								console.log(image_markup);
 								// refocus editor
@@ -630,14 +659,14 @@ class Field_Rich extends Field {
 						function fetch_images(searchtext, taglist) {
 						
 							// fetch images
-							postAjax('<?php echo Config::uripath();?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
+							postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
 								let image_list = JSON.parse(data);
 								let image_list_markup = "<ul class='media_selector_list single'>";
 								image_list.images.forEach(image => {
 									image_list_markup += `
 									<li>
 										<a class='media_selector_selection' data-id='${image.id}'>
-										<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::uripath();?>/image/${image.id}/thumb'>
+										<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::$uripath;?>/image/${image.id}/thumb'>
 										<span>${image.title}</span>
 										</a>
 									</li>`;
