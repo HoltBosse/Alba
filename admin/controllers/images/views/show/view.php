@@ -11,6 +11,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<div id="tag_operations" class="pull-right buttons has-addons">
 		<button type="button" onclick='clear_selection()' class='button is-primary' >Select None</button>
 		<button type="button" onclick='rename_image()' class='button is-info' >Edit</button>
+		<button type="button" onclick='crop_image()' class='button is-info' >Crop</button>
 		<button type="button" onclick='clear_tags()' class='button is-warning' >Clear Tags</button>
 		<button type="button" onclick='delete_items()' class='button is-danger' >Delete</button>
 	</div>

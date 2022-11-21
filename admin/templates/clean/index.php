@@ -19,6 +19,11 @@ require_once (CMSPATH . "/core/cms.php");
 <link href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.26.0/slimselect.min.css" rel="stylesheet"></link>
 <!-- end multiselect -->
 
+<!-- cropperjs - fengyuanchen - MIT license -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"/>
+<!-- end cropperjs -->
+
 <script>
 	/* Utility functions for global admin use */
 

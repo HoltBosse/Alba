@@ -143,6 +143,26 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 		}
 	}
 
+	function crop_image() {
+		selected = get_selected();
+		if (selected.length<1) {
+			alert('Select an image');
+		}
+		else if (selected.length>1) {
+			alert('Select a single image');
+		}
+		else {
+			// get vars
+			async function handle_img_editor() {
+				let image_id = selected[0].dataset.id;
+				const result = await window.load_img_editor(image_id);
+				console.log(result);
+			}
+
+			handle_img_editor();
+		}
+	}
+
 	function rename_image_action() {
 		// called by onclick of update button in modal
 		selected = get_selected();

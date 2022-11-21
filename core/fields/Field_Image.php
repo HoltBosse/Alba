@@ -13,6 +13,8 @@ class Field_Image extends Field {
 	}
 
 	public function display($repeatable_template=false) {
+		//add the image editor
+		Image::add_image_js_editor();
 
 		// repeatable template boolean initiated in Field_Repeatable.php if inside repeatable form
 
