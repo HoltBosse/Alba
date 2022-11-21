@@ -142,7 +142,7 @@
     }
 
     /* modals */
-    .modal-content .box, .modal-card, input {
+    .modal-content .box, .modal-card, input, .modal-content form.form {
         background-color: #222;
     }
     .modal-card-title, h1.title.sticky {
