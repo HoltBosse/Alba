@@ -154,6 +154,8 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 		else {
 			// get vars
 			async function handle_img_editor() {
+				let title = selected[0].querySelector('img').title;
+				let alt = selected[0].querySelector('img').alt;
 				let image_id = selected[0].dataset.id;
 				const result = await window.load_img_editor(image_id);
 				//console.log(result);
@@ -162,8 +164,8 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 					//console.log(result);
 					const formData = new FormData();
 					formData.append("file-upload[]", result);
-					formData.append("alt[]", ["nonsense"]);
-					formData.append("title[]", ["nonsense"]);
+					formData.append("alt[]", [title]);
+					formData.append("title[]", [alt]);
 					formData.append("web_friendly[]", [0]);
 
 					fetch(window.uripath + '/admin/images/uploadv2', {
