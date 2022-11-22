@@ -161,6 +161,8 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 				//console.log(result);
 
 				if(result != 0) {
+					document.getElementById("image_editor").querySelector(".modal-card-body").innerHTML = `<p>Uploading Edit to the Server. Please Wait ....</p>`;
+					document.getElementById("image_editor").querySelector(".modal-card-foot").innerHTML = "";
 					//console.log(result);
 					const formData = new FormData();
 					formData.append("file-upload[]", result);
