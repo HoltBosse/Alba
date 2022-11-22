@@ -128,5 +128,5 @@ $uploaded_files = implode(",",$uploaded_files);
 
 // return json to javascript uploaded and
 CMS::Instance()->queue_message('Images uploaded','success');
-echo '{"success":1,"msg":"Images uploaded","files","'.$uploaded_files.'"}';
+echo '{"success":1,"msg":"Images uploaded","files":"'.$uploaded_files.'"}';
 exit(0);

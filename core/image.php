@@ -144,7 +144,7 @@ class Image {
                                     </div>
                                 </section>
                                 <footer class="modal-card-foot">
-                                    <button class="button is-success">Save</button>
+                                    <button onclick="save_img_editor()" class="button is-success">Save</button>
                                     <button onclick="close_img_editor()" class="button cancel">Cancel</button>
                                 </footer>
                             </div>
@@ -193,10 +193,36 @@ class Image {
                             }
                         });
 
-                        //overwrite/new/close logic
+                        //close logic
                         window.close_img_editor = function() {
                             document.getElementById('image_editor').remove();
                             resolve(0);
+                        };
+
+                        //util func
+                        function dataURLtoFile(dataurl, filename) {
+ 
+                            var arr = dataurl.split(','),
+                                mime = arr[0].match(/:(.*?);/)[1],
+                                bstr = atob(arr[1]), 
+                                n = bstr.length, 
+                                u8arr = new Uint8Array(n);
+                                
+                            while(n--){
+                                u8arr[n] = bstr.charCodeAt(n);
+                            }
+                            
+                            return new File([u8arr], filename, {type:mime});
+                        }
+
+                        //save logic
+                        window.save_img_editor = function() {
+                            //console.log(cropper.getCroppedCanvas().toDataURL());
+
+                            /* cropper.getCroppedCanvas().toBlob((blob) => {
+                                resolve(blob);
+                            }); */
+                            resolve(dataURLtoFile(cropper.getCroppedCanvas().toDataURL('image/png'), "test.png"));
                         }
                     });
                 }

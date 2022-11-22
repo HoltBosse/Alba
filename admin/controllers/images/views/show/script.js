@@ -156,7 +156,27 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 			async function handle_img_editor() {
 				let image_id = selected[0].dataset.id;
 				const result = await window.load_img_editor(image_id);
-				console.log(result);
+				//console.log(result);
+
+				if(result != 0) {
+					//console.log(result);
+					const formData = new FormData();
+					formData.append("file-upload[]", result);
+					formData.append("alt[]", ["nonsense"]);
+					formData.append("title[]", ["nonsense"]);
+					formData.append("web_friendly[]", [0]);
+
+					fetch(window.uripath + '/admin/images/uploadv2', {
+						method: "POST",
+						/* headers: {
+							"Content-Type": "multipart/form-data"
+						}, */
+						body: formData,
+					}).then((response) => response.json()).then((data) => {
+						console.log(data);
+						window.location.reload();
+					});
+				}
 			}
 
 			handle_img_editor();
@@ -249,6 +269,7 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 						media_item_container = document.getElementById('media_item_id_' + item.toString());
 						media_item_container.closest('.all_images_image_container').innerHTML="";
 					});
+					window.location.reload();
 					//console.log(response); 
 
 				});
