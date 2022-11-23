@@ -1,6 +1,9 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+//add the image editor
+Image::add_image_js_editor();
+
 $valid_image_types = [];
 foreach(File::$image_types as $type => $value) {
     array_push($valid_image_types, "'$type'");
