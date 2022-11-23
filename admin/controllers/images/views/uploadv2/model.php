@@ -85,6 +85,7 @@ function correctImageOrientation($filename) {
 
 // upload images to processed directory - make web friendly if needed
 $n=0;
+$img_ids = [];
 foreach ($_FILES["file-upload"]["error"] as $key => $error) {
     if ($error == UPLOAD_ERR_OK) {
         $tmp_name = $_FILES["file-upload"]["tmp_name"][$key];
@@ -108,6 +109,7 @@ foreach ($_FILES["file-upload"]["error"] as $key => $error) {
 			$file->recalc_height(1920);
 		}
 		$in_db_ok = DB::exec("insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)", [$file->width, $file->height, $title, $alt, $file->filename, $file->mimetype]);
+		$img_ids[] = DB::get_last_insert_id();
 		if ($in_db_ok) {
 			$thumbdest = CMSPATH . '/images/processed/' . "web_" . $file->filename;
 			// make web friendly if required
@@ -128,5 +130,5 @@ $uploaded_files = implode(",",$uploaded_files);
 
 // return json to javascript uploaded and
 CMS::Instance()->queue_message('Images uploaded','success');
-echo '{"success":1,"msg":"Images uploaded","files","'.$uploaded_files.'"}';
+echo '{"success":1,"msg":"Images uploaded","files":"'.$uploaded_files.'","ids":"'.implode(",",$img_ids).'"}';
 exit(0);

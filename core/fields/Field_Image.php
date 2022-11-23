@@ -13,6 +13,8 @@ class Field_Image extends Field {
 	}
 
 	public function display($repeatable_template=false) {
+		//add the image editor
+		Image::add_image_js_editor();
 
 		// repeatable template boolean initiated in Field_Repeatable.php if inside repeatable form
 
@@ -49,6 +51,7 @@ class Field_Image extends Field {
 		
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
+		echo "<button type='button' id='trigger_image_crop_{$this->id}' class='button btn is-primary'>Crop Image</button>";
 		echo "&nbsp;<a href='" . Config::uripath() . "/admin/images/show?filter=upload' target='_blank' type='button' id='trigger_image_upload_{$this->id}' class='button btn is-small is-info is-light'>Upload New Image</a>";
 		echo "<button type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";	
 		
@@ -70,6 +73,43 @@ class Field_Image extends Field {
 		<script>
 
 		
+		document.getElementById("trigger_image_crop_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
+			let img_wrapper = document.getElementById("selected_image_<?php echo $this->id; ?>");
+			if(!img_wrapper.closest(".selected_image_wrap").classList.contains("active")) {
+				alert("no image selected");
+				return false;
+			}
+			let id = img_wrapper.querySelector("img").getAttribute("src").split("/")[2];
+
+			async function handle_img_editor() {
+				const result = await window.load_img_editor(id);
+				//console.log(result);
+
+				if(result != 0) {
+					document.getElementById("image_editor").querySelector(".modal-card-body").innerHTML = `<p>Uploading Edit to the Server. Please Wait ....</p>`;
+					document.getElementById("image_editor").querySelector(".modal-card-foot").innerHTML = "";
+					console.log(result);
+					const formData = new FormData();
+					formData.append("file-upload[]", result);
+					formData.append("alt[]", ["system cropped image"]);
+					formData.append("title[]", ["system cropped image"]);
+					formData.append("web_friendly[]", [0]);
+
+					fetch('<?php echo Config::uripath(); ?>/admin/images/uploadv2', {
+						method: "POST",
+						body: formData,
+					}).then((response) => response.json()).then((data) => {
+						console.log(data);
+						img_wrapper.querySelector("img").setAttribute("src", "/image/"+data.ids);
+						document.getElementById("<?php echo $this->id; ?>").value=data.ids;
+						document.getElementById("image_editor").remove();
+						//window.location.reload();
+					});
+				}
+			}
+
+			handle_img_editor();
+		})
 	
 
 		// choose new image button event listener
