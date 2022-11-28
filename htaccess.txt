@@ -45,3 +45,10 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 # internally rewrite the request to the index.php script
 RewriteRule .* index.php [L]
+
+# match anything in .git folder or .gitignore files, etc
+RedirectMatch 404 /\.git
+# any file matching readme
+RedirectMatch 404 (?i)(README)
+# send htaccess 404s to php so that no one is the wiser
+ErrorDocument 404 /404/
