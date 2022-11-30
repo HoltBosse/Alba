@@ -390,6 +390,11 @@ final class CMS {
 		echo "</pre>";
 	}
 
+	public static function console_log($o) {
+		echo "<script>";
+    	echo "console.log(" . json_encode($o) . ");";
+		echo "</script>";
+	}
 
 
 
