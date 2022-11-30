@@ -66,8 +66,13 @@ table.dragging tr.droppable.ready {
 	background:rgba(155,255,100,0.3);
 }
 .drag_td {
-	display:flex;
-	
+	height: 0;
+}
+.center_state {
+	height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 .before_after_wrap {
 	margin-right:0rem;
@@ -305,6 +310,7 @@ table.dragging .before_after_wrap {
 				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
+					<div class="center_state">
 						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $content_item->id; ?>'/>
 						<?php if ($order_by && $content_type_filter):?>
 						<div draggable="true"  data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>"  ondragend="dragend_handler(event)" ondragstart="dragstart_handler(event)" class="grip"><i class="fas fa-grip-lines"></i></div>
@@ -322,6 +328,7 @@ table.dragging .before_after_wrap {
 								echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
 							} ?>
 						</button>
+						</div>
 					</td>
 					<td>
 						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
