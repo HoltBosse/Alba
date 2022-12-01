@@ -390,7 +390,7 @@ final class CMS {
 		echo "</pre>";
 	}
 
-	public static function console_log($o, $mode = "log") {
+	public static function jprint_r($o, $mode = "log") {
     	echo "<script>console.".$mode."(".json_encode($o).");</script>";
 	}
 
