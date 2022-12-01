@@ -390,9 +390,9 @@ final class CMS {
 		echo "</pre>";
 	}
 
-
-
-
+	public static function jprint_r($o, $mode = "log") {
+    	echo "<script>console.".$mode."(".json_encode($o).");</script>";
+	}
 
 	public function get_controller() {
 		// returns name/location of controller (if any)
