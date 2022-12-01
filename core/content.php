@@ -217,7 +217,7 @@ class Content {
 		// ensure alias is unique for content_type - will use id for existing content, random 4 digit number otherwise
 		$this->make_alias_unique();
 
-		if(strlen($this->alias)>255) {
+		if(strlen($this->alias)>$required_details_form->get_field_by_name('alias')->maxlength) {
 			CMS::Instance()->queue_message('Auto generated alias to long','danger', $_SERVER['HTTP_REFERER']);
 			die;
 		}
