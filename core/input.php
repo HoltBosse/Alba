@@ -70,7 +70,7 @@ class Input {
 			return filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
 		}
 		elseif ($filter=="USERNAME"||$filter=="TEXT"||$filter=="STRING") {
-			return filter_var($foo, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+			return htmlspecialchars($foo, ENT_NOQUOTES);
 		}
 		elseif ($filter=="EMAIL") {
 			return filter_var($foo, FILTER_VALIDATE_EMAIL);
