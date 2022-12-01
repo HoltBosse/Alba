@@ -8,7 +8,7 @@
 			"type":"Text",
 			"required":true,
 			"filter":"STRING",
-			"maxlength":255
+			"maxlength":64
 		},
 		{
 			"label":"Content Type",

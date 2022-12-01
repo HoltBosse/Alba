@@ -107,7 +107,7 @@ class Field_Text extends Field {
 
 	public function validate() {
 		// TODO: enhance validation
-		if ($this->is_missing()) {
+		if ($this->is_missing() || mb_strlen($this->default)>$this->maxlength) {
 			return false;
 		}
 		return true;

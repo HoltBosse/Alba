@@ -81,6 +81,7 @@ class Form {
 			if (!$field->validate()) {
 				$field_info = print_r ($field,true);
 				CMS::Instance()->log('Invalid field: ' . $field_info);
+				CMS::Instance()->queue_message('Invalid field: ' . ($field->label ?? $field->name),'danger');
 				return false;
 			}
 		}

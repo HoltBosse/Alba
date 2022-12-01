@@ -125,7 +125,7 @@ div.position_tag_wrap.active {
 	<div class="field ">
 		<label class="label">Title</label>
 		<div class="control has-icons-left has-icons-right">
-			<input required name="title" class="input iss-success" type="text" placeholder="Page Title" value="<?php echo $page->title;?>">
+			<input required name="title" class="input iss-success" type="text" placeholder="Page Title" maxlength="255" value="<?php echo $page->title;?>">
 			<span class="icon is-small is-left">
 			<i class="fas fa-heading"></i>
 			</span>
@@ -139,7 +139,7 @@ div.position_tag_wrap.active {
 	<div class="field ">
 		<label class="label">URL Segment</label>
 		<div class="control has-icons-left has-icons-right">
-			<input name="alias" class="input iss-success" type="text" placeholder="URL Segment" value="<?php echo $page->alias;?>">
+			<input name="alias" class="input iss-success" type="text" placeholder="URL Segment" maxlength="255" value="<?php echo $page->alias;?>">
 			<span class="icon is-small is-left">
 			<i class="fas fa-signature"></i>
 			</span>
