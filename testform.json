@@ -2,8 +2,13 @@
 	"id":"testform",
 	"fields":[
 		{
-			"type":"Turnstile",
-			"name":"turnstile"
+			"name":"repeater",
+			"id":"repeater",
+			"type":"Repeatable",
+			"label":"Testing Repeatable Form",
+			"required":false,
+			"form_path":"/testrepeatform.json",
+			"description":"Testing repeatable form."
 		},
 		{
 			"name":"submit",

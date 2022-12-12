@@ -154,7 +154,30 @@ class Input {
 				}
 			}
 			else {
-				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
+				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFSTRING','danger',Config::uripath() . '/admin');
+				return false;
+			}
+		}
+		elseif ($filter=="ARRAYOFARRAYS") {
+			if (is_array($foo)) {
+				$ok = true;
+				foreach ($foo as $bar) {
+					if (is_array($bar)) {
+						// this one is fine
+					}
+					else {
+						$ok = false;
+					}
+				}
+				if ($ok) {
+					return $foo;
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFSTRING','danger',Config::uripath() . '/admin');
 				return false;
 			}
 		}
