@@ -7,5 +7,40 @@
     "author":"workaj",
     "website":"https://alba.holtbosse.com",
 	"fields":[
+        {
+            "type": "Text",
+            "label": "verify url",
+            "name": "verify_url",
+            "id": "verify_url",
+            "placeholder": "verify url",
+            "maxlength": "255",
+            "input_type": "text"
+        },
+        {
+            "type": "Text",
+            "label": "default user group ids (comma delimited)",
+            "name": "user_groups",
+            "id": "user_groups",
+            "placeholder": "user group ids",
+            "maxlength": "255",
+            "input_type": "text"
+        },
+        {
+            "type": "Select",
+            "label": "enable admin new user emails?",
+            "name": "admin_emails",
+            "id": "admin_emails",
+            "filter": "TEXT",
+            "select_options": [
+                {
+                    "text": "no",
+                    "value": "no"
+                },
+                {
+                    "text": "yes",
+                    "value": "yes"
+                }
+            ]
+        }
     ]
 }

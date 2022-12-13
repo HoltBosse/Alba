@@ -39,13 +39,13 @@ class Plugin_core_user_verify extends Plugin {
 
             if($username && $email && $password1 && !DB::fetch("SELECT * FROM users WHERE email=?", $email)) {
                 //make user here
-                $uid = User::create_new($username, $password1, $email, [], 0); //we want the user to be disabled by default
+                $uid = User::create_new($username, $password1, $email, [explode(",", $this->get_option('user_groups') ?? "")], 0); //we want the user to be disabled by default
 
                 $user = new User();
                 $user->load_from_id($uid);
 
                 //send email
-                $this->send_email($email, $username, $user->generate_reset_key());
+                $this->send_email($email, $username, $user->generate_reset_key(), $this->get_option('verify_url'));
 
                 $message = "Please open the link sent to your email address to verify your account";
             } else {
@@ -74,10 +74,12 @@ class Plugin_core_user_verify extends Plugin {
     }
 
     public function new_user_mail(...$args) {
-        $user = $args[0][0];
-        DB::exec("UPDATE users SET state=0 WHERE id=?", $user->id); //disable the user
-        $this->send_email($user->email, $user->username, $user->generate_reset_key());
-        CMS::Instance()->queue_message('User Email Sent','success');
+        if($this->get_option('admin_emails')=="yes") {
+            $user = $args[0][0];
+            DB::exec("UPDATE users SET state=0 WHERE id=?", $user->id); //disable the user
+            $this->send_email($user->email, $user->username, $user->generate_reset_key(), $this->get_option('verify_url'));
+            CMS::Instance()->queue_message('User Email Sent','success');
+        }
     }
 }
 
