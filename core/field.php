@@ -81,19 +81,6 @@ class Field {
 		elseif (is_array($value)) {
 			$this->default = json_encode($value);
 		}
-		else {
-			/* CMS::pprint_r ($_POST);
-			echo "<hr>";
-			CMS::pprint_r ($this->filter);
-			echo "<hr>";
-			CMS::pprint_r ($raw_value);
-			echo "<hr>";
-			CMS::pprint_r ($value);
-			echo "<hr>";
-			exit(); */
-			// should never get here, can't hurt to catch
-			CMS::show_error('Unknown value type submitted');
-		}
 	}
 
 	public function get_friendly_value() {

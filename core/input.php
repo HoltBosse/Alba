@@ -154,7 +154,7 @@ class Input {
 				}
 			}
 			else {
-				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFSTRING','danger',Config::uripath() . '/admin');
+				//CMS::log('Cannot convert non-array to array in ARRAYOFSTRING');
 				return false;
 			}
 		}
