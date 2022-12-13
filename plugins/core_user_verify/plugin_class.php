@@ -61,6 +61,7 @@ class Plugin_core_user_verify extends Plugin {
                 if($user->id) {
                     DB::exec("UPDATE users SET state=1 WHERE id=?", $user->id); //enable the user
                     $user->remove_reset_key();
+                    $_SESSION['user_id'] = $user->id;
                     echo "<script>setTimeout(function () { window.location.href= 'https://" . $_SERVER['SERVER_NAME'] . $this->get_option('verified_redirect') . "'; },5000);</script>";
                     $message = "Welcome, your account has been enabled";
                 } else {
