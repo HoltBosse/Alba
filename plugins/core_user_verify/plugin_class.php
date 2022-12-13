@@ -39,7 +39,7 @@ class Plugin_core_user_verify extends Plugin {
 
             if($username && $email && $password1 && !DB::fetch("SELECT * FROM users WHERE email=?", $email)) {
                 //make user here
-                $uid = User::create_new($username, $password1, $email, [explode(",", $this->get_option('user_groups') ?? "")], 0); //we want the user to be disabled by default
+                $uid = User::create_new($username, $password1, $email, array_map('intval', explode(",", $this->get_option('user_groups') ?? "")), 0); //we want the user to be disabled by default
 
                 $user = new User();
                 $user->load_from_id($uid);
