@@ -13,6 +13,7 @@
             "name": "verify_url",
             "id": "verify_url",
             "placeholder": "verify url",
+            "description": "domain and uri slug",
             "maxlength": "255",
             "input_type": "text"
         },
@@ -41,6 +42,15 @@
                     "value": "yes"
                 }
             ]
+        },
+        {
+            "type": "Text",
+            "label": "verified redirect slug",
+            "name": "verified_redirect",
+            "id": "verified_redirect",
+            "placeholder": "verified redirect slug",
+            "maxlength": "255",
+            "input_type": "text"
         }
     ]
 }
