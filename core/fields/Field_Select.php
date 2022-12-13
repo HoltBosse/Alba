@@ -36,7 +36,7 @@ class Field_Select extends Field {
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='" . ($this->slimselect ? "slimselect_select" : "select") . "'>";
-					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name()}>";
+					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} " . ($this->multiple ? "multiple" : false) . ">";
 						if ($this->required) {
 							$placeholder = $this->placeholder ?? $this->label;
 							echo "<option value='' >{$placeholder}</option>";
@@ -136,7 +136,7 @@ class Field_Select extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
+		
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->select_options = $config->select_options ?? [];
 		$this->default = $config->default ?? '';
@@ -145,6 +145,13 @@ class Field_Select extends Field {
 		$this->empty_string = $config->empty_string ?? '';
 		$this->placeholder = $config->placeholder ?? '';
 		$this->slimselect = $config->slimselect ?: false;
+		$this->multiple = $config->multiple ?: false;
+		if ($this->multiple) {
+			$this->filter = $config->filter ?? 'ARRAYOFSTRING';
+		}
+		else {
+			$this->filter = $config->filter ?? 'STRING';
+		}
 	}
 
 	public function validate() {

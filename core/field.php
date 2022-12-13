@@ -34,6 +34,7 @@ class Field {
 		return $rendered_name;
 	}
 
+
 	public function designer_display() {
 		echo "<label class='label'>Field Label</label>";
 		echo "<p>Hello, I am a field!</p>";
@@ -79,10 +80,6 @@ class Field {
 		}
 		elseif (is_array($value)) {
 			$this->default = json_encode($value);
-		}
-		else {
-			// should never get here, can't hurt to catch
-			CMS::show_error('Unknown value type submitted');
 		}
 	}
 
