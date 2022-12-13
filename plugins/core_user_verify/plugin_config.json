@@ -1,0 +1,11 @@
+{
+	"title":"User Verification",
+	"location":"core_user_verification",
+	"id":"user_verification",
+    "description":"Allows verification of new users",
+    "version":"1.0",
+    "author":"workaj",
+    "website":"https://alba.holtbosse.com",
+	"fields":[
+    ]
+}
