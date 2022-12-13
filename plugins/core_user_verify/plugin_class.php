@@ -5,7 +5,8 @@ class Plugin_core_user_verify extends Plugin {
 
     public function init() {
         // add to system hooks
-        CMS::add_action("verify_user", $this, 'user_verification'); 
+        CMS::add_action("verify_user", $this, 'user_verification');
+        CMS::add_action("on_user_save", $this, 'new_user_mail');
     }
 
     public function make_message($message="") {
@@ -16,6 +17,16 @@ class Plugin_core_user_verify extends Plugin {
                 </div>
             </section>
         <?php
+    }
+
+    public function send_email($email, $username, $key, $redirect) {
+        $mail = new Mail();
+        $mail->addAddress($email,$username);
+        $mail->subject = "User Verification Details for " . Config::sitename();
+        $mail->html = "<p>Hello, You have been registered for an account on " . Config::sitename() . "</p>";
+        $mail->html .= "<p>please click here to verify your account: <a href='https://" . ($redirect ?? $_SERVER['SCRIPT_URL']) . "?key=" . $key . "'>Verify</a></p>";
+        $mail->html .= "<p>If you believe this message to be in error or have not signed up for/requested an account, no further action is required</p>";
+        $mail->send();
     }
 
     public function user_verification() {
@@ -34,13 +45,7 @@ class Plugin_core_user_verify extends Plugin {
                 $user->load_from_id($uid);
 
                 //send email
-                $mail = new Mail();
-                $mail->addAddress($email,$username);
-                $mail->subject = "User Verification Details for " . Config::sitename();
-                $mail->html = "<p>Hello, You have been registered for an account on " . Config::sitename() . "</p>";
-                $mail->html .= "<p>please click here to verify your account: <a href='https://" . $_SERVER['SCRIPT_URL'] . "?key=" . $user->generate_reset_key() . "'>Verify</a></p>";
-                $mail->html .= "<p>If you believe this message to be in error or have not signed up for an account, no further action is required</p>";
-                $mail->send();
+                $this->send_email($email, $username, $user->generate_reset_key());
 
                 $message = "Please open the link sent to your email address to verify your account";
             } else {
@@ -66,6 +71,13 @@ class Plugin_core_user_verify extends Plugin {
                 $this->make_message("We're sorry, there has been an error");
             }
         }
+    }
+
+    public function new_user_mail(...$args) {
+        $user = $args[0][0];
+        DB::exec("UPDATE users SET state=0 WHERE id=?", $user->id); //disable the user
+        $this->send_email($user->email, $user->username, $user->generate_reset_key());
+        CMS::Instance()->queue_message('User Email Sent','success');
     }
 }
 
