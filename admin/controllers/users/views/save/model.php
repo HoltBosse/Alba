@@ -18,6 +18,7 @@ if (!$response) {
 $success = $user->save();
 if ($success) {
 	$response = Hook::execute_hook_actions('save_user_fields_form',$user);
+	Hook::execute_hook_actions('on_user_save',$user);
 	if ($response) {
 		CMS::Instance()->queue_message('User saved','success',Config::uripath().'/admin/users');
 	}

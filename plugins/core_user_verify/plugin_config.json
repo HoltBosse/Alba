@@ -1,0 +1,56 @@
+{
+	"title":"User Verification",
+	"location":"core_user_verification",
+	"id":"user_verification",
+    "description":"Allows verification of new users",
+    "version":"1.0",
+    "author":"workaj",
+    "website":"https://alba.holtbosse.com",
+	"fields":[
+        {
+            "type": "Text",
+            "label": "verify url",
+            "name": "verify_url",
+            "id": "verify_url",
+            "placeholder": "verify url",
+            "description": "domain and uri slug",
+            "maxlength": "255",
+            "input_type": "text"
+        },
+        {
+            "type": "Text",
+            "label": "default user group ids (comma delimited)",
+            "name": "user_groups",
+            "id": "user_groups",
+            "placeholder": "user group ids",
+            "maxlength": "255",
+            "input_type": "text"
+        },
+        {
+            "type": "Select",
+            "label": "enable admin new user emails?",
+            "name": "admin_emails",
+            "id": "admin_emails",
+            "filter": "TEXT",
+            "select_options": [
+                {
+                    "text": "no",
+                    "value": "no"
+                },
+                {
+                    "text": "yes",
+                    "value": "yes"
+                }
+            ]
+        },
+        {
+            "type": "Text",
+            "label": "verified redirect slug",
+            "name": "verified_redirect",
+            "id": "verified_redirect",
+            "placeholder": "verified redirect slug",
+            "maxlength": "255",
+            "input_type": "text"
+        }
+    ]
+}

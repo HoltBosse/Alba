@@ -189,7 +189,7 @@ class User {
 	}
 
 	public function generate_reset_key() {
-		$key = md5(2418*2+$this->email);
+		$key = md5((2418*2) . $this->email);
    		$addKey = substr(md5(uniqid(rand(),1)),3,10);
 		$key = $key . $addKey;
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
