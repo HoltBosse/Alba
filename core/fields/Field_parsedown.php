@@ -92,8 +92,10 @@ class Field_parsedown extends Field {
 					min-width: 100%;
 				}
 
+				/* markdown bulma fixing */
+				/* todo: finish this */
 				.preview_content {
-					margin-left: 1rem; /* fxes bulma removing space for lists and stuff */
+					margin-left: 1rem; /* fixes bulma removing space for lists and stuff */
 				}
 
 				.preview_content ul {
@@ -105,14 +107,14 @@ class Field_parsedown extends Field {
 					<p class="pd_tab_title active" data-tab_content="write_content">Write</p>
 					<p class="pd_tab_title" data-tab_content="preview_content">Preview</p>
 					<div class="pd_text_controls">
-						<i class="pd_text_option fas fa-heading"></i>
-						<i class="pd_text_option fas fa-bold"></i>
-						<i class="pd_text_option fas fa-italic"></i>
-						<i class="pd_text_option fas fa-quote-right"></i> <?php //fa-block-quote ?>
-						<i class="pd_text_option fas fa-code"></i>
-						<i class="pd_text_option fas fa-link"></i>
-						<i class="pd_text_option fas fa-list"></i>
-						<i class="pd_text_option fas fa-list"></i> <?php //fa-list-ol - find better option ?>
+						<i class="pd_text_option fas fa-heading" data-start_prefix="### "></i>
+						<i class="pd_text_option fas fa-bold" data-start_prefix="**" data-end_prefix="**"></i>
+						<i class="pd_text_option fas fa-italic" data-start_prefix="*" data-end_prefix="*"></i>
+						<i class="pd_text_option fas fa-quote-right" data-start_prefix="> "></i> <?php //fa-block-quote ?>
+						<i class="pd_text_option fas fa-code" data-start_prefix="`" data-end_prefix="`"></i>
+						<i class="pd_text_option fas fa-link" data-start_prefix="[" data-end_prefix="](url)"></i>
+						<i class="pd_text_option fas fa-list" data-start_prefix="- "></i>
+						<i class="pd_text_option fas fa-list" data-start_prefix="#. "></i> <?php //fa-list-ol - find better option ?>
 					</div>
 				</div>
 				<div class="pd_content_header_row">
@@ -143,12 +145,20 @@ class Field_parsedown extends Field {
 						}
 					}
 					if(e.target.classList.contains("pd_text_option")) {
-						if(window.getSelection().toString() != "") {
-							console.log("selected text");
-							/* check that its in the right spot */
-						} else {
-							console.log("non selected text");
+						/* TODO: figure out a way to handle numbered lists, require blockquotes on newlines, etc */
+						let start_offset=0;
+
+						let el = document.querySelector(".pd_parsedown_content");
+						const [start, end] = [el.selectionStart, el.selectionEnd];
+						if(e.target.dataset.start_prefix) {
+							el.setRangeText(e.target.dataset.start_prefix, start, start);
+							start_offset = e.target.dataset.start_prefix.length;
 						}
+						if(e.target.dataset.end_prefix) {
+							el.setRangeText(e.target.dataset.end_prefix, end+start_offset, end+start_offset);
+						}
+						el.focus();
+						el.setSelectionRange(start+start_offset, end+start_offset);
 					}
 				});
 			</script>
