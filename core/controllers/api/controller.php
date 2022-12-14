@@ -19,7 +19,6 @@ $response = [
 $segments = CMS::Instance()->uri_segments;
 
 if(sizeof($segments)==2 && $segments[1]=="parsedown") {
-    require_once(CMSPATH . "/core/thirdparty/parsedown/parsedown.php");
 
     if($_GET["markup"]) {
 
