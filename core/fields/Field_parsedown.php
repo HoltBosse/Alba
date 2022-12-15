@@ -161,6 +161,7 @@ class Field_parsedown extends Field {
 			</section>
 			<script>
 				let editor = document.getElementById("<?php echo $wrapper_id; ?>");
+				let editor_textarea = editor.querySelector(".pd_parsedown_content");
 				editor.addEventListener("click", (e)=>{
 					if(e.target.classList.contains("pd_tab_title") && !e.target.classList.contains("active")) {
 						editor.querySelector(".pd_tab_header_row").querySelector(".active").classList.remove("active");
@@ -181,19 +182,39 @@ class Field_parsedown extends Field {
 						/* TODO: figure out a way to handle numbered lists, require blockquotes on newlines, etc */
 						let start_offset=0;
 
-						let el = document.querySelector(".pd_parsedown_content");
-						const [start, end] = [el.selectionStart, el.selectionEnd];
+						const [start, end] = [editor_textarea.selectionStart, editor_textarea.selectionEnd];
 						if(e.target.dataset.start_prefix) {
-							el.setRangeText(e.target.dataset.start_prefix, start, start);
+							editor_textarea.setRangeText(e.target.dataset.start_prefix, start, start);
 							start_offset = e.target.dataset.start_prefix.length;
 						}
 						if(e.target.dataset.end_prefix) {
-							el.setRangeText(e.target.dataset.end_prefix, end+start_offset, end+start_offset);
+							editor_textarea.setRangeText(e.target.dataset.end_prefix, end+start_offset, end+start_offset);
 						}
-						el.focus();
-						el.setSelectionRange(start+start_offset, end+start_offset);
+						editor_textarea.focus();
+						editor_textarea.setSelectionRange(start+start_offset, end+start_offset);
 					}
 				});
+
+				//todo: get this working, supposed to insert lists, etc on enter if previous line is using it
+				/* editor_textarea.addEventListener("keypress", (e)=>{
+					if(e.key==="Enter") {
+						const [start, end] = [editor_textarea.selectionStart, editor_textarea.selectionEnd];
+						console.log(start, end);
+
+						line = editor_textarea.value.slice(editor_textarea.value.lastIndexOf('\n', editor_textarea.selectionStart - 1) + 1,
+							((end = editor_textarea.value.indexOf('\n', editor_textarea.selectionStart)) => end > -1 ? end : undefined)());
+						console.log(line);
+						
+						["* ", "- ", "* [ ]"].forEach((item)=>{
+							if (line.startsWith(item)) {
+								editor_textarea.setRangeText("\n"+item, start, start);
+								//editor_textarea.focus();
+								//editor_textarea.setSelectionRange(start+item.length, start+item.length);
+							}
+						});
+						
+					}
+				}); */
 			</script>
 		<?php
 	}
