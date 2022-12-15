@@ -101,6 +101,39 @@ class Field_parsedown extends Field {
 				.preview_content ul {
 					list-style: disc; /* actually want bulma to not clean slate things for once */
 				}
+
+				.preview_content p {
+					margin: 1em 0;
+				}
+
+				.preview_content h1, .preview_content h2, .preview_content h3, .preview_content h4, .preview_content h5, .preview_content h6 {
+					font-weight: bold;
+					margin: 1em 0;
+				}
+
+				.preview_content h1 {
+					font-size: 2em;
+				}
+				
+				.preview_content h2 {
+					font-size: 1.75em;
+				}
+				
+				.preview_content h3 {
+					font-size: 1.5em;
+				}
+				
+				.preview_content h4 {
+					font-size: 1.25em;
+				}
+				
+				.preview_content h5 {
+					font-size: 1em;
+				}
+				
+				.preview_content h6 {
+
+				}
 			</style>
 			<section class="pd_wrapper" id="<?php echo $wrapper_id; ?>">
 				<div class="pd_tab_header_row">
@@ -119,7 +152,7 @@ class Field_parsedown extends Field {
 				</div>
 				<div class="pd_content_header_row">
 					<div class="pd_tab_content write_content active">
-						<textarea class="input pd_parsedown_content"></textarea>
+						<textarea class="input pd_parsedown_content" <?php echo $this->get_rendered_name(); ?> ><?php echo $this->default; ?></textarea>
 					</div>
 					<div class="pd_tab_content preview_content">
 						<p>some content here</p>
