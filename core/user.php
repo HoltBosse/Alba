@@ -227,6 +227,7 @@ class User {
 	public function save() {
 		if ($this->id) {
 			// update
+			$this->registered = DB::fetch("SELECT created FROM users WHERE id=?", $this->id)->created;
 			if ($this->password==null) {
 				// no password change
 				$query = "update users set username=?, email=? where id=?";
