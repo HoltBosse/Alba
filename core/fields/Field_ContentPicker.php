@@ -20,8 +20,10 @@ class Field_ContentPicker extends Field {
 		$this->array_values = json_decode ($this->default);
 		$required="";
 		if ($this->content_type) {
-			// get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0) 
-			$content = Content::get_all_content ("id", $this->content_type, null, null, true); // get all published only content
+			$cs = new Content_Search();
+			$cs->type_filter = $this->content_type;
+			$cs->published_only = true;
+			$content = $cs->exec(); // get all published only content
 		}
 		else {
 			CMS::show_error('ContentPicker must have content type specified');
