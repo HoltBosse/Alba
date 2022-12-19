@@ -9,11 +9,12 @@ class Plugin_core_user_verify extends Plugin {
         CMS::add_action("on_user_save", $this, 'new_user_mail');
     }
 
-    public function make_message($message="") {
+    public function make_message($message="", $extra_html="") {
         ?>
             <section style="display: flex; justify-content:center; align-items: center;">
                 <div>
                     <p><?php echo $message; ?></p>
+                    <?php echo $extra_html; ?>
                 </div>
             </section>
         <?php
@@ -123,11 +124,12 @@ class Plugin_core_user_verify extends Plugin {
                     $_SESSION['user_id'] = $user->id;
                     echo "<script>setTimeout(function () { window.location.href= 'https://" . $_SERVER['SERVER_NAME'] . $this->get_option('verified_redirect') . "'; },5000);</script>";
                     $message = "Welcome, your account has been enabled";
+                    $extra_html = "<p>you will be redirected in 5 seconds</p><noscript><p>it looks like you have javascript disabled. as this breaks the redirect, please go to https://" . $_SERVER['SERVER_NAME'] . $this->get_option('verified_redirect') . "</p></noscript>";
                 } else {
                     $message = "We're sorry, there has been an error activating your account";
                 }
 
-                $this->make_message($message);
+                $this->make_message($message, $extra_html ?? "");
             } else {
                 $this->make_message("We're sorry, there has been an error");
             }
@@ -135,7 +137,7 @@ class Plugin_core_user_verify extends Plugin {
     }
 
     public function new_user_mail(...$args) {
-        if($this->get_option('admin_emails')=="yes") {
+        if($this->get_option('admin_emails')=="yes" && (strpos($args[0][0]->registered, date("Y-m-d H:i")) !== false)) {
             $user = $args[0][0];
             DB::exec("UPDATE users SET state=0 WHERE id=?", $user->id); //disable the user
             $this->send_email($user->email, $user->username, $user->generate_reset_key(), $this->get_option('verify_url'));
