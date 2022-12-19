@@ -43,9 +43,9 @@ class Plugin_core_user_verify extends Plugin {
         }
         
         // set link and cta colors
-        $config_link_color = $this->get_option("email_link_color");
+        $config_link_color = $this->get_option("email_link_color") ?? "#3e8ed0";
         $link_color = $config_link_color == "" ? "#3e8ed0" : $config_link_color;
-        $config_cta_color = $this->get_option("email_cta_color");
+        $config_cta_color = $this->get_option("email_cta_color") ?? "#3e8ed0";
         $cta_color = $config_cta_color == "" ? "#3e8ed0" : $config_cta_color;
 
         $mail->html = "
