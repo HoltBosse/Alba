@@ -16,8 +16,8 @@ class Form {
 		if (gettype($path)=="object") {
 			$obj = $path;
 		} elseif (is_file($path)) {
-			$json = file_get_contents($path);
-			$obj = json_decode($json);
+			$this->json = file_get_contents($path);
+			$obj = json_decode($this->json);
 		} else {
 			echo "<h5>File {$path} not found or invalid data passed</h5>";
 			if (Config::debug()) {
