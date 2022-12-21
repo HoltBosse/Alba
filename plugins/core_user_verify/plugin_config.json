@@ -1,0 +1,80 @@
+{
+	"title":"User Verification",
+	"location":"core_user_verification",
+	"id":"user_verification",
+    "description":"Allows verification of new users",
+    "version":"1.0",
+    "author":"workaj",
+    "website":"https://alba.holtbosse.com",
+	"fields":[
+        {
+            "type": "Text",
+            "label": "Verify URL",
+            "name": "verify_url",
+            "id": "verify_url",
+            "placeholder": "verify url",
+            "description": "Domain and uri slug.",
+            "maxlength": "255",
+            "input_type": "text"
+        },
+        {
+            "type": "Text",
+            "label": "Default User Group IDs (comma delimited)",
+            "name": "user_groups",
+            "id": "user_groups",
+            "placeholder": "user group ids",
+            "maxlength": "255",
+            "input_type": "text"
+        },
+        {
+            "type": "Select",
+            "label": "Enable admin new user emails?",
+            "name": "admin_emails",
+            "id": "admin_emails",
+            "filter": "TEXT",
+            "select_options": [
+                {
+                    "text": "no",
+                    "value": "no"
+                },
+                {
+                    "text": "yes",
+                    "value": "yes"
+                }
+            ]
+        },
+        {
+            "type": "Text",
+            "label": "Verified Redirect Slug",
+            "name": "verified_redirect",
+            "id": "verified_redirect",
+            "placeholder": "verified redirect slug",
+            "maxlength": "255",
+            "input_type": "text"
+        },
+        {
+            "label": "Email Logo",
+            "description": "Sets the logo that will be sent in the email. Otherwise defaults to admin default logo, then to Alba logo.",
+            "name": "logo_image",
+            "id": "logo_image",
+            "type": "Image",
+            "required": false
+        },
+        {
+            "type": "Text",
+            "label": "Verification Email Link Color",
+            "name": "email_link_color",
+            "id": "email_link_color",
+            "placeholder": "Any valid css color.",
+            "input_type": "text"
+        },
+        {
+            "type": "Text",
+            "label": "Verification Email CTA Color",
+            "name": "email_cta_color",
+            "id": "email_cta_color",
+            "placeholder": "Any valid css color.",
+            "input_type": "text"
+        }
+    ]
+}

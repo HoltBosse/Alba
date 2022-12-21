@@ -2,14 +2,7 @@
 	"id":"testrepeatform",
 	"repeatable":true,
 	"fields":[
-		{
-			"name":"qqq",
-			"id":"qqq",
-			"type":"Image",
-			"label":"QQQ",
-			"required":false,
-			"description":"Repeatable QQQ ."
-		},
+		
 		{
 			"name":"txt1",
 			"id":"txt1",
@@ -18,36 +11,22 @@
 			"required":true,
 			"description":"Repeatable text fields 1."
 		},
-		{
-			"name":"txt2",
-			"id":"txt2",
-			"type":"Text",
-			"label":"Txt Test 2",
-			"required":false,
-			"description":"Repeatable text fields 2."
-		},
+		
 		{
 			"name":"sel",
 			"id":"sel",
 			"type":"Select",
 			"label":"Repeatable SlimSelect Select",
 			"required":false,
-			"description":"Repeatable select with slimselect.",
+			"description":"Repeatable MULTIPLE select with slimselect.",
 			"slimselect":true,
+			"multiple":true,
 			"select_options":[
 				{"text":"ID","value":"id"},
 				{"text":"Ordering","value":"order"},
-				{"text":"Created Date","value":"created"}
+				{"text":"Created Date","value":"created"},
+				{"text":"Blah","value":"blah"}
 			]
-		},
-		{
-			"name":"testrepeattags",
-			"id":"testrepeattags",
-			"type":"TagMultiple",
-			"label":"Multi Tags Repeatable",
-			"required":false,
-			"description":"Hope this works",
-			"filter":"ARRAYNUM"
 		}
 	]
 }

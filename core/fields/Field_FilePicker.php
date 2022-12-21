@@ -1,14 +1,13 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-class Field_Select extends Field {
+class Field_FilePicker extends Field {
 
 	public $select_options;
 
 	function __construct($id="") {
 		$this->id = $id;
 		$this->name = $id;
-		$this->select_options=[];
 		$this->config = false;
 	}
 
@@ -36,9 +35,12 @@ class Field_Select extends Field {
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='" . ($this->slimselect ? "slimselect_select" : "select") . "'>";
-					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} " . ($this->multiple ? "multiple" : false) . ">";
+					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name()}>";
 						if ($this->required) {
 							$placeholder = $this->placeholder ?? $this->label;
+							echo "<option value='' >{$placeholder}</option>";
+						}
+						elseif ($this->placeholder) {
 							echo "<option value='' >{$placeholder}</option>";
 						}
 						foreach ($this->select_options as $select_option) {
@@ -105,12 +107,10 @@ class Field_Select extends Field {
 			window.Field_Select.designer_template = `
 			<div class="field">
 				<h2 class='heading title'>Text Field</h2>	
-
 				<label class="label">Label</label>
 				<div class="control has-icons-left has-icons-right">
 					<input required name="label" class="input iss-success" type="label" placeholder="Label" value="">
 				</div>
-
 				<label class="label">Required</label>
 				<div class="control has-icons-left has-icons-right">
 					<input name="required" class="checkbox iss-success" type="checkbox"  value="">
@@ -136,22 +136,31 @@ class Field_Select extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		
+		$this->filter = $config->filter ?? 'NUMBER';
 		$this->missingconfig = $config->missingconfig ?? false;
-		$this->select_options = $config->select_options ?? [];
+		$this->root_folder = $config->root_folder ? CMSPATH . "/" . $config->root_folder : CMSPATH;
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
 		$this->config = $config;
 		$this->empty_string = $config->empty_string ?? '';
 		$this->placeholder = $config->placeholder ?? '';
 		$this->slimselect = $config->slimselect ?: false;
-		$this->multiple = $config->multiple ?: false;
-		if ($this->multiple) {
-			$this->filter = $config->filter ?? 'ARRAYOFSTRING';
-		}
-		else {
-			$this->filter = $config->filter ?? 'STRING';
-		}
+        $this->mode = $config->mode ?: "file";
+        if($this->mode != "file" && $this->mode!="folder") {
+            $this->mode = "file";
+        }
+        $dir = new DirectoryIterator($this->root_folder);
+        foreach ($dir as $fileinfo) {
+            if ((($this->mode == "file" && $fileinfo->isFile()) || (($this->mode == "folder" && $fileinfo->isDir()))) && !$fileinfo->isDot()) {
+				$entry = new stdClass();
+				$entry->text = $fileinfo->getFilename();
+				$entry->value = $fileinfo->getFilename();
+                $this->select_options[] = $entry; // full path and name
+				//echo "<p>adding folder" . $fileinfo->getPathname() . "</p>";
+				sort($this->select_options);
+            }
+        }
+		//CMS::pprint_r ($this->select_options);
 	}
 
 	public function validate() {

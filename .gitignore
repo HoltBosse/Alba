@@ -24,10 +24,16 @@ images/upload/*
 testing/
 # plugins
 /plugins/**
-!/core_autoyear/**
-!/core_google_login/**
-!/core_google_login_jwt/**
-!/core_widget/**
+!/plugins/core_autoyear/
+!/plugins/core_autoyear/**
+!/plugins/core_google_login/
+!/plugins/core_google_login/**
+!/plugins/core_google_login_jwt/
+!/plugins/core_google_login_jwt/**
+!/plugins/core_widget/
+!/plugins/core_widget/**
+!/plugins/core_user_verify/
+!/plugins/core_user_verify/**
 # testing admin templates
 admin/templates/testadmintemplate/**
 # ignore custom controllers - note: add future default controllers here!

@@ -189,7 +189,7 @@ class User {
 	}
 
 	public function generate_reset_key() {
-		$key = md5(2418*2+$this->email);
+		$key = md5((2418*2) . $this->email);
    		$addKey = substr(md5(uniqid(rand(),1)),3,10);
 		$key = $key . $addKey;
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
@@ -227,6 +227,7 @@ class User {
 	public function save() {
 		if ($this->id) {
 			// update
+			$this->registered = DB::fetch("SELECT created FROM users WHERE id=?", $this->id)->created;
 			if ($this->password==null) {
 				// no password change
 				$query = "update users set username=?, email=? where id=?";
