@@ -18,16 +18,49 @@
 			]
 		},
 		{
+			"type":"Checkbox",
+			"id":"logic3",
+			"name":"logic3",
+			"label":"Double PDF?",
+			"logic":[
+				[
+					{
+						"field": "logic1",
+						"test": "==",
+						"value": "pdf"
+					}
+				]
+			],
+			"default":0
+		},
+		{
 			"type":"Text",
 			"name":"logic2",
 			"id":"logic2",
 			"required":true,
 			"logic":[
-				{
-					"field": "logic1",
-					"operator": "==",
-					"value": "pdf"
-				}
+				[
+					{
+						"field": "logic1",
+						"test": "==",
+						"value": "pdf"
+					}
+				]
+			]
+		},
+		{
+			"type":"Text",
+			"name":"logic4",
+			"id":"logic4",
+			"required":true,
+			"logic":[
+				[
+					{
+						"field": "logic3",
+						"test": "==",
+						"value": 1
+					}
+				]
 			]
 		},
 		{

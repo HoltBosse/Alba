@@ -146,17 +146,47 @@ class Form {
 			$aftername="[]";
 		}
 
-		// loop through fields and call display();
-		foreach ($this->fields as $field) {
-			if (!property_exists($field,'nowrap')) {
-				$wrapclass = $field->wrapclass ?? "";
-				echo "<div class='{$wrapclass} form_field field field_id_{$field->id}'>";
+		echo "<div class='form_contain' id='" . $this->id . "'>";
+
+			// loop through fields and call display();
+			foreach ($this->fields as $field) {
+				if (!property_exists($field,'nowrap')) {
+					$wrapclass = $field->wrapclass ?? "";
+					echo "<div class='{$wrapclass} form_field field field_id_{$field->id}'>";
+				}
+				$field->display($repeatable_template); // pass repeatable_template so it knows this is called for making js repeatable template
+				if (!property_exists($field,'nowrap')) {
+					echo "</div><!-- end field -->";
+				}
 			}
-			$field->display($repeatable_template); // pass repeatable_template so it knows this is called for making js repeatable template
-			if (!property_exists($field,'nowrap')) {
-				echo "</div><!-- end field -->";
+			echo "<input type='hidden' value='1' name='form_" . $this->id . "{$aftername}'>";
+		
+		echo "</div>";
+
+		// add logic js
+		echo "
+			<script>
+			let form_el = document.getElementById('{$this->id}');
+			if (form_el) {
+				// create logic function
+				function logic_for_{$this->id} () {
+					console.log('Doing logic checks');
+				}
+
+				// listen for changes on this form container
+				form_el.addEventListener('input',function(e){
+					let form_wrap_el = e.target.closest('.form_contain');
+					// do logic checks
+					logic_for_{$this->id}();
+				});
+
+				// call logic checks on pageload to ensure correct visibility
+				logic_for_{$this->id}();
 			}
-		}
-		echo "<input type='hidden' value='1' name='form_" . $this->id . "{$aftername}'>";
+			else {
+				console.warn('Form element not found - validation / visibility logic may not work!');
+			}
+			</script>
+		";
 	}
 }
