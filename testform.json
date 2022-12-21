@@ -2,8 +2,33 @@
 	"id":"testform",
 	"fields":[
 		{
-			"type":"Turnstile",
-			"name":"turnstile"
+			"type":"Select",
+			"id":"logic1",
+			"name":"logic1",
+			"required":true, 
+			"label":"Content Type",
+			"default":"id",
+			"description":"Set teaser ordering option.",
+			"filter":"STRING",
+			"placeholder":"Please select",
+			"select_options":[
+				{"text":"Lesson","value":"lesson"},
+				{"text":"PDF","value":"pdf"},
+				{"text":"Video","value":"video"}
+			]
+		},
+		{
+			"type":"Text",
+			"name":"logic2",
+			"id":"logic2",
+			"required":true,
+			"logic":[
+				{
+					"field": "logic1",
+					"operator": "==",
+					"value": "pdf"
+				}
+			]
 		},
 		{
 			"name":"submit",
