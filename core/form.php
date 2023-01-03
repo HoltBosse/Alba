@@ -152,14 +152,21 @@ class Form {
 			foreach ($this->fields as $field) {
 				if (!property_exists($field,'nowrap')) {
 					// wrapped field
+					// prepare logic data attribute
 					$logic = $field->logic;
 					$logic_json = json_encode($logic);
-					//CMS::pprint_r ($field->logic);
 					$wrapclass = $field->wrapclass ?? "";
 					if ($logic) {
 						$wrapclass .= " haslogic";
 					}
-					echo "<div data-logic='{$logic_json}' class='{$wrapclass} form_field field field_id_{$field->id}'>";
+					// prepare required data attribute
+					// (remember if element is required or not)
+					$req = $field->required ?? false;
+					$req_data = "";
+					if ($req) {
+						$req_data = " data-required='true' ";
+					}
+					echo "<div data-logic='{$logic_json}' $req_data class='{$wrapclass} form_field field field_id_{$field->id}'>";
 				}
 				$field->display($repeatable_template); // pass repeatable_template so it knows this is called for making js repeatable template
 				if (!property_exists($field,'nowrap')) {
