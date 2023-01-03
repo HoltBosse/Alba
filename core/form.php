@@ -151,8 +151,15 @@ class Form {
 			// loop through fields and call display();
 			foreach ($this->fields as $field) {
 				if (!property_exists($field,'nowrap')) {
+					// wrapped field
+					$logic = $field->logic;
+					$logic_json = json_encode($logic);
+					//CMS::pprint_r ($field->logic);
 					$wrapclass = $field->wrapclass ?? "";
-					echo "<div class='{$wrapclass} form_field field field_id_{$field->id}'>";
+					if ($logic) {
+						$wrapclass .= " haslogic";
+					}
+					echo "<div data-logic='{$logic_json}' class='{$wrapclass} form_field field field_id_{$field->id}'>";
 				}
 				$field->display($repeatable_template); // pass repeatable_template so it knows this is called for making js repeatable template
 				if (!property_exists($field,'nowrap')) {

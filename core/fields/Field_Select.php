@@ -152,6 +152,7 @@ class Field_Select extends Field {
 		else {
 			$this->filter = $config->filter ?? 'STRING';
 		}
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {
