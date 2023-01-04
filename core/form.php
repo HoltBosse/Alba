@@ -194,47 +194,66 @@ class Form {
 							//console.log(e);
 							let or_blocks = JSON.parse(e.dataset.logic);
 							if (or_blocks) {
-								var show = true; // default to show
+								var or_shows = [];
+								var show = false; // default to NO SHOW
 								console.log(or_blocks);
 								// loop over OR blocks
 								// single block is normal for single AND
 								or_blocks.forEach((and_arr)=>{
+									var and_show = true; // default to show
 									// b = AND array block
 									and_arr.forEach((b)=>{
 										// b = single AND obj
+										// and_show starts as true
+										// any single negative test will set and_show to false
 										let logic_target_el = document.getElementById(b.field);
 										// todo: make this work for textareas or any other non-value driven field
 										if (logic_target_el) {
 											let logic_target_value = logic_target_el.value;
 											switch(b.test) {
 												case '==' :
-													show = logic_target_value==b.value;
+													local_show = logic_target_value==b.value;
+													if (!local_show) {
+														and_show = false;
+													}
 													break;
 												default:
 													console.warn('Unknown logic test for ',b)
 													break;
 											}
-											// todo: handle 'required'
-											// find el inside e that has 'name' attr, target that
-											if (show) {
-												e.classList.remove('logic_hide');
-											}
-											else {
-												// remove required and hide
-												e.classList.add('logic_hide');
-											}
+											
 										}
 										else {
 											console.warn('Unable to find logic target for ',b);
 										}
 									});
+									// push AND final show to or_shows arr
+									or_shows.push(and_show);
 								});
+								// have all ORS (usually only 1 :) )
+								// loop over all ORS or until single TRUE is found
+								for (var n=0; n<or_shows.length; n++) {
+									if (or_shows[n]!==false) {
+										show = true;
+										break;
+									}
+								}	
+								// set visibility
+								// todo: handle 'required'
+								// find el inside e that has 'name' attr, target that
+								if (show) {
+									e.classList.remove('logic_hide');
+								}
+								else {
+									// remove required and hide
+									e.classList.add('logic_hide');
+								}
 							}
 							else {
 								console.warn('Failed to decode logic for ',e);
 							}
 						});
-							
+						
 					}
 				}
 

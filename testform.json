@@ -60,7 +60,12 @@
 					{
 						"field": "logic3",
 						"test": "==",
-						"value": 1
+						"value": "1"
+					},
+					{
+						"field": "logic1",
+						"test": "==",
+						"value": "pdf"
 					}
 				]
 			]
