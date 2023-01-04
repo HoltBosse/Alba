@@ -169,7 +169,7 @@ class Form {
 					if ($req) {
 						$req_data = " data-required='true' ";
 					}
-					echo "<div data-logic='{$logic_json}' $req_data class='{$wrapclass} form_field field field_id_{$field->id}'>";
+					echo "<div data-field_id='{$field->id}' data-logic='{$logic_json}' $req_data class='{$wrapclass} form_field field field_id_{$field->id}'>";
 				}
 				$field->display($repeatable_template); // pass repeatable_template so it knows this is called for making js repeatable template
 				if (!property_exists($field,'nowrap')) {
@@ -208,7 +208,7 @@ class Form {
 										// any single negative test will set and_show to false
 										let logic_target_el = document.getElementById(b.field);
 										// todo: make this work for any other 
-										// non-value driven field - e.g. checkbox
+										// non-value driven field - e.g. checkbox (done!)
 										if (logic_target_el) {
 											// set to value of el by default
 											var logic_target_value = logic_target_el.value;
@@ -249,11 +249,17 @@ class Form {
 								// set visibility
 								// todo: handle 'required'
 								// find el inside e that has 'name' attr, target that
+								let actual_named_el = document.getElementById(e.dataset.field_id);
+								let is_required = e.dataset.required=='true' ? true : false; 
 								if (show) {
+									// restore required from json default
+									actual_named_el.required = is_required;
 									e.classList.remove('logic_hide');
 								}
 								else {
 									// remove required and hide
+									// cannot be required, hidden
+									actual_named_el.required = false; 
 									e.classList.add('logic_hide');
 								}
 							}
