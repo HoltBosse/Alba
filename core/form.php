@@ -207,12 +207,21 @@ class Form {
 										// and_show starts as true
 										// any single negative test will set and_show to false
 										let logic_target_el = document.getElementById(b.field);
-										// todo: make this work for textareas or any other non-value driven field
+										// todo: make this work for any other 
+										// non-value driven field - e.g. checkbox
 										if (logic_target_el) {
-											let logic_target_value = logic_target_el.value;
+											// set to value of el by default
+											var logic_target_value = logic_target_el.value;
+											if (logic_target_el.nodeName=='INPUT') {
+												if (logic_target_el.type=='checkbox') {
+													logic_target_value = logic_target_el.checked;
+												}
+											}
 											switch(b.test) {
 												case '==' :
 													local_show = logic_target_value==b.value;
+													console.log('eq test for ',b,' and ',logic_target_el);
+													console.log('comparing ',logic_target_value,' to el value of ',b.value);
 													if (!local_show) {
 														and_show = false;
 													}
@@ -221,7 +230,6 @@ class Form {
 													console.warn('Unknown logic test for ',b)
 													break;
 											}
-											
 										}
 										else {
 											console.warn('Unable to find logic target for ',b);
