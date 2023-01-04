@@ -38,6 +38,7 @@
 			"name":"logic2",
 			"id":"logic2",
 			"required":true,
+			"label":"Show if PDF",
 			"logic":[
 				[
 					{
@@ -53,6 +54,7 @@
 			"name":"logic4",
 			"id":"logic4",
 			"required":true,
+			"label":"Show if checkbox checked",
 			"logic":[
 				[
 					{

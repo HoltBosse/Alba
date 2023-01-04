@@ -146,6 +146,9 @@ class Form {
 			$aftername="[]";
 		}
 
+		// todo: move to admin template?
+		echo "<style>.logic_hide {display:none;}</style>";
+
 		echo "<div class='form_contain' id='" . $this->id . "'>";
 
 			// loop through fields and call display();
@@ -185,6 +188,54 @@ class Form {
 				// create logic function
 				function logic_for_{$this->id} () {
 					console.log('Doing logic checks');
+					let logic_els = form_el.querySelectorAll('.haslogic');
+					if (logic_els) {
+						logic_els.forEach((e)=>{
+							//console.log(e);
+							let or_blocks = JSON.parse(e.dataset.logic);
+							if (or_blocks) {
+								var show = true; // default to show
+								console.log(or_blocks);
+								// loop over OR blocks
+								// single block is normal for single AND
+								or_blocks.forEach((and_arr)=>{
+									// b = AND array block
+									and_arr.forEach((b)=>{
+										// b = single AND obj
+										let logic_target_el = document.getElementById(b.field);
+										// todo: make this work for textareas or any other non-value driven field
+										if (logic_target_el) {
+											let logic_target_value = logic_target_el.value;
+											switch(b.test) {
+												case '==' :
+													show = logic_target_value==b.value;
+													break;
+												default:
+													console.warn('Unknown logic test for ',b)
+													break;
+											}
+											// todo: handle 'required'
+											// find el inside e that has 'name' attr, target that
+											if (show) {
+												e.classList.remove('logic_hide');
+											}
+											else {
+												// remove required and hide
+												e.classList.add('logic_hide');
+											}
+										}
+										else {
+											console.warn('Unable to find logic target for ',b);
+										}
+									});
+								});
+							}
+							else {
+								console.warn('Failed to decode logic for ',e);
+							}
+						});
+							
+					}
 				}
 
 				// listen for changes on this form container
