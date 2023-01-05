@@ -121,6 +121,46 @@ table.dragging .before_after_wrap {
 	opacity:1;
 }
 
+/* state button css */
+.state_button {
+	padding: 0 !important;
+}
+
+.state_button button {
+	height: 100%;
+	padding: 0 0.75em;
+	border: 1px solid transparent;
+	width: 100%;
+}
+
+.state_button hr {
+	width: 1px;
+	height: 70%;
+}
+
+.state_button .navbar-link:not(.is-arrowless)::after {
+	right: auto;
+}
+
+.state_button .navbar-link:not(.is-arrowless) {
+	padding-right: 1.5em;
+}
+
+.state_button .navbar-item.has-dropdown {
+	height: 100%;
+}
+
+.state_button .navbar-item {
+	display: flex;
+	gap: 1em;
+}
+
+@media screen and (max-width: 1024px) {
+	/* disabled on mobile due to bulma lack of support */
+	.state_button .navbar-item.has-dropdown, .state_button hr {
+		display: none;
+	}
+}
 </style>
 
 <form id='searchform' action="" method="GET"></form>
@@ -310,46 +350,6 @@ table.dragging .before_after_wrap {
 				<?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
 			</tr>
 		</thead>
-		<style>
-			.state_button {
-				padding: 0 !important;
-			}
-
-			.state_button button {
-				height: 100%;
-				padding: 0 0.75em;
-    			border: 1px solid transparent;
-			}
-
-			.state_button hr {
-				width: 1px;
-    			height: 70%;
-			}
-
-			.state_button .navbar-link:not(.is-arrowless)::after {
-				right: auto;
-			}
-
-			.state_button .navbar-link:not(.is-arrowless) {
-				padding-right: 1.5em;
-			}
-
-			.state_button .navbar-item.has-dropdown {
-				height: 100%;
-			}
-
-			.state_button .navbar-item {
-				display: flex;
-    			gap: 1em;
-			}
-
-			@media screen and (max-width: 1024px) {
-				/* disabled on mobile due to bulma lack of support */
-				.state_button .navbar-item.has-dropdown, .state_button hr {
-					display: none;
-				}
-			}
-		</style>
 		<tbody>
 			<?php foreach ($all_content as $content_item):?>
 				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
