@@ -305,6 +305,46 @@ table.dragging .before_after_wrap {
 				<?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
 			</tr>
 		</thead>
+		<style>
+			.state_button {
+				padding: 0 !important;
+			}
+
+			.state_button button {
+				height: 100%;
+				padding: 0 0.75em;
+    			border: 1px solid transparent;
+			}
+
+			.state_button hr {
+				width: 1px;
+    			height: 70%;
+			}
+
+			.state_button .navbar-link:not(.is-arrowless)::after {
+				right: auto;
+			}
+
+			.state_button .navbar-link:not(.is-arrowless) {
+				padding-right: 1.5em;
+			}
+
+			.state_button .navbar-item.has-dropdown {
+				height: 100%;
+			}
+
+			.state_button .navbar-item {
+				display: flex;
+    			gap: 1em;
+			}
+
+			@media screen and (max-width: 1024px) {
+				/* disabled on mobile due to bulma lack of support */
+				.state_button .navbar-item.has-dropdown, .state_button hr {
+					display: none;
+				}
+			}
+		</style>
 		<tbody>
 			<?php foreach ($all_content as $content_item):?>
 				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
@@ -319,15 +359,44 @@ table.dragging .before_after_wrap {
 							<span droppable='true' class='drop_after order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">After</span>
 						</div>
 						<?php endif; ?>
-						<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
-							<?php 
-							if ($content_item->state==1) { 
-								echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-							}
-							else {
-								echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-							} ?>
-						</button>
+						<div class='button state_button'>
+							<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
+								<?php 
+								if ($content_item->state==1) { 
+									echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
+								}
+								else {
+									echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
+								} ?>
+							</button>
+							<hr>
+							<div class="navbar-item has-dropdown is-hoverable">
+								<a class="navbar-link"></a>
+								<div class="navbar-dropdown">
+									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
+											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Disabled
+										</button>
+									</form>
+									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
+											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Enabled
+										</button>
+									</form>
+									
+									<hr class="dropdown-divider">
+									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='2' class="navbar-item">
+											<i class="fas fa-times-circle" aria-hidden="true"></i>other
+										</button>
+									</form>
+									
+								</div>
+							</div>
+						</div>
 						</div>
 					</td>
 					<td>
