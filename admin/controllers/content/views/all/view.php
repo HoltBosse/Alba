@@ -131,6 +131,12 @@ table.dragging .before_after_wrap {
 	padding: 0 0.75em;
 	border: 1px solid transparent;
 	width: 100%;
+	background-color: #fff;
+}
+
+.state_button button:hover {
+	background-color: #f5f5f5;
+    cursor: pointer;
 }
 
 .state_button hr {

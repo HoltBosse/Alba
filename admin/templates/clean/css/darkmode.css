@@ -148,4 +148,9 @@
     .modal-card-title, h1.title.sticky {
         background-color: rgba(0,0,0,0);
     }
+
+    /* state button */
+    .state_button button {
+		background-color: #121212 !important;
+	}
 }
