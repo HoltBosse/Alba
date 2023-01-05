@@ -53,7 +53,7 @@
         background-color: rgb(255 255 255 / 5%);
         color: white;
     }
-    .button, .button.is-light {
+    .button, .button.is-light, .state_button button {
         background-color: rgb(255 255 255 / 5%);
         color: #aaa;
     }
@@ -148,4 +148,9 @@
     .modal-card-title, h1.title.sticky {
         background-color: rgba(0,0,0,0);
     }
+
+    /* state button */
+    .state_button button {
+		background-color: #121212 !important;
+	}
 }
