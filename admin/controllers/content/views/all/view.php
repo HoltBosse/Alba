@@ -184,6 +184,11 @@ table.dragging .before_after_wrap {
 						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
 						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
 						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
+						<?php
+							foreach($custom_fields->states as $state) {
+								echo "<option " . ($filters['state']==$state->state ? "selected" : false) . " value='$state->state'>" . ucwords($state->name) . "</option>";
+							}
+						?>
 					</select>
 				</div>
 			</div>
@@ -387,13 +392,13 @@ table.dragging .before_after_wrap {
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
-											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Disabled
+											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
 										</button>
 									</form>
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
-											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Enabled
+											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
 										</button>
 									</form>
 									
