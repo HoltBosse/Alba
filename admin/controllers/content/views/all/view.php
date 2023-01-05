@@ -360,14 +360,25 @@ table.dragging .before_after_wrap {
 						</div>
 						<?php endif; ?>
 						<div class='button state_button'>
-							<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
+							<button <?php if($content_item->state==0 || $content_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/content/action/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
 								<?php 
-								if ($content_item->state==1) { 
-									echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-								}
-								else {
-									echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-								} ?>
+									if ($content_item->state==1) { 
+										echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
+									}
+									elseif ($content_item->state==0) {
+										echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
+									} else {
+										foreach($custom_fields->states as $state) {
+											if($content_item->state==$state->state) {
+												echo "<i style='color:$state->color' class='fas fa-times-circle' aria-hidden='true'></i>";
+												$ok = true;
+											}
+										}
+										if(!$ok) {
+											echo "<i class='fas fa-times-circle' aria-hidden='true'></i>"; //default grey color if state not found
+										}
+									}
+								?>
 							</button>
 							<hr>
 							<div class="navbar-item has-dropdown is-hoverable">
@@ -387,12 +398,14 @@ table.dragging .before_after_wrap {
 									</form>
 									
 									<hr class="dropdown-divider">
-									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
-										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
-										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='2' class="navbar-item">
-											<i class="fas fa-times-circle" aria-hidden="true"></i>other
-										</button>
-									</form>
+									<?php foreach($custom_fields->states as $state) { ?>
+										<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
+												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
+											</button>
+										</form>
+									<?php } ?>
 									
 								</div>
 							</div>
