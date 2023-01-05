@@ -121,6 +121,52 @@ table.dragging .before_after_wrap {
 	opacity:1;
 }
 
+/* state button css */
+.state_button {
+	padding: 0 !important;
+}
+
+.state_button button {
+	height: 100%;
+	padding: 0 0.75em;
+	border: 1px solid transparent;
+	width: 100%;
+	background-color: #fff;
+}
+
+.state_button button:hover {
+	background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+.state_button hr {
+	width: 1px;
+	height: 70%;
+}
+
+.state_button .navbar-link:not(.is-arrowless)::after {
+	right: auto;
+}
+
+.state_button .navbar-link:not(.is-arrowless) {
+	padding-right: 1.5em;
+}
+
+.state_button .navbar-item.has-dropdown {
+	height: 100%;
+}
+
+.state_button .navbar-item {
+	display: flex;
+	gap: 1em;
+}
+
+@media screen and (max-width: 1024px) {
+	/* disabled on mobile due to bulma lack of support */
+	.state_button .navbar-item.has-dropdown, .state_button hr {
+		display: none;
+	}
+}
 </style>
 
 <form id='searchform' action="" method="GET"></form>
@@ -184,6 +230,11 @@ table.dragging .before_after_wrap {
 						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
 						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
 						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
+						<?php
+							foreach($custom_fields->states as $state) {
+								echo "<option " . ($filters['state']==$state->state ? "selected" : false) . " value='$state->state'>" . ucwords($state->name) . "</option>";
+							}
+						?>
 					</select>
 				</div>
 			</div>
@@ -319,15 +370,57 @@ table.dragging .before_after_wrap {
 							<span droppable='true' class='drop_after order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">After</span>
 						</div>
 						<?php endif; ?>
-						<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
-							<?php 
-							if ($content_item->state==1) { 
-								echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-							}
-							else {
-								echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-							} ?>
-						</button>
+						<div class='button state_button'>
+							<button <?php if($content_item->state==0 || $content_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/content/action/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
+								<?php 
+									if ($content_item->state==1) { 
+										echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
+									}
+									elseif ($content_item->state==0) {
+										echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
+									} else {
+										foreach($custom_fields->states as $state) {
+											if($content_item->state==$state->state) {
+												echo "<i style='color:$state->color' class='fas fa-times-circle' aria-hidden='true'></i>";
+												$ok = true;
+											}
+										}
+										if(!$ok) {
+											echo "<i class='fas fa-times-circle' aria-hidden='true'></i>"; //default grey color if state not found
+										}
+									}
+								?>
+							</button>
+							<hr>
+							<div class="navbar-item has-dropdown is-hoverable">
+								<a class="navbar-link"></a>
+								<div class="navbar-dropdown">
+									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
+											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
+										</button>
+									</form>
+									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
+											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
+										</button>
+									</form>
+									
+									<hr class="dropdown-divider">
+									<?php foreach($custom_fields->states as $state) { ?>
+										<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
+												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
+											</button>
+										</form>
+									<?php } ?>
+									
+								</div>
+							</div>
+						</div>
 						</div>
 					</td>
 					<td>
