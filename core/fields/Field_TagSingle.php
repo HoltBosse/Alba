@@ -88,6 +88,7 @@ class Field_TagSingle extends Field {
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
 		$this->content_type = $config->content_type ?? false;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function get_friendly_value() {

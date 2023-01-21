@@ -815,6 +815,7 @@ class Field_Rich extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? '<p></p>';
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {
