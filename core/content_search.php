@@ -232,7 +232,7 @@ class Content_Search {
 		
 
 		if ($this->order_by) {
-			$query .= " order by " . $this->order_by . " " . $this->order_direction;
+			$query .= " order by '" . $this->order_by . "' " . $this->order_direction;
 		}
 		if ($this->page) {
 			if (is_numeric($this->page_size) && is_numeric($this->page)) {
