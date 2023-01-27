@@ -24,6 +24,20 @@ if ($action=='toggle') {
 	}
 }
 
+if ($action=='togglestate') {
+	$togglestate = Input::getvar('togglestate','ARRAYOFINT');
+	if (!$togglestate) {
+		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
+	}
+	$result = DB::exec("UPDATE content SET state = ? where id=?", [$togglestate[1], $togglestate[0]]); //first is id, second is state
+	if ($result) {
+		CMS::Instance()->queue_message('Updated state of content','success', $_SERVER['HTTP_REFERER']);
+	}
+	else {
+		CMS::Instance()->queue_message('Failed to update state of content','danger', $_SERVER['HTTP_REFERER']);
+	}
+}
+
 elseif ($action=='publish') {
 	$id = Input::getvar('id','ARRAYOFINT');
 	if (!$id) {

@@ -41,9 +41,13 @@ class Field_Text extends Field {
 				if (property_exists($this,'min')) {
 					$minmax=" min='{$this->min}' max='{$this->max}' ";
 				}
+				$step="";
+				if (property_exists($this,'step')) {
+					$step=" step='{$this->step}' ";
+				}
 				$placeholder = $this->placeholder ?? "";
 
-				echo "<input type='{$this->input_type}' value='{$this->default}' placeholder='{$placeholder}' {$minmax} {$pattern} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
+				echo "<input type='{$this->input_type}' value='{$this->default}' placeholder='{$placeholder}' {$minmax} {$pattern} {$step} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
@@ -104,6 +108,7 @@ class Field_Text extends Field {
 		$this->attribute_list = $config->attribute_list ?? "";
 		$this->placeholder = $config->placeholder ?? "";
 		$this->logic = $config->logic ?? '';
+		$this->step = $config->step;
 	}
 
 	public function validate() {

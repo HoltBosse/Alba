@@ -21,7 +21,7 @@ if ($resetemail) {
 		<p>If you did not initiate this request, please ignore this email.</p>
 		";
 		$mail = new Mail();	
-		$mail->addAddress($resetemail,Config::sitename() . - " User");
+		$mail->addAddress($resetemail,Config::sitename() . " - User");
 		$mail->subject = 'Reset Email for ' . Config::sitename();
 		$mail->html = $markup;
 		$mail->send();

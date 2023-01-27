@@ -189,6 +189,14 @@ class Input {
 				return filter_var($foo, FILTER_SANITIZE_NUMBER_INT);
 			}
 		}
+		elseif ($filter=="FLOAT") {
+			if ($foo===0) {
+				return 0;
+			}
+			else {
+				return filter_var($foo, FILTER_SANITIZE_NUMBER_FLOAT | FILTER_FLAG_ALLOW_FRACTION);
+			}
+		}
 		elseif ($filter=="JSON") {
 			return json_decode($foo) ? $foo : false;
 		}
