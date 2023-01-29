@@ -48,9 +48,56 @@ class Form {
 		}
 	}
 
+	private function set_field_required_based_on_logic($field) {
+		// logic here mirrors that of js section in 'display_front_end' function in this class
+		// algorithm is essentially:
+		// loop over logic arrays
+		// outarray is ORs
+		// each inner array is ANDs
+		// note result of each set of AND checks - set a true/false accordingly in an array of OR results
+		// check if any OR result is true, if so, we are required
+		if ($field->required) {
+			$logic = $field->logic ?? false;
+			$new_required = false;
+			if ($logic) {
+				$or_arr = []; // array of AND test results - if ANY are true, we are required
+				foreach ($logic as $or) {
+					$and_arr = [];
+					foreach ($or as $and) {
+						// check logic
+						$logic_target_field = $this->get_field_by_name($and->field);
+						$logic_target_value = $logic_target_field->default; // already set by set_from_submit loop in form class
+						switch($and->test) {
+							case '==':
+								$and_arr[] = $logic_target_value == $and->value;
+								break;
+							default:
+								// unknown test
+								$and_arr[] = false;
+								break;
+						}
+					}
+					$or_arr[] = !in_array(false, $and_arr, true); // if false is in our AND array, set this OR to false;
+				}
+				$field->logic_checks_done = true;
+				$field->required = in_array(true, $or_arr, true); // if true is anywhere in our or_arr, we're required
+				if (!$field->required) {
+					// set property to show we are not required by this logic
+					$field->required_ignore_by_logic = true;
+				}
+			}
+			// else no logic available, carry on
+		}
+		// else - we weren't required in the first place!
+	}
+
 	public function set_from_submit() {
 		foreach ($this->fields as $field) {
 			$field->set_from_submit();
+		}
+		// have all field values do 'required' logic
+		foreach ($this->fields as $field) {
+			$this->set_field_required_based_on_logic($field);
 		}
 	}
 
@@ -157,7 +204,12 @@ class Form {
 					// wrapped field
 					// prepare logic data attribute
 					$logic = $field->logic;
-					$logic_json = json_encode($logic);
+					if ($logic) {
+						$logic_json = json_encode($logic);
+					}
+					else {
+						$logic_json = "";
+					}
 					$wrapclass = $field->wrapclass ?? "";
 					if ($logic) {
 						$wrapclass .= " haslogic";
@@ -183,13 +235,14 @@ class Form {
 		// add logic js
 		echo "
 			<script>
-			let form_el = document.getElementById('{$this->id}');
-			if (form_el) {
+			var form_el_{$this->id} = document.getElementById('{$this->id}');
+			if (form_el_{$this->id}) {
 				// create logic function
 				function logic_for_{$this->id} () {
 					console.log('Doing logic checks');
-					let logic_els = form_el.querySelectorAll('.haslogic');
+					var logic_els = form_el_{$this->id}.querySelectorAll('.haslogic');
 					if (logic_els) {
+						console.log('LOGIC ELS',logic_els);
 						logic_els.forEach((e)=>{
 							//console.log(e);
 							let or_blocks = JSON.parse(e.dataset.logic);
@@ -272,7 +325,7 @@ class Form {
 				}
 
 				// listen for changes on this form container
-				form_el.addEventListener('input',function(e){
+				form_el_{$this->id}.addEventListener('input',function(e){
 					let form_wrap_el = e.target.closest('.form_contain');
 					// do logic checks
 					logic_for_{$this->id}();
