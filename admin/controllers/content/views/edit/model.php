@@ -47,7 +47,7 @@ foreach($required_details_obj->fields as $field) {
 
 // prep forms
 $required_details_form = new Form($required_details_obj);
-$content_form = new Form (CMSPATH . '/controllers/' . $content->content_location . "/custom_fields.json");
+$content_form = new Form ($custom_fields);
 // set content_type for tag field based on content type of new/editing content
 $tags_field = $required_details_form->get_field_by_name('tags');
 $tags_field->content_type = $content->content_type;
