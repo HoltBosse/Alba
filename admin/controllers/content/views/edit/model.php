@@ -31,8 +31,22 @@ else {
 CMS::Instance()->editing_content = $content;
 
 
+// inject custom content states into form
+$custom_fields = json_decode(file_get_contents(CMSPATH . '/controllers/' . $content->content_location . "/custom_fields.json"));
+$required_details_obj = json_decode(file_get_contents(ADMINPATH . '/controllers/content/views/edit/required_fields_form.json'));
+foreach($required_details_obj->fields as $field) {
+	if($field->name == "state") {
+		foreach($custom_fields->states as $state) {
+			$field->select_options[] = (object) [
+				"value"=>$state->state,
+				"text"=>$state->name,
+			];
+		}
+	}
+}
+
 // prep forms
-$required_details_form = new Form(ADMINPATH . '/controllers/content/views/edit/required_fields_form.json');
+$required_details_form = new Form($required_details_obj);
 $content_form = new Form (CMSPATH . '/controllers/' . $content->content_location . "/custom_fields.json");
 // set content_type for tag field based on content type of new/editing content
 $tags_field = $required_details_form->get_field_by_name('tags');
