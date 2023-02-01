@@ -33,7 +33,7 @@ class Field_HTML extends Field {
 		$this->nowrap = $config->nowrap ?? true;
 		$this->save = $config->save ?? false;
 		$this->html = $config->html ?? "";
-		$this->logic = $config->logic ?? '';
+		$this->logic = $config->logic ?? ''; // make sure to set nowrap to false explicitly for this if logic is used - also use name+id fields in json
 	}
 
 	public function validate() {

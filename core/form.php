@@ -82,7 +82,6 @@ class Form {
 				$field->logic_checks_done = true;
 				$field->required = in_array(true, $or_arr, true); // if true is anywhere in our or_arr, we're required
 				if (!$field->required) {
-					// set property to show we are not required by this logic
 					$field->required_ignore_by_logic = true;
 				}
 			}
@@ -200,11 +199,13 @@ class Form {
 
 			// loop through fields and call display();
 			foreach ($this->fields as $field) {
-				if (!property_exists($field,'nowrap')) {
+				$nowrap_bool = $field->nowrap ?? false;
+				if (!property_exists($field,'nowrap') || !$nowrap_bool) {
 					// wrapped field
 					// prepare logic data attribute
 					$logic = $field->logic;
 					if ($logic) {
+						
 						$logic_json = json_encode($logic);
 					}
 					else {
@@ -224,7 +225,7 @@ class Form {
 					echo "<div data-field_id='{$field->id}' data-logic='{$logic_json}' $req_data class='{$wrapclass} form_field field field_id_{$field->id}'>";
 				}
 				$field->display($repeatable_template); // pass repeatable_template so it knows this is called for making js repeatable template
-				if (!property_exists($field,'nowrap')) {
+				if (!property_exists($field,'nowrap') || !$nowrap_bool) {
 					echo "</div><!-- end field -->";
 				}
 			}
@@ -306,13 +307,17 @@ class Form {
 								let is_required = e.dataset.required=='true' ? true : false; 
 								if (show) {
 									// restore required from json default
-									actual_named_el.required = is_required;
+									if (actual_named_el) {
+										actual_named_el.required = is_required;
+									}
 									e.classList.remove('logic_hide');
 								}
 								else {
 									// remove required and hide
 									// cannot be required, hidden
-									actual_named_el.required = false; 
+									if (actual_named_el) {
+										actual_named_el.required = false; 
+									}
 									e.classList.add('logic_hide');
 								}
 							}
