@@ -144,11 +144,20 @@ class Field_Rich extends Field {
 					}
 					
 					if (!found_image) {
-						// assume text / rich or otherwise
 						console.log('not image - cleaning paste');
-						var text = pasteEvent.clipboardData.getData("text/html");
-						text = text.replace(/style="[^"]*"/gi,"");
-						document.execCommand("insertHTML", false, text);
+						if (pasteEvent.clipboardData.types.includes('text/html')) {
+							var text = pasteEvent.clipboardData.getData("text/html");
+							text = text.replace(/style="[^"]*"/gi,"");
+							document.execCommand("insertHTML", false, text);
+						}
+						else if (pasteEvent.clipboardData.types.includes('text/plain')) {
+							// attempt plaintext paste
+							var text = pasteEvent.clipboardData.getData("text/plain");
+							document.execCommand("insertText", false, text);
+						}
+						else {
+							console.alert('Unknown content type pasted');
+						}
 					}
 				});
 				// click event handler for editor - for now used for handling image float changes etc... //rich_image
