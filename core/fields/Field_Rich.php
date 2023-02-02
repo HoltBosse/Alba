@@ -156,7 +156,7 @@ class Field_Rich extends Field {
 							document.execCommand("insertText", false, text);
 						}
 						else {
-							console.alert('Unknown content type pasted');
+							alert('Unknown content type pasted');
 						}
 					}
 				});
