@@ -11,12 +11,14 @@ if (!$success) {
 	CMS::Instance()->queue_message('Failed to create page object from form data','danger',Config::uripath().'/admin/pages');
 }
 
-$existing_page = DB::fetch("SELECT * FROM pages WHERE alias=? AND parent=?", [$page->alias, $page->parent]);
-if($existing_page) {
-	CMS::Instance()->queue_message('Page already exists (user created)','danger',Config::uripath().'/admin/pages');
-} elseif(file_exists(CMSPATH . "/core/controllers/{$page->alias}/controller.php")) {
-	//read https://www.php.net/manual/en/function.clearstatcache.php - if the file is found to exist, and then later deleted, will need to clear the cache
-	CMS::Instance()->queue_message('Page already exists (core)','danger',Config::uripath().'/admin/pages');
+if(Input::getvar("id")==0) {
+	$existing_page = DB::fetch("SELECT * FROM pages WHERE alias=? AND parent=?", [$page->alias, $page->parent]);
+	if($existing_page) {
+		CMS::Instance()->queue_message('Page already exists (user created)','danger',Config::uripath().'/admin/pages');
+	} elseif(file_exists(CMSPATH . "/core/controllers/{$page->alias}/controller.php")) {
+		//read https://www.php.net/manual/en/function.clearstatcache.php - if the file is found to exist, and then later deleted, will need to clear the cache
+		CMS::Instance()->queue_message('Page already exists (core)','danger',Config::uripath().'/admin/pages');
+	}
 }
 
 /* CMS::pprint_r($page);
