@@ -160,6 +160,7 @@ class Field_Repeatable extends Field {
 		$this->type = 'Repeatable';
 		$this->form_path = $config->form_path ?? false;
 		$this->repeatable = true; // always!!!
+		$this->logic = $config->logic ?? '';
 		//$this->form = new Form($this->form_path);
 	}
 

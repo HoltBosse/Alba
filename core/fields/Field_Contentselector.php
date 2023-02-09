@@ -96,6 +96,7 @@ class Field_Contentselector extends Field {
 		$this->empty_string = $config->empty_string ?? '';
 		$this->tags = $config->tags ?? [];
 		$this->list_unpublished = $config->list_unpublished ?? false;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function get_friendly_value() {

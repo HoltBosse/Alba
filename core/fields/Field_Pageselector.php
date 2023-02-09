@@ -122,6 +122,7 @@ class Field_Pageselector extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->multiple = $config->multiple ?? true;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

@@ -113,6 +113,7 @@ class Field_ContentTypeselector extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->showmedia = $config->showmedia ?? true;
 		$this->showusers = $config->showusers ?? false;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

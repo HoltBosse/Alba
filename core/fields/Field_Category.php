@@ -64,6 +64,7 @@ class Field_Category extends Field {
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
 		$this->content_type = $config->content_type ?? 1;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function get_friendly_value() {
