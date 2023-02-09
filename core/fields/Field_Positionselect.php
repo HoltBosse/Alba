@@ -74,6 +74,7 @@ class Field_Positionselect extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

@@ -248,6 +248,7 @@ class Field_Image extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->default = $config->default ?? null;
 		$this->type = $config->type ?? 'error!!!';
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

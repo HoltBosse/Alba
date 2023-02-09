@@ -107,6 +107,7 @@ class Field_Text extends Field {
 		$this->default = $config->default ?? $this->default;
 		$this->attribute_list = $config->attribute_list ?? "";
 		$this->placeholder = $config->placeholder ?? "";
+		$this->logic = $config->logic ?? '';
 		$this->step = $config->step;
 	}
 

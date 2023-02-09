@@ -160,6 +160,7 @@ class Field_FilePicker extends Field {
 				sort($this->select_options);
             }
         }
+		$this->logic = $config->logic ?? '';
 		//CMS::pprint_r ($this->select_options);
 	}
 

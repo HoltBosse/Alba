@@ -63,6 +63,7 @@ class Field_Templateselect extends Field {
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
 		$this->config = $config;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

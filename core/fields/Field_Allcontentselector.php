@@ -90,6 +90,7 @@ class Field_Allcontentselector extends Field {
 		$this->select_options = $config->select_options ?? [];
 		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

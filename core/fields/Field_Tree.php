@@ -436,6 +436,7 @@ class Field_Tree extends Field {
 		$this->sql = $config->sql ?? 'select id as value, title as text from pages where state=1';
 		$this->dataset = DB::fetchAll($this->sql);
 		$this->default = $config->default ?? '{"parent":null,"value":"-1","text":"Root","children":[]}';
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

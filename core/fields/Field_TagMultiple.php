@@ -81,6 +81,7 @@ class Field_TagMultiple extends Field {
 		$this->default = json_decode($config->default) ?? "";
 		$this->type = $config->type ?? 'error!!!';
 		$this->content_type = $config->content_type ?? false;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function get_friendly_value() {

@@ -37,6 +37,7 @@ class Field_RecaptchaV2 extends Field {
 		$this->filter = $config->filter ?? 'STRING';
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? $this->default;
+		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

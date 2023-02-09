@@ -20,10 +20,10 @@ h1 span.subheading {
   margin-top:0.5em;
 }
 
-.flex {
+.flex, #required_content_fields {
   display:flex;
 }
-.flex.gap {
+.flex.gap, #required_content_fields {
   gap:2rem;
 }
 
