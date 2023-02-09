@@ -8,8 +8,15 @@ class Field_Repeatable extends Field {
 	public $form_path;
 
 	public function display() {
-		// get default saved repeatable form stuff
-		$saved_data = json_decode($this->default);
+		/* 
+			get default saved repeatable form stuff
+			specifically loading $saved_data this way because olf how page view options are stored
+		*/
+		if(gettype($this->default)!="array") {
+			$saved_data = json_decode($this->default);
+		} elseif(gettype($this->default)=="array") {
+			$saved_data = $this->default;
+		}
 
 		// get example repeatable for js rendering
 		$this->form = new Form(CMSPATH . $this->form_path, true); 
@@ -23,16 +30,16 @@ class Field_Repeatable extends Field {
 			
 			echo "<div class='repeated_forms_container' id='repeated_forms_container_{$this->form->id}'>";
 		
-		
+		//null coalescing here to make page view repeatables work due to how they are saved
 		if ($saved_data) {
 			foreach ($saved_data as $repeatable_form_data) {
 				// load form
-				$repeatable_form = new Form(CMSPATH . $repeatable_form_data->form_path, true); // second parameter is boolean for repeatable or not
-				foreach ($repeatable_form_data->fields as $field_info) {
+				$repeatable_form = new Form(CMSPATH . ($repeatable_form_data->form_path ?? $this->form_path), true); // second parameter is boolean for repeatable or not
+				foreach (($repeatable_form_data->fields ?? $repeatable_form_data->value) as $field_info) {
 					$field = $repeatable_form->get_field_by_name($field_info->name);
 					if ($field) {
 						//CMS::pprint_r ($field_info);
-						$field->default = $field_info->default;
+						$field->default = $field_info->default ?? $field_info->value;
 					}
 				}
 				?>
