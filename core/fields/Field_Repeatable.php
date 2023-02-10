@@ -32,7 +32,7 @@ class Field_Repeatable extends Field {
 		
 		//null coalescing here to make page view repeatables work due to how they are saved
 		if ($saved_data) {
-			foreach ($saved_data as $repeatable_form_data) {
+			foreach ($saved_data as $repeatable_index=>$repeatable_form_data) {
 				// load form
 				$repeatable_form = new Form(CMSPATH . ($repeatable_form_data->form_path ?? $this->form_path), true); // second parameter is boolean for repeatable or not
 				foreach (($repeatable_form_data->fields ?? $repeatable_form_data->value) as $field_info) {
@@ -47,7 +47,15 @@ class Field_Repeatable extends Field {
 					<button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
 					<button type='button' onclick='move_repeatable_up(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>^</button>
 					<button type='button' onclick='move_repeatable_down(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>v</button>
-					<?php $repeatable_form->display_front_end(); ?>
+					<?php
+						ob_start();
+						$repeatable_form->display_front_end();
+						$rform_contents = ob_get_contents();
+						ob_end_clean();
+						$rform_contents = str_replace("{{repeatable_id_suffix}}", uniqid(), $rform_contents);
+						$rform_contents = str_replace("{{replace_with_index}}", $repeatable_index, $rform_contents);
+						echo $rform_contents;
+					?>
 				</div>
 				<?php
 			}
