@@ -30,7 +30,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	margin:1rem;
 	padding:1rem;
 	border:1px dashed rgba(0,0,0,0.2);
-	max-height:100vh;
+	max-height:inherit;
 	opacity:1;
 }
 
@@ -269,7 +269,7 @@ div.position_tag_wrap.active {
 				</div>
 			</div>
 
-			<div id="content_type_controller_view_options">
+			<div id="content_type_controller_view_options" style="width: 100%;">
 				<h6 class='heading title is-6'>VIEW OPTIONS</h6>
 				<?php 
 					if ($page->view>0) {
