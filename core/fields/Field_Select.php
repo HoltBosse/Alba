@@ -43,7 +43,7 @@ class Field_Select extends Field {
 						}
 						foreach ($this->select_options as $select_option) {
 							$selected = "";
-							if ($this->multiple && $select_option->value != "" && str_contains($this->default, $select_option->value)) {
+							if ($this->multiple && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
 							} elseif ($select_option->value == $this->default) {
 								$selected="selected";
