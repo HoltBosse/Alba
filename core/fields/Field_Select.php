@@ -43,7 +43,11 @@ class Field_Select extends Field {
 						}
 						foreach ($this->select_options as $select_option) {
 							$selected = "";
-							if ($select_option->value == $this->default) { $selected="selected";}
+							if ($this->multiple && $select_option->value != "" && str_contains($this->default, $select_option->value)) {
+								$selected="selected";
+							} elseif ($select_option->value == $this->default) {
+								$selected="selected";
+							}
 							if (isset($select_option->UpdateSelect)) { $UpdateSelect[$select_option->value] = $select_option->UpdateSelect;}
 							echo "<option {$selected} value='{$select_option->value}'>{$select_option->text}</option>";
 						}
