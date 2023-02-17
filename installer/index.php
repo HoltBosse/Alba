@@ -36,12 +36,13 @@ function pprint_r ($msg) {
 
 function change_config_file_settings ($filePath, $newSettings) {
     // Build the new file as a string
-    $newFileStr = "<?php\n\ndefined('CMSPATH') or die; // prevent unauthorized access \n\n class Config {\n\n";
+    $newFileStr = "<?php\ndefined('CMSPATH') or die; // prevent unauthorized access \n\nclass Config {\n\n";
     foreach ($newSettings as $name => $val) {
         // Using var_export() allows you to set complex values such as arrays and also
         // ensures types will be correct
-        $newFileStr .= "static \${$name} = " . var_export($val, true) . ";\n";
+        $newFileStr .= "\tstatic \${$name} = " . var_export($val, true) . ";\n";
 	}
+	$newFileStr .= "\n\tpublic static function __callStatic(\$name, \$args) {\n\t\treturn property_exists('Config',\$name) ? Config::\$\$name : null;\n\t}";
 	$newFileStr .= "\n\n}"; // close class structure
     // Write it back to the file
     file_put_contents($filePath, $newFileStr);
