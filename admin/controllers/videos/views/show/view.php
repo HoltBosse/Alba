@@ -2,8 +2,6 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
-<?php if (!$filter=='upload'):?>
-
 <dialog id="video_preview" class="video_dialog">
 	<video controls>
 		<source src="" type="video/mp4">
@@ -53,53 +51,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</div>
 	</form>
 </section>
-
-<?php else :?>
-	<script>window.close_when_done = true;</script>
-	<style>nav {display:none !important;}</style>
-	<h1 class='title sticky'>Upload</h1>
-<?php endif; ?>
-
-
-<p class='help'>Max upload total size: <?php echo $max_upload_size; ?> (<?php echo $max_upload_size_bytes; ?> bytes)</p>
-<script>
-	window.max_upload_size_bytes = <?php echo $max_upload_size_bytes;?>;
-	window.uripath = "<?php echo Config::uripath(); ?>";
-</script>
-<div id='upload_space'><h1>Drag & Drop New Videos Here</h1></div>
-
-<section class='section'>
-	<input id='regular_upload' type="file" multiple/>
-</section>
-
-<?php if (!$filter=='upload'):?>
-	<div id='rename_image_modal' class="modal">
-	<div class="modal-background"></div>
-	<div class="modal-content">
-		<form class='form'>
-			<input type='hidden' value='' id='rename_image_id' name='rename_image_id'/>
-			<div class='field'>
-				<label class='label'  for='rename_title'>Title</label>
-				<div class='control'>
-					<input placeholder='Title Text' class='input' name='rename_title' id='rename_title' type='text' required/>
-				</div>
-			</div>
-			<div class='field'>
-				<label class='label' for='rename_alt'>Alt Text</label>
-				<div class='control'>
-					<input placeholder='Alt Text' class='input' name='rename_alt' id='rename_alt' type='text' required/>
-				</div>
-			</div>
-			<div class='field'>
-				<button id='update_image_values_trigger' onclick="rename_image_action();" type='button' class='btn button is-success'>Update</button>
-				<button id='close_image_modal' onclick='this.closest(".modal").classList.remove("is-active");' type='button' class='btn button is-danger'>Cancel</button>
-			</div>
-		</form>
-	</div>
-	<button class="modal-close is-large" aria-label="close"></button>
-	</div>
-
-<?php endif; ?>
 
 <style>
 
@@ -220,9 +171,6 @@ dialog::backdrop {
 }
 </style>
 
-
-<?php if (!$filter=='upload'):?>
-
 <div id='all_images'>
 	<?php foreach ($all_videos->data as $image):?>
 		<?php
@@ -255,35 +203,16 @@ dialog::backdrop {
 	<?php endforeach; ?>
 </div>
 
-<?php endif; // skipped display of all images if filter==upload ?>
-
-<div id='upload_modal' class="modal">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Upload images</p>
-      <button class="delete" aria-label="close"></button>
-    </header>
-    <section class="modal-card-body">
-      <form id='image_upload_form' action='<?php echo Config::uripath();?>/admin/images/uploadv2' method="POST" enctype="multipart/form-data">
-	  </form>
-    </section>
-    <footer class="modal-card-foot">
-      <button onclick='document.getElementById("image_upload_form_submit").click();' class="button is-success">Upload</button>
-      <button class="button cancel">Cancel</button>
-    </footer>
-  </div>
-</div>
-
-<dialog id="uploading_progress_dialog">
-	<section>
-		<p>Uploading... Please wait</p>
-	</section>
-</dialog>
-
-<?php if ($autoclose):?>
-	<script>window.autoclose = true;</script>
-<?php else: ?>
-	<script>window.autoclose = false;</script>
-<?php endif; ?>
-<script src='<?php echo Config::uripath();?>/admin/controllers/videos/views/show/script.js'></script>
+<script>
+	// image click handler
+	all_image_containers = document.querySelectorAll('.all_images_image_container');
+	//console.log(all_image_containers);
+	all_image_containers.forEach(container => {
+		container.addEventListener('click',function(e){
+			let modal = document.getElementById("video_preview");
+			modal.querySelector("source").src=e.target.dataset.video;
+			modal.querySelector("video").load();
+			modal.showModal();
+		});
+	});
+</script>
