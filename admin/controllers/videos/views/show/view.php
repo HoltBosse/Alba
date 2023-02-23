@@ -55,6 +55,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <style>
 
 .video_dialog {
+	max-height: 90vh;
 	padding: 0;
     max-width: 75%;
     border-width: 0;

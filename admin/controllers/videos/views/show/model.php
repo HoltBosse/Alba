@@ -13,6 +13,7 @@ else {
     //CMS::pprint_r($all_videos->data[0]);
 }
 
+//echo "<xmp>"; print_r($all_videos); echo "</xmp>";
 
 $image_tags = Content::get_applicable_tags ("-1");
 
