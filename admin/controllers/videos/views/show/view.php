@@ -6,7 +6,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<video controls>
 		<source src="" type="video/mp4">
 	</video>
-	<p onclick="document.getElementById('video_preview').close()">X</p>
+	<p onclick="document.getElementById('video_preview').close(); document.getElementById('video_preview').querySelector('video').pause();">X</p>
 </dialog>
 
 <h1 class='title sticky'>
