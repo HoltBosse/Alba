@@ -206,9 +206,9 @@ dialog::backdrop {
 
 <div style="display: inline-flex; gap: 1rem;">
 	<?php if($all_videos->paging->previous) { ?>
-    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->previous); ?>" class="button is-info trigger_loading">Back</a>
+    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode(base64_encode($all_videos->paging->previous)); ?>" class="button is-info trigger_loading">Back</a>
 	<?php } if($all_videos->paging->next) { ?>
-    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->next); ?>" class="button is-info trigger_loading">Next</a>
+    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode(base64_encode($all_videos->paging->next)); ?>" class="button is-info trigger_loading">Next</a>
 	<?php } ?>
 </div>
 

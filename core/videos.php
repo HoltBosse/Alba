@@ -71,6 +71,24 @@ class Videos {
         $output = curl_exec($curl);
         curl_close($curl);
 
-        return json_decode($output);
+        if(str_contains($page, "/items?")) {
+            $return_data = json_decode($output);
+            $output = (object) [
+                "total"=>$return_data->total,
+                "page"=>$return_data->page,
+                "per_page"=>$return_data->per_page,
+                "paging"=>$return_data->paging,
+                "data"=>[]
+            ];
+
+            foreach($return_data->data as $item) {
+                $output->data[] = $item->video;
+            }
+
+            return $output;
+            
+        } else {
+            return json_decode($output);
+        }
     }
 }
