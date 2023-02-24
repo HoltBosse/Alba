@@ -35,7 +35,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<div class="field">
 				<label class="label">&nbsp;</label>
 				<div class="control">
-					<button form="searchform" type="submit" class="button is-info">
+					<button form="searchform" type="submit" class="button is-info trigger_loading">
 						Search
 					</button>
 				</div>
@@ -206,9 +206,9 @@ dialog::backdrop {
 
 <div style="display: inline-flex; gap: 1rem;">
 	<?php if($all_videos->paging->previous) { ?>
-    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->previous); ?>" class="button is-info">Back</a>
+    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->previous); ?>" class="button is-info trigger_loading">Back</a>
 	<?php } if($all_videos->paging->next) { ?>
-    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->next); ?>" class="button is-info">Next</a>
+    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->next); ?>" class="button is-info trigger_loading">Next</a>
 	<?php } ?>
 </div>
 
@@ -223,5 +223,74 @@ dialog::backdrop {
 			modal.querySelector("video").load();
 			modal.showModal();
 		});
+	});
+</script>
+
+<style>
+	.lds-ring {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-ring div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border: 8px solid #9d9fa2;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #9d9fa2 transparent transparent transparent;
+    }
+    .lds-ring div:nth-child(1) {
+        animation-delay: -0.45s;
+    }
+    .lds-ring div:nth-child(2) {
+        animation-delay: -0.3s;
+    }
+    .lds-ring div:nth-child(3) {
+        animation-delay: -0.15s;
+    }
+    @keyframes lds-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+	.loader_wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 99999999;
+        margin: 0;
+        min-height: 100vh;
+        width: 100%;
+        /* display: grid; */
+		display: none;
+        place-content: center;
+        background: #000000CC;
+        z-index: 99999999999999999999;
+    }
+	.loader_wrapper.active {
+		display: grid;
+	}
+</style>
+
+<div class="loader_wrapper">
+    <div class="lds-ring">
+		<div></div><div></div><div></div><div></div>
+	</div>
+</div>
+
+<script>
+	document.body.addEventListener("click", (e)=>{
+		if(e.target.classList.contains("trigger_loading")) {
+			document.querySelector(".loader_wrapper").classList.add("active");
+		}
 	});
 </script>
