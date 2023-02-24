@@ -62,4 +62,15 @@ class Videos {
             return json_decode($output);
         }
     }
+
+    public function get_page($page) {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "https://api.vimeo.com$page");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: bearer ' . $this->token]);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $output = curl_exec($curl);
+        curl_close($curl);
+
+        return json_decode($output);
+    }
 }

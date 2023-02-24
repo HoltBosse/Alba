@@ -204,6 +204,14 @@ dialog::backdrop {
 	<?php endforeach; ?>
 </div>
 
+<div style="display: inline-flex; gap: 1rem;">
+	<?php if($all_videos->paging->previous) { ?>
+    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->previous); ?>" class="button is-info">Back</a>
+	<?php } if($all_videos->paging->next) { ?>
+    	<a href="<?php echo Config::uripath(); ?>/admin/videos/show?page=<?php echo urlencode($all_videos->paging->next); ?>" class="button is-info">Next</a>
+	<?php } ?>
+</div>
+
 <script>
 	// image click handler
 	all_image_containers = document.querySelectorAll('.all_images_image_container');

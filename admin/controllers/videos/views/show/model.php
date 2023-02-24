@@ -4,11 +4,13 @@ defined('CMSPATH') or die; // prevent unauthorized access
 $videos = new Videos();
 
 $searchtext = Input::getvar('searchtext','TEXT',null);
+$page = Input::getvar('page','TEXT',null);
 
 if ($searchtext) {
     $all_videos = $videos->search_all_videos($searchtext);
-}
-else {
+} elseif($page) {
+    $all_videos = $videos->get_page(urldecode($page));
+} else {
     $all_videos = $videos->get_all_videos();
     //CMS::pprint_r($all_videos->data[0]);
 }
