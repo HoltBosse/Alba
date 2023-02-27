@@ -40,11 +40,13 @@ class Field_Video extends Field {
 		echo "<p>Selected Video</p>";
 		if ($this->default) {
 			$active = ' active ';
+			$preview_image = json_decode($this->default)->thumb_with_play_button ?? "https://via.placeholder.com/500x250.png?text=Preview+Not+Found";
 		}
 		else {
 			$active = '';
+			$preview_image = "";
 		}
-		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Video Selected</p><img  src='".Config::uripath() . '/image/' . $this->default ."/thumb' id='image_selector_chosen_preview_{$this->id}'?></div>";
+		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Video Selected</p><img  src='$preview_image' id='image_selector_chosen_preview_{$this->id}'?></div>";
 		
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Video</button>";
@@ -208,7 +210,7 @@ class Field_Video extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
+		$this->filter = $config->filter ?? 'RAW';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->default = $config->default ?? null;
 		$this->type = $config->type ?? 'error!!!';
