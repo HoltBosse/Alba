@@ -1,6 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+//legacy systems may only have an embed code when transitioning to this field, so keep that in mind
 class Field_Video extends Field {
 
 	public $select_options;
