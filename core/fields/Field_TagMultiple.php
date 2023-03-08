@@ -12,9 +12,33 @@ class Field_TagMultiple extends Field {
 		$this->default = "";
 		$this->content_type="";
 		$this->type = "TagMultiple";
+		$this->$tag_cache = [];
 	}
 
-	
+	private function get_parent_tag($input) {
+		if ($input->parent != 0) {
+			if($this->$tag_cache[$input->parent]) {
+				return $this->$tag_cache[$input->parent];
+			} else {
+				$parent_tag = DB::fetch("SELECT * FROM tags WHERE id=?", $input->parent);
+				$this->$tag_cache[$parent_tag->id] = $parent_tag;
+				return $parent_tag;
+			}
+		} else {
+			return (object) ["parent"=>0];
+		}
+	}
+
+	private function make_tag_path($input) {
+		$title = $input->title;
+		while($input->parent != 0) {
+			$parent_tag = $this->get_parent_tag($input);
+			$title = $parent_tag->title . " > " . $title;
+			$input = $parent_tag;
+		}
+
+		return $title;
+	}
 
 	public function display() {
 		$this->array_values = json_decode ($this->default);
@@ -47,7 +71,7 @@ class Field_TagMultiple extends Field {
 							if ($tag->state==1) {
 								$selected = "";
 								if ($this->array_values && in_array($tag->id, $this->array_values)) { $selected="selected";}
-								echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
+								echo "<option {$selected} value='{$tag->id}'>" . $this->make_tag_path($tag) . "</option>";
 							}
 						}
 					echo "</select>";
