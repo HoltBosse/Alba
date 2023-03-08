@@ -32,7 +32,6 @@ class Field_TagMultiple extends Field {
 	private function make_tag_path($input) {
 		$title = $input->title;
 		while($input->parent != 0) {
-			CMS::pprint_r($input->title);
 			$parent_tag = $this->get_parent_tag($input);
 			$title = $parent_tag->title . " > " . $title;
 			$input = $parent_tag;
