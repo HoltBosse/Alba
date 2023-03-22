@@ -223,3 +223,15 @@ legend {
   font-style:italic;
 }
 
+@media screen and (max-width: 1023px) {
+  #navbarBasicExample.active {
+    display: block;
+  }
+  .navbar-dropdown, .navbar-end {
+    display: none;
+  }
+  .navbar-dropdown.active {
+    display: block;
+  }
+}
+

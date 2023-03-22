@@ -153,4 +153,10 @@
     .state_button button {
 		background-color: #121212 !important;
 	}
+
+    @media screen and (max-width: 1023px) {
+        .navbar-menu {
+            background-color: inherit;
+        }
+    }
 }

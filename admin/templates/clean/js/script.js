@@ -172,7 +172,17 @@ function lazyload(target) {
 var lazyTargets = document.querySelectorAll(".lazy");
 lazyTargets.forEach(lazyload);
 
-
-
-
-
+let hamburger = document.querySelector("a.navbar-burger.burger");
+if(hamburger) {
+	hamburger.addEventListener("click", (e)=>{
+		document.getElementById("navbarBasicExample").classList.toggle("active");
+	});
+}
+let nav_menu = document.getElementById("navbarBasicExample");
+if(nav_menu) {
+	nav_menu.addEventListener("click", (e)=>{
+		if(e.target.classList.contains("navbar-link")) {
+			e.target.closest(".navbar-item.has-dropdown").querySelector("div.navbar-dropdown").classList.toggle("active");
+		}
+	});
+}
