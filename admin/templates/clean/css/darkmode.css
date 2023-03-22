@@ -158,5 +158,8 @@
         .navbar-menu {
             background-color: inherit;
         }
+        nav {
+            background-color: #222 !important;
+        }
     }
 }

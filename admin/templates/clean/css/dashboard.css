@@ -224,6 +224,10 @@ legend {
 }
 
 @media screen and (max-width: 1023px) {
+  nav {
+    position: sticky !important;
+    top: 0;
+  }
   #navbarBasicExample.active {
     display: block;
   }
@@ -232,6 +236,58 @@ legend {
   }
   .navbar-dropdown.active {
     display: block;
+  }
+  #configtabs {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid;
+  }
+  #configtabs ul {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  #configtabs ul li {
+    width: 99%; /* prevent border from being ut off due to bulmas overflow rules */
+  }
+  #configtabs ul li a {
+    border-radius: 4px;
+  }
+  #all_users_table tr,
+  #all_pages_table tr,
+  table.table tr {
+    display: flex;
+  }
+  #all_users_table th, #all_users_table td,
+  #all_pages_table th, #all_pages_table td,
+  table.table th, table.table td {
+    display: none;
+  }
+  #all_users_table th:nth-of-type(1), #all_users_table th:nth-of-type(2), #all_users_table td:nth-of-type(1), #all_users_table td:nth-of-type(2),
+  #all_pages_table th:nth-of-type(1), #all_pages_table th:nth-of-type(2), #all_pages_table th:nth-of-type(3), #all_pages_table td:nth-of-type(1), #all_pages_table td:nth-of-type(2), #all_pages_table td:nth-of-type(3),
+  table.table th:nth-of-type(1), table.table th:nth-of-type(2), table.table td:nth-of-type(1), table.table td:nth-of-type(2) {
+    display: block;
+  }
+  #all_users_table th:nth-of-type(2), #all_users_table td:nth-of-type(2),
+  #all_pages_table th:nth-of-type(3), #all_pages_table td:nth-of-type(3),
+  table.table th:nth-of-type(2), table.table td:nth-of-type(2) {
+    width: 100%;
+  }
+  .drag_td {
+    height: auto !important;
+  }
+  #content_search_controls {
+    flex-direction: column;
+    width: 100%;
+    gap: 0 !important;
+  }
+  #user_operations.pull-right {
+    float: left;
+  }
+  #content_type_section {
+    flex-direction: column;
+  }
+  #content_type_wrap {
+    flex-direction: column;
+    gap: 3rem;
   }
 }
 
