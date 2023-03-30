@@ -19,6 +19,7 @@ class Content_Search {
 	public $searchtext;
 	public $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
 	public $page_size;
+	public $category; // category id to match
 	public $tags; // array of tag ids to match 
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	private $count; // set after query is exec() shows total potential row count for paginated calls
@@ -38,6 +39,7 @@ class Content_Search {
 		$this->count=0;
 		$this->filters=[];
 		$this->fetch_all = false;
+		$this->category = null;
 		$this->tags=[];
 		$this->filter_pdo_params = [];
 		$this->search_pdo_params = [];
@@ -215,6 +217,10 @@ class Content_Search {
 					$where .= " and c." . $key . " = ? " ;
 				}
 			}
+		}
+
+		if ($this->category && is_numeric($this->category)) {
+			$where .= " AND c.category=" . $this->category . " "; // safe to inject - checked for number
 		}
 
 		if ($this->created_by_cur_user) {
