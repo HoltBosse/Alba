@@ -119,7 +119,7 @@ class User {
 		}
 		$this->email = Input::getvar('email','EMAIL');
 		if (!$this->email) {
-			CMS::queue_message('Invalid email','warning');
+			CMS::Instance()->queue_message('Invalid email','warning');
 			return false;
 		}
 		$this->registered = date('Y-m-d H:i:s');
@@ -231,7 +231,16 @@ class User {
 			if ($this->password==null) {
 				// no password change
 				$query = "update users set username=?, email=? where id=?";
-				$result = CMS::Instance()->pdo->prepare($query)->execute(array($this->username, $this->email, $this->id));
+				try {
+					$result = CMS::Instance()->pdo->prepare($query)->execute(array($this->username, $this->email, $this->id));
+				}
+				catch (PDOException $e) {
+					CMS::Instance()->queue_message('Username and/or email already exists','danger',Config::uripath().'/admin/users/');
+					if (Config::debug()) {
+						echo "<code>" . $e->getMessage() . "</code>";
+					}
+					$result = false;
+				}
 			}
 			else {
 				// new password
