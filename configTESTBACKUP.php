@@ -19,7 +19,7 @@ class Config {
     static $channel = "stable";     // stable/alpha
     static $updatedomain = "alba.holtbosse.com";
     static $dev_banner = false;
-
+    static $home_controller = false; // set true if homepage may be required to consume url params e.g. blog
     public static function __callStatic($name, $args) {
         return property_exists('Config',$name) ? Config::$$name : null;
     }

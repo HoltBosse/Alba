@@ -625,7 +625,16 @@ final class CMS {
 					}
 				}
 				if (!$alias) {
-					$this->raise_404();
+					if (Config::home_controller()) {
+						// no page found, but we have a home controller that may consume extra params (eg. blog)
+						// let it take care of it and generate 404 if necessary
+						$alias = 'home';
+						$query = "select * from pages where parent=-1 and alias='home' and state>0";
+						$page = $this->pdo->query($query)->fetch();
+					}
+					else {
+						$this->raise_404();
+					}
 				}
 				if (Config::debug()) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
