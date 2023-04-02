@@ -107,7 +107,7 @@ class Field_Rich extends Field {
 		}
 		</style>
 		<script>
-
+			// TODO: make id/agnostic for repeatable + live additions
 			document.addEventListener("DOMContentLoaded", function(){
 				
 				// move markup to hidden textarea on input
