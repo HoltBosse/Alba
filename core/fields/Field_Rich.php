@@ -109,18 +109,28 @@ class Field_Rich extends Field {
 		<script>
 			// TODO: make id/agnostic for repeatable + live additions
 			document.addEventListener("DOMContentLoaded", function(){
+
+				if (!window.hasOwnProperty('editor_code_already_exists')) {
+					// editor code only needs to exist once for a given page
+					// with multiple editor fields / repeatables
+					document.addEventListener('input',function(e){
+						if (e.target.classList.contains('editor')) {
+							//console.log('INPUT DETECTED IN EDITOR');
+							// move markup to hidden textarea
+							raw = e.target.innerHTML; 
+							textarea = e.target.closest('.control').querySelector('textarea');
+							textarea.value = raw; 
+						}
+						if (e.target.classList.contains('editor_raw')) {
+							// move textarea to markup in editable on any change
+							raw = e.target.value;
+							e.target.closest('.control').querySelector('.editor').innerHTML = raw;
+						}
+					});
+					// set global flag to ensure event listeners only added once
+					window.editor_code_already_exists = true;
+				}
 				
-				// move markup to hidden textarea on input
-				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('input',function(e){
-					raw = e.target.innerHTML; 
-					textarea = document.querySelector('#<?php echo $this->name;?>');
-					textarea.value = raw; 
-				});
-				// move textarea to markup in editable on any change
-				document.querySelector('#<?php echo $this->id;?>').addEventListener('input',function(e){
-					raw = e.target.value;
-					document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML = raw;
-				});
 				// remove styles on paste
 				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener("paste", function(pasteEvent) {
 					let found_image = false;
