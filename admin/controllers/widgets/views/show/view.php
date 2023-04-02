@@ -117,7 +117,7 @@ div.pull-right {
 				}
 				?>
 				</td>
-				<!-- <td><?php CMS::pprint_r ($widget->options);?></td> -->
+				<!-- <td><?php //CMS::pprint_r ($widget->options);?></td> -->
 				<td class='note_td'><?php echo $widget->note; ?></td>
 			</tr>
 		<?php endforeach; ?>
