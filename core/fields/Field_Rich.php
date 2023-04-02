@@ -127,76 +127,567 @@ class Field_Rich extends Field {
 							e.target.closest('.control').querySelector('.editor').innerHTML = raw;
 						}
 					});
+
+					document.addEventListener('click',function(e){
+						// click event handler for editor 
+
+						if (e.target.classList.contains('rich_image')) {
+							// handle rich image click
+							// clear any active rich image
+							var current_active = e.target.closest('.control').querySelector('.editor .rich_image_active');
+							if (current_active!==null) {
+								current_active.classList.remove('rich_image_active');
+							}
+							// make clicked active
+							var img = e.target;
+							img.classList.add('rich_image_active');
+						}
+						else {
+							// remove rich_image_active state
+							let editor = e.target.closest('.editor');
+							if (editor) {
+								let all_editor_active_images = editor.querySelectorAll('img.rich_image_active');
+								all_editor_active_images.forEach(img => {
+									img.classList.remove('rich_image_active');
+								});
+							}
+						}
+
+						if (e.target.classList.contains('internal_anchor')) {
+							let kill_anchor = window.confirm('Remove anchor?');
+							if (kill_anchor) {
+								e.target.remove();
+							}
+						}
+
+						let closest_editor_toolbar = e.target.closest('.hbcms_editor_toolbar');
+						if (closest_editor_toolbar) {
+						
+							// handle editor toolbar clicks
+
+							e.preventDefault();
+
+							// remember dynamic editor/textarea
+							let this_editor = e.target.closest('.control').querySelector('.editor');
+							let this_textarea = e.target.closest('.control').querySelector('textarea');
+
+							if (e.target.classList.contains('fa')) {
+								editor_button = e.target.closest('.editor_button');
+							}
+							else {
+								editor_button = e.target;
+							}
+							command = editor_button.dataset.command;
+							console.log('Command: ',command);
+
+							if (editor_button.classList.contains('toggle_editor_raw')) {
+								control = editor_button.closest('.control');
+								raw = control.querySelector('textarea.editor_raw');
+								if (raw.style.display=='block') {
+									raw.style.display='none';
+								}
+								else {
+									raw.style.display='block';
+								}
+								return false;
+							}
+
+							if (command == 'h1' || command == 'h2' || command == 'h3' || command == 'h4' || command == 'p') {
+								document.execCommand('formatBlock', false, command);
+							}
+							
+							else if (command == 'createlink') {
+
+								window.anchor_choice = function(e) {
+									let id = e.dataset.id;
+									let url_for_markup_input = document.getElementById('url_for_markup');
+									if (url_for_markup_input) {
+										url_for_markup_input.value = id;
+									}
+								}
+
+								var selection = window.getSelection().toString();
+
+								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
+								
+								let iL = ["URL", "Display Text"];
+								let iI = [`url_for_${uniq}`, `display_text_for_${uniq}`];
+								let cV = ["", selection];
+								var helptext = "Enter full link including https:// <br>";
+								let anchors = document.querySelectorAll('a.internal_anchor');
+								if (anchors.length>0) {
+									console.log('Found anchors: ',anchors);
+									helptext += "<strong>or</strong> one of the following anchors: <ul>";
+									anchors.forEach(a => {
+										helptext += "<li onClick='anchor_choice(this)' class='insert_anchor' data-id='#"+a.id+"' >#" + a.id + "</li>";
+									});
+									helptext += "</ul>";
+								}
+								let hL = [helptext, ""];
+
+								function onCreate() {
+									// insert link html at anchor location
+									let link_html = "<a id='newly_created_link_for_<?php echo $this->name;?>'>" + selection + "</a>";
+									document.execCommand('insertHTML', false, link_html);							
+									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
+								}
+
+								function onAdd() {
+									// get values and update link
+									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+									link.href = document.getElementById(iI[0]).value;
+									link.innerHTML = document.getElementById(iI[1]).value;
+									link.removeAttribute('id');		// remove id so future links not messed up
+								}
+
+
+								function onCancel() {
+									// replace anchor with original text
+									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+									link.parentNode.replaceChild(document.createTextNode(selection), link);
+								}
+
+								createModal(iL, iI, cV, hL, onCreate, onAdd, onCancel);
+
+							}
+
+							else if (command == 'createanchor') {
+								window.sel = document.getSelection();
+								anchorid = prompt('Anchor ID: ','');
+								if (anchorid) {
+									if (window.sel.getRangeAt && window.sel.rangeCount) {
+										range = window.sel.getRangeAt(0);
+										var frag = range.createContextualFragment("<a title='#"+anchorid+"' class='internal_anchor' id='"+anchorid+"' ><i class='fa fa-anchor' aria-hidden='true'></i></a>");
+										range.insertNode(frag);
+									}
+									// force update of editor contents
+									let markup = this_editor.innerHTML;
+									this_textarea.value = markup;
+								}
+							}
+
+							else if (command=='floatleft') {
+								var active_image = this_editor.querySelector('.rich_image_active');
+								if (active_image!==null) {
+									active_image.classList.add('pull-left');
+									active_image.classList.remove('rich_image_active','pull-right');
+
+									// do the same for parent figure if active_image captioned
+									if (active_image.parentElement.tagName == 'FIGURE') {
+										active_image.parentElement.classList.add('pull-left');
+										active_image.parentElement.classList.remove('pull-right');
+									}
+								}
+								else {
+									alert('No image selected');
+								}
+							}
+
+							else if (command=='edit_image_props') {
+								
+								var active_image = this_editor.querySelector('.rich_image_active');
+								
+								if (active_image!==null) {
+									
+									// get current image props
+									let alt = active_image.alt;
+									let title = active_image.title;
+
+									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
+
+									let iL = ["Alt Text", "Image Title"];
+									let iI = [`alt_text_for_${uniq}`, `title_for_${uniq}`,];
+									let cV = [alt, title];
+									let hL = ["Alternative text for the visually impaired, will also display when the browser cannot render the image.",
+											"Title will appear in a tooltip on hover of the image. It can also be used to provide a broader description than the alt text."];
+									
+									function onAdd() {
+										// set to image
+										let new_alt = document.getElementById(iI[0]).value;
+										let new_title = document.getElementById(iI[1]).value;
+										active_image.alt = new_alt;
+										active_image.title = new_title;
+										active_image.classList.remove('rich_image_active');
+										
+										// push updated content to textarea
+										active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
+									}
+
+									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+									
+								}
+								else {
+									alert('No image selected');
+								}
+							}
+
+							else if (command=='edit_image_attribution') {
+								var active_image = this_editor.querySelector('.rich_image_active');
+								if (active_image!==null) {
+
+									// check data attributes if present to load into modal
+									let author = active_image.dataset.author ? active_image.dataset.author : "";
+									let source = active_image.dataset.source ? active_image.dataset.source : "";
+									let license = active_image.dataset.license ? active_image.dataset.license : "";
+									let licenselink = active_image.dataset.licenselink ? active_image.dataset.licenselink : "";
+
+									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
+
+									let iL = ["Image Author", "Image Source", "License Name", "License Link"];
+									let iI = [`image_author_for_${uniq}`, `image_source_for_${uniq}`, `license_name_for_${uniq}`, `license_link_for_${uniq}`];
+									let cV = [author, source, license, licenselink];
+									let hL = ["", "", "", "Enter full link including https://"];
+
+									function onAdd() {
+										
+										// get new values for information
+										let new_author = document.getElementById(iI[0]).value;
+										let new_source = document.getElementById(iI[1]).value;
+										let new_license = document.getElementById(iI[2]).value;
+										let new_licenselink = document.getElementById(iI[3]).value;
+										
+										// update image dataset
+										active_image.dataset.author = new_author;
+										active_image.dataset.source = new_source
+										active_image.dataset.license = new_license
+										active_image.dataset.licenselink = new_licenselink
+
+										// will be used to determine if there will be captions
+										let new_data = [new_author, new_source, new_license, new_licenselink];
+
+										function allEmpty(array) {
+											for (const item of array) {
+												if (item!="") return false;
+											}
+											return true;
+										}
+
+										let hasFigure = active_image.parentElement.nodeName==="FIGURE";
+										let hasCaptions = !allEmpty(new_data);
+
+										function createFigure() {
+											let image = active_image;
+											let figure = document.createElement('FIGURE');
+											figure.classList.add('rich_image_figure');
+											
+											// deal with pull left and right
+											if (image.classList.contains('pull-right')) { 
+												figure.classList.add('pull-right');
+											}
+											if (image.classList.contains('pull-left')) {
+												figure.classList.add('pull-left');
+											}
+
+											active_image.replaceWith(figure);
+											figure.appendChild(image);
+										}
+
+										function removeFigure() {
+											let figure = active_image.parentElement;
+											let image = active_image;
+											figure.replaceWith(image);
+										}
+
+										function addCaptions() {
+
+											let figure = active_image.parentElement;
+
+											function appendFigcaptionToFigure(label, content, figure) {
+												let figCaption = document.createElement('FIGCAPTION');
+												let uniq = label.replace(/\s+/g, '_').toLowerCase();
+												let div = `<div class="image_${uniq}"><span class="attrib_label">${label}:&nbsp;</span><span class="attrib_value">${content}</span></div>`;
+												figCaption.innerHTML = div; 
+												console.log(figCaption);
+												figure.appendChild(figCaption);
+											} 
+
+											// create only needed captions
+											if (new_author) {
+												appendFigcaptionToFigure(`Author`, new_author, figure);
+											}
+											if (new_source) {
+												appendFigcaptionToFigure(`Source`, new_source, figure);
+											}
+											if (new_license || new_licenselink) {
+
+												function makeLinkHTML(href, content) {
+													return `<a href="${href}">${content}</a>`;
+												}
+
+												// sort out whether a link should/shouldn't be included
+												let new_content = "";
+												if (new_licenselink && new_license) {
+													new_content = makeLinkHTML(new_licenselink, new_license);
+												} 
+												else if (new_licenselink && !new_license) {
+													new_content = makeLinkHTML(new_licenselink, new_licenselink);
+												}
+												else if (!new_licenselink && new_license) {
+													new_content = new_license;
+												}
+
+												appendFigcaptionToFigure(`License`, new_content, figure);
+											}
+										}
+
+										// logical schema for when to add/rem figure and captions
+										if (!hasFigure && hasCaptions) {
+											createFigure();
+											addCaptions();
+										}
+										else if (hasFigure && hasCaptions) {
+											removeFigure();
+											createFigure();
+											addCaptions();
+										} 
+										else if (hasFigure && !hasCaptions) {
+											removeFigure();
+										}
+										else if (!hasFigure && !hasCaptions) {
+											// all is well, do nothing
+										}
+
+									}
+
+									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+									
+								}
+								else {
+									alert('No image selected');
+								}
+							}
+
+							else if (command=='floatright') {
+								var active_image = this_editor.querySelector('.rich_image_active');
+								if (active_image!==null) {
+									active_image.classList.add('pull-right');
+									active_image.classList.remove('rich_image_active','pull-left');
+
+									// do the same for parent figure if active_image captioned
+									if (active_image.parentElement.tagName == 'FIGURE') {
+										active_image.parentElement.classList.add('pull-right');
+										active_image.parentElement.classList.remove('pull-left');
+									}
+
+								}
+								else {
+									alert('No image selected');
+								}
+							}
+
+							else if (command=='floatclear') {
+								var active_image = this_editor.querySelector('.rich_image_active');
+								if (active_image!==null) {
+									active_image.classList.remove('pull-left','pull-right');
+									active_image.classList.remove('rich_image_active');
+
+									// do the same for parent figure if active_image captioned
+									if (active_image.parentElement.tagName == 'FIGURE') {
+										active_image.parentElement.classList.remove('pull-left', 'pull-right');
+									}
+								}
+								else {
+									alert('No image selected');
+								}
+							}
+							
+							else if (command=='img') {
+								//alert('choose image');
+								// launch image selector
+								var media_selector = document.createElement('div');
+								media_selector.innerHTML =`
+								<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
+								<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
+								<h1 style='color:white;'>Choose Image <a href='#' class='delete_parent'>X</a></h1>
+								<div class='form-group'>
+									<input id='media_selector_modal_search'/><button type='button' id='trigger_media_selector_search'>Search</button>
+								</div>
+								<div class='media_selector'><h2>LOADING</h2></div>
+								</div>
+								`;
+								document.body.appendChild(media_selector); 
+
+								// remember the editor to refocus for image insertion
+								window.last_editor = document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>');
+								window.sel = document.getSelection(); 
+								window.saved = [ window.sel.focusNode, window.sel.focusOffset ];
+
+								// handle click close
+								document.getElementById('media_selector_modal_close').addEventListener('click',function(e){
+									var modal = e.target.closest('.media_selector_modal');
+									modal.parentNode.removeChild(modal);
+								});
+								// handle modal close
+								media_selector.querySelector('.delete_parent').addEventListener('click',function(e){
+									e.preventDefault();
+									e.target.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode);
+								});
+								// add click event handler to capture child selection clicks
+								media_selector.addEventListener('click',function(e){
+									//console.log(e.target);
+									e.preventDefault();
+									e.stopPropagation();
+									let selected_image = e.target.closest('.media_selector_selection');
+									console.log(selected_image);
+									if (selected_image!==null) {
+										let media_id = selected_image.dataset.id;
+										let alt = selected_image.querySelector('img').alt;
+										let title = selected_image.querySelector('img').title;
+										let url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
+										let image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
+										console.log(image_markup);
+										// refocus editor
+										window.last_editor.focus();
+										// restore caret position
+										window.sel.collapse(window.saved[0], window.saved[1]);
+										// insert image
+										document.execCommand('insertHTML',false, image_markup);
+										let modal = selected_image.closest('.media_selector_modal');
+										modal.parentNode.removeChild(modal);
+									} // else clicked on container not on an anchor or it's children
+								});
+								// search handler
+								let searchtrigger = document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
+									let searchtext = document.getElementById('media_selector_modal_search').value;
+									fetch_images(searchtext, null); // string, no tags
+								});
+
+								// do initial listing
+								fetch_images (null, null); // no search, all tags
+
+								function fetch_images(searchtext, taglist) {
+								
+									// fetch images
+									postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
+										let image_list = JSON.parse(data);
+										let image_list_markup = "<ul class='media_selector_list single'>";
+										image_list.images.forEach(image => {
+											image_list_markup += `
+											<li>
+												<a class='media_selector_selection' data-id='${image.id}'>
+												<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::$uripath;?>/image/${image.id}/thumb'>
+												<span>${image.title}</span>
+												</a>
+											</li>`;
+										});
+										image_list_markup += "</ul>";
+										media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
+										
+									});
+								}
+							}
+
+							else if (command=='toggle_external_link') {
+								let this_sel = document.getSelection(); 
+								let this_parent = this_sel.focusNode.parentElement;
+								if (this_parent && this_parent.nodeName=="A") {
+									// caret inside anchor!
+									if (this_parent.target=="_blank") {
+										this_parent.target="_self";
+									}
+									else {
+										this_parent.target="_blank";
+									}
+								}
+							}
+
+							else if (command == 'ul' || command == 'ol') {
+								if (command=='ol') {
+									document.execCommand('insertorderedlist', false, command);
+								}
+								else {
+									document.execCommand('insertunorderedlist', false, command);
+								}
+							}
+							else if (command == 'addclass') {
+								
+								// get parent model to potentially use later
+								let parent = window.getSelection().focusNode.parentNode;
+
+								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
+
+								let iL = ["Add Class"];
+								let iI = [`new_class_for_${uniq}`];
+								let cV = [""];
+								let hL = ["Must be alphanumeric with no spaces or will not be added."];
+								
+								function onAdd() {
+									
+									// add class
+									let new_class_name = document.getElementById(iI[0]).value;
+									var modal = event.target.closest('.modal');
+									if (new_class_name) {
+										parent.classList.add(new_class_name);
+									}
+								}
+
+								createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+
+							}
+
+							else if (command=="removeFormat") {
+								// remove all inline style from all elements and
+								// then do default remove formatting
+								let editor_els = this_editor.querySelectorAll('*');
+								editor_els.forEach(el => {
+									el.removeAttribute('style');
+								});
+								document.execCommand(command, false, null);
+							}
+
+							else document.execCommand(command, false, null);
+						}
+					});
+
+
+					document.addEventListener('paste',function(e){
+						if (e.target.classList.contains('editor')) {
+							// remove styles on paste
+							let found_image = false;
+							pasteEvent.preventDefault();
+							//console.log((pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items);
+							let items = (pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items;
+							for (var i = 0; i < items.length; i++) {
+								// Skip content if not image
+								if (items[i].type.indexOf("image") == -1) continue;
+								// Retrieve image on clipboard as blob
+								let blob = items[i].getAsFile();
+								var reader = new FileReader();
+								reader.onload = function(event) {
+									//let pasted_img = new Image;
+									//pasted_img.src = event.target.result;
+									let img_markup = `<img class="pasted rich_image" src="${event.target.result}"/>`;
+									document.execCommand("insertHTML", false, img_markup);
+								};
+								reader.readAsDataURL(blob);
+								found_image = true;
+							}
+							
+							if (!found_image) {
+								console.log('not image - cleaning paste');
+								if (pasteEvent.clipboardData.types.includes('text/html')) {
+									var text = pasteEvent.clipboardData.getData("text/html");
+									text = text.replace(/style="[^"]*"/gi,"");
+									document.execCommand("insertHTML", false, text);
+								}
+								else if (pasteEvent.clipboardData.types.includes('text/plain')) {
+									// attempt plaintext paste
+									var text = pasteEvent.clipboardData.getData("text/plain");
+									document.execCommand("insertText", false, text);
+								}
+								else {
+									alert('Unknown content type pasted');
+								}
+							}
+						}
+					});
+
 					// set global flag to ensure event listeners only added once
 					window.editor_code_already_exists = true;
 				}
+
 				
-				// remove styles on paste
-				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener("paste", function(pasteEvent) {
-					let found_image = false;
-					pasteEvent.preventDefault();
-					//console.log((pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items);
-					let items = (pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items;
-					for (var i = 0; i < items.length; i++) {
-						// Skip content if not image
-						if (items[i].type.indexOf("image") == -1) continue;
-						// Retrieve image on clipboard as blob
-						let blob = items[i].getAsFile();
-						var reader = new FileReader();
-						reader.onload = function(event) {
-							//let pasted_img = new Image;
-							//pasted_img.src = event.target.result;
-							let img_markup = `<img class="pasted rich_image" src="${event.target.result}"/>`;
-							document.execCommand("insertHTML", false, img_markup);
-						};
-    					reader.readAsDataURL(blob);
-						found_image = true;
-					}
-					
-					if (!found_image) {
-						console.log('not image - cleaning paste');
-						if (pasteEvent.clipboardData.types.includes('text/html')) {
-							var text = pasteEvent.clipboardData.getData("text/html");
-							text = text.replace(/style="[^"]*"/gi,"");
-							document.execCommand("insertHTML", false, text);
-						}
-						else if (pasteEvent.clipboardData.types.includes('text/plain')) {
-							// attempt plaintext paste
-							var text = pasteEvent.clipboardData.getData("text/plain");
-							document.execCommand("insertText", false, text);
-						}
-						else {
-							alert('Unknown content type pasted');
-						}
-					}
-				});
-				// click event handler for editor - for now used for handling image float changes etc... //rich_image
-				document.querySelector('#editor_for_<?php echo $this->name;?>').addEventListener('click',function(e){
-					if (e.target.classList.contains('rich_image')) {
-						// handle rich image click
-						// clear any active rich image
-						var current_active = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
-						if (current_active!==null) {
-							current_active.classList.remove('rich_image_active');
-						}
-						// make clicked active
-						var img = e.target;
-						img.classList.add('rich_image_active');
-					}
-					else {
-						// remove rich_image_active
-						let all_editor_active_images = e.target.closest('.editor').querySelectorAll('img.rich_image_active');
-						all_editor_active_images.forEach(img => {
-							img.classList.remove('rich_image_active');
-						});
-					}
-					if (e.target.classList.contains('internal_anchor')) {
-						let kill_anchor = window.confirm('Remove anchor?');
-						if (kill_anchor) {
-							e.target.remove();
-						}
-					}
-				});
 
 				/**
 				 * Creates and displays a modal handling onclick events for user input. An example function call might look
@@ -285,479 +776,6 @@ class Field_Rich extends Field {
 
 					});
 				}
-
-				// toolbar click - TODO: handle multiple editors per page // DONE?
-				document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>').addEventListener('click',function(e){
-					e.preventDefault();
-
-					if (e.target.classList.contains('fa')) {
-						editor_button = e.target.closest('.editor_button');
-					}
-					else {
-						editor_button = e.target;
-					}
-					command = editor_button.dataset.command;
-					console.log('Command: ',command);
-
-					if (editor_button.classList.contains('toggle_editor_raw')) {
-						control = editor_button.closest('.control');
-						raw = control.querySelector('textarea.editor_raw');
-						if (raw.style.display=='block') {
-							raw.style.display='none';
-						}
-						else {
-							raw.style.display='block';
-						}
-						return false;
-					}
-
-					if (command == 'h1' || command == 'h2' || command == 'h3' || command == 'h4' || command == 'p') {
-						document.execCommand('formatBlock', false, command);
-					}
-					
-					else if (command == 'createlink') {
-
-						window.anchor_choice = function(e) {
-							let id = e.dataset.id;
-							let url_for_markup_input = document.getElementById('url_for_markup');
-							if (url_for_markup_input) {
-								url_for_markup_input.value = id;
-							}
-						}
-
-						var selection = window.getSelection().toString();
-
-						let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-						
-						let iL = ["URL", "Display Text"];
-						let iI = [`url_for_${uniq}`, `display_text_for_${uniq}`];
-						let cV = ["", selection];
-						var helptext = "Enter full link including https:// <br>";
-						let anchors = document.querySelectorAll('a.internal_anchor');
-						if (anchors.length>0) {
-							console.log('Found anchors: ',anchors);
-							helptext += "<strong>or</strong> one of the following anchors: <ul>";
-							anchors.forEach(a => {
-								helptext += "<li onClick='anchor_choice(this)' class='insert_anchor' data-id='#"+a.id+"' >#" + a.id + "</li>";
-							});
-							helptext += "</ul>";
-						}
-						let hL = [helptext, ""];
-
-						function onCreate() {
-							// insert link html at anchor location
-							let link_html = "<a id='newly_created_link_for_<?php echo $this->name;?>'>" + selection + "</a>";
-							document.execCommand('insertHTML', false, link_html);							
-							let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-							link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
-						}
-
-						function onAdd() {
-							// get values and update link
-							let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-							link.href = document.getElementById(iI[0]).value;
-							link.innerHTML = document.getElementById(iI[1]).value;
-							link.removeAttribute('id');		// remove id so future links not messed up
-						}
-
-
-						function onCancel() {
-							// replace anchor with original text
-							let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-							link.parentNode.replaceChild(document.createTextNode(selection), link);
-						}
-
-						createModal(iL, iI, cV, hL, onCreate, onAdd, onCancel);
-
-					}
-
-					else if (command == 'createanchor') {
-						window.sel = document.getSelection();
-						anchorid = prompt('Anchor ID: ','');
-						if (anchorid) {
-							if (window.sel.getRangeAt && window.sel.rangeCount) {
-								range = window.sel.getRangeAt(0);
-								var frag = range.createContextualFragment("<a title='#"+anchorid+"' class='internal_anchor' id='"+anchorid+"' ><i class='fa fa-anchor' aria-hidden='true'></i></a>");
-								range.insertNode(frag);
-							}
-							// force update of editor contents
-							let markup = document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML;
-							document.querySelector('#<?php echo $this->id;?>').value = markup;
-						}
-					}
-
-					else if (command=='floatleft') {
-						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
-						if (active_image!==null) {
-							active_image.classList.add('pull-left');
-							active_image.classList.remove('rich_image_active','pull-right');
-
-							// do the same for parent figure if active_image captioned
-							if (active_image.parentElement.tagName == 'FIGURE') {
-								active_image.parentElement.classList.add('pull-left');
-								active_image.parentElement.classList.remove('pull-right');
-							}
-						}
-						else {
-							alert('No image selected');
-						}
-					}
-
-					else if (command=='edit_image_props') {
-						
-						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
-						
-						if (active_image!==null) {
-							
-							// get current image props
-							let alt = active_image.alt;
-							let title = active_image.title;
-
-							let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-
-							let iL = ["Alt Text", "Image Title"];
-							let iI = [`alt_text_for_${uniq}`, `title_for_${uniq}`,];
-							let cV = [alt, title];
-							let hL = ["Alternative text for the visually impaired, will also display when the browser cannot render the image.",
-									  "Title will appear in a tooltip on hover of the image. It can also be used to provide a broader description than the alt text."];
-							
-							function onAdd() {
-								// set to image
-								let new_alt = document.getElementById(iI[0]).value;
-								let new_title = document.getElementById(iI[1]).value;
-								active_image.alt = new_alt;
-								active_image.title = new_title;
-								active_image.classList.remove('rich_image_active');
-								
-								// push updated content to textarea
-								active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
-							}
-
-							createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
-							
-						}
-						else {
-							alert('No image selected');
-						}
-					}
-
-					else if (command=='edit_image_attribution') {
-						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
-						if (active_image!==null) {
-
-							// check data attributes if present to load into modal
-							let author = active_image.dataset.author ? active_image.dataset.author : "";
-							let source = active_image.dataset.source ? active_image.dataset.source : "";
-							let license = active_image.dataset.license ? active_image.dataset.license : "";
-							let licenselink = active_image.dataset.licenselink ? active_image.dataset.licenselink : "";
-
-							let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-
-							let iL = ["Image Author", "Image Source", "License Name", "License Link"];
-							let iI = [`image_author_for_${uniq}`, `image_source_for_${uniq}`, `license_name_for_${uniq}`, `license_link_for_${uniq}`];
-							let cV = [author, source, license, licenselink];
-							let hL = ["", "", "", "Enter full link including https://"];
-
-							function onAdd() {
-								
-								// get new values for information
-								let new_author = document.getElementById(iI[0]).value;
-								let new_source = document.getElementById(iI[1]).value;
-								let new_license = document.getElementById(iI[2]).value;
-								let new_licenselink = document.getElementById(iI[3]).value;
-								
-								// update image dataset
-								active_image.dataset.author = new_author;
-								active_image.dataset.source = new_source
-								active_image.dataset.license = new_license
-								active_image.dataset.licenselink = new_licenselink
-
-								// will be used to determine if there will be captions
-								let new_data = [new_author, new_source, new_license, new_licenselink];
-
-								function allEmpty(array) {
-									for (const item of array) {
-										if (item!="") return false;
-									}
-									return true;
-								}
-
-								let hasFigure = active_image.parentElement.nodeName==="FIGURE";
-								let hasCaptions = !allEmpty(new_data);
-
-								function createFigure() {
-									let image = active_image;
-									let figure = document.createElement('FIGURE');
-									figure.classList.add('rich_image_figure');
-									
-									// deal with pull left and right
-									if (image.classList.contains('pull-right')) { 
-										figure.classList.add('pull-right');
-									}
-									if (image.classList.contains('pull-left')) {
-										figure.classList.add('pull-left');
-									}
-
-									active_image.replaceWith(figure);
-									figure.appendChild(image);
-								}
-
-								function removeFigure() {
-									let figure = active_image.parentElement;
-									let image = active_image;
-									figure.replaceWith(image);
-								}
-
-								function addCaptions() {
-
-									let figure = active_image.parentElement;
-
-									function appendFigcaptionToFigure(label, content, figure) {
-										let figCaption = document.createElement('FIGCAPTION');
-										let uniq = label.replace(/\s+/g, '_').toLowerCase();
-										let div = `<div class="image_${uniq}"><span class="attrib_label">${label}:&nbsp;</span><span class="attrib_value">${content}</span></div>`;
-										figCaption.innerHTML = div; 
-										console.log(figCaption);
-										figure.appendChild(figCaption);
-									} 
-
-									// create only needed captions
-									if (new_author) {
-										appendFigcaptionToFigure(`Author`, new_author, figure);
-									}
-									if (new_source) {
-										appendFigcaptionToFigure(`Source`, new_source, figure);
-									}
-									if (new_license || new_licenselink) {
-
-										function makeLinkHTML(href, content) {
-											return `<a href="${href}">${content}</a>`;
-										}
-
-										// sort out whether a link should/shouldn't be included
-										let new_content = "";
-										if (new_licenselink && new_license) {
-											new_content = makeLinkHTML(new_licenselink, new_license);
-										} 
-										else if (new_licenselink && !new_license) {
-											new_content = makeLinkHTML(new_licenselink, new_licenselink);
-										}
-										else if (!new_licenselink && new_license) {
-											new_content = new_license;
-										}
-
-										appendFigcaptionToFigure(`License`, new_content, figure);
-									}
-								}
-
-								// logical schema for when to add/rem figure and captions
-								if (!hasFigure && hasCaptions) {
-									createFigure();
-									addCaptions();
-								}
-								else if (hasFigure && hasCaptions) {
-									removeFigure();
-									createFigure();
-									addCaptions();
-								} 
-								else if (hasFigure && !hasCaptions) {
-									removeFigure();
-								}
-								else if (!hasFigure && !hasCaptions) {
-									// all is well, do nothing
-								}
-
-							}
-
-							createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
-							
-						}
-						else {
-							alert('No image selected');
-						}
-					}
-
-					else if (command=='floatright') {
-						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
-						if (active_image!==null) {
-							active_image.classList.add('pull-right');
-							active_image.classList.remove('rich_image_active','pull-left');
-
-							// do the same for parent figure if active_image captioned
-							if (active_image.parentElement.tagName == 'FIGURE') {
-								active_image.parentElement.classList.add('pull-right');
-								active_image.parentElement.classList.remove('pull-left');
-							}
-
-						}
-						else {
-							alert('No image selected');
-						}
-					}
-
-					else if (command=='floatclear') {
-						var active_image = document.querySelector('#editor_for_<?php echo $this->name;?> .rich_image_active');
-						if (active_image!==null) {
-							active_image.classList.remove('pull-left','pull-right');
-							active_image.classList.remove('rich_image_active');
-
-							// do the same for parent figure if active_image captioned
-							if (active_image.parentElement.tagName == 'FIGURE') {
-								active_image.parentElement.classList.remove('pull-left', 'pull-right');
-							}
-						}
-						else {
-							alert('No image selected');
-						}
-					}
-					
-					else if (command=='img') {
-						//alert('choose image');
-						// launch image selector
-						var media_selector = document.createElement('div');
-						media_selector.innerHTML =`
-						<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
-						<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
-						<h1 style='color:white;'>Choose Image <a href='#' class='delete_parent'>X</a></h1>
-						<div class='form-group'>
-							<input id='media_selector_modal_search'/><button type='button' id='trigger_media_selector_search'>Search</button>
-						</div>
-						<div class='media_selector'><h2>LOADING</h2></div>
-						</div>
-						`;
-						document.body.appendChild(media_selector); 
-
-						// remember the editor to refocus for image insertion
-						window.last_editor = document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>');
-						window.sel = document.getSelection(); 
-						window.saved = [ window.sel.focusNode, window.sel.focusOffset ];
-
-						// handle click close
-						document.getElementById('media_selector_modal_close').addEventListener('click',function(e){
-							var modal = e.target.closest('.media_selector_modal');
-							modal.parentNode.removeChild(modal);
-						});
-						// handle modal close
-						media_selector.querySelector('.delete_parent').addEventListener('click',function(e){
-							e.preventDefault();
-							e.target.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode);
-						});
-						// add click event handler to capture child selection clicks
-						media_selector.addEventListener('click',function(e){
-							//console.log(e.target);
-							e.preventDefault();
-							e.stopPropagation();
-							let selected_image = e.target.closest('.media_selector_selection');
-							console.log(selected_image);
-							if (selected_image!==null) {
-								let media_id = selected_image.dataset.id;
-								let alt = selected_image.querySelector('img').alt;
-								let title = selected_image.querySelector('img').title;
-								let url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
-								let image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
-								console.log(image_markup);
-								// refocus editor
-								window.last_editor.focus();
-								// restore caret position
-								window.sel.collapse(window.saved[0], window.saved[1]);
-								// insert image
-								document.execCommand('insertHTML',false, image_markup);
-								let modal = selected_image.closest('.media_selector_modal');
-								modal.parentNode.removeChild(modal);
-							} // else clicked on container not on an anchor or it's children
-						});
-						// search handler
-						let searchtrigger = document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
-							let searchtext = document.getElementById('media_selector_modal_search').value;
-							fetch_images(searchtext, null); // string, no tags
-						});
-
-						// do initial listing
-						fetch_images (null, null); // no search, all tags
-
-						function fetch_images(searchtext, taglist) {
-						
-							// fetch images
-							postAjax('<?php echo Config::$uripath;?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
-								let image_list = JSON.parse(data);
-								let image_list_markup = "<ul class='media_selector_list single'>";
-								image_list.images.forEach(image => {
-									image_list_markup += `
-									<li>
-										<a class='media_selector_selection' data-id='${image.id}'>
-										<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::$uripath;?>/image/${image.id}/thumb'>
-										<span>${image.title}</span>
-										</a>
-									</li>`;
-								});
-								image_list_markup += "</ul>";
-								media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
-								
-							});
-						}
-					}
-
-					else if (command=='toggle_external_link') {
-						let this_sel = document.getSelection(); 
-						let this_parent = this_sel.focusNode.parentElement;
-						if (this_parent && this_parent.nodeName=="A") {
-							// caret inside anchor!
-							if (this_parent.target=="_blank") {
-								this_parent.target="_self";
-							}
-							else {
-								this_parent.target="_blank";
-							}
-						}
-					}
-
-					else if (command == 'ul' || command == 'ol') {
-						if (command=='ol') {
-							document.execCommand('insertorderedlist', false, command);
-						}
-						else {
-							document.execCommand('insertunorderedlist', false, command);
-						}
-					}
-					else if (command == 'addclass') {
-						
-						// get parent model to potentially use later
-						let parent = window.getSelection().focusNode.parentNode;
-
-						let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-
-						let iL = ["Add Class"];
-						let iI = [`new_class_for_${uniq}`];
-						let cV = [""];
-						let hL = ["Must be alphanumeric with no spaces or will not be added."];
-						
-						function onAdd() {
-							
-							// add class
-							let new_class_name = document.getElementById(iI[0]).value;
-							var modal = event.target.closest('.modal');
-							if (new_class_name) {
-								parent.classList.add(new_class_name);
-							}
-						}
-
-						createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
-
-					}
-
-					else if (command=="removeFormat") {
-						// remove all inline style from all elements and
-						// then do default remove formatting
-						let editor = document.querySelector('#editor_for_<?php echo $this->name;?>');
-						let editor_els = editor.querySelectorAll('*');
-						editor_els.forEach(el => {
-							el.removeAttribute('style');
-						});
-						document.execCommand(command, false, null);
-					}
-
-					else document.execCommand(command, false, null);
-				});
 			});
 		</script>
 		<?php
