@@ -247,7 +247,7 @@ class Field_Rich extends Field {
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.parentNode.replaceChild(document.createTextNode(selection), link);
 								}
-
+								window.live_editor = this_editor;
 								createModal(iL, iI, cV, hL, onCreate, onAdd, onCancel);
 
 							}
@@ -313,7 +313,7 @@ class Field_Rich extends Field {
 										// push updated content to textarea
 										active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
 									}
-
+									window.live_editor = this_editor;
 									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
 									
 								}
@@ -449,7 +449,7 @@ class Field_Rich extends Field {
 										}
 
 									}
-
+									window.live_editor = this_editor;
 									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
 									
 								}
@@ -621,7 +621,7 @@ class Field_Rich extends Field {
 										parent.classList.add(new_class_name);
 									}
 								}
-
+								window.live_editor = this_editor;
 								createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
 
 							}
@@ -757,8 +757,9 @@ class Field_Rich extends Field {
 							parent = modal.parentNode;
 							parent.removeChild(modal);	
 							// update editor raw textarea with changes
-							let markup = document.querySelector('#editor_for_<?php echo $this->name;?>').innerHTML;
-							document.querySelector('#<?php echo $this->name;?>').value = markup;
+							let markup = window.live_editor.innerHTML;
+							window.live_editor.closest('.control').querySelector('textarea').value = markup;
+							//document.querySelector('#<?php echo $this->name;?>').value = markup;
 						}
 
 						switch (e.target.dataset.modalAction) {
