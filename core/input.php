@@ -194,7 +194,7 @@ class Input {
 				return 0;
 			}
 			else {
-				return filter_var($foo, FILTER_SANITIZE_NUMBER_FLOAT | FILTER_FLAG_ALLOW_FRACTION);
+				return filter_var($foo, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 			}
 		}
 		elseif ($filter=="JSON") {
