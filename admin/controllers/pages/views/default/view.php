@@ -145,10 +145,10 @@ div.pull-right {
 					}?>
 				</td>
 				<!-- <td>
-					<span class='unimportant'><?php echo $page->content_view_configuration; ?></span>
+					<span class='unimportant'><?php //echo $page->content_view_configuration; ?></span>
 				</td> -->
 				<!-- <td>
-					<span class='unimportant'><?php echo $page->updated; ?></span>
+					<span class='unimportant'><?php //echo $page->updated; ?></span>
 				</td> -->
 				<td class='unimportant'>
 					<span class=''><?php echo $page->id; ?></span>
