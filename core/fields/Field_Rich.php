@@ -261,9 +261,6 @@ class Field_Rich extends Field {
 										var frag = range.createContextualFragment("<a title='#"+anchorid+"' class='internal_anchor' id='"+anchorid+"' ><i class='fa fa-anchor' aria-hidden='true'></i></a>");
 										range.insertNode(frag);
 									}
-									// force update of editor contents
-									let markup = this_editor.innerHTML;
-									this_textarea.value = markup;
 								}
 							}
 
@@ -637,6 +634,10 @@ class Field_Rich extends Field {
 							}
 
 							else document.execCommand(command, false, null);
+
+							// force update of editor contents
+							let markup = this_editor.innerHTML;
+							this_textarea.value = markup;
 						}
 					});
 
@@ -759,7 +760,6 @@ class Field_Rich extends Field {
 							// update editor raw textarea with changes
 							let markup = window.live_editor.innerHTML;
 							window.live_editor.closest('.control').querySelector('textarea').value = markup;
-							//document.querySelector('#<?php echo $this->name;?>').value = markup;
 						}
 
 						switch (e.target.dataset.modalAction) {
