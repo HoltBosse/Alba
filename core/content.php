@@ -550,7 +550,7 @@ class Content {
         $content_search->filters = $filters;
 		$content_search->page = $page;
 		$content_search->searchtext = $search;
-		$content_search->$page_size = $custom_pagination_size;
+		$content_search->page_size = $custom_pagination_size;
 
 		return $content_search->exec();
 	}
