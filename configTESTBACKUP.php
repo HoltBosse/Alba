@@ -19,7 +19,6 @@ class Config {
     static $channel = "stable";     // stable/alpha
     static $updatedomain = "alba.holtbosse.com";
     static $dev_banner = false;
-
     public static function __callStatic($name, $args) {
         return property_exists('Config',$name) ? Config::$$name : null;
     }

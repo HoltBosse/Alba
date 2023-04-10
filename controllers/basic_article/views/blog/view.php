@@ -39,7 +39,13 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				echo $blog->f_og_description; ?>
 				</p>
 			<?php endif; ?>
-			<a class='readmore' href='<?php echo CMS::Instance()->page->get_url() . "/" . $blog->alias;?>'>Read More</a>
+			<?php 
+			$url_start = CMS::Instance()->page->get_url();
+			if ($url_start=="/") {
+				$url_start = "";
+			}
+			?>
+			<a class='readmore' href='<?php echo $url_start . "/" . $blog->alias;?>'>Read More</a>
 			
 		</div>
 	<?php endforeach; ?>

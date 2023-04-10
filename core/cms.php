@@ -625,7 +625,15 @@ final class CMS {
 					}
 				}
 				if (!$alias) {
-					$this->raise_404();
+					// magic alias of 'home' used for now - todo: make configurable via config option in future
+					// home page has to have a controller and alias of home and at root of pages and published
+					$alias = 'home'; // see magic alias comment above for this and query below
+					$query = "select * from pages where content_type>0 and parent=-1 and alias='home' and state>0";
+					$page = $this->pdo->query($query)->fetch();
+					if (!$page) {
+						// have params, but no page found and/or home has no controller to consume params
+						$this->raise_404();
+					}
 				}
 				if (Config::debug()) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
