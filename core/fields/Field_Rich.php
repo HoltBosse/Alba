@@ -105,6 +105,36 @@ class Field_Rich extends Field {
 		.editor [aria-hidden="true"] {
 			pointer-events:none;
 		}
+
+		[data-tooltip] {
+			position:relative;
+		}
+		[data-tooltip]:hover::before {
+			content: "";
+			position: absolute;
+			top:-0.25rem;
+			left:50%;
+			transform: translateX(-50%);
+			border-width: 4px 6px 0 6px;
+			border-style: solid;
+			border-color: rgba(0,0,0,0.7) transparent transparent transparent;
+			z-index: 100;
+		}
+		[data-tooltip]:hover::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			left:50%;
+			top:-0.25rem;
+			transform: translateX(-50%) translateY(-100%);
+			background: rgba(0,0,0,0.7);
+			text-align: center;
+			color: #fff;
+			padding: 0.5rem 0.25rem;
+			font-size: 0.75rem;
+			min-width: 5rem;
+			border-radius: 0.25rem;
+			pointer-events: none;
+		}
 		</style>
 		<script>
 			// TODO: make id/agnostic for repeatable + live additions
@@ -791,31 +821,31 @@ class Field_Rich extends Field {
 				?>
 				<!-- toolbar -->
 				<div class='hbcms_editor_toolbar' id='editor_toolbar_for_<?php echo $this->name; ?>'>
-					<a class='editor_button' href="#" data-command='h1'>H1</a>
-					<a class='editor_button' href="#" data-command='h2'>H2</a>
-					<a class='editor_button' href="#" data-command='h3'>H3</a>
-					<a class='editor_button' href="#" data-command='h4'>H4</a>
-					<a class='editor_button' href="#" data-command='p'>P</a>
-					<a class='editor_button' href="#" data-command='ul'>UL</a>
-					<a class='editor_button' href="#" data-command='ol'>OL</a>
-					<a class='editor_button' href="#" data-command='bold'><i class="fa fa-bold"></i></a>
-					<a class='editor_button' href="#" data-command='underline'><i class="fa fa-underline"></i></a>
-					<a class='editor_button' href="#" data-command='addclass'>Cls+</a>
-					<a class='editor_button' href="#" data-command='img'><i class="fa fa-images"></i></a>
-					<a class='editor_button' href="#" data-command='undo'><i class='fa fa-undo'></i></a>
-					<a class='editor_button' href="#" data-command='createlink'><i class='fa fa-link'></i></a>
-					<a class='editor_button' href="#" data-command='unlink'><i class='fa fa-unlink'></i></a>
-					<a class='editor_button' href="#" data-command='createanchor'><i class='fa fa-anchor'></i></a>
-					<a class='editor_button' href="#" data-command='toggle_external_link' title='Toggle external link'><i class='fa fa-external-link'></i></a>
-					<a class='editor_button' href="#" data-command='justifyLeft'><i class='fa fa-align-left'></i></a>
-					<a class='editor_button' href="#" data-command='superscript'><i class='fa fa-superscript'></i></a>
-					<a class='editor_button' href="#" data-command='removeFormat'><i class='fa fa-broom'></i></a>
-					<a class='editor_button image_selected' href='#' data-command='floatleft'>FL</a>
-					<a class='editor_button image_selected' href='#' data-command='floatright'>FR</a>
-					<a class='editor_button image_selected' href='#' data-command='floatclear'>FC</a>
-					<a class='editor_button image_selected' href='#' data-command='edit_image_props'>IMG ALT/TITLE</a>
-					<a class='editor_button image_selected' href='#' data-command='edit_image_attribution'>IMG ATTRIB</a>
-					<a class='editor_button toggle_editor_raw' href="#" data-command='none'><i class='fa fa-edit'></i></a>
+					<a class='editor_button' href="#" data-command='h1' data-tooltip="Heading 1">H1</a>
+					<a class='editor_button' href="#" data-command='h2' data-tooltip="Heading 2">H2</a>
+					<a class='editor_button' href="#" data-command='h3' data-tooltip="Heading 3">H3</a>
+					<a class='editor_button' href="#" data-command='h4' data-tooltip="Heading 4">H4</a>
+					<a class='editor_button' href="#" data-command='p' data-tooltip="Paragraph">P</a>
+					<a class='editor_button' href="#" data-command='ul' data-tooltip="Unordered List">UL</a>
+					<a class='editor_button' href="#" data-command='ol' data-tooltip="Numbered List">OL</a>
+					<a class='editor_button' href="#" data-command='bold' data-tooltip="Bold"><i class="fa fa-bold"></i></a>
+					<a class='editor_button' href="#" data-command='underline' data-tooltip="Underline"><i class="fa fa-underline"></i></a>
+					<a class='editor_button' href="#" data-command='addclass' data-tooltip="Add Class">Cls+</a>
+					<a class='editor_button' href="#" data-command='img' data-tooltip="Image"><i class="fa fa-images"></i></a>
+					<a class='editor_button' href="#" data-command='undo' data-tooltip="Undo"><i class='fa fa-undo'></i></a>
+					<a class='editor_button' href="#" data-command='createlink' data-tooltip="Create Link"><i class='fa fa-link'></i></a>
+					<a class='editor_button' href="#" data-command='unlink' data-tooltip="Delete Link"><i class='fa fa-unlink'></i></a>
+					<a class='editor_button' href="#" data-command='createanchor' data-tooltip="Add Anchor"><i class='fa fa-anchor'></i></a>
+					<a class='editor_button' href="#" data-command='toggle_external_link' title='Toggle external link' data-tooltip="Toggle External Link"><i class='fa fa-external-link'></i></a>
+					<a class='editor_button' href="#" data-command='justifyLeft' data-tooltip="Justify Left"><i class='fa fa-align-left'></i></a>
+					<a class='editor_button' href="#" data-command='superscript' data-tooltip="Super Script"><i class='fa fa-superscript'></i></a>
+					<a class='editor_button' href="#" data-command='removeFormat' data-tooltip="Remove Formating"><i class='fa fa-broom'></i></a>
+					<a class='editor_button image_selected' href='#' data-command='floatleft' data-tooltip="Float Left">FL</a>
+					<a class='editor_button image_selected' href='#' data-command='floatright' data-tooltip="Float Right">FR</a>
+					<a class='editor_button image_selected' href='#' data-command='floatclear' data-tooltip="Clear Float">FC</a>
+					<a class='editor_button image_selected' href='#' data-command='edit_image_props' data-tooltip="Image Atrributes">IMG ALT/TITLE</a>
+					<a class='editor_button image_selected' href='#' data-command='edit_image_attribution' data-tooltip="Image Author">IMG ATTRIB</a>
+					<a class='editor_button toggle_editor_raw' href="#" data-command='none' data-tooltip="Code View"><i class='fa fa-edit'></i></a>
 				</div>
 				<?php
 				echo "<div class='editor content' contentEditable='true' id='editor_for_{$this->name}'>{$this->default}</div>";
