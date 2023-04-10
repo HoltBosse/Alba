@@ -240,10 +240,10 @@ class Form {
 			if (form_el_{$this->id}) {
 				// create logic function
 				function logic_for_{$this->id} () {
-					console.log('Doing logic checks');
+					//console.log('Doing logic checks');
 					var logic_els = form_el_{$this->id}.querySelectorAll('.haslogic');
 					if (logic_els) {
-						console.log('LOGIC ELS',logic_els);
+						//console.log('LOGIC ELS',logic_els);
 						logic_els.forEach((e)=>{
 							//console.log(e);
 							let or_blocks = JSON.parse(e.dataset.logic);
