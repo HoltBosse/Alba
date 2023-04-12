@@ -26,7 +26,7 @@ class Field_Text extends Field {
 			}
 		}
 		echo "<div class='field {$required} {$hidden}'>";
-			echo "<label class='label'>{$this->label}</label>";
+			echo "<label for='{$this->id}' class='label'>{$this->label}</label>";
 			echo "<div class='control'>";
 				
 				if ($this->input_type=='date') {

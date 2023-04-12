@@ -22,7 +22,7 @@ class Field_Textarea extends Field {
 		$required="";
 		if ($this->required) {$required=" required ";}
 		echo "<div class='field {$required} {$hidden}'>";
-			echo "<label class='label'>{$this->label}</label>";
+			echo "<label for='{$this->id}' class='label'>{$this->label}</label>";
 			echo "<div class='control'>";
 				$this->default = str_replace("[NEWLINE]","\n",$this->default);
 				echo "<textarea type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} placeholder='{$this->placeholder}' minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
