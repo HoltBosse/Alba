@@ -431,7 +431,7 @@ class Field_Rich extends Field {
 
 											// create only needed captions
 											if (new_author) {
-												appendFigcaptionToFigure(`Author`, new_author, figure);
+												appendFigcaptionToFigure(`Photo By`, new_author, figure);
 											}
 											if (new_source) {
 												appendFigcaptionToFigure(`Source`, new_source, figure);
