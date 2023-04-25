@@ -173,15 +173,16 @@ class Field_Rich extends Field {
 
 							let href = e.target.getAttribute('href');
 							let text = e.target.innerText;
+							let class = e.target.classList.value;
 
 							console.log('URL',href);
 							console.log('TEXT',text);
 							
-							let iL = ["URL", "Display Text"];
-							let iI = ["a_url", "a_text"];
-							let cV = [href, text];
+							let iL = ["URL", "Display Text", "Class"];
+							let iI = ["a_url", "a_text", "a_class"];
+							let cV = [href, text, class];
 							var helptext = "<br>";
-							let hL = [helptext, ""];
+							let hL = [helptext, "", ""];
 
 							function onCreate_a() {
 								// do nothing?
@@ -191,6 +192,7 @@ class Field_Rich extends Field {
 								// update anchors
 								window.editor_anchor.innerText = document.getElementById('a_text').value;
 								window.editor_anchor.href = document.getElementById('a_url').value;
+								window.editor_anchor.classList.value = document.getElementById('a_class').value;
 							}
 
 
