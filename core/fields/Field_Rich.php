@@ -168,21 +168,21 @@ class Field_Rich extends Field {
 							window.this_editor = e.target.closest('.control').querySelector('.editor');
 							window.this_textarea = e.target.closest('.control').querySelector('textarea');
 
-							console.log('show anchor editor');
+							//console.log('show anchor editor');
 							window.editor_anchor = e.target;
 
 							let href = e.target.getAttribute('href');
 							let text = e.target.innerText;
-							let class = e.target.classList.value;
+							let classes = e.target.classList.value;
 
-							console.log('URL',href);
+							/* console.log('URL',href);
 							console.log('TEXT',text);
+							console.log('CLASS',classes); */
 							
 							let iL = ["URL", "Display Text", "Class"];
 							let iI = ["a_url", "a_text", "a_class"];
-							let cV = [href, text, class];
-							var helptext = "<br>";
-							let hL = [helptext, "", ""];
+							let cV = [href, text, classes];
+							let hL = ["", "", ""];
 
 							function onCreate_a() {
 								// do nothing?
