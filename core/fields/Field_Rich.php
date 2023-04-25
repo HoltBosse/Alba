@@ -161,43 +161,44 @@ class Field_Rich extends Field {
 					document.addEventListener('click',function(e){
 						// click event handler for editor 
 
+						
+
 						if (e.target.nodeName==='A') {
+							// remember dynamic editor/textarea
+							window.this_editor = e.target.closest('.control').querySelector('.editor');
+							window.this_textarea = e.target.closest('.control').querySelector('textarea');
+
 							console.log('show anchor editor');
 							window.editor_anchor = e.target;
-							return true;
 
 							let href = e.target.getAttribute('href');
-							let text = e.target.innerHTML;
+							let text = e.target.innerText;
 
+							console.log('URL',href);
+							console.log('TEXT',text);
 							
 							let iL = ["URL", "Display Text"];
-							let iI = [href, text];
-							let cV = ["", selection];
+							let iI = ["a_url", "a_text"];
+							let cV = [href, text];
 							var helptext = "<br>";
 							let hL = [helptext, ""];
 
-							function onCreate() {
-								// insert link html at anchor location
-								window.editor_anchor.innerHTML = foo;
-								window.editor_anchor.href = url;
+							function onCreate_a() {
+								// do nothing?
 							}
 
-							function onAdd() {
-								// get values and update link
-								let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-								link.href = document.getElementById(iI[0]).value;
-								link.innerHTML = document.getElementById(iI[1]).value;
-								link.removeAttribute('id');		// remove id so future links not messed up
+							function onAdd_a() {
+								// update anchors
+								window.editor_anchor.innerText = document.getElementById('a_text').value;
+								window.editor_anchor.href = document.getElementById('a_url').value;
 							}
 
 
-							function onCancel() {
-								// replace anchor with original text
-								let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-								link.parentNode.replaceChild(document.createTextNode(selection), link);
+							function onCancel_a() {
+								// do nothing
 							}
 							window.live_editor = this_editor;
-							createModal(iL, iI, cV, hL, onCreate, onAdd, onCancel);
+							createModal(iL, iI, cV, hL, onCreate_a, onAdd_a, onCancel_a);
 
 						}
 
@@ -238,8 +239,8 @@ class Field_Rich extends Field {
 							e.preventDefault();
 
 							// remember dynamic editor/textarea
-							let this_editor = e.target.closest('.control').querySelector('.editor');
-							let this_textarea = e.target.closest('.control').querySelector('textarea');
+							window.this_editor = e.target.closest('.control').querySelector('.editor');
+							window.this_textarea = e.target.closest('.control').querySelector('textarea');
 
 							if (e.target.classList.contains('fa')) {
 								editor_button = e.target.closest('.editor_button');
