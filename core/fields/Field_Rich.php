@@ -164,44 +164,48 @@ class Field_Rich extends Field {
 						
 
 						if (e.target.nodeName==='A') {
-							// remember dynamic editor/textarea
-							window.this_editor = e.target.closest('.control').querySelector('.editor');
-							window.this_textarea = e.target.closest('.control').querySelector('textarea');
-
-							//console.log('show anchor editor');
-							window.editor_anchor = e.target;
-
-							let href = e.target.getAttribute('href');
-							let text = e.target.innerText;
-							let classes = e.target.classList.value;
-
-							/* console.log('URL',href);
-							console.log('TEXT',text);
-							console.log('CLASS',classes); */
 							
-							let iL = ["URL", "Display Text", "Class"];
-							let iI = ["a_url", "a_text", "a_class"];
-							let cV = [href, text, classes];
-							let hL = ["", "", ""];
+							// only work on anchors inside editor (i.e. not toolbar or elswhere... :) )
+							let in_editor = e.target.closest('.editor');
+							if (in_editor) {
+								// remember dynamic editor/textarea
+								window.this_editor = e.target.closest('.control').querySelector('.editor');
+								window.this_textarea = e.target.closest('.control').querySelector('textarea');
 
-							function onCreate_a() {
-								// do nothing?
+								//console.log('show anchor editor');
+								window.editor_anchor = e.target;
+
+								let href = e.target.getAttribute('href');
+								let text = e.target.innerText;
+								let classes = e.target.classList.value;
+
+								/* console.log('URL',href);
+								console.log('TEXT',text);
+								console.log('CLASS',classes); */
+								
+								let iL = ["URL", "Display Text", "Class"];
+								let iI = ["a_url", "a_text", "a_class"];
+								let cV = [href, text, classes];
+								let hL = ["", "", ""];
+
+								function onCreate_a() {
+									// do nothing?
+								}
+
+								function onAdd_a() {
+									// update anchors
+									window.editor_anchor.innerText = document.getElementById('a_text').value;
+									window.editor_anchor.href = document.getElementById('a_url').value;
+									window.editor_anchor.classList.value = document.getElementById('a_class').value;
+								}
+
+
+								function onCancel_a() {
+									// do nothing
+								}
+								window.live_editor = this_editor;
+								createModal(iL, iI, cV, hL, onCreate_a, onAdd_a, onCancel_a);
 							}
-
-							function onAdd_a() {
-								// update anchors
-								window.editor_anchor.innerText = document.getElementById('a_text').value;
-								window.editor_anchor.href = document.getElementById('a_url').value;
-								window.editor_anchor.classList.value = document.getElementById('a_class').value;
-							}
-
-
-							function onCancel_a() {
-								// do nothing
-							}
-							window.live_editor = this_editor;
-							createModal(iL, iI, cV, hL, onCreate_a, onAdd_a, onCancel_a);
-
 						}
 
 						if (e.target.classList.contains('rich_image')) {
