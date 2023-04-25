@@ -161,6 +161,46 @@ class Field_Rich extends Field {
 					document.addEventListener('click',function(e){
 						// click event handler for editor 
 
+						if (e.target.nodeName==='A') {
+							console.log('show anchor editor');
+							window.editor_anchor = e.target;
+							return true;
+
+							let href = e.target.getAttribute('href');
+							let text = e.target.innerHTML;
+
+							
+							let iL = ["URL", "Display Text"];
+							let iI = [href, text];
+							let cV = ["", selection];
+							var helptext = "<br>";
+							let hL = [helptext, ""];
+
+							function onCreate() {
+								// insert link html at anchor location
+								window.editor_anchor.innerHTML = foo;
+								window.editor_anchor.href = url;
+							}
+
+							function onAdd() {
+								// get values and update link
+								let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+								link.href = document.getElementById(iI[0]).value;
+								link.innerHTML = document.getElementById(iI[1]).value;
+								link.removeAttribute('id');		// remove id so future links not messed up
+							}
+
+
+							function onCancel() {
+								// replace anchor with original text
+								let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+								link.parentNode.replaceChild(document.createTextNode(selection), link);
+							}
+							window.live_editor = this_editor;
+							createModal(iL, iI, cV, hL, onCreate, onAdd, onCancel);
+
+						}
+
 						if (e.target.classList.contains('rich_image')) {
 							// handle rich image click
 							// clear any active rich image
