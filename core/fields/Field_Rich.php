@@ -178,15 +178,16 @@ class Field_Rich extends Field {
 								let href = e.target.getAttribute('href');
 								let text = e.target.innerText;
 								let classes = e.target.classList.value;
+								let target = e.target.getAttribute('target') ? e.target.getAttribute('target') : "";
 
 								/* console.log('URL',href);
 								console.log('TEXT',text);
 								console.log('CLASS',classes); */
 								
-								let iL = ["URL", "Display Text", "Class"];
-								let iI = ["a_url", "a_text", "a_class"];
-								let cV = [href, text, classes];
-								let hL = ["", "", ""];
+								let iL = ["URL", "Display Text", "Class", "Target"];
+								let iI = ["a_url", "a_text", "a_class","a_target"];
+								let cV = [href, text, classes, target];
+								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
 
 								function onCreate_a() {
 									// do nothing?
@@ -197,6 +198,7 @@ class Field_Rich extends Field {
 									window.editor_anchor.innerText = document.getElementById('a_text').value;
 									window.editor_anchor.href = document.getElementById('a_url').value;
 									window.editor_anchor.classList.value = document.getElementById('a_class').value;
+									window.editor_anchor.target = document.getElementById('a_target').value;
 								}
 
 
