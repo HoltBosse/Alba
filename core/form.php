@@ -274,12 +274,16 @@ class Form {
 											switch(b.test) {
 												case '==' :
 													local_show = logic_target_value==b.value;
-													console.log('eq test for ',b,' and ',logic_target_el);
-													console.log('comparing ',logic_target_value,' to el value of ',b.value);
 													if (!local_show) {
 														and_show = false;
 													}
 													break;
+												case '!=' :
+														local_show = logic_target_value!=b.value;
+														if (!local_show) {
+															and_show = false;
+														}
+														break;
 												default:
 													console.warn('Unknown logic test for ',b)
 													break;
