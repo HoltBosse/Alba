@@ -90,7 +90,33 @@ class Field_Select extends Field {
 			<script>
 				try {
 					document.getElementById('<?php echo $this->id;?>').slimselect = new SlimSelect({
-						select: '#<?php echo $this->id;?>'
+						select: '#<?php echo $this->id;?>',
+						<?php if($this->slimselect_ajax): ?>
+						searchingText: 'Searching...',
+						ajax: function (search, callback) {
+							if (search.length < <?php echo $this->slimselect_ajax_minchar; ?>) {
+								callback('Please enter at least <?php echo $this->slimselect_ajax_minchar; ?> characters')
+								return
+							}
+
+							fetch('<?php echo Config::uripath() . $this->slimselect_ajax_url; ?>?searchterm=' + encodeURI(search))
+							.then(function (response) {
+								return response.json()
+							})
+							.then(function (json) {
+								let data = [];
+								json.data.forEach((item)=>{
+									data.push({text: item.text, value: item.value})
+								});
+
+								//console.log(data);
+								callback(data);
+							})
+							.catch(function(error) {
+								callback(false)
+							})
+						}
+						<?php endif; ?>
 					});
 				} catch {
 					alert("SlimSelect is not present!");
@@ -150,6 +176,9 @@ class Field_Select extends Field {
 		$this->placeholder = $config->placeholder ?? '';
 		$this->slimselect = $config->slimselect ?: false;
 		$this->multiple = $config->multiple ?: false;
+		$this->slimselect_ajax = $config->slimselect_ajax ?? false;
+		$this->slimselect_ajax_url = $config->slimselect_ajax_url ?? "";
+		$this->slimselect_ajax_minchar = $config->slimselect_ajax_minchar ?? 3;
 		if ($this->multiple) {
 			$this->filter = $config->filter ?? 'ARRAYOFSTRING';
 		}
