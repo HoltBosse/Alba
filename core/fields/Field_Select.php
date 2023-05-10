@@ -51,6 +51,15 @@ class Field_Select extends Field {
 							if (isset($select_option->UpdateSelect)) { $UpdateSelect[$select_option->value] = $select_option->UpdateSelect;}
 							echo "<option {$selected} value='{$select_option->value}'>{$select_option->text}</option>";
 						}
+						if ($this->slimselect_ajax) {
+							if($this->multiple && $this->default && $this->default != "" && $this->default != '[""]') {
+								foreach(json_decode($this->default) as $item) {
+									echo "<option selected value='$item'>$item</option>";
+								}
+							} elseif(!$this->multiple && $this->default && $this->default != "") {
+								echo "<option selected value='$this->default'>$this->default</option>";
+							}
+						}
 					echo "</select>";
 				echo "</div>";
 			echo "</div>";
