@@ -32,7 +32,13 @@ if ($required_details_form->is_submitted()) {
 	// validate
 	if ($required_details_form->validate()) {
 		// forms are valid, save info
-		$tag->save($required_details_form);
+		$saved = $tag->save($required_details_form);
+		if ($saved) {
+			CMS::Instance()->queue_message('Tag saved','danger', Config::uripath() . '/admin/content/all/' . $this->content_type;);
+		}
+		else {
+			CMS::Instance()->queue_message('Failed to save tag','danger',$_SERVER['REQUEST_URI']);
+		}
 	}
 	else {
 		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
