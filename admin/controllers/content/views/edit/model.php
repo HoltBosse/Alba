@@ -88,11 +88,13 @@ if ($required_details_form->is_submitted()) {
 		if ($saved) {
 			if ($quicksave) {
 				$redirect_to = $_SERVER['HTTP_REFERER'];
+				$msg = "Quicksave successful";
 			}
 			else {
 				$redirect_to = Config::uripath() . "/admin/content/all/" . $content->content_type;
+				$msg = "Content saved";
 			}
-			CMS::Instance()->queue_message('Quicksave successful','success', $redirect_to);
+			CMS::Instance()->queue_message($msg, 'success', $redirect_to);
 		}
 		else {
 			CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['HTTP_REFERER']);
