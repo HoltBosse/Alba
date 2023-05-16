@@ -83,12 +83,21 @@ if ($required_details_form->is_submitted()) {
 		} */
 
 		$quicksave = Input::getvar('quicksave',"STRING");
-		if ($quicksave) {
-			$content->save($required_details_form, $content_form, $_SERVER['HTTP_REFERER'] );
+		$saved = $content->save($required_details_form, $content_form );
+	
+		if ($saved) {
+			if ($quicksave) {
+				$redirect_to = $_SERVER['HTTP_REFERER'];
+			}
+			else {
+				$redirect_to = Config::uripath() . "/admin/content/all/" . $content->content_type;
+			}
+			CMS::Instance()->queue_message('Quicksave successful','success', $redirect_to);
 		}
 		else {
-			$content->save($required_details_form, $content_form);
+			CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['HTTP_REFERER']);
 		}
+		
 	}
 	else {
 		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
