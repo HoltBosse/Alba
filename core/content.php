@@ -196,10 +196,7 @@ class Content {
 		}
 	}
 
-	public function save($required_details_form, $content_form, $return_url='') {
-		// return url will be used as passed, if left blank will use referral
-		// unless in ADMIN section, in which case admin content all page will be used
-		
+	public function save($required_details_form, $content_form) {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->get_field_by_name('title')->default;
 		$this->state = $required_details_form->get_field_by_name('state')->default;
@@ -218,7 +215,7 @@ class Content {
 		$this->make_alias_unique();
 
 		if(strlen($this->alias)>$required_details_form->get_field_by_name('alias')->maxlength) {
-			CMS::Instance()->queue_message('Auto generated alias to long','danger', $_SERVER['HTTP_REFERER']);
+			CMS::Instance()->queue_message('Auto generated alias too long','danger', $_SERVER['HTTP_REFERER']);
 			die;
 		}
 
@@ -261,16 +258,14 @@ class Content {
 			}
 		}
 		if (!$required_result) {
-			// TODO: specific message for new/edit etc
-			CMS::Instance()->queue_message('Failed to save content','danger', $_SERVER['HTTP_REFERER']);
+			CMS::Instance()->log("Failed to save content");
+			return false;
 		}
 
 		// set tags
 		Tag::set_tags_for_content($this->id, json_decode($this->tags), $this->content_type);
 
 		// now save fields
-		/* CMS::pprint_r ($this);
-		CMS::pprint_r ($content_form); */
 		// first remove old field data if any exists
 		DB::exec("delete from content_fields where content_id=?", array($this->id));
 		$error_text="";
@@ -298,21 +293,12 @@ class Content {
 			}
 		}
 
-		if (!$return_url) {
-			if (ADMINPATH) {
-				$return_url = Config::uripath() . '/admin/content/all/' . $this->content_type;
-			}
-			else {
-				$return_url = $_SERVER['HTTP_REFERER'];
-			}
-		}
-
 		if ($error_text) {
-			CMS::Instance()->queue_message($error_text,'danger', $return_url);
+			return false;
 		}
 		else {
 			Hook::execute_hook_actions('on_content_save', $this);
-			CMS::Instance()->queue_message('Saved content','success', $return_url);
+			return true;
 		}
 	}
 
