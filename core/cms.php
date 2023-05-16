@@ -461,7 +461,6 @@ final class CMS {
 				<h1 style="font-weight: bold; font-size: 5rem; color: black;">DEV SITE</h1>
 			</div>
 		<?php
-		ob_start();
 		$dev_banner = ob_get_contents();
 		ob_end_clean();
 		return $dev_banner;
