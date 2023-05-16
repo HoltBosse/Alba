@@ -288,10 +288,15 @@ class Field_Rich extends Field {
 								var selection = window.getSelection().toString();
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-								
-								let iL = ["URL", "Display Text"];
-								let iI = [`url_for_${uniq}`, `display_text_for_${uniq}`];
-								let cV = ["", selection];
+
+								var href="";
+								var classes="";
+								var target="";
+								let iL = ["URL", "Display Text", "Class", "Target"];
+								let iI = ["a_url", "a_text", "a_class","a_target"];
+								let cV = [href, selection, classes, target];
+								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
+
 								var helptext = "Enter full link including https:// <br>";
 								let anchors = document.querySelectorAll('a.internal_anchor');
 								if (anchors.length>0) {
@@ -302,11 +307,10 @@ class Field_Rich extends Field {
 									});
 									helptext += "</ul>";
 								}
-								let hL = [helptext, ""];
-
+								
 								function onCreate() {
 									// insert link html at anchor location
-									let link_html = "<a id='newly_created_link_for_<?php echo $this->name;?>'>" + selection + "</a>";
+									let link_html = "<a data-foo='bar' target='"+target+"' class='"+classes+"' id='newly_created_link_for_<?php echo $this->name;?>'>" + selection + "</a>";
 									document.execCommand('insertHTML', false, link_html);							
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
@@ -317,6 +321,8 @@ class Field_Rich extends Field {
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.href = document.getElementById(iI[0]).value;
 									link.innerHTML = document.getElementById(iI[1]).value;
+									link.classList.value = document.getElementById(iI[2]).value;
+									link.target = document.getElementById(iI[3]).value;
 									link.removeAttribute('id');		// remove id so future links not messed up
 								}
 
