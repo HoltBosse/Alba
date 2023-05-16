@@ -34,7 +34,7 @@ if ($required_details_form->is_submitted()) {
 		// forms are valid, save info
 		$saved = $tag->save($required_details_form);
 		if ($saved) {
-			CMS::Instance()->queue_message('Tag saved','danger', Config::uripath() . '/admin/content/all/' . $this->content_type;);
+			CMS::Instance()->queue_message('Tag saved','danger', Config::uripath() . '/admin/content/all/' . $this->content_type);
 		}
 		else {
 			CMS::Instance()->queue_message('Failed to save tag','danger',$_SERVER['REQUEST_URI']);
