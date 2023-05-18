@@ -75,10 +75,6 @@ class Cache {
     }
 
     public function serve_page($filepath) {
-        // todo: headers?
-        if ($this->ignore($request)) {
-            return false;
-        }
         echo "<!-- Alba cache: " . date('F j, Y, g:i a', filemtime($filepath)) . " -->\n";
         readfile($filepath);
         exit();
