@@ -10,6 +10,15 @@ class Widget {
 	public $state;
 	public $options;
 
+	public function render_edit() {
+		if (CMS::Instance()->user->is_member_of(1)) { ?>
+			<div class='front_end_edit_wrap' >
+				<a style='' target="_blank" href='/admin/widgets/edit/<?php echo $this->id;?>'>EDIT &ldquo;<?= htmlspecialchars($this->title); ?>&rdquo;</a>
+			</div>
+		<?php
+		}
+	}
+
 	public function render() {
 		echo "<h1>Hello, I'm a base class widget!</h1>";
 	}
@@ -49,13 +58,13 @@ class Widget {
 
 	public static function get_widget_overrides_csv_for_position ($page, $position) {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
-		$widget_ids = DB::fetch("select widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets; // csv
+		$widget_ids = DB::fetch("select widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets ?? null; // csv
 		return $widget_ids;
 	}
 
 	public static function get_widget_overrides_for_position ($page, $position) {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
-		$widget_ids = DB::fetch("select widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets; // csv
+		$widget_ids = DB::fetch("select widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets ?? null; // csv
 		if ($widget_ids) {
 			$query = 'select id,title,type,state 
 			from widgets 
