@@ -8,8 +8,22 @@ ob_end_clean();
 
 $segments = CMS::Instance()->uri_segments;
 $segsize = sizeof($segments);
-$req_width = $_GET['w'] ?? $segments[2]; 
-$req_format = $_GET['fmt'] ?? $segments[3];
+
+// get width
+if ($segsize>=3) {
+	$req_width = $segments[2] ?? null;
+}
+else {
+	$req_width = $_GET['w'] ?? null;
+}
+// get format 
+if ($segsize>=4) {
+	$req_format = $segments[3] ?? null;
+}
+else {
+	$req_format = $_GET['fmt'] ?? null;
+}
+// quality fixed for url param version
 $req_quality = $_GET['q'] ?? 75;
 
 // check quality param - size/width checked elsewhere
