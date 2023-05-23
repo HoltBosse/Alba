@@ -236,13 +236,17 @@ class Content {
 			//$this->end = date("Y-m-d H:i:s", strtotime($this->end));
 			$this->end = strtotime($this->end);
 		}
+
+
+		$starttime = $this->start ? date("Y-m-d H:i:s", $this->start) : null; 
+    	$endtime = $this->end ? date("Y-m-d H:i:s", $this->end) : null; 
 		
 		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
 		if ($this->id) {
 			// update
-			$params = array($this->state, $this->title, $this->alias, $this->note, $this->start, $this->end, $this->updated_by, $this->category, $this->id) ;
-			$required_result = DB::exec("update content set state=?,  title=?, alias=?, note=?, start=FROM_UNIXTIME(?), end=FROM_UNIXTIME(?), updated_by=?, category=? where id=?", $params);
+			$params = array($this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id) ;
+			$required_result = DB::exec("update content set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? where id=?", $params);
 		}
 		else {
 			// new
@@ -252,8 +256,8 @@ class Content {
 			if (!$ordering) {
 				$ordering=1;
 			}
-			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?),?)";
-			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
+			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
+			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $starttime, $endtime, $this->category);
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
 				// update object id with inserted id
