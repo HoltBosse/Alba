@@ -237,8 +237,9 @@ class Content {
 			$this->end = strtotime($this->end);
 		}
 
-		$starttime = date("Y-m-d H:i:s", $this->start); 
-    	$endtime = date("Y-m-d H:i:s", $this->end); 
+
+		$starttime = $this->start ? date("Y-m-d H:i:s", $this->start) : null; 
+    	$endtime = $this->end ? date("Y-m-d H:i:s", $this->end) : null; 
 		
 		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
