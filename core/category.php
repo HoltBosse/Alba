@@ -91,10 +91,7 @@ class Category {
 		}
 	}
 
-	public function save($required_details_form, $custom_fields_form = "", $return_url='') {
-		// return url will be used as passed, if left blank will use referral
-		// unless in ADMIN section, in which case admin content all page will be used
-		
+	public function save($required_details_form, $custom_fields_form = "") {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->get_field_by_name('title')->default;
 		$this->state = $required_details_form->get_field_by_name('state')->default;
@@ -115,25 +112,12 @@ class Category {
 			}
 		}
 		if (!$required_result) {
-			CMS::Instance()->queue_message('Failed to save category','danger', $_SERVER['HTTP_REFERER']);
+			CMS::Instance()->log("Failed to save category");
+			return false;
 		}
 
-		if (!$return_url) {
-			if (ADMINPATH) {
-				$return_url = Config::uripath() . '/admin/categories/all/' . $this->content_type;
-			}
-			else {
-				$return_url = $_SERVER['HTTP_REFERER'];
-			}
-		}
-
-		if ($error_text) {
-			CMS::Instance()->queue_message($error_text,'danger', $return_url);
-		}
-		else {
-			Hook::execute_hook_actions('on_category_save', $this);
-			CMS::Instance()->queue_message('Saved category','success', $return_url);
-		}
+		Hook::execute_hook_actions('on_category_save', $this);
+		return true;
 	}
 
 
