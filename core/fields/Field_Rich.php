@@ -161,6 +161,48 @@ class Field_Rich extends Field {
 					document.addEventListener('click',function(e){
 						// click event handler for editor 
 
+						
+
+						if (e.target.nodeName==='A') {
+							
+							// only work on anchors inside editor (i.e. not toolbar or elswhere... :) )
+							let in_editor = e.target.closest('.editor');
+							if (in_editor) {
+								// remember dynamic editor/textarea
+								window.this_editor = e.target.closest('.control').querySelector('.editor');
+								window.this_textarea = e.target.closest('.control').querySelector('textarea');
+
+								//console.log('show anchor editor');
+								window.editor_anchor = e.target;
+
+								let href = e.target.getAttribute('href');
+								let text = e.target.innerText;
+								let classes = e.target.classList.value;
+								let target = e.target.getAttribute('target') ? e.target.getAttribute('target') : "";
+
+								/* console.log('URL',href);
+								console.log('TEXT',text);
+								console.log('CLASS',classes); */
+								
+								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
+								let iL = ["URL", "Display Text", "Class", "Target"];
+								let iI = ["a_url", "a_text", "a_class","a_target"];
+								let cV = [href, text, classes, target];
+								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
+
+								function onAdd_a() {
+									// update anchors
+									window.editor_anchor.innerText = document.getElementById('a_text').value;
+									window.editor_anchor.href = document.getElementById('a_url').value;
+									window.editor_anchor.classList.value = document.getElementById('a_class').value;
+									window.editor_anchor.target = document.getElementById('a_target').value;
+								}
+
+								window.live_editor = this_editor;
+								createModal(iL, iI, cV, hL, null, onAdd_a);
+							}
+						}
+
 						if (e.target.classList.contains('rich_image')) {
 							// handle rich image click
 							// clear any active rich image
@@ -198,8 +240,8 @@ class Field_Rich extends Field {
 							e.preventDefault();
 
 							// remember dynamic editor/textarea
-							let this_editor = e.target.closest('.control').querySelector('.editor');
-							let this_textarea = e.target.closest('.control').querySelector('textarea');
+							window.this_editor = e.target.closest('.control').querySelector('.editor');
+							window.this_textarea = e.target.closest('.control').querySelector('textarea');
 
 							if (e.target.classList.contains('fa')) {
 								editor_button = e.target.closest('.editor_button');
@@ -239,10 +281,17 @@ class Field_Rich extends Field {
 								var selection = window.getSelection().toString();
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-								
-								let iL = ["URL", "Display Text"];
-								let iI = [`url_for_${uniq}`, `display_text_for_${uniq}`];
-								let cV = ["", selection];
+
+								let href="";
+								let classes="";
+								let target="";
+
+								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
+								let iL = ["URL", "Display Text", "Class", "Target"];
+								let iI = ["a_url", "a_text", "a_class","a_target"];
+								let cV = [href, selection, classes, target];
+								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
+
 								var helptext = "Enter full link including https:// <br>";
 								let anchors = document.querySelectorAll('a.internal_anchor');
 								if (anchors.length>0) {
@@ -253,11 +302,10 @@ class Field_Rich extends Field {
 									});
 									helptext += "</ul>";
 								}
-								let hL = [helptext, ""];
-
+								
 								function onCreate() {
 									// insert link html at anchor location
-									let link_html = "<a id='newly_created_link_for_<?php echo $this->name;?>'>" + selection + "</a>";
+									let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
 									document.execCommand('insertHTML', false, link_html);							
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
@@ -268,6 +316,8 @@ class Field_Rich extends Field {
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.href = document.getElementById(iI[0]).value;
 									link.innerHTML = document.getElementById(iI[1]).value;
+									link.classList.value = document.getElementById(iI[2]).value;
+									link.target = document.getElementById(iI[3]).value;
 									link.removeAttribute('id');		// remove id so future links not messed up
 								}
 
@@ -323,6 +373,7 @@ class Field_Rich extends Field {
 
 									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
+									// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 									let iL = ["Alt Text", "Image Title"];
 									let iI = [`alt_text_for_${uniq}`, `title_for_${uniq}`,];
 									let cV = [alt, title];
@@ -361,6 +412,7 @@ class Field_Rich extends Field {
 
 									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
+									// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 									let iL = ["Image Author", "Image Source", "License Name", "License Link"];
 									let iI = [`image_author_for_${uniq}`, `image_source_for_${uniq}`, `license_name_for_${uniq}`, `license_link_for_${uniq}`];
 									let cV = [author, source, license, licenselink];
@@ -634,6 +686,7 @@ class Field_Rich extends Field {
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
+								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 								let iL = ["Add Class"];
 								let iI = [`new_class_for_${uniq}`];
 								let cV = [""];
