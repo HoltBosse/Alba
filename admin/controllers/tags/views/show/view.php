@@ -40,6 +40,8 @@ div.pull-right {
 }
 </style>
 
+<form id='searchform' action="" method="GET"></form>
+
 <form action='' method='post' name='tag_action' id='tag_action_form'>
 
 	<h1 class='title'>All Tags
@@ -52,12 +54,48 @@ div.pull-right {
 		</div>
 	</h1>
 
+	<div id='tag_search_controls' class='flex'>
+
+		<div class="field">
+			<label class="label">Search Title/Note</label>
+			<div class="control">
+				<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="">
+			</div>
+		</div>
+
+		<div class='field'>
+			<label class="label">&nbsp;</label>
+			<div class='control'>
+				<button form="searchform" type="submit" class="button is-info">
+					Search
+				</button>
+			</div>
+		</div>
+
+		<div class='field'>
+			<label class="label">&nbsp;</label>
+			<div class='control'>
+				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0]; return false;' class="button is-default">
+					Clear
+				</button>
+			</div>
+		</div>
+
+	</div>
+
 	<table class='table'>
 		<thead>
 			<tr><th>State</th><th>Title</th><th>Available To Use On</th><th>Category</th><th>Front-End</th><th>Note</th>
 		</thead>
 		<tbody>
 		<?php foreach ($all_tags as $tag):?>
+			<?php if ($search) {
+				if (stripos($tag->title,$search)===false && stripos($tag->note,$search)===false) {
+					// skip, nothing matching 
+					continue;
+				}
+			}
+			?>
 			<tr class='tag_admin_row'>
 				<td>
 					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $tag->id; ?>'/>
@@ -76,7 +114,7 @@ div.pull-right {
 					/* $tag_o = new Tag(); $tag_o->load($tag->id);
 					$depth = $tag_o->get_depth(); */
 					for ($n=0; $n<$tag->depth; $n++) {
-						echo "&nbsp-&nbsp";
+						echo "&nbsp&#x21B3;&nbsp";
 					}
 					?>
 					<a href="<?php echo Config::uripath(); ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo $tag->title; ?></a>
