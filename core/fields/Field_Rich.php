@@ -184,6 +184,7 @@ class Field_Rich extends Field {
 								console.log('TEXT',text);
 								console.log('CLASS',classes); */
 								
+								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 								let iL = ["URL", "Display Text", "Class", "Target"];
 								let iI = ["a_url", "a_text", "a_class","a_target"];
 								let cV = [href, text, classes, target];
@@ -292,6 +293,8 @@ class Field_Rich extends Field {
 								var href="";
 								var classes="";
 								var target="";
+
+								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 								let iL = ["URL", "Display Text", "Class", "Target"];
 								let iI = ["a_url", "a_text", "a_class","a_target"];
 								let cV = [href, selection, classes, target];
@@ -378,6 +381,7 @@ class Field_Rich extends Field {
 
 									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
+									// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 									let iL = ["Alt Text", "Image Title"];
 									let iI = [`alt_text_for_${uniq}`, `title_for_${uniq}`,];
 									let cV = [alt, title];
@@ -416,6 +420,7 @@ class Field_Rich extends Field {
 
 									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
+									// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 									let iL = ["Image Author", "Image Source", "License Name", "License Link"];
 									let iI = [`image_author_for_${uniq}`, `image_source_for_${uniq}`, `license_name_for_${uniq}`, `license_link_for_${uniq}`];
 									let cV = [author, source, license, licenselink];
@@ -689,6 +694,7 @@ class Field_Rich extends Field {
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
+								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 								let iL = ["Add Class"];
 								let iI = [`new_class_for_${uniq}`];
 								let cV = [""];
