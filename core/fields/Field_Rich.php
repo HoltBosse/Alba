@@ -313,7 +313,7 @@ class Field_Rich extends Field {
 								
 								function onCreate() {
 									// insert link html at anchor location
-									let link_html = "<a data-foo='bar' target='"+target+"' class='"+classes+"' id='newly_created_link_for_<?php echo $this->name;?>'>" + selection + "</a>";
+									let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
 									document.execCommand('insertHTML', false, link_html);							
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
