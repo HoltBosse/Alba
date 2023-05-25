@@ -290,9 +290,9 @@ class Field_Rich extends Field {
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
-								var href="";
-								var classes="";
-								var target="";
+								let href="";
+								let classes="";
+								let target="";
 
 								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 								let iL = ["URL", "Display Text", "Class", "Target"];
