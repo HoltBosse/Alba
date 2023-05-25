@@ -190,10 +190,6 @@ class Field_Rich extends Field {
 								let cV = [href, text, classes, target];
 								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
 
-								function onCreate_a() {
-									// do nothing?
-								}
-
 								function onAdd_a() {
 									// update anchors
 									window.editor_anchor.innerText = document.getElementById('a_text').value;
@@ -202,12 +198,8 @@ class Field_Rich extends Field {
 									window.editor_anchor.target = document.getElementById('a_target').value;
 								}
 
-
-								function onCancel_a() {
-									// do nothing
-								}
 								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, onCreate_a, onAdd_a, onCancel_a);
+								createModal(iL, iI, cV, hL, null, onAdd_a);
 							}
 						}
 
