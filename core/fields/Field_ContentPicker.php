@@ -21,7 +21,7 @@ class Field_ContentPicker extends Field {
 		$required="";
 		if ($this->content_type) {
 			// get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0) 
-			$content = Content::get_all_content ("id", $this->content_type, null, null, true); // get all published only content
+			$content = DB::fetchAll('select * from content where state>0 and content_type=?',$this->content_type);
 		}
 		else {
 			CMS::show_error('ContentPicker must have content type specified');
