@@ -10,6 +10,9 @@ if ($resetemail) {
 
 	if ($reset_user && $reset_user->username != 'guest') {
 		$key = $reset_user->generate_reset_key();
+		if (!$key) {
+			CMS::Instance()->queue_message('Error creating reset key - see logs for details.','danger',Config::uripath() . '/admin');
+		}
 		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 		$domain = $_SERVER['HTTP_HOST'].'/';
 		$domain_url = $protocol.$domain;
