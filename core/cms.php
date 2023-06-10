@@ -224,14 +224,7 @@ final class CMS {
 			$this->need_session=false; // don't need session for image api
 		}
 
-		if (Config::$caching ?? null && !ADMINPATH) {
-			// admin will never create caches, so no point in even checking
-			$this->cache = new Cache();
-			$cached_page_file = $this->cache->is_cached($request, 'url');
-			if ($cached_page_file) {
-				$this->cache->serve_page($cached_page_file);
-			}
-		}
+		
 
 		// db
 		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
@@ -343,6 +336,20 @@ final class CMS {
 		// default page contents
 		$this->page_contents = "";
 		$this->page_id = false;
+
+		// moved cache serve checking post session + db bootstrap
+		// small performance hit, but only way to alleviate potential security issues for following checks
+		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && $this->user->id!=false)  {
+			// check if caching is turned on and we are on front-end 
+			// admin will never create caches, so no point in even checking
+			// also never serve cache if messages waiting to be viewed potentially
+			// and never serve if any user is logged in
+			$this->cache = new Cache();
+			$cached_page_file = $this->cache->is_cached($request, 'url');
+			if ($cached_page_file) {
+				$this->cache->serve_page($cached_page_file);
+			}
+		}
 	}
 
 	private function showinfo() {
@@ -675,7 +682,8 @@ final class CMS {
 				echo $this->page_contents;
 
 				// create full page cache if needed
-				if (Config::$caching ?? null) {
+				// only if no messages in queue and user is not logged in
+				if ( (Config::$caching ?? null) && !($_SESSION['flash_messages'] ?? null) && $this->user->id!=false ) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}
 			}	
