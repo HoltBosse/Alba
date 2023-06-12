@@ -339,11 +339,20 @@ final class CMS {
 
 		// moved cache serve checking post session + db bootstrap
 		// small performance hit, but only way to alleviate potential security issues for following checks
-		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && $this->user->id!=false)  {
+
+		// check for core controller - save folder name if found for include during rendering
+		foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
+			if($this->uri_segments[0] == $folder) {
+				$this->core_controller = $folder;
+				break;
+			}
+		}
+		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
 			// check if caching is turned on and we are on front-end 
 			// admin will never create caches, so no point in even checking
 			// also never serve cache if messages waiting to be viewed potentially
 			// and never serve if any user is logged in
+			// also never serve if this is a core controller
 			$this->cache = new Cache();
 			$cached_page_file = $this->cache->is_cached($request, 'url');
 			if ($cached_page_file) {
@@ -486,11 +495,10 @@ final class CMS {
 			exit(); // shouldn't be needed, controller should exit
 		}
 		// check for user core controllers
-		foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
-			if($this->uri_segments[0] == $folder) {
-				include_once (CMSPATH . "/core/controllers/" . $this->uri_segments[0] . "/controller.php");
-				exit(); // shouldn't be needed, controller should exit
-			}
+		// already checked for existing folder during cache testing
+		if($this->core_controller) {
+			include_once (CMSPATH . "/core/controllers/" . $this->core_controller . "/controller.php");
+			exit(); // shouldn't be needed, controller should exit
 		}
 
 		// override debug if chosen
@@ -682,8 +690,8 @@ final class CMS {
 				echo $this->page_contents;
 
 				// create full page cache if needed
-				// only if no messages in queue and user is not logged in
-				if ( (Config::$caching ?? null) && !($_SESSION['flash_messages'] ?? null) && $this->user->id!=false ) {
+				// only if no messages in queue and user is not logged in and not a core controller
+				if ( (Config::$caching ?? null) && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}
 			}	
