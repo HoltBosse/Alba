@@ -136,7 +136,7 @@ class Field_FilePicker extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? false;
 		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
+		$this->filter = $config->filter ?? 'TEXT';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->root_folder = $config->root_folder ? CMSPATH . "/" . $config->root_folder : CMSPATH;
 		$this->default = $config->default ?? '';
