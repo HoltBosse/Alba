@@ -83,6 +83,7 @@ class Field_ContentPickerOrdered extends Field {
                             <ul class='twocol_picker_ul'>
                                 <?php foreach ($options_all_articles as $item):?>
                                     <li 
+									<?php if (in_array($item->id, $existing_arr)) { echo " style='display:none;' ";} ?>
                                     class='draggable_content_item twocol_picker_source_item' 
                                     draggable 
                                     data-content_id='<?php echo $item->id;?>'
@@ -197,12 +198,14 @@ class Field_ContentPickerOrdered extends Field {
 								csv_arr.push(an_li.dataset.content_id);
 							});
 							hidden_input.value = csv_arr.join(",");
+							// hide original clicked element - ready to restore if clicked in right column
+							e.target.style.display='none';
                         }
 						else {
 							if (e.target.nodeName=="LI") {
 								// update field
 								let ul = e.target.closest('ul');
-								e.target.remove();
+								
 								let hidden_input = document.getElementById("<?php echo $this->id;?>");
 								let csv_arr = [];
 								let all_li = ul.querySelectorAll('li');
@@ -210,8 +213,13 @@ class Field_ContentPickerOrdered extends Field {
 									csv_arr.push(an_li.dataset.content_id);
 								});
 								hidden_input.value = csv_arr.join(",");
-								
-								
+								// restore left column item
+								let id = e.target.dataset.content_id;
+								let picker = e.target.closest('.twocol_picker');
+								let left_col_el = picker.querySelector('.twocol_picker_left li[data-content_id="' + id + '"]');
+								left_col_el.style.display = 'block';
+								// remove right hand element, no longer needed
+								e.target.remove();
 							}
 						}
                     });
