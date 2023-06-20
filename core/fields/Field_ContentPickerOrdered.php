@@ -129,8 +129,8 @@ class Field_ContentPickerOrdered extends Field {
                 <script>
                     let picker_<?php echo $this->id;?> = document.getElementById('twocol_picker_<?php echo $this->id;?>');
 					// apply drag drop to server rendered lis
-					let rendered_lis = picker_<?php echo $this->id;?>.querySelectorAll('.twocol_picker_right ul li');
-					rendered_lis.forEach(li => {
+					let rendered_lis_<?php echo $this->id;?> = picker_<?php echo $this->id;?>.querySelectorAll('.twocol_picker_right ul li');
+					rendered_lis_<?php echo $this->id;?>.forEach(li => {
 						li.setAttribute('draggable', true);
 						li.ondragend = function(item) {
 							item.target.classList.remove('drag-sort-active');
