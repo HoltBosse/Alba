@@ -115,7 +115,7 @@ require_once (CMSPATH . "/core/cms.php");
 								<!-- commented out - using new blank content creator instead of front-end designer view for now -->
 								<!-- <a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/types">Content Types</a> -->
 								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/check">Check Fields</a>
+								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/check">Check Flat Tables</a>
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/new">Create New Type</a>
 							</div>
 						</div>
