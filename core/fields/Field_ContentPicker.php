@@ -32,8 +32,10 @@ class Field_ContentPicker extends Field {
 			$location = Content::get_content_location($this->content_type);
     		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
     		$table_name = "content_" . $custom_fields->id ;
-
-			$content = DB::fetchAll('select id,title from ' . $table_name . ' where state=1');
+			$query = "select id,title,state from {$table_name} where state=1";
+			$content = DB::fetchAll($query);
+			/* CMS::pprint_r ($query);
+			CMS::pprint_r ($content); */
 		}
 		else {
 			CMS::show_error('ContentPicker must have content type specified');
