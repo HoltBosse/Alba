@@ -51,7 +51,7 @@ class Content_Search {
 	private function field_in_filters($field_name) {
 		//CMS::pprint_r ("checking if {$field_name} is in: ");
 		//CMS::pprint_r ($this->filters);
-		$field_name = "f_" . $field_name;
+		$field_name = $field_name;
 		foreach ($this->filters as $filter) {
 			if ($filter[0]==$field_name) {
 				return $filter[1];
@@ -261,13 +261,15 @@ class Content_Search {
 		//CMS::pprint_r ($this->filter_pdo_params);
 		//CMS::pprint_r ($query); die(); 
 
-		/* CMS::pprint_r ($this->custom_search_params);
+		/* echo "<p>custom search param</p>";
+		CMS::pprint_r ($this->custom_search_params);
+		echo "<p>filters</p>";
 		CMS::pprint_r ($this->filters);
+		echo "<p>list fields</p>";
 		CMS::pprint_r ($this->list_fields);
-		if ($this->filters) {
-			CMS::pprint_r ($query); die(); 
-		}
-		CMS::pprint_r ($query); die(); */ 
+		echo "<p>query</p>";
+		CMS::pprint_r ($query); die();  */
+		
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
