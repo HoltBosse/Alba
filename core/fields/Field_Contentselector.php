@@ -23,6 +23,10 @@ class Field_Contentselector extends Field {
 				$this->content_type = Content::get_content_type_id($this->content_type);
 			}
 			if ($this->content_type && is_numeric($this->content_type)) {
+
+				$location = Content::get_content_location($this->content_type);
+				$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+				$table_name = "content_" . $custom_fields->id ;
 				
 				if ($this->list_unpublished) {
 					$min_state = 0;
@@ -32,12 +36,14 @@ class Field_Contentselector extends Field {
 				}
 				if (!$this->tags) {
 					// default order is alphabetical
-					$query = "select * from content where content_type={$this->content_type} and state>={$min_state} order by title ASC";
-					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state>={$min_state} order by title ASC")->fetchAll();
+					$query = "select * from " . $table_name . " where state >={$min_state} order by title ASC";
+					$options_all_articles = CMS::Instance()->pdo->query($query)->fetchAll();
+					/* CMS::pprint_r ($query);
+					CMS::pprint_r ($options_all_articles); */
 				}
 				else {
 					$tags_csv = "'".implode("','", $this->tags)."'";
-					$query = "select c.* from content c where c.content_type={$this->content_type} and c.state=1 ";
+					$query = "select c.* from {$table_name} c where c.state=1 ";
 					$query .= " and c.id in (";
 						$query .= " select tc.content_id from tagged tc where tc.content_type_id={$this->content_type} and tc.tag_id in (";
 							$query .= "select t.id from tags t where t.state>={$min_state} and t.alias in ($tags_csv)";
