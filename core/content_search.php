@@ -79,6 +79,7 @@ class Content_Search {
 			}
 			$location = Content::get_content_location($this->type_filter);
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			$table_name = "content_" . $custom_fields->id ;
 			if (!$this->list_fields || $this->fetch_all) {
 				// no fields request, so see if we need to get all or just get list items from json
 				if ($this->fetch_all) {
@@ -124,18 +125,22 @@ class Content_Search {
 				}
 			}
 		} 
+		else {
+			CMS::show_error('No content type filter provided for content search');
+		}
 		$query = "select";
 		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note, c.category, cat.title  as catname";
 		if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {
-				$select .= " ,f_{$field}_t.content as f_{$field}";
+				//$select .= " ,f_{$field}_t.content as f_{$field}";
+				$select .= " ,c.{$field} as {$field}"; // TODO: discuss dropping prefix f_
 			}
 		}
 		$count_select = " count(*) as c ";
 
 		$select = Hook::execute_hook_filters('custom_content_search_select', $select, $this->type_filter); 
 
-		$from = " from ( content c ";
+		$from = " from ( " . $table_name . " c ";
 
 		// if custom field exists as filter - needs to be added in from/where not as left join
 		// also save filter value to filter_pdo_params
@@ -143,7 +148,7 @@ class Content_Search {
 
 			if (array_key_exists($field, $this->filters)) {
 				$this->filter_pdo_params[] = $this->filters[$field];
-				$from .= ", content_fields f_{$field}_t ";
+				//$from .= ", content_fields f_{$field}_t "; // no longer needs all in one table now
 			}
 		}
 
@@ -153,13 +158,15 @@ class Content_Search {
 
 		// left join custom field fields
 		// ONLY where not in filters
-		if ($this->list_fields) {	
+
+		// no longer needed in flag tables
+		/* if ($this->list_fields) {	
 			foreach ($this->list_fields as $field) {
 				if (!array_key_exists($field, $this->filters)) {
 					$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
 				}
 			}
-		}
+		} */
 
 		$where = ' where ';
 
@@ -195,20 +202,22 @@ class Content_Search {
 		}
 
 		// custom fields being filtered
-		if ($this->list_fields) {
+		// no longer care - treat all fields the same
+		/* if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {			
 				if (array_key_exists('f_' . $field, $this->filters)) {
 					//CMS::pprint_r ('Got filter for custom field ' . $field);
 					$this->filter_pdo_params[] = $this->filters['f_'.$field];
-					$where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
-					$where .= " and f_{$field}_t.content = ? ";
+					/* $where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
+					$where .= " and f_{$field}_t.content = ? "; 
 				}
 			}
-		}
+		} */
 
 		// required fields filter
 		foreach ($this->filters as $key => $value) {
-			if (strpos($key,'f_')===false) {
+			// old
+			/* if (strpos($key,'f_')===false) {
 				// not custom field
 				// check if core field (nb - content type handled elsewhere in class, as more common)
 				if (in_array($key,['state','id','alias','title','category','created_by','created','updated_by','updated','note','start','end'])) {
@@ -216,7 +225,10 @@ class Content_Search {
 					$this->filter_pdo_params[] = $value;
 					$where .= " and c." . $key . " = ? " ;
 				}
-			}
+			} */
+			// new flat table
+			$this->filter_pdo_params[] = $value;
+			$where .= " and c." . $key . " = ? " ;
 		}
 
 		if ($this->category && is_numeric($this->category)) {
@@ -224,7 +236,7 @@ class Content_Search {
 		}
 
 		if ($this->created_by_cur_user) {
-			$where .= " AND created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
+			$where .= " AND c.created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
 		}
 
 		$where = Hook::execute_hook_filters('custom_content_search_where', $where, $this->type_filter); 
