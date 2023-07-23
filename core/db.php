@@ -36,6 +36,7 @@ class db {
 				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
 			}
 			else {
+				//CMS::pprint_r(debug_backtrace());
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
@@ -61,6 +62,7 @@ class db {
 				CMS::show_error("Error performing query: " . $e->getMessage());
 			}
 			else {
+				//CMS::pprint_r(debug_backtrace());
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
@@ -85,6 +87,7 @@ class db {
 				CMS::show_error("Error performing query: " . $e->getMessage());
 			}
 			else {
+				//CMS::pprint_r(debug_backtrace());
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
