@@ -20,8 +20,20 @@ class Field_ContentPicker extends Field {
 		$this->array_values = json_decode ($this->default);
 		$required="";
 		if ($this->content_type) {
+			if (!is_numeric($this->content_type)) {
+				$this->content_type = DB::fetch('select id from content_types where title=?',[$this->content_type])->id ?? null;
+			}
+			if (!$this->content_type) {
+				CMS::show_error('ContentPicker unable to determine content type');
+			}
 			// get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0) 
-			$content = DB::fetchAll('select * from content where state>0 and content_type=?',$this->content_type);
+			//$content = Content::get_all_content ("id", $this->content_type, null, null, true); // get all published only content
+
+			$location = Content::get_content_location($this->content_type);
+    		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+    		$table_name = "content_" . $custom_fields->id ;
+
+			$content = DB::fetchAll('select id,title from ' . $table_name . ' where state=1');
 		}
 		else {
 			CMS::show_error('ContentPicker must have content type specified');
