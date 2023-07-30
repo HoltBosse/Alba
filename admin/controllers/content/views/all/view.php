@@ -424,7 +424,7 @@ table.dragging .before_after_wrap {
 						</div>
 					</td>
 					<td>
-						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
+						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo $content_item->title; ?></a>
 						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
 					</td>
 

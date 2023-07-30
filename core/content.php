@@ -17,6 +17,23 @@ class Content {
 	public $alias;
 	public $category;
 
+	public static function get_table_name_for_content_type($type_id) {
+		if (!is_numeric($type_id)) {
+			CMS::show_error('Unable to determine table name for non-numeric content type');
+		}
+		else {
+			$location = Content::get_content_location($type_id);
+			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			if ($custom_fields->id ?? null) {
+				$table_name = "content_" . $custom_fields->id ;
+				return $table_name;
+			}
+			else {
+				CMS::show_error('Unable to determine table name for content id ' . $type_id);
+			}
+		}
+	}
+
 	public function __construct($content_type=0) {
 		$this->id = false;
 		$this->title = "";
@@ -27,6 +44,8 @@ class Content {
 		$this->tags = [];
 		if ($content_type) {
 			$this->content_location = $this->get_content_location($this->content_type);
+			$this->custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			$this->table_name = "content_" . $this->custom_fields->id ;
 		}
 		$this->created_by = CMS::Instance()->user->id;
 		$this->alias="";
@@ -105,17 +124,24 @@ class Content {
 	}
 
 	public function get_field($field_name) {
-		$value = DB::fetch("select content from content_fields where content_id=? and name=?", [$this->id, $field_name]);
+		//CMS::pprint_r ($this);
+		if (!$this->table_name) {
+			CMS::pprint_r ($this); die();
+			CMS::show_error('Unknown table name'); // shouldn't get here, but catching during dev
+		}
+		$query = "select {$field_name} as v from {$this->table_name} where id=?";
+		$value = DB::fetch($query, [$this->id])->v; // todo: can we make col name param?
 		if ($value) {
-			return $value->content;
+			return $value; 
 		}
 		else {
 			return null;
 		}
 	}
 
-	public function load($id) {
-		$info = DB::fetch('select * from content where id=?',array($id));
+	public function load($id, $content_type) {
+		$table_name = Content::get_table_name_for_content_type($content_type);
+		$info = DB::fetch('select * from ' . $table_name . ' where id=?',array($id));
 		if ($info) {
 			$this->id = $info->id;
 			$this->title = $info->title;
@@ -124,6 +150,7 @@ class Content {
 			$this->alias = $info->alias;
 			$this->start = $info->start;
 			$this->end = $info->end;
+			$this->table_name = $table_name;
 			$this->content_type = $info->content_type;
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->created_by = $info->created_by;
@@ -137,9 +164,11 @@ class Content {
 		}
 	}
 
-	public function load_from_alias($alias) {
-		$info = DB::fetch('select * from content where alias=?',array($alias));
+	public function load_from_alias($alias, $content_type) {
+		$table_name = Content::get_table_name_for_content_type($content_type);
+		$info = DB::fetch('select * from ' . $table_name . ' where alias=?',array($alias));
 		if ($info) {
+			$this->table_name = $table_name;
 			$this->id = $info->id;
 			$this->title = $info->title;
 			$this->state = $info->state;
@@ -495,8 +524,7 @@ class Content {
 		//$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
 		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 		$table_name = "content_" . $custom_fields->id ;
-
-		$result = DB::fetch("select * from " . $table_name);
+		$result = DB::fetch("select * from " . $table_name . " where id=?", [$id]);
 
 		// check if default needs to be filled in for any custom fields
 		foreach ($custom_fields->fields as $f) {
