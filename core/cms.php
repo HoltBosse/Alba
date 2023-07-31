@@ -583,8 +583,12 @@ final class CMS {
 		else {
 			if (ADMINPATH) {
 				//check the users access rights
-				if (sizeof($this->uri_segments) >= 1 && !Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
-					$this->queue_message('You do not have access to this page','danger', Config::uripath() . "/admin");
+				if (!Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
+					if(CMS::Instance()->user && CMS::Instance()->user->groups && (CMS::Instance()->user->is_member_of(1) || CMS::Instance()->user->is_member_of(2))) {
+						$this->queue_message('You do not have access to this page','danger', Config::uripath() . "/admin");
+					} else {
+						$this->queue_message('You do not have access to this page','danger', Config::uripath() . "/");
+					}
 				}
 
 				ob_start();
