@@ -159,6 +159,19 @@ class Field_Parsedown extends Field {
 					</div>
 				</div>
 			</section>
+			<style>
+				#emote_popup {
+					display: none;
+					position: absolute;
+				}
+				#emote_popup.active {
+					display: block;
+				}
+			</style>
+			<div id="emote_popup">
+				<p>test</p>
+				<p>test2 of thingsss?</p>
+			</div>
 			<script>
 				let editor = document.getElementById("<?php echo $wrapper_id; ?>");
 				let editor_textarea = editor.querySelector(".pd_parsedown_content");
@@ -215,6 +228,167 @@ class Field_Parsedown extends Field {
 						
 					}
 				}); */
+
+				function createCopy(textArea) {
+					var copy = document.createElement('div');
+					copy.textContent = textArea.value;
+					var style = getComputedStyle(textArea);
+					[
+						'fontFamily',
+						'fontSize',
+						'fontWeight',
+						'wordWrap', 
+						'whiteSpace',
+						'borderLeftWidth',
+						'borderTopWidth',
+						'borderRightWidth',
+						'borderBottomWidth',
+					].forEach(function(key) {
+						copy.style[key] = style[key];
+					});
+					copy.style.overflow = 'auto';
+					copy.style.width = textArea.offsetWidth + 'px';
+					copy.style.height = textArea.offsetHeight + 'px';
+					copy.style.position = 'absolute';
+					copy.style.left = textArea.offsetLeft + 'px';
+					copy.style.top = textArea.offsetTop + 'px';
+					document.body.appendChild(copy);
+					return copy;
+				}
+
+				function getCaretPosition(textArea) {
+					var start = textArea.selectionStart;
+					var end = textArea.selectionEnd;
+					var copy = createCopy(textArea);
+					var range = document.createRange();
+					range.setStart(copy.firstChild, start);
+					range.setEnd(copy.firstChild, end);
+					var selection = document.getSelection();
+					selection.removeAllRanges();
+					selection.addRange(range);
+					var rect = range.getBoundingClientRect();
+					document.body.removeChild(copy);
+					textArea.selectionStart = start;
+					textArea.selectionEnd = end;
+					textArea.focus();
+					return {
+						x: rect.left - textArea.scrollLeft,
+						y: rect.top - textArea.scrollTop
+					};
+				}
+
+				window.emotemenu = {
+					"active": false,
+					"buffer": "",
+					"element": document.getElementById("emote_popup"),
+					"supportedEmotes": {
+						"point_up_2": "👆",
+						"point_down": "👇",
+						"point_left": "👈",
+						"point_right": "👉",
+						"facepunch": "👊",
+						"punch": "👊",
+						"wave": "👋",
+						"ok_hand": "👌",
+						"+1": "👍",
+						"thumbsup": "👍",
+						"-1": "👎",
+						"thumbsdown": "👎",
+						"clap": "👏",
+						"open_hands": "👐",
+						"crown": "👑",
+						"eyes": "👀",
+						"heart": "❤️",
+						"exclamation": "❗️",
+						"tm": "™️",
+						"pray": "🙏",
+						"rocket": "🚀",
+					},
+					"disable": ()=>{
+						window.emotemenu.active=false;
+						document.getElementById("emote_popup").classList.remove("active");
+						window.emotemenu.clearBuffer();
+					},
+					"enable": ()=>{
+						window.emotemenu.active = true;
+						console.log("activated");
+						//console.log(e.data);
+
+						let position = getCaretPosition(editor_textarea);
+						window.emotemenu.updateBuffer("");
+						window.emotemenu.element.style.left = `Calc(${position.x}px + ${getComputedStyle(editor_textarea).fontSize})`;
+						window.emotemenu.element.style.top = `Calc(${position.y}px + ${getComputedStyle(editor_textarea).lineHeight})`;
+						window.emotemenu.element.classList.add("active");
+					},
+					"isActive": ()=>{
+						return window.emotemenu.active;
+					},
+					"isNotActive": ()=>{
+						return !window.emotemenu.active;
+					},
+					"updateBuffer": (input)=>{
+						if(input != ":" && input != null) {
+							window.emotemenu.buffer += input;
+						} else if (input == null) {
+							if(window.emotemenu.buffer.length==0) {
+								window.emotemenu.disable();
+								return;
+							}
+							window.emotemenu.buffer = window.emotemenu.buffer.slice(0, -1); //backspace;
+							console.log("backspace");
+						}
+						//console.log(`buffer is: '${window.emotemenu.buffer}'`);
+
+						window.emotemenu.element.innerHTML = window.emotemenu.makeEmoteRows(window.emotemenu.buffer);
+					},
+					"makeEmoteRows": (input)=>{
+						let markup = "";
+						for (const key in window.emotemenu.supportedEmotes) {
+							if (key.startsWith(input)) {
+								markup +=`<div data-emote='${window.emotemenu.supportedEmotes[key]}'><p>${key} ${window.emotemenu.supportedEmotes[key]}</p></div>`;
+							}
+						}
+
+						return markup;
+					},
+					"clearBuffer": ()=>{
+						window.emotemenu.buffer="";
+					}
+				};
+
+				editor_textarea.addEventListener("input", (e)=>{
+					//console.log(e.data);
+					if(e.data==":" && window.emotemenu.isActive()) {
+						window.emotemenu.disable();
+					} else if (e.data==":" && window.emotemenu.isNotActive()) {
+						window.emotemenu.enable();
+					} else if (window.emotemenu.isActive() && e.data==" ") {
+						window.emotemenu.disable();
+					}
+
+					if(window.emotemenu.isActive()) {
+						window.emotemenu.updateBuffer(e.data);
+					}
+				});
+
+				editor_textarea.addEventListener("focusout", (e)=>{
+					if(window.emotemenu.isActive()) {
+						window.emotemenu.disable();
+					}
+				});
+
+				editor_textarea.addEventListener("keypress", (e)=>{
+					if(e.key==="Enter" && window.emotemenu.isActive()) {
+						e.preventDefault();
+						console.log("take");
+						let substringone = editor_textarea.value.slice(0, editor_textarea.selectionStart-(window.emotemenu.buffer.length+1));
+						let substringtwo = editor_textarea.value.slice(editor_textarea.selectionStart);
+						editor_textarea.value = `${substringone}${window.emotemenu.element.querySelector("div").dataset.emote}${substringtwo}`;
+						window.emotemenu.disable();
+					}
+				});
+				//TODO: make emote menu clickable
+				
 			</script>
 		<?php
 	}
