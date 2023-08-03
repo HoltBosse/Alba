@@ -163,9 +163,28 @@ class Field_Parsedown extends Field {
 				#emote_popup {
 					display: none;
 					position: absolute;
+					border: 1px solid white;
+					/* padding: 0.5rem; */
+					border-radius: 0.5rem;
+					background-color: #111;
 				}
 				#emote_popup.active {
 					display: block;
+				}
+				#emote_popup div {
+					padding: 0.25rem 0.5rem;
+				}
+				#emote_popup div:hover {
+					background-color: #3e8ed0;
+					color: white;
+					cursor: pointer;
+				}
+				#emote_popup div:hover:first-child, #emote_popup div:hover:last-child {
+					border-top: 0px solid transparent;
+					border-radius: 0.5rem;
+				}
+				#emote_popup p {
+					pointer-events: none;
 				}
 			</style>
 			<div id="emote_popup">
@@ -343,7 +362,7 @@ class Field_Parsedown extends Field {
 					},
 					"makeEmoteRows": (input)=>{
 						let markup = "";
-						for (const key in window.emotemenu.supportedEmotes) {
+						for (const [key, value] of Object.entries(window.emotemenu.supportedEmotes)) {
 							if (key.startsWith(input)) {
 								markup +=`<div data-emote='${window.emotemenu.supportedEmotes[key]}'><p>${key} ${window.emotemenu.supportedEmotes[key]}</p></div>`;
 							}
@@ -371,13 +390,15 @@ class Field_Parsedown extends Field {
 					}
 				});
 
-				editor_textarea.addEventListener("focusout", (e)=>{
+				editor_textarea.addEventListener("blur", (e)=>{
 					if(window.emotemenu.isActive()) {
-						window.emotemenu.disable();
+						setTimeout(() => {
+							window.emotemenu.disable();
+						}, 1000); //small delay, so that if the user clicks on a menu item, its event listener can fire, if it fires, it closes itself
 					}
 				});
 
-				editor_textarea.addEventListener("keypress", (e)=>{
+				editor_textarea.addEventListener("keydown", (e)=>{
 					if(e.key==="Enter" && window.emotemenu.isActive()) {
 						e.preventDefault();
 						console.log("take");
@@ -385,9 +406,24 @@ class Field_Parsedown extends Field {
 						let substringtwo = editor_textarea.value.slice(editor_textarea.selectionStart);
 						editor_textarea.value = `${substringone}${window.emotemenu.element.querySelector("div").dataset.emote}${substringtwo}`;
 						window.emotemenu.disable();
+					} /* else if(e.key==="Tab" && window.emotemenu.isActive()) {
+						e.preventDefault();
+						console.log(e.key);
+					} */
+				});
+
+				window.emotemenu.element.addEventListener("click", (e)=>{
+					console.log("clicked");
+					console.log(e.target);
+					if(e.target.dataset.emote) {
+						console.log("thing");
+						e.preventDefault();
+						let substringone = editor_textarea.value.slice(0, editor_textarea.selectionStart-(window.emotemenu.buffer.length+1));
+						let substringtwo = editor_textarea.value.slice(editor_textarea.selectionStart);
+						editor_textarea.value = `${substringone}${e.target.dataset.emote}${substringtwo}`;
+						window.emotemenu.disable();
 					}
 				});
-				//TODO: make emote menu clickable
 				
 			</script>
 		<?php
