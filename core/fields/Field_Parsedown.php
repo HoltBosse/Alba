@@ -1,7 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-class Field_parsedown extends Field {
+class Field_Parsedown extends Field {
 
 	public function display() {
 		$wrapper_id = uniqid();
