@@ -140,14 +140,14 @@ class Field_Parsedown extends Field {
 					<p class="pd_tab_title active" data-tab_content="write_content">Write</p>
 					<p class="pd_tab_title" data-tab_content="preview_content">Preview</p>
 					<div class="pd_text_controls">
-						<i class="pd_text_option fas fa-heading" data-start_prefix="### "></i>
-						<i class="pd_text_option fas fa-bold" data-start_prefix="**" data-end_prefix="**"></i>
-						<i class="pd_text_option fas fa-italic" data-start_prefix="*" data-end_prefix="*"></i>
-						<i class="pd_text_option fas fa-quote-right" data-start_prefix="> "></i> <?php //fa-block-quote ?>
-						<i class="pd_text_option fas fa-code" data-start_prefix="`" data-end_prefix="`"></i>
-						<i class="pd_text_option fas fa-link" data-start_prefix="[" data-end_prefix="](url)"></i>
-						<i class="pd_text_option fas fa-list" data-start_prefix="- "></i>
-						<i class="pd_text_option fas fa-list" data-start_prefix="#. "></i> <?php //fa-list-ol - find better option ?>
+						<i class="pd_text_option fas fa-heading" data-start_prefix="### " title="Heading"></i>
+						<i class="pd_text_option fas fa-bold" data-start_prefix="**" data-end_prefix="**" title="Bold"></i>
+						<i class="pd_text_option fas fa-italic" data-start_prefix="*" data-end_prefix="*"  title="Italicise"></i>
+						<i class="pd_text_option fas fa-quote-right" data-start_prefix="> " title="Quote"></i> <?php //fa-block-quote ?>
+						<i class="pd_text_option fas fa-code" data-start_prefix="`" data-end_prefix="`" title="Code"></i>
+						<i class="pd_text_option fas fa-link" data-start_prefix="[" data-end_prefix="](url)" title="Link"></i>
+						<i class="pd_text_option fas fa-list" data-start_prefix="- " title="Bulleted List"></i>
+						<i class="pd_text_option fas fa-list" data-start_prefix="#. " title="Numeric List"></i> <?php //fa-list-ol - find better option ?>
 					</div>
 				</div>
 				<div class="pd_content_header_row">
