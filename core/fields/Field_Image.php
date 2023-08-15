@@ -249,6 +249,7 @@ class Field_Image extends Field {
 		$this->default = $config->default ?? null;
 		$this->type = $config->type ?? 'error!!!';
 		$this->logic = $config->logic ?? '';
+		$this->coltype = $config->coltype ?? '';
 	}
 
 	public function validate() {

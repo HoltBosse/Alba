@@ -86,6 +86,7 @@ if ($required_details_form->is_submitted()) {
 		} */
 
 		$quicksave = Input::getvar('quicksave',"STRING");
+<<<<<<< HEAD
 		$saved = $content->save($required_details_form, $content_form );
 	
 		if ($saved) {
@@ -101,6 +102,24 @@ if ($required_details_form->is_submitted()) {
 		}
 		else {
 			CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['HTTP_REFERER']);
+=======
+		if ($quicksave) {
+			if ($content->save($required_details_form, $content_form )) {
+				CMS::Instance()->queue_message('Content saved','success',$_SERVER['HTTP_REFERER']);
+			}
+			else {
+				CMS::Instance()->queue_message('Error saving content','danger',$_SERVER['HTTP_REFERER']);
+			}
+		}
+		else {
+			if ($content->save($required_details_form, $content_form)) {
+				//echo Config::uripath() . '/admin/content/all/' . $content_type;
+				CMS::Instance()->queue_message('Content saved','success', Config::uripath() . '/admin/content/all/' . $content_type);
+			}
+			else {
+				CMS::Instance()->queue_message('Error saving content','danger', Config::uripath() . '/admin/content/all/' . $content_type);
+			}
+>>>>>>> d04c392 (feat: flat table content saving)
 		}
 		
 	}
