@@ -226,8 +226,7 @@ class Content {
 	}
 
 	public function save($required_details_form, $content_form, $return_url='') {
-		// return url will be used as passed, if left blank will use referral
-		// unless in ADMIN section, in which case admin content all page will be used
+		// return URL not used anymore - left for now for legacy
 		
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->get_field_by_name('title')->default;
@@ -265,13 +264,16 @@ class Content {
 			//$this->end = date("Y-m-d H:i:s", strtotime($this->end));
 			$this->end = strtotime($this->end);
 		}
+
+		$starttime = $this->start ? date("Y-m-d H:i:s", $this->start) : null;
+        $endtime = $this->end ? date("Y-m-d H:i:s", $this->end) : null;
 		
 		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
 		if ($this->id) {
 			// update
-			$params = array($this->state, $this->title, $this->alias, $this->note, $this->start, $this->end, $this->updated_by, $this->category, $this->id) ;
-			$required_result = DB::exec("update content set state=?,  title=?, alias=?, note=?, start=FROM_UNIXTIME(?), end=FROM_UNIXTIME(?), updated_by=?, category=? where id=?", $params);
+			$params = array($this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id) ;
+			$required_result = DB::exec("update {$this->table_name} set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? where id=?", $params);
 		}
 		else {
 			// new
@@ -281,7 +283,7 @@ class Content {
 			if (!$ordering) {
 				$ordering=1;
 			}
-			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?),?)";
+			$query = "insert into {$this->table_name} (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?),?)";
 			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
@@ -290,8 +292,8 @@ class Content {
 			}
 		}
 		if (!$required_result) {
-			// TODO: specific message for new/edit etc
-			CMS::Instance()->queue_message('Failed to save content','danger', $_SERVER['HTTP_REFERER']);
+			CMS::Instance()->log("Failed to save content");
+            return false;
 		}
 
 		// set tags
@@ -301,7 +303,9 @@ class Content {
 		/* CMS::pprint_r ($this);
 		CMS::pprint_r ($content_form); */
 		// first remove old field data if any exists
-		DB::exec("delete from content_fields where content_id=?", array($this->id));
+		// NO MORE content_fields
+		// DB::exec("delete from content_fields where content_id=?", array($this->id));
+
 		$error_text="";
 		foreach ($content_form->fields as $field) {
 			// insert field info
@@ -320,28 +324,28 @@ class Content {
 					$field->default = implode(",",$field->default);
 				}
 			}
-			$result = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$this->id, $field->name, $field->type, $field->default]);
+			// always update, either new row for new content, or id available for update
+			// content casting
+			// make sure INT is good
+			if ($field->coltype=="INTEGER") {
+				$field->default = (int)$field->default;
+				if (!is_numeric($field->default)) {
+					$field->default = null;
+				}
+			}
+			$result = DB::exec("update `{$this->table_name}` set `{$field->name}`=? where id=?", [$field->default, $this->id]);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
 				CMS::Instance()->log("Error saving: " . $field->name);
 			}
 		}
 
-		if (!$return_url) {
-			if (ADMINPATH) {
-				$return_url = Config::uripath() . '/admin/content/all/' . $this->content_type;
-			}
-			else {
-				$return_url = $_SERVER['HTTP_REFERER'];
-			}
-		}
-
 		if ($error_text) {
-			CMS::Instance()->queue_message($error_text,'danger', $return_url);
+			return false;
 		}
 		else {
 			Hook::execute_hook_actions('on_content_save', $this);
-			CMS::Instance()->queue_message('Saved content','success', $return_url);
+			return true;
 		}
 	}
 
