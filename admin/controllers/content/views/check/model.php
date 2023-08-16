@@ -19,7 +19,7 @@ foreach ($all_content_types as $content_type) {
 
     
     $results[] = "<p>Table is flat - checking content</p>";
-    $table_name = "content_" . $custom_fields->id ;
+    $table_name = "controller_" . $custom_fields->id ;
     // check for table
     $exists = DB::fetch("
         SELECT table_name FROM 

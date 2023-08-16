@@ -25,7 +25,7 @@ class Content {
 			$location = Content::get_content_location($type_id);
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 			if ($custom_fields->id ?? null) {
-				$table_name = "content_" . $custom_fields->id ;
+				$table_name = "controller_" . $custom_fields->id ;
 				return $table_name;
 			}
 			else {
@@ -45,7 +45,7 @@ class Content {
 		if ($content_type) {
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $this->content_location . '/custom_fields.json');
-			$this->table_name = "content_" . $this->custom_fields->id ;
+			$this->table_name = "controller_" . $this->custom_fields->id ;
 		}
 		$this->created_by = CMS::Instance()->user->id;
 		$this->alias="";
@@ -468,7 +468,7 @@ class Content {
 		$location = Content::get_content_location($old_content->content_type);
 		//CMS::pprint_r ("Loading: " . CMSPATH . '/controllers/' . $location . "/custom_fields.json");
 		$content_form = new Form (CMSPATH . '/controllers/' . $location . "/custom_fields.json");
-		$table_name = "content_" . $custom_fields->id ;
+		$table_name = "controller_" . $custom_fields->id ;
 		//CMS::pprint_r ($content_form);exit(0);
 		foreach ($content_form->fields as $field) {
 			// insert field info
@@ -527,7 +527,7 @@ class Content {
 		$location = Content::get_content_location($result->content_type);
 		//$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
 		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-		$table_name = "content_" . $custom_fields->id ;
+		$table_name = "controller_" . $custom_fields->id ;
 		$result = DB::fetch("select * from " . $table_name . " where id=?", [$id]);
 
 		// check if default needs to be filled in for any custom fields
