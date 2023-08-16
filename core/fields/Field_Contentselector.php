@@ -26,7 +26,7 @@ class Field_Contentselector extends Field {
 
 				$location = Content::get_content_location($this->content_type);
 				$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-				$table_name = "content_" . $custom_fields->id ;
+				$table_name = "controller_" . $custom_fields->id ;
 				
 				if ($this->list_unpublished) {
 					$min_state = 0;
