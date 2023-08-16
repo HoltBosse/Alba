@@ -19,7 +19,7 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
 	$content_type = $segments[3];
-	$content = new content($content_type);
+	$content = new Content($content_type);
 	//$content->type_id = $segments[3]; // passing optional parameter to class constructor above
 	$new_content = true;
 }

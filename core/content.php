@@ -44,7 +44,7 @@ class Content {
 		$this->tags = [];
 		if ($content_type) {
 			$this->content_location = $this->get_content_location($this->content_type);
-			$this->custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			$this->custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $this->content_location . '/custom_fields.json');
 			$this->table_name = "content_" . $this->custom_fields->id ;
 		}
 		$this->created_by = CMS::Instance()->user->id;
@@ -283,8 +283,8 @@ class Content {
 			if (!$ordering) {
 				$ordering=1;
 			}
-			$query = "insert into {$this->table_name} (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,FROM_UNIXTIME(?),FROM_UNIXTIME(?),?)";
-			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
+			$query = "insert into `{$this->table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
+			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $starttime, $endtime, $this->category);
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
 				// update object id with inserted id
