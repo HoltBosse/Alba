@@ -556,7 +556,12 @@ class Content {
 	//exists for legacy compat, please use new content_search for new code instead of this
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
 		//add inputed filters, and then if id is present, add that to filters as well
-		$filters = [$filter_field=>$filter_val];
+		if ($filter_field) {
+			$filters = [$filter_field=>$filter_val];
+		}
+		else {
+			$filters = null;
+		}
 		$id ? $filters["id"] = $id : "";
 
 		if(!$list_fields && $type_filter) {

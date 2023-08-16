@@ -196,11 +196,6 @@ class Content_Search {
 			}
 		}
 
-		
-		if ($this->type_filter && is_numeric($this->type_filter)) {
-			$where .= " and c.content_type={$this->type_filter} ";
-		}
-
 		// custom fields being filtered
 		// no longer care - treat all fields the same
 		/* if ($this->list_fields) {
