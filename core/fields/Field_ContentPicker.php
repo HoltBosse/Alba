@@ -31,7 +31,7 @@ class Field_ContentPicker extends Field {
 
 			$location = Content::get_content_location($this->content_type);
     		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-    		$table_name = "content_" . $custom_fields->id ;
+    		$table_name = "controller_" . $custom_fields->id ;
 			$query = "select id,title,state from {$table_name} where state=1";
 			$content = DB::fetchAll($query);
 			/* CMS::pprint_r ($query);

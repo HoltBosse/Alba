@@ -79,7 +79,7 @@ class Content_Search {
 			}
 			$location = Content::get_content_location($this->type_filter);
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-			$table_name = "content_" . $custom_fields->id ;
+			$table_name = "controller_" . $custom_fields->id ;
 			if (!$this->list_fields || $this->fetch_all) {
 				// no fields request, so see if we need to get all or just get list items from json
 				if ($this->fetch_all) {
