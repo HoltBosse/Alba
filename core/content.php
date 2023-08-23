@@ -87,7 +87,7 @@ class Content {
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
-			$results = DB::fetchall("select * from content where alias=? and content_type=?", array($this->alias, $this->content_type) );
+			$results = DB::fetchall("select * from {$this->table_name} where alias=? and content_type=?", [$this->alias] );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
 			if ($this->id) {
@@ -279,7 +279,7 @@ class Content {
 			// new
 			//CMS::pprint_r ($this);
 			// get next order value
-			$ordering = DB::fetch("select (max(ordering)+1) as ordering from content")->ordering;
+			$ordering = DB::fetch("select (max(ordering)+1) as ordering from `{$this->table_name}`")->ordering;
 			if (!$ordering) {
 				$ordering=1;
 			}
