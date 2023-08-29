@@ -42,7 +42,7 @@
         background-color: rgb(255 255 255 / 0%);
         color: #aaa;
     }
-    .navbar-item:hover, .navbar-item.has-dropdown:hover .navbar-link, a.navbar-item:hover, .navbar-dropdown, .input, .select select, /* .table, */ .modal-card-body {
+    .navbar-item:hover, .navbar-item.has-dropdown:hover .navbar-link, a.navbar-item:hover, .navbar-dropdown, .input, .select select, /* .table, */ .modal-card-body, section.pd_wrapper {
         background-color: #121212;
         color: white
     }

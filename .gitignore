@@ -60,6 +60,8 @@ admin/controllers/home/views
 admin/controllers/home/views/**
 #ignore non default controllers
 core/controllers/**
+!core/controllers/api/
+!core/controllers/api/**
 !core/controllers/image/
 !core/controllers/image/**
 !controllers/image/
