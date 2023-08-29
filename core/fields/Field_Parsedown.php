@@ -442,7 +442,7 @@ class Field_Parsedown extends Field {
 		$this->minlength = $config->minlength ?? 0;
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
-		$this->default = $config->default ?? '<p></p>';
+		$this->default = $config->default ?? '### New Text';
 	}
 
 	public function validate() {
