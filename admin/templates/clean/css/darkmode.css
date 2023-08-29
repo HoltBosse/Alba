@@ -46,7 +46,7 @@
         background-color: #121212;
         color: white
     }
-    .navbar-link, .navbar-item, .label, .tabs.is-toggle a, label, .table thead th {
+    .navbar-link, .navbar-item, .label, .tabs.is-toggle a, label, .table thead th, .pagination-link {
         color: #aaa;
     }
     .navbar-dropdown a.navbar-item:hover, .dropdown-divider, .modal-card-head, .modal-card-foot, .modal-card-title, .box {
