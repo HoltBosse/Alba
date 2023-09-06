@@ -31,9 +31,6 @@ else {
 // prep forms
 $required_details_form = new Form(CMSPATH . '/widgets/required_fields_form.json');
 $position_options_form = new Form(CMSPATH . '/widgets/position_options_form.json');
-
-$widget_options_form_object = JSON::load_obj_from_file(CMSPATH . '/widgets/' . $widget->type->location . '/widget_config.json');
-//$widget_options_form_object->fields = $widget->options;
 $widget_options_form = new Form($widget->form_data);
 
 // old way - TODO: delete?
