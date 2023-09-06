@@ -156,7 +156,7 @@ final class CMS {
 				$widget_class_name = "Widget_" . $type_info->location;
 				$widget_of_type = new $widget_class_name();
 				$widget_of_type->load ($widget->id);
-				$widget_of_type->render();
+				$widget_of_type->internal_render();
 			}
 			//CMS::pprint_r ($widget_of_type); 
 		}

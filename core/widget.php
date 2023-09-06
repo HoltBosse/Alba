@@ -24,6 +24,14 @@ class Widget {
 		echo "<h1>Hello, I'm a base class widget!</h1>";
 	}
 
+	public function internal_render() {
+		ob_start();
+		$this->render();
+		$output = ob_get_clean();
+		$output = Hook::execute_hook_filters('on_widget_render', $output, $this);
+		echo $output;
+	}
+
 	public static function get_all_widget_types() {
 		return CMS::Instance()->pdo->query('select * from widget_types')->fetchAll();
 	}
