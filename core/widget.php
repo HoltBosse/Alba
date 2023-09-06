@@ -9,6 +9,7 @@ class Widget {
 	public $type;
 	public $state;
 	public $options;
+	public $form_data;
 
 	public function render_edit() {
 		if (CMS::Instance()->user->is_member_of(1)) { ?>
@@ -33,10 +34,6 @@ class Widget {
 		where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) 
 		and global_position=? and state>=0 ORDER BY ordering,id ASC';
 		return DB::fetchAll($query, [$page_id, $page_id, $position]);
-	}
-
-	public function get_type_object() {
-		$this->type = CMS::Instance()->pdo->query('select * from widget_types where id=' . $this->type_id)->fetch();
 	}
 
 	public function get_option_value($option_name) {
@@ -86,18 +83,28 @@ class Widget {
 		return false;
 	}
 
-	public function load($id) {
-		$info = CMS::Instance()->pdo->query('select * from widgets where id=' . $id)->fetch();
-		$this->id = $info->id;
-		$this->title = $info->title;
-		$this->type_id = $info->type;
-		$this->state = $info->state;
-		$this->note = $info->note;
-		$this->ordering = $info->ordering;
-		$this->options = json_decode($info->options);
-		$this->position_control = $info->position_control;
-		$this->global_position = $info->global_position;
-		$this->page_list = explode(',', $info->page_list);
+	public function load($id, $type_id=null) {
+		//id of -1 is a new widget
+		if($id!=-1) {
+			$info = CMS::Instance()->pdo->query('select * from widgets where id=' . $id)->fetch();
+			$this->id = $info->id;
+			$this->title = $info->title;
+			$this->type_id = $info->type;
+			$this->state = $info->state;
+			$this->note = $info->note;
+			$this->ordering = $info->ordering;
+			$this->options = json_decode($info->options);
+			$this->position_control = $info->position_control;
+			$this->global_position = $info->global_position;
+			$this->page_list = explode(',', $info->page_list);
+		} else {
+			$this->type_id = $type_id;
+		}
+
+		$this->type = CMS::Instance()->pdo->query('select * from widget_types where id=' . $this->type_id)->fetch();
+		$this->form_data = JSON::load_obj_from_file(CMSPATH . '/widgets/' . $this->type->location . '/widget_config.json');
+
+		Hook::execute_hook_actions('on_widget_load', $this, "thinggg");
 	}
 
 	public static function get_widget_type_title($widget_type_id) {
