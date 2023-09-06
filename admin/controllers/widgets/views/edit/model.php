@@ -13,7 +13,6 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$widget_class_name = "Widget_" . $type_info->location;
 	$widget = new $widget_class_name();
 	$widget->load($widget_id);
-	$widget->get_type_object();
 	$new_widget = false;
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
@@ -21,9 +20,8 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 	$type_info = Widget::get_widget_type($segments[3]);
 	$widget_class_name = "Widget_" . $type_info->location;
 	$widget = new $widget_class_name();
-	$widget->type_id = $segments[3];
 	$new_widget = true;
-	$widget->get_type_object();
+	$widget->load(-1, $segments[3]);
 }
 else {
 	CMS::Instance()->queue_message('Unkown widget operation','danger',Config::uripath().'/admin/widgets/show');
@@ -33,7 +31,7 @@ else {
 // prep forms
 $required_details_form = new Form(CMSPATH . '/widgets/required_fields_form.json');
 $position_options_form = new Form(CMSPATH . '/widgets/position_options_form.json');
-$widget_options_form = new Form(CMSPATH . '/widgets/' . $widget->type->location . '/widget_config.json');
+$widget_options_form = new Form($widget->form_data);
 
 // old way - TODO: delete?
 //$required_details_form->load_json(CMSPATH . '/widgets/required_fields_form.json');
