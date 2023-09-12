@@ -5,18 +5,21 @@ $segments = CMS::Instance()->uri_segments;
 
 $version_count = 0;
 
-if (sizeof($segments)==3 && is_numeric($segments[2])) {
+if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])) {
+	// need to pass content type now as well
 	$content_id = $segments[2];
+	$content_type = $segments[3];
 	
 	$content = new content();
-	$content->load($content_id);
+	$content->load($content_id, $content_type);
 	$new_content = false;
 
 	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?',array($content_id))->c;
 	
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
-	$content = new content($segments[3]);
+	$content_type = $segments[3];
+	$content = new Content($content_type);
 	//$content->type_id = $segments[3]; // passing optional parameter to class constructor above
 	$new_content = true;
 }
@@ -98,6 +101,7 @@ if ($required_details_form->is_submitted()) {
 		}
 		else {
 			CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['HTTP_REFERER']);
+
 		}
 		
 	}
@@ -129,7 +133,9 @@ else {
 	}
 	// set content form TODO
 	foreach ($content_form->fields as $content_field) {
+		//CMS::pprint_r ('checking for ' . $content_field->name);
 		$value = $content->get_field($content_field->name);
+		//CMS::pprint_r ('got '); CMS::pprint_r ($value);
 		if ($value||is_numeric($value)) {
 			$content_field->default = $value;
 		}

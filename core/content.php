@@ -17,6 +17,23 @@ class Content {
 	public $alias;
 	public $category;
 
+	public static function get_table_name_for_content_type($type_id) {
+		if (!is_numeric($type_id)) {
+			CMS::show_error('Unable to determine table name for non-numeric content type');
+		}
+		else {
+			$location = Content::get_content_location($type_id);
+			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			if ($custom_fields->id ?? null) {
+				$table_name = "controller_" . $custom_fields->id ;
+				return $table_name;
+			}
+			else {
+				CMS::show_error('Unable to determine table name for content id ' . $type_id);
+			}
+		}
+	}
+
 	public function __construct($content_type=0) {
 		$this->id = false;
 		$this->title = "";
@@ -27,6 +44,8 @@ class Content {
 		$this->tags = [];
 		if ($content_type) {
 			$this->content_location = $this->get_content_location($this->content_type);
+			$this->custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $this->content_location . '/custom_fields.json');
+			$this->table_name = "controller_" . $this->custom_fields->id ;
 		}
 		$this->created_by = CMS::Instance()->user->id;
 		$this->alias="";
@@ -68,7 +87,7 @@ class Content {
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
-			$results = DB::fetchall("select * from content where alias=? and content_type=?", array($this->alias, $this->content_type) );
+			$results = DB::fetchall("select * from {$this->table_name} where alias=? and content_type=?", [$this->alias] );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
 			if ($this->id) {
@@ -105,17 +124,24 @@ class Content {
 	}
 
 	public function get_field($field_name) {
-		$value = DB::fetch("select content from content_fields where content_id=? and name=?", [$this->id, $field_name]);
+		//CMS::pprint_r ($this);
+		if (!$this->table_name) {
+			CMS::pprint_r ($this); die();
+			CMS::show_error('Unknown table name'); // shouldn't get here, but catching during dev
+		}
+		$query = "select {$field_name} as v from {$this->table_name} where id=?";
+		$value = DB::fetch($query, [$this->id])->v; // todo: can we make col name param?
 		if ($value) {
-			return $value->content;
+			return $value; 
 		}
 		else {
 			return null;
 		}
 	}
 
-	public function load($id) {
-		$info = DB::fetch('select * from content where id=?',array($id));
+	public function load($id, $content_type) {
+		$table_name = Content::get_table_name_for_content_type($content_type);
+		$info = DB::fetch('select * from ' . $table_name . ' where id=?',array($id));
 		if ($info) {
 			$this->id = $info->id;
 			$this->title = $info->title;
@@ -124,6 +150,7 @@ class Content {
 			$this->alias = $info->alias;
 			$this->start = $info->start;
 			$this->end = $info->end;
+			$this->table_name = $table_name;
 			$this->content_type = $info->content_type;
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->created_by = $info->created_by;
@@ -137,9 +164,11 @@ class Content {
 		}
 	}
 
-	public function load_from_alias($alias) {
-		$info = DB::fetch('select * from content where alias=?',array($alias));
+	public function load_from_alias($alias, $content_type) {
+		$table_name = Content::get_table_name_for_content_type($content_type);
+		$info = DB::fetch('select * from ' . $table_name . ' where alias=?',array($alias));
 		if ($info) {
+			$this->table_name = $table_name;
 			$this->id = $info->id;
 			$this->title = $info->title;
 			$this->state = $info->state;
@@ -197,6 +226,7 @@ class Content {
 	}
 
 	public function save($required_details_form, $content_form) {
+
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->get_field_by_name('title')->default;
 		$this->state = $required_details_form->get_field_by_name('state')->default;
@@ -234,26 +264,26 @@ class Content {
 			$this->end = strtotime($this->end);
 		}
 
-
 		$starttime = $this->start ? date("Y-m-d H:i:s", $this->start) : null; 
     	$endtime = $this->end ? date("Y-m-d H:i:s", $this->end) : null; 
+
 		
 		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
 		if ($this->id) {
 			// update
 			$params = array($this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id) ;
-			$required_result = DB::exec("update content set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? where id=?", $params);
+			$required_result = DB::exec("update {$this->table_name} set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? where id=?", $params);
 		}
 		else {
 			// new
 			//CMS::pprint_r ($this);
 			// get next order value
-			$ordering = DB::fetch("select (max(ordering)+1) as ordering from content")->ordering;
+			$ordering = DB::fetch("select (max(ordering)+1) as ordering from `{$this->table_name}`")->ordering;
 			if (!$ordering) {
 				$ordering=1;
 			}
-			$query = "insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
+			$query = "insert into `{$this->table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
 			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $starttime, $endtime, $this->category);
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
@@ -271,7 +301,9 @@ class Content {
 
 		// now save fields
 		// first remove old field data if any exists
-		DB::exec("delete from content_fields where content_id=?", array($this->id));
+		// NO MORE content_fields
+		// DB::exec("delete from content_fields where content_id=?", array($this->id));
+
 		$error_text="";
 		foreach ($content_form->fields as $field) {
 			// insert field info
@@ -290,7 +322,16 @@ class Content {
 					$field->default = implode(",",$field->default);
 				}
 			}
-			$result = DB::exec("insert into content_fields (content_id, name, field_type, content) values (?,?,?,?)", [$this->id, $field->name, $field->type, $field->default]);
+			// always update, either new row for new content, or id available for update
+			// content casting
+			// make sure INT is good
+			if ($field->coltype=="INTEGER") {
+				$field->default = (int)$field->default;
+				if (!is_numeric($field->default)) {
+					$field->default = null;
+				}
+			}
+			$result = DB::exec("update `{$this->table_name}` set `{$field->name}`=? where id=?", [$field->default, $this->id]);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
 				CMS::Instance()->log("Error saving: " . $field->name);
@@ -425,6 +466,7 @@ class Content {
 		$location = Content::get_content_location($old_content->content_type);
 		//CMS::pprint_r ("Loading: " . CMSPATH . '/controllers/' . $location . "/custom_fields.json");
 		$content_form = new Form (CMSPATH . '/controllers/' . $location . "/custom_fields.json");
+		$table_name = "controller_" . $custom_fields->id ;
 		//CMS::pprint_r ($content_form);exit(0);
 		foreach ($content_form->fields as $field) {
 			// insert field info
@@ -469,7 +511,7 @@ class Content {
 		}
 	}
 
-	public static function get_all_content_for_id ($id) {
+	public static function get_all_content_for_id ($id, $content_type) {
 		// accept content id, return object with all named required fields (title, state) etc
 		// determine content type and parse content type custom_fields json
 		// obtain all content_fields for content and store in custom_fields object property
@@ -477,46 +519,47 @@ class Content {
 		// if no matched data from content_fields found, populate with default value from form
 		// - function is useful for complex content types that have not been 'fixed' (may have missing content_fields in DB)
 		// - todo: decide if it's worthwhile to also include in returned object all fields in db, not just those required by json form?
-		$result = DB::fetch('select * from content where id=?',$id);
-		if ($result) {
-			$location = Content::get_content_location($result->content_type);
-			$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
-			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-			// convert content fields from indexed array to assoc array with 'name' as key
-			$content_fields_assoc = array_column($content_fields, null, 'name');
-			foreach ($custom_fields->fields as $f) {
-				if (property_exists($f,'save')) {
-					if ($f->save===false) {
-						// skip if save property is false - assume any other value or save property missing indicates saveable value
-						continue;
-					}
-				}
-				// saveable field
-				// check if field content already found in db
-				$keyname = "f_" . $f->name;
-				if (array_key_exists($f->name, $content_fields_assoc)) {
-					$result->{$keyname} = $content_fields_assoc[$f->name]->content;
-				}
-				else {
-					// not found, use default from form if exists
-					if (property_exists($f,'default')) {
-						$result->{$keyname} = $f->default;
-					}
-					else {
-						$result->{$keyname} = null; // hey, at least we have the object property :)
-					}
+
+		// NOW requires content_type since id is not unique - same id can exist in multiple content tables
+		
+		$location = Content::get_content_location($result->content_type);
+		//$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
+		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+		$table_name = "controller_" . $custom_fields->id ;
+		$result = DB::fetch("select * from " . $table_name . " where id=?", [$id]);
+
+		// check if default needs to be filled in for any custom fields
+		foreach ($custom_fields->fields as $f) {
+			if (property_exists($f,'save')) {
+				if ($f->save===false) {
+					// skip if save property is false - assume any other value or save property missing indicates saveable value
+					continue;
 				}
 			}
-			return $result;
+			// saveable field
+			// check if has content or we need to sub our default from json
+			$cur_val = $result->$f->name ?? null;
+			if (!$cur_val) {
+				// not found, use default from form if exists
+				if (property_exists($f,'default')) {
+					$result->{$f->name} = $f->default;
+				}
+			}
 		}
-		return false;
+		return $result;
+		
 	}
 
 
 	//exists for legacy compat, please use new content_search for new code instead of this
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
 		//add inputed filters, and then if id is present, add that to filters as well
-		$filters = [$filter_field=>$filter_val];
+		if ($filter_field) {
+			$filters = [$filter_field=>$filter_val];
+		}
+		else {
+			$filters = null;
+		}
 		$id ? $filters["id"] = $id : "";
 
 		if(!$list_fields && $type_filter) {
