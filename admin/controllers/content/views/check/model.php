@@ -31,7 +31,7 @@ foreach ($all_content_types as $content_type) {
     if (!$exists) {
         // create table
         $required_fields_query = "  
-        `id` int NOT NULL AUTO_INCREMENT,
+        `id` int primary key NOT NULL AUTO_INCREMENT,
         `state` tinyint NOT NULL DEFAULT '1',
         `ordering` int NOT NULL DEFAULT '1',
         `title` varchar(255) NOT NULL,
