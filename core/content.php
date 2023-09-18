@@ -540,7 +540,7 @@ class Content {
 			}
 			// saveable field
 			// check if has content or we need to sub our default from json
-			$cur_val = $result->$f->name ?? null;
+			$cur_val = $f->name ?? null;
 			if (!$cur_val) {
 				// not found, use default from form if exists
 				if (property_exists($f,'default')) {
