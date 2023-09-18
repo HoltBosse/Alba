@@ -87,7 +87,7 @@ class Content {
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
-			$results = DB::fetchall("select * from {$this->table_name} where alias=? and content_type=?", [$this->alias] );
+			$results = DB::fetchall("select * from {$this->table_name} where alias=? and content_type=?", [$this->alias, $this->content_type] );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
 			if ($this->id) {
