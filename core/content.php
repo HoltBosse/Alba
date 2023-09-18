@@ -524,7 +524,7 @@ class Content {
 
 		// NOW requires content_type since id is not unique - same id can exist in multiple content tables
 		
-		$location = Content::get_content_location($result->content_type);
+		$location = Content::get_content_location($content_type);
 		//$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
 		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 		$table_name = "controller_" . $custom_fields->id ;
