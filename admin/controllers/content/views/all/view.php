@@ -431,7 +431,7 @@ table.dragging .before_after_wrap {
 					<?php if ($content_list_fields):?>
 						<?php foreach ($content_list_fields as $content_list_field):?>
 							<td><?php 
-								$propname = "f_{$content_list_field->name}"; 
+								$propname = "{$content_list_field->name}"; 
 								$classname = "Field_" . $content_list_field->type;
 								$curfield = new $classname($content_item->$propname);
 								$curfield->default = $content_item->$propname;
