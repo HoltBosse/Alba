@@ -21,7 +21,7 @@ class Content_Search {
 	public $page_size;
 	public $category; // category id to match
 	public $tags; // array of tag ids to match 
-	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
+	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] 
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $search_pdo_params;
 	private $filter_pdo_params;
@@ -133,7 +133,7 @@ class Content_Search {
 		if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {
 				//$select .= " ,f_{$field}_t.content as f_{$field}";
-				$select .= " ,c.{$field} as {$field}"; // TODO: discuss dropping prefix f_
+				$select .= " ,c.{$field} as {$field}"; 
 			}
 		}
 		$count_select = " count(*) as c ";
