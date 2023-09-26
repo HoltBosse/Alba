@@ -132,7 +132,11 @@ else {
 	}
 	// set content form TODO
 	foreach ($content_form->fields as $content_field) {
-		//CMS::pprint_r ('checking for ' . $content_field->name);
+		if (property_exists($content_field,'save')) {
+			if ($content_field->save===false) {
+				continue; // skip unsaveable fields
+			}
+		}
 		$value = $content->get_field($content_field->name);
 		//CMS::pprint_r ('got '); CMS::pprint_r ($value);
 		if ($value||is_numeric($value)) {
