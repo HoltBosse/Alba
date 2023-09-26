@@ -30,15 +30,6 @@ class Plugin_core_frontend_editbutton extends Plugin {
         } else {
             return $page_contents;
         }
-
-        /* $groupOptionsArray = json_decode($widget_options["UserGroupsMultiple"] ?? "") ?? [];
-        if(in_array($partner_dets->id, $partnerOptionsArray) && sizeof($partnerOptionsArray) > 0) {
-            return $page_contents;
-        } elseif(sizeof($partnerOptionsArray) > 0) {
-            return "";
-        } else {
-            return $page_contents;
-        } */
     }
 }
 
