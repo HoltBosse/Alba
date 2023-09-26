@@ -34,6 +34,8 @@ testing/
 !/plugins/core_widget/**
 !/plugins/core_user_verify/
 !/plugins/core_user_verify/**
+!/plugins/core_frontend_editbutton/
+!/plugins/core_frontend_editbutton/**
 # testing admin templates
 admin/templates/testadmintemplate/**
 # ignore custom controllers - note: add future default controllers here!

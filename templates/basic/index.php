@@ -33,6 +33,20 @@
 		.menu_item_wrap p {
 			margin-bottom:0; 
 		}
+		.front_end_edit_wrap {
+			position: absolute;
+			left: 0;
+			z-index: 999999999999999999;
+			background: rgba(0,0,0,0.5);
+			border-radius: 0 0 2rem 0;
+		}
+		.front_end_edit_wrap a {
+			font-size: 0.8rem;
+			color: white;
+			text-decoration: none;
+			padding: 0.5em 1.5rem;
+			display: inline-block;
+		}
 		
 		footer {margin:1rem; padding:1rem; background:#eee; border:1px solid black; }
 	</style>
