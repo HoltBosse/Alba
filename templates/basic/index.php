@@ -36,7 +36,7 @@
 		.front_end_edit_wrap {
 			position: absolute;
 			left: 0;
-			z-index: 3;
+			z-index: 999999999999999999;
 			background: rgba(0,0,0,0.5);
 			border-radius: 0 0 2rem 0;
 		}
