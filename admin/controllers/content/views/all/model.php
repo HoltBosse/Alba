@@ -12,6 +12,9 @@ $content_type_filter = null;
 if (sizeof($segments)==3) {
 	$content_type_filter = $segments[2];
 }
+else {
+	CMS::show_error('Cannot determine content type to show');
+}
 
 if (!$order_by) {
 	$cur_page = Input::getvar('page','INT','1');
@@ -76,9 +79,14 @@ if ($content_type_filter) {
 	$location = Content::get_content_location($content_type_filter);
 	//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
 	$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+	// create easy to access field array based on 'name' property
+	// useful, for example, in field get_friendly_value function call
+	$named_custom_fields = array_column($custom_fields->fields, null, 'name');
 	
 	if (property_exists($custom_fields,'list')) {
 		// create content_list_fields
+		// TODO: for performance, pre-calculate the content type table names for 
+		// fast lookups in any get_friendly_value calls in fields
 		foreach ($custom_fields->list as $custom_field_name) {
 			//$content_list_fields = $custom_fields->list;
 			$custom_fields_list_item = new stdClass();

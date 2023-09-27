@@ -434,8 +434,11 @@ table.dragging .before_after_wrap {
 								$propname = "{$content_list_field->name}"; 
 								$classname = "Field_" . $content_list_field->type;
 								$curfield = new $classname($content_item->$propname);
-								$curfield->default = $content_item->$propname;
-								echo $curfield->get_friendly_value();
+								$curfield->default = $content_item->$propname; // set temp field value to current stored value
+								// TODO: pass precalc array of table names for content types to aid in performance of lookups 
+								// some fields will currently parse json config files to determine tables to query for friendly values
+								// PER row/field. not ideal.
+								echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
 								?></td>
 						<?php endforeach; ?>
 					<?php endif; ?>
