@@ -110,10 +110,7 @@ require_once (CMSPATH . "/core/cms.php");
 								<?php foreach (Content::get_all_content_types() as $content_type):?>
 									<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/all/<?php echo $content_type->id;?>"><?php echo $content_type->title;?></a>
 								<?php endforeach; ?>
-								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/all">All Content</a>
-								<!-- commented out - using new blank content creator instead of front-end designer view for now -->
-								<!-- <a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/types">Content Types</a> -->
+								<!-- removed all content view -->
 								<hr class="dropdown-divider">
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/check">Check Flat Tables</a>
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/new">Create New Type</a>
