@@ -571,7 +571,15 @@ class Content {
 			}
 			$form = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 			foreach($form->fields as $field) {
-				$list_fields[] = $field->name;
+				if (isset($field->save)) {
+					if ($field->save===true) {
+						$list_fields[] = $field->name;
+					}
+				}
+				else {
+					// assume saveable
+					$list_fields[] = $field->name;
+				} 
 			}
 		}
 
