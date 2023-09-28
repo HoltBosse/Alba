@@ -174,7 +174,7 @@ table.dragging .before_after_wrap {
 
 
 <form action='' method='post' name='content_action' id='content_action_form'>
-
+<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
 <h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
 	<?php if ($content_type_filter):?>
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
@@ -396,12 +396,14 @@ table.dragging .before_after_wrap {
 								<a class="navbar-link"></a>
 								<div class="navbar-dropdown">
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
 											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
 										</button>
 									</form>
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
 											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
@@ -411,6 +413,7 @@ table.dragging .before_after_wrap {
 									<hr class="dropdown-divider">
 									<?php foreach($custom_fields->states as $state) { ?>
 										<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+											<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
 												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
