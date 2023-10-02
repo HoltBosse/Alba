@@ -71,7 +71,7 @@ class Field_Allcontentselector extends Field {
 
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		$result = DB::fetch('select title from content where id=?', $this->default);
 		//CMS::pprint_r ($this);
 		//$friendly = $result->initials . $result->jobnumber . " - " . $result->title;

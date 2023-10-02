@@ -99,7 +99,7 @@ class Field_ContentPicker extends Field {
 		$this->logic = $config->logic ?? '';
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		return DB::fetch('select title from content where id=?', [$this->default])->title;
 	}
 
