@@ -256,7 +256,7 @@ class Field_ContentPickerOrdered extends Field {
 		$this->logic = $config->logic ?? '';
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		//CMS::pprint_r ($this->content_type);
 		//CMS::pprint_r ($this);
 		echo DB::fetch('select title from content where id=?',$this->default)->title ?? "";

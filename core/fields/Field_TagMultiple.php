@@ -108,7 +108,7 @@ class Field_TagMultiple extends Field {
 		$this->logic = $config->logic ?? '';
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		return DB::fetch('select title from tags where id=?', [$this->default])->title;
 	}
 

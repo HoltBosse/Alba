@@ -83,9 +83,11 @@ class Field {
 		}
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		// return friendly (text) version of data represented by default/current value
 		// ostensibly used by 'list' item option in content listings for user driven columns
+		// helpful info can be anything, but something like the field config object
+		// can be used to determine, for example, a content type for a contentselector etc
 		return $this->default;
 	}
 

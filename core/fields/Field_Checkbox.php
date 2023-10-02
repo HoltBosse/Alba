@@ -43,7 +43,7 @@ class Field_Checkbox extends Field {
 		<?php 
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		$checked="";
 		if ($this->default==1) {
 			$checked=" checked ";
