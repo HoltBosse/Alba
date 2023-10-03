@@ -552,6 +552,18 @@ class Content {
 		
 	}
 
+	public static function get_table_name($content_id) {
+		$location = Content::get_content_location($content_id);
+		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+		$table_name = "controller_" . $custom_fields->id ;
+		if ($table_name=="controller_") {
+			return false;
+		}
+		else {
+			return $table_name;
+		}
+	}
+
 
 	//exists for legacy compat, please use new content_search for new code instead of this
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
