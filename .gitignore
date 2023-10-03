@@ -71,3 +71,4 @@ cache/**
 templates/**
 !templates/basic/
 !templates/basic/**
+adminer.php
