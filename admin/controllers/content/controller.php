@@ -107,6 +107,56 @@ if ($missing) { ?>
 	</article>
 <?php }
 
+// check for new content columns
+$cols_added=[];
+$all_content_types = DB::fetchAll('select * from content_types');
+foreach ($all_content_types as $content_type) {
+	$location = Content::get_content_location($content_type->id);
+	$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+	$table_name = "controller_" . $custom_fields->id ;
+	if ($table_name=="controller_") {
+		CMS::show_error('Unable to determine table name for content id ' . $content_type->id);
+	}
+	else {
+		$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{$table_name}'";
+		$cols = DB::fetchallcolumn($query);
+		foreach ($custom_fields->fields as $f) {
+			if (!in_array($f->name, $cols)) {
+				// check if column is saveable
+				if (property_exists($f, 'save')) {
+					if ($f->save===false) {
+						// skip, not saveable
+						continue;
+					}
+				}
+				// new column needed, try and get type from JSON obj
+				$coltype = $f->coltype ?? null ? $f->coltype : " mediumtext " ;
+            	DB::exec('ALTER TABLE ' . $table_name . ' ADD COLUMN ' . $f->name . ' ' . $coltype);
+				// add to report array
+				$cols_added[] = [$table_name, $f->name];
+			}
+		}
+	}
+}
+if ($cols_added) { ?>
+	<article class="message is-success">
+	<div class="message-header">
+		<p>New Content Columns Created</p>
+		<button class="delete" aria-label="delete"></button>
+	</div>
+	<div class="message-body">
+		<h5 class='title is-5'>Created <?php echo sizeof($cols_added);?> new table columns:</h5>
+		<ul class='list'>
+			<?php foreach ($cols_added as $c) {
+				echo "<li class='list-item'>Added column <strong>{$c[1]}</strong> into table &ldquo;{$c[0]}&rdquo;</li>";
+			}?>
+		</ul>
+	</div>
+	</article>
+<?php 
+}
+
+
 // load model + view
 
 $content_type_controller = new Controller(realpath(dirname(__FILE__)),$view);
