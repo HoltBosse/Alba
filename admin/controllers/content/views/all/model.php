@@ -74,32 +74,32 @@ else {
 $content_list_fields = [];
 $custom_fields = false;
 
-if ($content_type_filter) {
-	// get listing fields for content type based on custom_fields_json list field
-	$location = Content::get_content_location($content_type_filter);
-	//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
-	$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-	// create easy to access field array based on 'name' property
-	// useful, for example, in field get_friendly_value function call
-	$named_custom_fields = array_column($custom_fields->fields, null, 'name');
-	
-	if (property_exists($custom_fields,'list')) {
-		// create content_list_fields
-		// TODO: for performance, pre-calculate the content type table names for 
-		// fast lookups in any get_friendly_value calls in fields
-		foreach ($custom_fields->list as $custom_field_name) {
-			//$content_list_fields = $custom_fields->list;
-			$custom_fields_list_item = new stdClass();
-			$custom_fields_list_item->name = $custom_field_name;
-			// get label and type
-			foreach ($custom_fields->fields as $field) {
-				if ($field->name==$custom_field_name) {
-					$custom_fields_list_item->label = $field->label;
-					$custom_fields_list_item->type = $field->type;
-				}
+
+// get listing fields for content type based on custom_fields_json list field
+$location = Content::get_content_location($content_type_filter);
+//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
+$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+// create easy to access field array based on 'name' property
+// useful, for example, in field get_friendly_value function call
+$named_custom_fields = array_column($custom_fields->fields, null, 'name');
+
+if (property_exists($custom_fields,'list')) {
+	// create content_list_fields
+	// TODO: for performance, pre-calculate the content type table names for 
+	// fast lookups in any get_friendly_value calls in fields
+	foreach ($custom_fields->list as $custom_field_name) {
+		//$content_list_fields = $custom_fields->list;
+		$custom_fields_list_item = new stdClass();
+		$custom_fields_list_item->name = $custom_field_name;
+		// get label and type
+		foreach ($custom_fields->fields as $field) {
+			if ($field->name==$custom_field_name) {
+				$custom_fields_list_item->label = $field->label;
+				$custom_fields_list_item->type = $field->type;
 			}
-			$content_list_fields[] = $custom_fields_list_item;
 		}
-		
+		$content_list_fields[] = $custom_fields_list_item;
 	}
+	
 }
+
