@@ -32,11 +32,11 @@ if (CMS::Instance()->uri_segments) {
 		// depending on url parameter
 		$blog_alias = CMS::Instance()->uri_segments[0];
 		$blog = new Content();
-		$blog_found = $blog->load_from_alias($blog_alias);
+		$blog_found = $blog->load_from_alias($blog_alias, 1);
 		if (!$blog_found || $blog->state<1) {
 			CMS::raise_404();
 		}
-		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true); 
+		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true);
 		// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
 		
 		if ($blog_content_items) {
@@ -45,17 +45,17 @@ if (CMS::Instance()->uri_segments) {
 			// TODO: add seo/OG fields to blog item and update page header for cms render_head function
 			// override page->form options values with og data from this content item
 			//CMS::pprint_r ($blog_content_item);
-			if (isset ($blog_content_item->f_og_title)) {
-				CMS::Instance()->page->set_page_option_value('og_title', $blog_content_item->f_og_title);
+			if (isset ($blog_content_item->og_title)) {
+				CMS::Instance()->page->set_page_option_value('og_title', $blog_content_item->og_title);
 			}
-			if (isset ($blog_content_item->f_og_image)) {
-				CMS::Instance()->page->set_page_option_value('og_image', $blog_content_item->f_og_image);
+			if (isset ($blog_content_item->og_image)) {
+				CMS::Instance()->page->set_page_option_value('og_image', $blog_content_item->og_image);
 			}
-			if (isset ($blog_content_item->f_og_description)) {
-				CMS::Instance()->page->set_page_option_value('og_description', $blog_content_item->f_og_description);
+			if (isset ($blog_content_item->og_description)) {
+				CMS::Instance()->page->set_page_option_value('og_description', $blog_content_item->og_description);
 			}
-			if (isset ($blog_content_item->f_og_keywords)) {
-				CMS::Instance()->page->set_page_option_value('og_keywords', $blog_content_item->f_og_keywords);
+			if (isset ($blog_content_item->og_keywords)) {
+				CMS::Instance()->page->set_page_option_value('og_keywords', $blog_content_item->og_keywords);
 			}
 		}
 	}
