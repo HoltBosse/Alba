@@ -146,7 +146,7 @@ class Content_Search {
 		// also save filter value to filter_pdo_params
 		foreach ($this->list_fields as $field) {
 
-			if (array_key_exists($field, $this->filters)) {
+			if (array_key_exists($field, $this->filters ?? [])) {
 				$this->filter_pdo_params[] = $this->filters[$field];
 				//$from .= ", content_fields f_{$field}_t "; // no longer needs all in one table now
 			}
