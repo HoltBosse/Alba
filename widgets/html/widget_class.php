@@ -3,7 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Widget_html extends Widget {
 	public function render() {
-		//CMS::pprint_r ($this);
-		echo $this->options[0]->value;
+		$normalizedOptions = array_combine(array_column($this->options, 'name'), array_column($this->options, 'value'));
+		echo $normalizedOptions["markup"];
 	}
 }
