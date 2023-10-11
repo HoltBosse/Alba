@@ -6,7 +6,9 @@ require_once (CMSPATH . "/core/cms.php");
 
 <html>
 <meta name="viewport" content="width=device-width, user-scalable=no" />
-	<head><!-- Latest compiled and minified CSS -->
+	<head>
+	<script>window.uripath = "<?php echo Config::uripath();?>";</script>
+	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/bulma.min.css"></link>
 <link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/dashboard.css"></link>
 <link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/layout.css"></link>
