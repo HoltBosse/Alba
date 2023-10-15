@@ -6,8 +6,8 @@ CREATE TABLE `configurations` (
   `configuration` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `content`;
-CREATE TABLE `content` (
+DROP TABLE IF EXISTS `controller_basic_html`;
+CREATE TABLE `controller_basic_html` (
   `id` int(11) NOT NULL,
   `state` tinyint(2) NOT NULL DEFAULT '1',
   `ordering` int(11) NOT NULL DEFAULT '1',
@@ -21,16 +21,16 @@ CREATE TABLE `content` (
   `note` varchar(255) DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT current_timestamp(),
   `category` int(11) NOT NULL DEFAULT 0,
-  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `markup` mediumtext,
+  `og_description` mediumtext,
+  `seo_keywords` mediumtext,
+  `og_title` mediumtext,
+  `og_image` mediumtext,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `content_fields`;
-CREATE TABLE `content_fields` (
-  `content_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL COMMENT 'from name attr in form',
-  `field_type` varchar(255) NOT NULL,
-  `content` mediumtext COMMENT 'Maybe make JSON?'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `content_types`;
 CREATE TABLE `content_types` (
