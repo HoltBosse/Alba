@@ -1,7 +1,6 @@
 {
 	"title":"HTML / Plain Content",
 	"id":"basic_html",
-	"method":"flat",
 	"fields":[
 		{
 			"name":"markup",
