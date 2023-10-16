@@ -26,8 +26,7 @@ CREATE TABLE `controller_basic_html` (
   `og_description` mediumtext,
   `seo_keywords` mediumtext,
   `og_title` mediumtext,
-  `og_image` mediumtext,
-  PRIMARY KEY (`id`)
+  `og_image` mediumtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `content_fields`;
@@ -204,7 +203,7 @@ ALTER TABLE `categories`
 ALTER TABLE `configurations`
   ADD PRIMARY KEY (`name`);
 
-ALTER TABLE `content`
+ALTER TABLE `controller_basic_html`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `content_types`
@@ -251,7 +250,7 @@ ALTER TABLE `plugins`
 ALTER TABLE `content_versions`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `content`
+ALTER TABLE `controller_basic_html`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `content_types`
