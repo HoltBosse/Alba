@@ -42,10 +42,12 @@ if ($missing) { ?>
 			<?php //CMS::pprint_r ($missing);?>
 			<?php foreach ($missing as $missed) {
 				$controller_config_file = CMSPATH . '/controllers/' . $missed . '/controller_config.json';
+				$custom_fields_file = CMSPATH . '/controllers/' . $missed . '/custom_fields.json';
 				if (is_readable($controller_config_file)) {
-					//$w_config = json_decode(file_get_contents($controller_config_file));
+					// $w_config = json_decode(file_get_contents($controller_config_file));
 					$w_config = JSON::load_obj_from_file($controller_config_file);
-					if (!$w_config || !$w_config->title) {
+					$custom_fields = JSON::load_obj_from_file($custom_fields_file);
+					if (!$w_config || !$w_config->title || !$custom_fields->id) {
 						echo "<li class='list-item has-text-danger'>Skipped <strong>{$missed}</strong> - missing or badly formed <em>controller_config.json</em></li>";
 					}
 					else {
@@ -55,6 +57,26 @@ if ($missing) { ?>
 						$ok = DB::exec("INSERT into content_types (title, controller_location, description, state) values (?,?,?,1)", [$w_config->title, $missed, $w_config->description]);
 						if ($ok) {
 							echo "<li class='list-item'><strong>{$w_config->title}</strong> - {$w_config->description} - <em>Installed</em>";
+							// create controller/content table
+							$create_table_query = "
+							CREATE TABLE `controller_{$custom_fields->id}` (
+								`id` int(11) NOT NULL,
+								`state` tinyint(2) NOT NULL DEFAULT '1',
+								`ordering` int(11) NOT NULL DEFAULT '1',
+								`title` varchar(255) NOT NULL,
+								`alias` varchar(255) NOT NULL,
+								`content_type` int(11) NOT NULL COMMENT 'content_types table',
+								`start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+								`end` timestamp NULL DEFAULT NULL,
+								`created_by` int(11) NOT NULL,
+								`updated_by` int(11) NOT NULL,
+								`note` varchar(255) DEFAULT NULL,
+								`created` timestamp NOT NULL DEFAULT current_timestamp(),
+								`category` int(11) NOT NULL DEFAULT 0,
+								`updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+								PRIMARY KEY (id)
+							  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+							DB::exec($create_table_query);
 							// install views as well
 							$content_type_id = CMS::Instance()->pdo->lastInsertId();
 							$view_folders=[];
