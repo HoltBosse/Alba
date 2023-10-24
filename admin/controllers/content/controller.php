@@ -60,7 +60,7 @@ if ($missing) { ?>
 							// create controller/content table
 							$create_table_query = "
 							CREATE TABLE `controller_{$custom_fields->id}` (
-								`id` int(11) NOT NULL,
+								`id` int(11) NOT NULL AUTO_INCREMENT,
 								`state` tinyint(2) NOT NULL DEFAULT '1',
 								`ordering` int(11) NOT NULL DEFAULT '1',
 								`title` varchar(255) NOT NULL,
