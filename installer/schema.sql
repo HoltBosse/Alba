@@ -111,7 +111,8 @@ CREATE TABLE `tags` (
   `description` mediumtext DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL,
   `parent` int(11) DEFAULT NULL,
-  `category` int(11) NOT NULL DEFAULT 0
+  `category` int(11) NOT NULL DEFAULT 0,
+  `custom_fields` text NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tag_content_type`;
