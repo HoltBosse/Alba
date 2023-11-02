@@ -341,10 +341,12 @@ final class CMS {
 		// small performance hit, but only way to alleviate potential security issues for following checks
 
 		// check for core controller - save folder name if found for include during rendering
-		foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
-			if($this->uri_segments[0] == $folder) {
-				$this->core_controller = $folder;
-				break;
+		if(!ADMINPATH) {
+			foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
+				if($this->uri_segments[0] == $folder) {
+					$this->core_controller = $folder;
+					break;
+				}
 			}
 		}
 		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
