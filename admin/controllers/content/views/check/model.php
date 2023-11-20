@@ -42,7 +42,6 @@ foreach ($all_content_types as $content_type) {
         `created_by` int NOT NULL,
         `updated_by` int NOT NULL,
         `note` varchar(255) DEFAULT NULL,
-        `category` int DEFAULT '0',
         `created` timestamp NOT NULL DEFAULT current_timestamp(),
         `category` int(11) NOT NULL DEFAULT 0,
         `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()";
