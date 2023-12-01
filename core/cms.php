@@ -277,7 +277,7 @@ final class CMS {
 				//$this->user->load_from_id(s::get('user_id'));
 				//$this->user->load_from_id($session_user_id); // cant use user class as it requires CMS - will call constructor twice!
 				// code below is almost same as 'load_from_id' in user class
-				$query = "select * from users where id=?";
+				$query = "select * from users where id=? and state>0";
 				$stmt = $this->pdo->prepare($query);
 				$stmt->execute(array($session_user_id));
 				$result = $stmt->fetch();
