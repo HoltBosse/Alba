@@ -172,6 +172,7 @@ class Widget_menu extends Widget {
 				}
 			}
 			if ($node->type=="heading") {
+				$is_anchor = false;
 				$title = $node->title;
 				$classList.=" menu_heading ";
 				$aria = ' aria-haspopup="true" aria-expanded="false" ';
