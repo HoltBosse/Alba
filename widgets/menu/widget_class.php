@@ -166,9 +166,10 @@ class Widget_menu extends Widget {
 			if ($node->type=="link") {
 				$title = $node->title;
 				$url = $node->info->url;
+				$title_for_class = Input::make_alias($title);
 				if ($node->info->newtab) {
 					$target = "_blank";
-					$classList.=" external_link ";
+					$classList.=" external_link " .$title_for_class;
 				}
 			}
 			if ($node->type=="heading") {
