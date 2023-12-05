@@ -247,6 +247,21 @@ final class CMS {
 
 		// END DB SETUP
 
+		// autopublish
+		if (Config::autopublish()) {
+			// loop over whitelist content tables and autopublish / unpublish where necessary
+			foreach (Config::autopublish_tables() as $controller_table) {
+				$publish_query = 'update ' . $controller_table . " set state=1 where start<=NOW() and state=-2";
+				$unbpublish_query = 'update ' . $controller_table . " set state=0 where end is not null and state=1 and end<=NOW()";
+				// pub
+				$stmt = $this->pdo->prepare($publish_query);
+				$stmt->execute();
+				// unpub
+				$stmt = $this->pdo->prepare($unbpublish_query);
+				$stmt->execute();
+			}
+		}
+
 		
 		// Load plugins
 		$GLOBALS['hooks'] = []; // reset hooks array

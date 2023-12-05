@@ -13,6 +13,7 @@ class Field_Contentselector extends Field {
 		$this->list_unpublished=false;
 		$this->tags=[];
 		$this->content_type = false; // content type - REQUIRED in flat
+		$this->states = [1,-2]; // default to published or pending
 	}
 
 	public function display() {
@@ -33,21 +34,29 @@ class Field_Contentselector extends Field {
 			$table_name = "controller_" . $custom_fields->id ;
 			
 			if ($this->list_unpublished) {
-				$min_state = 0;
+				if (!in_array(0,$this->states)) {
+					// add unpublished to states list
+					$this->states[] = 0;
+				}
+			}
+
+			if (sizeof($this->states)==1) {
+				$states_string = " c.state=" . $this->states[0] . " ";
 			}
 			else {
-				$min_state = 1;
+				$states_string = " c.state IN (" . implode(",",$this->states) . ") ";
 			}
+
 			if (!$this->tags) {
 				// default order is alphabetical
-				$query = "select * from " . $table_name . " where state >={$min_state} order by title ASC";
+				$query = "select * from " . $table_name . " c where {$states_string} order by title ASC";
 				$options_all_articles = CMS::Instance()->pdo->query($query)->fetchAll();
 				/* CMS::pprint_r ($query);
 				CMS::pprint_r ($options_all_articles); */
 			}
 			else {
 				$tags_csv = "'".implode("','", $this->tags)."'";
-				$query = "select c.* from {$table_name} c where c.state=1 ";
+				$query = "select c.* from {$table_name} c where {$states_string} ";
 				$query .= " and c.id in (";
 					$query .= " select tc.content_id from tagged tc where tc.content_type_id={$this->content_type} and tc.tag_id in (";
 						$query .= "select t.id from tags t where t.state>={$min_state} and t.alias in ($tags_csv)";

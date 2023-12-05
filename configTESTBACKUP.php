@@ -19,6 +19,8 @@ class Config {
     static $channel = "stable";     // stable/alpha
     static $updatedomain = "alba.holtbosse.com";
     static $dev_banner = false;
+    static $autopublish = false;
+    static $autopublish_tables = ['controller_basic_html']; // whitelist of tables to autopublish
     public static function __callStatic($name, $args) {
         return property_exists('Config',$name) ? Config::$$name : null;
     }

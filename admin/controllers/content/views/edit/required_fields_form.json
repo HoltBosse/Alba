@@ -62,7 +62,8 @@
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"Published"},
-				{"value":0,"text":"Unpublished"}
+				{"value":0,"text":"Unpublished"},
+				{"value":-2,"text":"Pending"}
 			],
 			"coltype":"tinyint NOT NULL DEFAULT '1'"
 		},

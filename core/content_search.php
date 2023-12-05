@@ -12,6 +12,7 @@ class Content_Search {
 	public $order_direction;
 	public $type_filter;
 	public $published_only;
+	public $states;
 	public $list_fields;
 	public $ignore_fields;
 	public $created_by_cur_user;
@@ -32,6 +33,7 @@ class Content_Search {
 		$this->order_direction = "DESC";
 		$this->type_filter = 1;
 		$this->published_only = false;
+		$this->states = [];
 		$this->page=1;
 		$this->searchtext="";
 		$this->ignore_fields=[];
@@ -128,6 +130,24 @@ class Content_Search {
 		else {
 			CMS::show_error('No content type filter provided for content search');
 		}
+
+		$states_string = " c.state is not null "; // default check - need for correct query build
+		if ($published_only) {
+			// push 1 onto states list if needed
+			if (!in_array(1,$this->states)) {
+				$this->states[] = 1;
+			}
+		}
+		if ($this->states) {
+			if (sizeof($this->states)==1) {
+				$states_string = " c.state=" . $this->states[0] . " ";
+			}
+			else {
+				if ($published_only)
+				$states_string = " c.state IN (" . implode(",",$this->states) . ") ";
+			}
+		}
+
 		$query = "select";
 		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note, c.category, cat.title  as catname";
 		if ($this->list_fields) {
@@ -170,12 +190,8 @@ class Content_Search {
 
 		$where = ' where ';
 
-		if ($this->published_only) {
-			$where .= " c.state > 0 ";
-		}
-		else {
-			$where .= " c.state >= 0 ";
-		}
+		$where .= $states_string;
+
 		if ($this->searchtext) {
 			$where .= " AND (c.title like ? or c.note like ?) "; 
 		}

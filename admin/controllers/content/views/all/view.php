@@ -378,7 +378,11 @@ table.dragging .before_after_wrap {
 									}
 									elseif ($content_item->state==0) {
 										echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-									} else {
+									}
+									elseif ($content_item->state==-2) {
+										echo '<i class="state-2 fas fa-clock" aria-hidden="true"></i>';
+									}
+									else {
 										foreach($custom_fields->states as $state) {
 											if($content_item->state==$state->state) {
 												echo "<i style='color:$state->color' class='fas fa-times-circle' aria-hidden='true'></i>";
@@ -395,6 +399,13 @@ table.dragging .before_after_wrap {
 							<div class="navbar-item has-dropdown is-hoverable">
 								<a class="navbar-link"></a>
 								<div class="navbar-dropdown">
+								<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='-2' class="navbar-item">
+											<i class="state-2 fas fa-clock" aria-hidden="true"></i>Pending
+										</button>
+									</form>
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
 										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
