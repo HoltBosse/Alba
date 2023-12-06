@@ -169,24 +169,32 @@ final class CMS {
 		}
 		http_response_code($http_code);
 		?>
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-			<div style="display:flex; justify-content:center; align-items:center; height: 100%;">
-				<div style="max-width: 50%;">
-					<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
-						<?php 
-							$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
-							$logo_src = $logo_image_id ? Config::uripath() . "/image/" . $logo_image_id : Config::uripath() . "/admin/templates/clean/alba_logo.webp";
-						?>
-						<img src="<?php echo $logo_src;?>" >
-						<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+			<!DOCTYPE html>
+			<html style="height: 100%;" lang="en">
+				<head>
+					<title>Page not Found</title>
+					<meta name="viewport" content="width=device-width, initial-scale=1" />
+					<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+				</head>
+				<body style="display:flex; justify-content:center; align-items:center; height: 100%;">
+					<div style="max-width: 50%;">
+						<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
+							<?php 
+								$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
+								$logo_src = $logo_image_id ? Config::uripath() . "/image/" . $logo_image_id : Config::uripath() . "/admin/templates/clean/alba_logo.webp";
+								$img_meta_string = Config::sitename() . " site logo";
+							?>
+							<img src="<?php echo $logo_src;?>" title="<?= $img_meta_string; ?>" alt="<?= $img_meta_string; ?>">
+							<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+						</div>
+						<br><br>
+						<div>
+							<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
+							<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;" hreflang="en">Visit Home</a></p>
+						</div>
 					</div>
-					<br><br>
-					<div>
-						<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
-						<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;">Visit Home</a></p>
-					</div>
-				</div>
-			</div>
+				</body>
+			</html>
 		<?php
 		die();
 	}
