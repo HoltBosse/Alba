@@ -213,7 +213,9 @@ class Field_ContentPickerOrdered extends Field {
 								let csv_arr = [];
 								let all_li = ul.querySelectorAll('li');
 								all_li.forEach(an_li => {
-									csv_arr.push(an_li.dataset.content_id);
+									if(an_li.dataset.content_id!=e.target.dataset.content_id) {
+										csv_arr.push(an_li.dataset.content_id);
+									}
 								});
 								hidden_input.value = csv_arr.join(",");
 								// restore left column item
