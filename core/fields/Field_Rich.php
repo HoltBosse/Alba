@@ -267,6 +267,10 @@ class Field_Rich extends Field {
 							if (command == 'h1' || command == 'h2' || command == 'h3' || command == 'h4' || command == 'p') {
 								document.execCommand('formatBlock', false, command);
 							}
+
+							else if (command="em") {
+								document.execCommand('italic', false, command);
+							}
 							
 							else if (command == 'createlink') {
 
@@ -882,6 +886,7 @@ class Field_Rich extends Field {
 					<a class='editor_button' href="#" data-command='ul' data-tooltip="Unordered List">UL</a>
 					<a class='editor_button' href="#" data-command='ol' data-tooltip="Numbered List">OL</a>
 					<a class='editor_button' href="#" data-command='bold' data-tooltip="Bold"><i class="fa fa-bold"></i></a>
+					<a class='editor_button' href="#" data-command='em' data-tooltip="Italics"><i class="fa fa-italic"></i></a>
 					<a class='editor_button' href="#" data-command='underline' data-tooltip="Underline"><i class="fa fa-underline"></i></a>
 					<a class='editor_button' href="#" data-command='addclass' data-tooltip="Add Class">Cls+</a>
 					<a class='editor_button' href="#" data-command='img' data-tooltip="Image"><i class="fa fa-images"></i></a>
