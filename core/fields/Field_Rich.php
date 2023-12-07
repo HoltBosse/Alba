@@ -268,7 +268,7 @@ class Field_Rich extends Field {
 								document.execCommand('formatBlock', false, command);
 							}
 
-							else if (command="em") {
+							else if (command=="em") {
 								document.execCommand('italic', false, command);
 							}
 							
