@@ -189,6 +189,7 @@ class Content {
 	}
 
 	public function duplicate() {
+		$table_name = Content::get_table_name_for_content_type($this->content_type);
 		// remember original id
 		$original_id = $this->id;
 		// make current duplicate id blank
@@ -197,11 +198,11 @@ class Content {
 		$this->title = $this->title . " - Copy";
 		$this->make_alias_unique();
 		// ordering
-		$ordering = DB::fetch("select (max(ordering)+1) as ordering from content")->ordering;
+		$ordering = DB::fetch("select (max(ordering)+1) as ordering from " . $table_name)->ordering;
 		if (!$ordering) {
 			$ordering=1;
 		}
-		$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category);
+		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category];
 		$required_result = DB::exec("insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
 			$this->id = CMS::Instance()->pdo->lastInsertId();

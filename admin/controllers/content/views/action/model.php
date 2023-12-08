@@ -99,10 +99,10 @@ elseif ($action=='duplicate') {
 		//CMS::pprint_r ($ids);exit(0);
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
-	CMS::pprint_r ($id);
+	
 	foreach ($ids as $id) {
 		$orig = new Content();
-		$orig->load($id);
+		$orig->load($id, Input::getvar('content_type','INT'));
 		$orig->duplicate();
 	}
 }
