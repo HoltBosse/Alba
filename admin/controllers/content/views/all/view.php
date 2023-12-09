@@ -229,6 +229,9 @@ table.dragging .before_after_wrap {
 						<option value=''>State</option>
 						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
 						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
+							<?php if (in_array($table_name, Config::autopublish_tables())??null):?>
+								<option <?php if ($filters['state']==='-2') { echo " selected "; }?> value='-2'>Pending</option>
+							<?php endif; ?>
 						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
 						<?php
 							foreach($custom_fields->states as $state) {

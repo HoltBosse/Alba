@@ -24,6 +24,8 @@ else {
 	$cur_page = null;
 }
 
+$table_name = Content::get_table_name_for_content_type($content_type_filter); 
+
 // og all content call - comment out experimental section below to restore
 // and uncomment next 3 lines
 //$all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page, $search);
