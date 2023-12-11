@@ -190,6 +190,8 @@ class Content {
 
 	public function duplicate() {
 		$table_name = Content::get_table_name_for_content_type($this->content_type);
+		$location = Content::get_content_location($this->content_type);
+		$content_form = new Form (CMSPATH . '/controllers/' . $location . "/custom_fields.json");
 		// remember original id
 		$original_id = $this->id;
 		// make current duplicate id blank
@@ -203,7 +205,7 @@ class Content {
 			$ordering=1;
 		}
 		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category];
-		$required_result = DB::exec("insert into content (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
+		$required_result = DB::exec("insert into ".$table_name." (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
 			$this->id = CMS::Instance()->pdo->lastInsertId();
 			// set tags
@@ -214,15 +216,26 @@ class Content {
 			}
 			Tag::set_tags_for_content($this->id, $tag_id_array, $this->content_type);
 			// copy content fields
-			$cur_content_fields = DB::fetchAll('select * from content_fields where content_id=?',$original_id);
-			//echo "<p>origin content:</p>"; CMS::pprint_r ($cur_content_fields);
-			foreach ($cur_content_fields as $f) {
-				DB::exec('insert into content_fields (content_id, name, field_type, content) values(?,?,?,?)', array($this->id, $f->name, $f->field_type, $f->content));
+			foreach ($content_form->fields as $field) {
+				if (isset($field->save)) {
+					if ($field->save===false) {
+						// field have save property set explicitly to false - SKIP saving
+						// this may be a field such as an SQL statement from a non-cms table, or just markup etc
+						continue;
+					}
+				}
+				// get og field value and insert into new content
+				// $dup_query = 'update ' . $table_name . " as o set o." . $field->name . " = (select c.{$field->name} from {$table_name} c where c.id={$original_id}) where o.id=?";
+				// above query does not work - query optimizer makes it so sql see table as same, and cannot update from self selection
+				// leaving for future us to learn from repeatedly
+				$dup_query = "update {$table_name} as n inner join {$table_name} as o on o.id=? and n.id=? set n.{$field->name} = o.{$field->name}";
+				//CMS::pprint_r ($dup_query); CMS::pprint_r ($this->id); die();
+				DB::exec($dup_query, [$original_id, $this->id]); 
 			}
-			CMS::Instance()->queue_message('Content duplicated','success', Config::uripath() . "/admin/content/all");
+			CMS::Instance()->queue_message('Content duplicated','success', Config::uripath() . "/admin/content/all/" . $this->content_type);
 		}
 		else {
-			CMS::Instance()->queue_message('Error duplicating content','danger', Config::uripath() . "/admin/content/all");
+			CMS::Instance()->queue_message('Error duplicating content','danger', Config::uripath() . "/admin/content/all/" . $this->content_type);
 		}
 	}
 
