@@ -130,7 +130,7 @@ class Content_Search {
 		else {
 			CMS::show_error('No content type filter provided for content search');
 		}
-
+		
 		$states_string = " c.state is not null "; // default check - need for correct query build
 		if ($published_only) {
 			// push 1 onto states list if needed
@@ -143,8 +143,12 @@ class Content_Search {
 				$states_string = " c.state=" . $this->states[0] . " ";
 			}
 			else {
-				if ($published_only)
-				$states_string = " c.state IN (" . implode(",",$this->states) . ") ";
+				if ($published_only) {
+					$states_string = " c.state=1 ";
+				}
+				else {
+					$states_string = " c.state IN (" . implode(",",$this->states) . ") ";
+				}
 			}
 		}
 

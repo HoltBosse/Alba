@@ -40,6 +40,7 @@ $content_search = new Content_Search();
 $content_search->searchtext = $search;
 $content_search->type_filter = $content_type_filter;
 $content_search->page = $cur_page;
+$content_search->states = [-2,0,1]; // pending, unpublished or published only
 
 if ($filters) {
 	$content_search->filters = $filters;
