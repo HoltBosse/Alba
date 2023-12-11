@@ -232,10 +232,10 @@ class Content {
 				//CMS::pprint_r ($dup_query); CMS::pprint_r ($this->id); die();
 				DB::exec($dup_query, [$original_id, $this->id]); 
 			}
-			CMS::Instance()->queue_message('Content duplicated','success', Config::uripath() . "/admin/content/all/" . $this->content_type);
+			return true;
 		}
 		else {
-			CMS::Instance()->queue_message('Error duplicating content','danger', Config::uripath() . "/admin/content/all/" . $this->content_type);
+			return false;
 		}
 	}
 
