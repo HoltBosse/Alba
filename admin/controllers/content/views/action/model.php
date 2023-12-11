@@ -105,6 +105,8 @@ elseif ($action=='duplicate') {
 		$orig->load($id, Input::getvar('content_type','INT'));
 		$orig->duplicate();
 	}
+	// todo: nicely report on good or bad duplicates
+	CMS::Instance()->queue_message('Content duplicated','success', $_SERVER['HTTP_REFERER']);
 }
 
 
