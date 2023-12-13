@@ -253,11 +253,15 @@ final class CMS {
 			foreach (Config::autopublish_tables() as $controller_table) {
 				$publish_query = 'update ' . $controller_table . " set state=1 where start<=NOW() and state=-2";
 				$unbpublish_query = 'update ' . $controller_table . " set state=0 where end is not null and state=1 and end<=NOW()";
+				$pend_query = 'update ' . $controller_table . " set state=-2 where start>=NOW() and state=1";
 				// pub
 				$stmt = $this->pdo->prepare($publish_query);
 				$stmt->execute();
 				// unpub
 				$stmt = $this->pdo->prepare($unbpublish_query);
+				$stmt->execute();
+				// pend
+				$stmt = $this->pdo->prepare($pend_query);
 				$stmt->execute();
 			}
 		}
