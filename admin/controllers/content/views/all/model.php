@@ -24,6 +24,8 @@ else {
 	$cur_page = null;
 }
 
+$table_name = Content::get_table_name_for_content_type($content_type_filter); 
+
 // og all content call - comment out experimental section below to restore
 // and uncomment next 3 lines
 //$all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page, $search);
@@ -38,6 +40,7 @@ $content_search = new Content_Search();
 $content_search->searchtext = $search;
 $content_search->type_filter = $content_type_filter;
 $content_search->page = $cur_page;
+$content_search->states = [-2,0,1]; // pending, unpublished or published only
 
 if ($filters) {
 	$content_search->filters = $filters;

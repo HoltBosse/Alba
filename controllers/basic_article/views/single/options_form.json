@@ -9,7 +9,8 @@
 			"required": false,
 			"description": "",
 			"filter": "NUMBER",
-			"content_type":1
+			"content_type":1,
+			"states":[1]
 		}
 	]
 }
