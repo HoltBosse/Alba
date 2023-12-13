@@ -38,6 +38,16 @@ if ($action=='toggle') {
 			CMS::Instance()->queue_message('Cannot set content to pending or published, end date has passed.','danger', $_SERVER['HTTP_REFERER']);
 		}
 	}
+	/* CMS::pprint_r ($cur); die();
+	if ($cur->state==-2) {
+		CMS::pprint_r ($cur->start);
+		CMS::pprint_r (strtotime($cur->start));
+		CMS::pprint_r (time());
+		die();
+	} */
+	if ($cur->state==-2 && strtotime($cur->start) >= time()) {
+		$pub_state = 0;
+	}
 	// unpub by default now - pending gets unpubbed, so does pubbed
 	// pub_state based on previous check of end date and current state
 	$result = DB::exec("UPDATE $table_name SET state = (CASE state WHEN 0 THEN $pub_state ELSE 0 END) where id=?", [$id[0]]); // id always array even with single id being passed

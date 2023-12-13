@@ -248,6 +248,7 @@ final class CMS {
 		// END DB SETUP
 
 		// autopublish
+		// todo - move to content class to be called on content save, admin content load etc
 		if (Config::autopublish()) {
 			// loop over whitelist content tables and autopublish / unpublish where necessary
 			foreach (Config::autopublish_tables() as $controller_table) {

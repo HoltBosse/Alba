@@ -374,7 +374,7 @@ table.dragging .before_after_wrap {
 						</div>
 						<?php endif; ?>
 						<div class='button state_button'>
-							<button <?php if($content_item->state==0 || $content_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/content/action/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
+							<button <?php if($content_item->state==0 || $content_item->state==1 || $content_item->state==-2) { echo "type='submit' formaction='" . Config::uripath() . "/admin/content/action/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
 								<?php 
 									if ($content_item->state==1) { 
 										echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
