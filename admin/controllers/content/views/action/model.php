@@ -25,13 +25,28 @@ if ($action=='toggle') {
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
-	$result = DB::exec("UPDATE $table_name SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
-	if ($result) {
-		CMS::Instance()->queue_message('Toggled state of content','success', $_SERVER['HTTP_REFERER']);
+	// check for pending
+	$cur = DB::fetch("select id,state,start,end from $table_name where id=?",[$id[0]]);
+	// get new potential published state (either 1 for published or -2 for pending)
+	$pub_state = 1;
+	if ($cur->state==0 && $cur->end) {
+		// need to check if state should be 1 or -2
+		if (time() < strtotime($cur->end)) {
+			$pub_state = -2; // can be set to pending
+		}
+		else {
+			CMS::Instance()->queue_message('Cannot set content to pending or published, end date has passed.','danger', $_SERVER['HTTP_REFERER']);
+		}
 	}
-	else {
+	// unpub by default now - pending gets unpubbed, so does pubbed
+	// pub_state based on previous check of end date and current state
+	$result = DB::exec("UPDATE $table_name SET state = (CASE state WHEN 0 THEN $pub_state ELSE 0 END) where id=?", [$id[0]]); // id always array even with single id being passed
+	if (!$result) {
 		CMS::Instance()->queue_message('Failed to toggle state of content','danger', $_SERVER['HTTP_REFERER']);
 	}
+	
+	CMS::Instance()->queue_message('Toggled state of content','success', $_SERVER['HTTP_REFERER']);
+	
 }
 
 if ($action=='togglestate') {
