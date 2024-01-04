@@ -62,7 +62,7 @@ if ($required_details_form->is_submitted()) {
 			// forms are valid, save info
 			$saved = $cat->save($required_details_form, $custom_fields_form);
 			if ($saved) {
-				CMS::Instance()->queue_message('Category saved','danger',$_SERVER['REQUEST_URI']);
+				CMS::Instance()->queue_message('Category saved','success',$_SERVER['REQUEST_URI']);
 			}
 			else {
 				CMS::Instance()->queue_message('Failed to save category','danger',$_SERVER['REQUEST_URI']);
