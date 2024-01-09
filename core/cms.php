@@ -696,6 +696,9 @@ final class CMS {
 				foreach ($this->head_entries as $he) {
 					$cms_head .= $he;
 				}
+				if(!str_contains($this->page_contents, "<!--CMSHEAD-->")) {
+					CMS::show_error("Failed to Load Head", 500);
+				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				if(Config::dev_banner() ?? null) {
 					$this->page_contents .= $this->render_dev_banner();
