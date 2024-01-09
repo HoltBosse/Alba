@@ -271,6 +271,10 @@ class Field_Rich extends Field {
 							else if (command=="em") {
 								document.execCommand('italic', false, command);
 							}
+
+							else if (command=="small") {
+								document.execCommand('superscript', false, command);
+							}
 							
 							else if (command == 'createlink') {
 
@@ -887,6 +891,7 @@ class Field_Rich extends Field {
 					<a class='editor_button' href="#" data-command='ol' data-tooltip="Numbered List">OL</a>
 					<a class='editor_button' href="#" data-command='bold' data-tooltip="Bold"><i class="fa fa-bold"></i></a>
 					<a class='editor_button' href="#" data-command='em' data-tooltip="Italics"><i class="fa fa-italic"></i></a>
+					<a class='editor_button' href="#" data-command='small' data-tooltip="Small"><i class="fa fa-compress"></i></a>
 					<a class='editor_button' href="#" data-command='underline' data-tooltip="Underline"><i class="fa fa-underline"></i></a>
 					<a class='editor_button' href="#" data-command='addclass' data-tooltip="Add Class">Cls+</a>
 					<a class='editor_button' href="#" data-command='img' data-tooltip="Image"><i class="fa fa-images"></i></a>
