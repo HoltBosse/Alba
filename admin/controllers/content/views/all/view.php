@@ -602,7 +602,7 @@ if ($cur_page) {
 		}
 		//console.log('Insert',source_id, insert_position, dest_id);
 		// perform ajax action silently
-		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position};
+		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position,"content_type":'<?php echo $content_type_filter; ?>'};
 		postAjax('<?php echo Config::uripath();?>/admin/content/api', api_data, function(data){
 			response = JSON.parse(data);
 			if (response.success=='1') {
