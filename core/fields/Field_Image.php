@@ -10,6 +10,7 @@ class Field_Image extends Field {
 		$this->name = $id;
 		$this->image_id = null;
 		$this->default = null;
+		$this->mimetypes = null;
 	}
 
 	public function display($repeatable_template=false) {
@@ -166,7 +167,7 @@ class Field_Image extends Field {
 			function fetch_images(searchtext, taglist) {
 			
 				// fetch images
-				postAjax('<?php echo Config::uripath();?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
+				postAjax('<?php echo Config::uripath();?>/admin/images/api', {"action":"list_images","searchtext":searchtext<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>}, function(data) { 
 					var image_list = JSON.parse(data);
 					var image_list_markup = "<ul class='media_selector_list single'>";
 					if (image_list.images.length==0) {
@@ -226,7 +227,7 @@ class Field_Image extends Field {
 		
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		if (is_numeric($this->id)) {
 			$img = new Image($this->id);
 			$img->render('thumb','backend');
@@ -249,6 +250,8 @@ class Field_Image extends Field {
 		$this->default = $config->default ?? null;
 		$this->type = $config->type ?? 'error!!!';
 		$this->logic = $config->logic ?? '';
+		$this->coltype = $config->coltype ?? '';
+		$this->mimetypes = $config->mimetypes ?? null;
 	}
 
 	public function validate() {

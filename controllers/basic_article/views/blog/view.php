@@ -30,13 +30,13 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					<?php endforeach; ?>
 				</ol>
 			</div>
-			<?php if ($blog->f_og_description || $blog->f_og_image):?>
+			<?php if ($blog->og_description || $blog->og_image):?>
 				<p class='preview'>
-				<?php if ($blog->f_og_image) {
-					$thumb = $img = new Image($blog->f_og_image);
+				<?php if ($blog->og_image) {
+					$thumb = $img = new Image($blog->og_image);
 					$thumb->render('thumb','thumb square pull-right');
 				}
-				echo $blog->f_og_description; ?>
+				echo $blog->og_description; ?>
 				</p>
 			<?php endif; ?>
 			<?php 

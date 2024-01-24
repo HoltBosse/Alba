@@ -16,7 +16,7 @@ class Plugin {
         $this->description = $plugin_info->description;
         $this->location = $plugin_info->location;
         $this->id = $plugin_info->id;
-        $this->options = json_decode($plugin_info->options);
+        $this->options = json_decode((string)$plugin_info->options);
         $this->init();
     }
     
