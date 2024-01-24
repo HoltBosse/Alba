@@ -5,48 +5,58 @@ class Field_Contentselector extends Field {
 
 	public $select_options;
 
-	function __construct($content_type=1) {
+	function __construct($content_type=false) {
 		$this->id = "";
 		$this->name = "";
 		$this->select_options=[];
-		$this->default=$content_type;
+		$this->default=false; // content id
 		$this->list_unpublished=false;
 		$this->tags=[];
+		$this->content_type = false; // content type - REQUIRED in flat
 	}
 
 	public function display() {
 		$required="";
-		if ($this->content_type) {
-			if (!is_numeric($this->content_type)) {
-				// content type denoted by content controller location - this is a unique safe folder name
-				// e.g. basic_article
-				$this->content_type = Content::get_content_type_id($this->content_type);
+		if (!$this->content_type) {
+			CMS::show_error('Content type required for Contentselector field in v3+');
+		}
+
+		if (!is_numeric($this->content_type)) {
+			// content type denoted by content controller location - this is a unique safe folder name
+			// e.g. basic_article
+			$this->content_type = Content::get_content_type_id($this->content_type);
+		}
+		if ($this->content_type && is_numeric($this->content_type)) {
+
+			$location = Content::get_content_location($this->content_type);
+			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			$table_name = "controller_" . $custom_fields->id ;
+			
+			if ($this->list_unpublished) {
+				$min_state = 0;
 			}
-			if ($this->content_type && is_numeric($this->content_type)) {
-				
-				if ($this->list_unpublished) {
-					$min_state = 0;
-				}
-				else {
-					$min_state = 1;
-				}
-				if (!$this->tags) {
-					// default order is alphabetical
-					$query = "select * from content where content_type={$this->content_type} and state>={$min_state} order by title ASC";
-					$options_all_articles = CMS::Instance()->pdo->query("select * from content where content_type={$this->content_type} and state>={$min_state} order by title ASC")->fetchAll();
-				}
-				else {
-					$tags_csv = "'".implode("','", $this->tags)."'";
-					$query = "select c.* from content c where c.content_type={$this->content_type} and c.state=1 ";
-					$query .= " and c.id in (";
-						$query .= " select tc.content_id from tagged tc where tc.content_type_id={$this->content_type} and tc.tag_id in (";
-							$query .= "select t.id from tags t where t.state>={$min_state} and t.alias in ($tags_csv)";
-						$query .= ")";
-					$query .= ") order by c.title ASC";
-					$options_all_articles = DB::fetchAll($query);
-				}
+			else {
+				$min_state = 1;
+			}
+			if (!$this->tags) {
+				// default order is alphabetical
+				$query = "select * from " . $table_name . " where state >={$min_state} order by title ASC";
+				$options_all_articles = CMS::Instance()->pdo->query($query)->fetchAll();
+				/* CMS::pprint_r ($query);
+				CMS::pprint_r ($options_all_articles); */
+			}
+			else {
+				$tags_csv = "'".implode("','", $this->tags)."'";
+				$query = "select c.* from {$table_name} c where c.state=1 ";
+				$query .= " and c.id in (";
+					$query .= " select tc.content_id from tagged tc where tc.content_type_id={$this->content_type} and tc.tag_id in (";
+						$query .= "select t.id from tags t where t.state>={$min_state} and t.alias in ($tags_csv)";
+					$query .= ")";
+				$query .= ") order by c.title ASC";
+				$options_all_articles = DB::fetchAll($query);
 			}
 		}
+		
 		if (!$options_all_articles) {
 			// content type was not able to be established
 			if (Config::debug()) {
@@ -99,10 +109,13 @@ class Field_Contentselector extends Field {
 		$this->logic = $config->logic ?? '';
 	}
 
-	public function get_friendly_value() {
-		//CMS::pprint_r ($this->content_type);
-		//CMS::pprint_r ($this);
-		echo DB::fetch('select title from content where id=?',$this->default)->title ?? "";
+	public function get_friendly_value($custom_field_config) {
+		// custom field config should contain content_type from config
+		// this combined with the content id set in 'default' will help us get the specific content item from our tables
+		$location = Content::get_content_location($custom_field_config->content_type);
+		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+		$table_name = "controller_" . $custom_fields->id ; 
+		echo DB::fetch("select title from {$table_name} where id=?",$this->default)->title ?? "";
 	}
 
 	public function validate() {

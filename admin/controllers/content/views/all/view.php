@@ -174,7 +174,7 @@ table.dragging .before_after_wrap {
 
 
 <form action='' method='post' name='content_action' id='content_action_form'>
-
+<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
 <h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
 	<?php if ($content_type_filter):?>
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
@@ -396,12 +396,14 @@ table.dragging .before_after_wrap {
 								<a class="navbar-link"></a>
 								<div class="navbar-dropdown">
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
 											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
 										</button>
 									</form>
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
 											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
@@ -411,6 +413,7 @@ table.dragging .before_after_wrap {
 									<hr class="dropdown-divider">
 									<?php foreach($custom_fields->states as $state) { ?>
 										<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+											<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
 												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
@@ -424,18 +427,21 @@ table.dragging .before_after_wrap {
 						</div>
 					</td>
 					<td>
-						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
+						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo $content_item->title; ?></a>
 						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
 					</td>
 
 					<?php if ($content_list_fields):?>
 						<?php foreach ($content_list_fields as $content_list_field):?>
 							<td><?php 
-								$propname = "f_{$content_list_field->name}"; 
+								$propname = "{$content_list_field->name}"; 
 								$classname = "Field_" . $content_list_field->type;
 								$curfield = new $classname($content_item->$propname);
-								$curfield->default = $content_item->$propname;
-								echo $curfield->get_friendly_value();
+								$curfield->default = $content_item->$propname; // set temp field value to current stored value
+								// TODO: pass precalc array of table names for content types to aid in performance of lookups 
+								// some fields will currently parse json config files to determine tables to query for friendly values
+								// PER row/field. not ideal.
+								echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
 								?></td>
 						<?php endforeach; ?>
 					<?php endif; ?>
@@ -596,7 +602,7 @@ if ($cur_page) {
 		}
 		//console.log('Insert',source_id, insert_position, dest_id);
 		// perform ajax action silently
-		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position};
+		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position,"content_type":'<?php echo $content_type_filter; ?>'};
 		postAjax('<?php echo Config::uripath();?>/admin/content/api', api_data, function(data){
 			response = JSON.parse(data);
 			if (response.success=='1') {

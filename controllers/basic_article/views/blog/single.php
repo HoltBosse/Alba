@@ -16,5 +16,5 @@ $tags = Tag::get_tags_for_content($blog->id, 1);
             <?php endforeach; ?>
         </ol>
     </div>
-    <?php echo $blog->f_markup; ?>
+    <?php echo $blog->markup; ?>
 </div>

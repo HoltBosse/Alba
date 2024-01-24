@@ -71,7 +71,7 @@ class Field_TagMultiple extends Field {
 							if ($tag->state==1) {
 								$selected = "";
 								if ($this->array_values && in_array($tag->id, $this->array_values)) { $selected="selected";}
-								echo "<option {$selected} value='{$tag->id}'>" . $this->make_tag_path($tag) . "</option>";
+								echo "<option {$selected} data-parent={$tag->parent} data-public={$tag->public} value='{$tag->id}'>" . $this->make_tag_path($tag) . "</option>";
 							}
 						}
 					echo "</select>";
@@ -108,7 +108,7 @@ class Field_TagMultiple extends Field {
 		$this->logic = $config->logic ?? '';
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		return DB::fetch('select title from tags where id=?', [$this->default])->title;
 	}
 

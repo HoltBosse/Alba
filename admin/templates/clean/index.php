@@ -6,7 +6,9 @@ require_once (CMSPATH . "/core/cms.php");
 
 <html>
 <meta name="viewport" content="width=device-width, user-scalable=no" />
-	<head><!-- Latest compiled and minified CSS -->
+	<head>
+	<script>window.uripath = "<?php echo Config::uripath();?>";</script>
+	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/bulma.min.css"></link>
 <link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/dashboard.css"></link>
 <link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/layout.css"></link>
@@ -110,12 +112,9 @@ require_once (CMSPATH . "/core/cms.php");
 								<?php foreach (Content::get_all_content_types() as $content_type):?>
 									<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/all/<?php echo $content_type->id;?>"><?php echo $content_type->title;?></a>
 								<?php endforeach; ?>
+								<!-- removed all content view -->
 								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/all">All Content</a>
-								<!-- commented out - using new blank content creator instead of front-end designer view for now -->
-								<!-- <a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/types">Content Types</a> -->
-								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/check">Check Fields</a>
+								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/check">Check Flat Tables</a>
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/new">Create New Type</a>
 							</div>
 						</div>

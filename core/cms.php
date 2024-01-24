@@ -169,24 +169,32 @@ final class CMS {
 		}
 		http_response_code($http_code);
 		?>
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-			<div style="display:flex; justify-content:center; align-items:center; height: 100%;">
-				<div style="max-width: 50%;">
-					<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
-						<?php 
-							$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
-							$logo_src = $logo_image_id ? Config::uripath() . "/image/" . $logo_image_id : Config::uripath() . "/admin/templates/clean/alba_logo.webp";
-						?>
-						<img src="<?php echo $logo_src;?>" >
-						<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+			<!DOCTYPE html>
+			<html style="height: 100%;" lang="en">
+				<head>
+					<title>Page not Found</title>
+					<meta name="viewport" content="width=device-width, initial-scale=1" />
+					<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+				</head>
+				<body style="display:flex; justify-content:center; align-items:center; height: 100%;">
+					<div style="max-width: 50%;">
+						<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
+							<?php 
+								$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
+								$logo_src = $logo_image_id ? Config::uripath() . "/image/" . $logo_image_id : Config::uripath() . "/admin/templates/clean/alba_logo.webp";
+								$img_meta_string = Config::sitename() . " site logo";
+							?>
+							<img src="<?php echo $logo_src;?>" title="<?= $img_meta_string; ?>" alt="<?= $img_meta_string; ?>">
+							<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+						</div>
+						<br><br>
+						<div>
+							<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
+							<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;" hreflang="en">Visit Home</a></p>
+						</div>
 					</div>
-					<br><br>
-					<div>
-						<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
-						<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;">Visit Home</a></p>
-					</div>
-				</div>
-			</div>
+				</body>
+			</html>
 		<?php
 		die();
 	}
@@ -277,7 +285,7 @@ final class CMS {
 				//$this->user->load_from_id(s::get('user_id'));
 				//$this->user->load_from_id($session_user_id); // cant use user class as it requires CMS - will call constructor twice!
 				// code below is almost same as 'load_from_id' in user class
-				$query = "select * from users where id=?";
+				$query = "select * from users where id=? and state>0";
 				$stmt = $this->pdo->prepare($query);
 				$stmt->execute(array($session_user_id));
 				$result = $stmt->fetch();
@@ -341,10 +349,12 @@ final class CMS {
 		// small performance hit, but only way to alleviate potential security issues for following checks
 
 		// check for core controller - save folder name if found for include during rendering
-		foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
-			if($this->uri_segments[0] == $folder) {
-				$this->core_controller = $folder;
-				break;
+		if(!ADMINPATH) {
+			foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
+				if($this->uri_segments[0] == $folder) {
+					$this->core_controller = $folder;
+					break;
+				}
 			}
 		}
 		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
@@ -685,6 +695,9 @@ final class CMS {
 				// add additional head_entries that may have been created
 				foreach ($this->head_entries as $he) {
 					$cms_head .= $he;
+				}
+				if(!str_contains($this->page_contents, "<!--CMSHEAD-->")) {
+					CMS::show_error("Failed to Load Head", 500);
 				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				if(Config::dev_banner() ?? null) {

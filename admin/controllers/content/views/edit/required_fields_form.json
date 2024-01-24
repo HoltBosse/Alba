@@ -8,7 +8,8 @@
 			"type":"Text",
 			"required":true,
 			"filter":"STRING",
-			"maxlength":255
+			"maxlength":255,
+			"coltype":"VARCHAR (255)"
 		},
 		{
 			"label":"URL Friendly",
@@ -17,7 +18,8 @@
 			"type":"Text",
 			"filter":"ALIAS",
 			"maxlength":255,
-			"description":""
+			"description":"",
+			"coltype":"VARCHAR (255)"
 		},
 		{
 			"label":"Tags",
@@ -25,7 +27,8 @@
 			"id":"tags",
 			"type":"TagMultiple",
 			"required":false,
-			"filter":"ARRAYOFINT"
+			"filter":"ARRAYOFINT",
+			"coltype":"varchar (255)"
 		},
 		{
 			"name": "category",
@@ -34,7 +37,8 @@
 			"content_type":1,
 			"label": "Category",
 			"filter": "NUMBER",
-			"default":0
+			"default":0,
+			"coltype":"int default(0)"
 		},
 		{
 			"label":"Note",
@@ -45,7 +49,8 @@
 			"filter":"STRING",
 			"maxlength":255,
 			"description":"Not required, but may be useful.",
-			"default":""
+			"default":"",
+			"coltype":"varchar (255)"
 		},
 		{
 			"name": "state",
@@ -58,7 +63,8 @@
 			"select_options":[
 				{"value":1,"text":"Published"},
 				{"value":0,"text":"Unpublished"}
-			]
+			],
+			"coltype":"tinyint NOT NULL DEFAULT '1'"
 		},
 		{
 			"label":"Start",
@@ -68,7 +74,8 @@
 			"required":false,
 			"filter":"STRING",
 			"maxlength":255,
-			"input_type":"date"
+			"input_type":"date",
+			"coltype":"timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP"
 		},
 		{
 			"label":"End",
@@ -78,7 +85,8 @@
 			"required":false,
 			"filter":"STRING",
 			"maxlength":255,
-			"input_type":"date"
+			"input_type":"date",
+			"coltype":"timestamp NULL"
 		}
 	]
 }

@@ -33,10 +33,13 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
+				CMS::pprint_r(debug_backtrace()); die();
 				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
 			}
 			else {
-				CMS::show_error("Database query error - turn on debug for more information.");
+				//CMS::pprint_r(debug_backtrace()); die();
+				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
+				//CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
 		return $success;
@@ -57,10 +60,11 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
-				//print_r (debug_backtrace()); exit(0);
+				CMS::pprint_r(debug_backtrace()); die();
 				CMS::show_error("Error performing query: " . $e->getMessage());
 			}
 			else {
+				//CMS::pprint_r(debug_backtrace()); die();
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
@@ -82,9 +86,11 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
+				CMS::pprint_r(debug_backtrace()); die();
 				CMS::show_error("Error performing query: " . $e->getMessage());
 			}
 			else {
+				//CMS::pprint_r(debug_backtrace()); die();
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}

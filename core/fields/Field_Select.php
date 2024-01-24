@@ -37,7 +37,7 @@ class Field_Select extends Field {
 			echo "<div class='control'>";
 				echo "<div class='" . ($this->slimselect ? "slimselect_select" : "select") . "'>";
 					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} " . ($this->multiple ? "multiple" : false) . ">";
-						if ($this->required) {
+						if ($this->required || $this->placeholder) {
 							$placeholder = $this->placeholder ?? $this->label;
 							echo "<option value='' >{$placeholder}</option>";
 						}
@@ -163,7 +163,7 @@ class Field_Select extends Field {
 
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		// TODO: select fields need to store config somewhere to retrieve friendly values
 		// for now return id
 		return $this->id;
