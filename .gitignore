@@ -72,3 +72,5 @@ templates/**
 !templates/basic/
 !templates/basic/**
 adminer.php
+user_classes/**
+!user_classes/User_User.php
