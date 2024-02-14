@@ -79,7 +79,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                             });
 
                             function submitContent(e) {
-                                console.log("hiii");
+                                //console.log("hiii");
 
                                 const formData = new FormData();
                                 formData.append("cfe_update", true);
@@ -92,10 +92,11 @@ class Plugin_core_frontend_editbutton extends Plugin {
                                     method: "POST",
                                     body: formData,
                                 }).then((response) => response.json()).then((data) => {
-                                    console.log(data);
+                                    //console.log(data);
                                     //window.location.reload();
                                 }).catch((e)=>{
-                                    console.log("error");
+                                    alert("Failed to update content");
+                                    window.location.reload();
                                 });
                             }
 
@@ -141,8 +142,12 @@ class Plugin_core_frontend_editbutton extends Plugin {
                     die;
                 }
 
-                $fieldNames = DB::fetchall("SHOW fields FROM controller_basic_html");
+                $table = Content::get_table_name_for_content_type($contenttype);
+
+                $fieldNames = DB::fetchall("SHOW fields FROM $table");
                 $fieldNames = array_column($fieldNames, "Field");
+
+                //TODO: maybe nicely show content over length limit???
 
                 //safety check that we arent getting a mess
                 if(!in_array($contentfield, $fieldNames)) {
@@ -153,7 +158,6 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 //clean it because im not trusting
                 $contentfield = str_replace("`","``",$contentfield);
 
-                $table = Content::get_table_name_for_content_type($contenttype);
                 DB::exec("UPDATE $table SET `$contentfield`=? WHERE id=?", [$contentdata, $contentid]);
 
                 $this->rj([
