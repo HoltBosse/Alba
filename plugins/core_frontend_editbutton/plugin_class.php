@@ -163,7 +163,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                                             <h5>${e.target.innerText.replace("EDIT", "EDITING")} <span class="cfe_closeme">X</span></h5>
                                             <form method="post">
                                                 <input type='hidden' name='cfe_widget_fields_submit' value='true'>
-                                                <input type="hidden" name="cfe_widgetid" value="${e.target.dataset.widgetid}"
+                                                <input type="hidden" name="cfe_widgetid" value="${e.target.dataset.widgetid}">
                                                 ${data}
                                                 <br><br>
                                                 <button type="submit">Submit</submit>
