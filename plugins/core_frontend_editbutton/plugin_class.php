@@ -37,7 +37,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
         $data = $this->get_data();
 
         if($this->validateGroup($data->groupOptionsArray, $data->userGroups)) {
-            if(Config::enable_expiremental_frontend_edit() ?? false) {
+            if(Config::enable_experimental_frontend_edit() ?? false) {
                 $page_contents = "
                     <div class='front_end_edit_wrap' >
                         <a class='cfe_widget_edit' data-widgetid='{$params[0]->id}' href='#'>EDIT &ldquo;" . htmlspecialchars($params[0]->title) . "&rdquo;</a>
