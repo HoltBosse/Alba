@@ -56,6 +56,150 @@ class Plugin_core_frontend_editbutton extends Plugin {
         }
     }
 
+    private function handle_api_requests($data) {
+        //this function assumes that a user is logged in and the feature is enabled
+
+        if(Input::getvar("cfe_content_update")) {
+            ob_get_clean();
+
+            header('Content-Type: application/json; charset=utf-8');
+            
+            $contentid = Input::getvar("cfe_contentid");
+            $contenttype = Input::getvar("cfe_contenttype");
+            $contentfield = Input::getvar("cfe_contentfield");
+            $contentdata = Input::getvar("cfe_contentdata");
+
+            if(!$contentid || !$contenttype || !$contentfield || !$contentdata) {
+                http_response_code(500); //500 so js fetch catch works
+                die;
+            }
+
+            $table = Content::get_table_name_for_content_type($contenttype);
+
+            $fieldNames = DB::fetchall("SHOW fields FROM $table");
+            $fieldNames = array_column($fieldNames, "Field");
+
+            //TODO: maybe nicely show content over length limit???
+
+            //safety check that we arent getting a mess
+            if(!in_array($contentfield, $fieldNames)) {
+                http_response_code(500); //500 so js fetch catch works
+                die;
+            }
+
+            //clean it because im not trusting
+            $contentfield = str_replace("`","``",$contentfield);
+
+            DB::exec("UPDATE $table SET `$contentfield`=? WHERE id=?", [$contentdata, $contentid]);
+
+            $this->rj([
+                "success"=>1,
+                "message"=>"Updated",
+                "data"=>(object) [],
+            ]);
+        }
+
+        if(Input::getvar("cfe_widget_fields")) {
+            ob_get_clean();
+
+            //header('Content-Type: application/json; charset=utf-8');
+
+            $widgetid = Input::getvar("cfe_widgetid");
+
+            if(!$widgetid) {
+                http_response_code(500); //500 so js fetch catch works
+                die;
+            }
+
+            $widget = new Widget();
+            $widget->load($widgetid);
+            $form = new Form($widget->form_data);
+
+            foreach ($widget->options as $option) {
+                //echo "$key => $value\n";
+                $field = $form->get_field_by_name($option->name);
+                if ($field) {
+                    $field->default = $option->value;
+                }
+                else {
+                    // do nothing, leave default from form json
+                }
+            }
+
+            $form->display_front_end();
+
+            die;
+
+        }
+
+        if(Input::getvar("cfe_widget_fields_submit")) {
+            
+            $widgetid = Input::getvar("cfe_widgetid");
+
+            if(!$widgetid) {
+                http_response_code(500); //500 so js fetch catch works
+                die;
+            }
+
+            $widget = new Widget();
+            $widget->load($widgetid);
+            $form = new Form($widget->form_data);
+
+            $form->set_from_submit();
+
+            $options = [];
+            foreach ($form->fields as $option) {
+                $obj = new stdClass();
+                $obj->name = $option->name;
+                $obj->value = $option->default;
+                //$obj->{$option->name} = $option->default;
+                $options[] = $obj;
+            }
+
+            $options_json = json_encode($options);
+
+            DB::exec("UPDATE widgets set options=? where id=?", [$options_json, $widgetid]);
+
+
+
+            header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            die;
+
+        }
+    }
+
+    private function generate_editor_nav_bar($data) {
+        ob_start();
+            ?>
+                <section class="cfe_design">
+                    <ul class="nb_nav">
+                        <li class="nb_item nb_has_dd">
+                            A
+                            <ul class="nb_dd">
+                                <li class="nb_dd_item"><a href="https://holtbosse.com/" target="_blank">Holt Bosse</a></li>
+                                <li class="nb_dd_item"><a href="https://alba.holtbosse.com/" target="_blank">Alba</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nb_item"><a href="<?php echo Config::uripath() . "/"; ?>">Home</a></li>
+                        <li class="nb_item"><a href="#">Edit Page</a></li>
+
+                        <li class="nb_item nb_has_dd">
+                            New
+                            <ul class="nb_dd">
+                                <li class="nb_dd_item"><a href="#">Page</a></li>
+                                <li class="nb_dd_item"><a href="#">Widget</a></li>
+                                <li class="nb_dd_item"><a href="#">Stuff?</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nb_item nb_end">Welcome, <?php echo CMS::Instance()->user->username; ?></li>
+                    </ul>
+                </section>
+            <?php
+        return ob_get_clean();
+    }
+
     public function handle_frontend_render($page_contents, $params) {
         $data = $this->get_data();
 
@@ -208,149 +352,11 @@ class Plugin_core_frontend_editbutton extends Plugin {
             CMS::Instance()->head_entries[] = $contents;
             CMS::Instance()->head_entries[] = "<style>" . file_get_contents(CMSPATH . "/plugins/core_frontend_editbutton/style.css") . "</style>";
 
-            if(Input::getvar("cfe_content_update")) {
-                ob_get_clean();
+            $this->handle_api_requests($data);
 
-                header('Content-Type: application/json; charset=utf-8');
-                
-                $contentid = Input::getvar("cfe_contentid");
-                $contenttype = Input::getvar("cfe_contenttype");
-                $contentfield = Input::getvar("cfe_contentfield");
-                $contentdata = Input::getvar("cfe_contentdata");
-
-                if(!$contentid || !$contenttype || !$contentfield || !$contentdata) {
-                    http_response_code(500); //500 so js fetch catch works
-                    die;
-                }
-
-                $table = Content::get_table_name_for_content_type($contenttype);
-
-                $fieldNames = DB::fetchall("SHOW fields FROM $table");
-                $fieldNames = array_column($fieldNames, "Field");
-
-                //TODO: maybe nicely show content over length limit???
-
-                //safety check that we arent getting a mess
-                if(!in_array($contentfield, $fieldNames)) {
-                    http_response_code(500); //500 so js fetch catch works
-                    die;
-                }
-
-                //clean it because im not trusting
-                $contentfield = str_replace("`","``",$contentfield);
-
-                DB::exec("UPDATE $table SET `$contentfield`=? WHERE id=?", [$contentdata, $contentid]);
-
-                $this->rj([
-                    "success"=>1,
-                    "message"=>"Updated",
-                    "data"=>(object) [],
-                ]);
-            }
-
-            if(Input::getvar("cfe_widget_fields")) {
-                ob_get_clean();
-    
-                //header('Content-Type: application/json; charset=utf-8');
-    
-                $widgetid = Input::getvar("cfe_widgetid");
-    
-                if(!$widgetid) {
-                    http_response_code(500); //500 so js fetch catch works
-                    die;
-                }
-    
-                $widget = new Widget();
-                $widget->load($widgetid);
-                $form = new Form($widget->form_data);
-    
-                foreach ($widget->options as $option) {
-                    //echo "$key => $value\n";
-                    $field = $form->get_field_by_name($option->name);
-                    if ($field) {
-                        $field->default = $option->value;
-                    }
-                    else {
-                        // do nothing, leave default from form json
-                    }
-                }
-    
-                $form->display_front_end();
-    
-                die;
-    
-            }
-    
-            if(Input::getvar("cfe_widget_fields_submit")) {
-                
-                $widgetid = Input::getvar("cfe_widgetid");
-    
-                if(!$widgetid) {
-                    http_response_code(500); //500 so js fetch catch works
-                    die;
-                }
-    
-                $widget = new Widget();
-                $widget->load($widgetid);
-                $form = new Form($widget->form_data);
-    
-                $form->set_from_submit();
-    
-                $options = [];
-                foreach ($form->fields as $option) {
-                    $obj = new stdClass();
-                    $obj->name = $option->name;
-                    $obj->value = $option->default;
-                    //$obj->{$option->name} = $option->default;
-                    $options[] = $obj;
-                }
-    
-                $options_json = json_encode($options);
-    
-                DB::exec("UPDATE widgets set options=? where id=?", [$options_json, $widgetid]);
-    
-    
-    
-                header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-                die;
-    
-            }
-
-
-            ob_start();
-                ?>
-                    <section class="cfe_design">
-                        <ul class="nb_nav">
-                            <li class="nb_item nb_has_dd">
-                                A
-                                <ul class="nb_dd">
-                                    <li class="nb_dd_item"><a href="https://holtbosse.com/" target="_blank">Holt Bosse</a></li>
-                                    <li class="nb_dd_item"><a href="https://alba.holtbosse.com/" target="_blank">Alba</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="nb_item"><a href="<?php echo Config::uripath() . "/"; ?>">Home</a></li>
-                            <li class="nb_item"><a href="#">Edit Page</a></li>
-
-                            <li class="nb_item nb_has_dd">
-                                New
-                                <ul class="nb_dd">
-                                    <li class="nb_dd_item"><a href="#">Page</a></li>
-                                    <li class="nb_dd_item"><a href="#">Widget</a></li>
-                                    <li class="nb_dd_item"><a href="#">Stuff?</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="nb_item nb_end">Welcome, <?php echo CMS::Instance()->user->username; ?></li>
-                        </ul>
-                    </section>
-                <?php
-            $contents = ob_get_clean();
-
-            $page_contents = $contents . $page_contents;
+            $edit_navbar = $this->generate_editor_nav_bar($data);
+            $page_contents = $edit_navbar . $page_contents;
         }
-
-
 
         return $page_contents;
     }
