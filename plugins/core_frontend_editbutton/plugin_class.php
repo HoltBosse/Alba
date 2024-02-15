@@ -59,7 +59,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
     public function handle_frontend_render($page_contents, $params) {
         $data = $this->get_data();
 
-        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_expiremental_frontend_edit() ?? false)) {
+        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false)) {
             ob_start();
                 ?>
                     <style>
@@ -246,75 +246,76 @@ class Plugin_core_frontend_editbutton extends Plugin {
                     "data"=>(object) [],
                 ]);
             }
-        }
-        
-        if(Input::getvar("cfe_widget_fields")) {
-            ob_get_clean();
 
-            //header('Content-Type: application/json; charset=utf-8');
-
-            $widgetid = Input::getvar("cfe_widgetid");
-
-            if(!$widgetid) {
-                http_response_code(500); //500 so js fetch catch works
-                die;
-            }
-
-            $widget = new Widget();
-            $widget->load($widgetid);
-            $form = new Form($widget->form_data);
-
-            foreach ($widget->options as $option) {
-                //echo "$key => $value\n";
-                $field = $form->get_field_by_name($option->name);
-                if ($field) {
-                    $field->default = $option->value;
+            if(Input::getvar("cfe_widget_fields")) {
+                ob_get_clean();
+    
+                //header('Content-Type: application/json; charset=utf-8');
+    
+                $widgetid = Input::getvar("cfe_widgetid");
+    
+                if(!$widgetid) {
+                    http_response_code(500); //500 so js fetch catch works
+                    die;
                 }
-                else {
-                    // do nothing, leave default from form json
+    
+                $widget = new Widget();
+                $widget->load($widgetid);
+                $form = new Form($widget->form_data);
+    
+                foreach ($widget->options as $option) {
+                    //echo "$key => $value\n";
+                    $field = $form->get_field_by_name($option->name);
+                    if ($field) {
+                        $field->default = $option->value;
+                    }
+                    else {
+                        // do nothing, leave default from form json
+                    }
                 }
-            }
-
-            $form->display_front_end();
-
-            die;
-
-        }
-
-        if(Input::getvar("cfe_widget_fields_submit")) {
-            
-            $widgetid = Input::getvar("cfe_widgetid");
-
-            if(!$widgetid) {
-                http_response_code(500); //500 so js fetch catch works
+    
+                $form->display_front_end();
+    
                 die;
+    
             }
-
-            $widget = new Widget();
-            $widget->load($widgetid);
-            $form = new Form($widget->form_data);
-
-            $form->set_from_submit();
-
-            $options = [];
-            foreach ($form->fields as $option) {
-                $obj = new stdClass();
-                $obj->name = $option->name;
-                $obj->value = $option->default;
-                //$obj->{$option->name} = $option->default;
-                $options[] = $obj;
+    
+            if(Input::getvar("cfe_widget_fields_submit")) {
+                
+                $widgetid = Input::getvar("cfe_widgetid");
+    
+                if(!$widgetid) {
+                    http_response_code(500); //500 so js fetch catch works
+                    die;
+                }
+    
+                $widget = new Widget();
+                $widget->load($widgetid);
+                $form = new Form($widget->form_data);
+    
+                $form->set_from_submit();
+    
+                $options = [];
+                foreach ($form->fields as $option) {
+                    $obj = new stdClass();
+                    $obj->name = $option->name;
+                    $obj->value = $option->default;
+                    //$obj->{$option->name} = $option->default;
+                    $options[] = $obj;
+                }
+    
+                $options_json = json_encode($options);
+    
+                DB::exec("UPDATE widgets set options=? where id=?", [$options_json, $widgetid]);
+    
+    
+    
+                header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+                die;
+    
             }
-
-            $options_json = json_encode($options);
-
-            DB::exec("UPDATE widgets set options=? where id=?", [$options_json, $widgetid]);
-
-
-
-            header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
-            die;
-
         }
+
 
 
         return $page_contents;
