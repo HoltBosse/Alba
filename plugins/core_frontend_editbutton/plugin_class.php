@@ -206,6 +206,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $contents = ob_get_clean();
 
             CMS::Instance()->head_entries[] = $contents;
+            CMS::Instance()->head_entries[] = "<style>" . file_get_contents(CMSPATH . "/plugins/core_frontend_editbutton/style.css") . "</style>";
 
             if(Input::getvar("cfe_content_update")) {
                 ob_get_clean();
@@ -314,6 +315,39 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 die;
     
             }
+
+
+            ob_start();
+                ?>
+                    <section class="cfe_design">
+                        <ul class="nb_nav">
+                            <li class="nb_item nb_has_dd">
+                                A
+                                <ul class="nb_dd">
+                                    <li class="nb_dd_item"><a href="https://holtbosse.com/" target="_blank">Holt Bosse</a></li>
+                                    <li class="nb_dd_item"><a href="https://alba.holtbosse.com/" target="_blank">Alba</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nb_item"><a href="<?php echo Config::uripath() . "/"; ?>">Home</a></li>
+                            <li class="nb_item"><a href="#">Edit Page</a></li>
+
+                            <li class="nb_item nb_has_dd">
+                                New
+                                <ul class="nb_dd">
+                                    <li class="nb_dd_item"><a href="#">Page</a></li>
+                                    <li class="nb_dd_item"><a href="#">Widget</a></li>
+                                    <li class="nb_dd_item"><a href="#">Stuff?</a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nb_item nb_end">Welcome, <?php echo CMS::Instance()->user->username; ?></li>
+                        </ul>
+                    </section>
+                <?php
+            $contents = ob_get_clean();
+
+            $page_contents = $contents . $page_contents;
         }
 
 
