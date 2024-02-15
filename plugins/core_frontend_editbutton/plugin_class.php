@@ -4,6 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Plugin_core_frontend_editbutton extends Plugin {
     public function init() {
         CMS::add_action("on_widget_render",$this,'handle_widget_render'); // label, function, priority 
+        CMS::add_action("on_controller_render",$this,'handle_controller_render'); // label, function, priority 
         CMS::add_action("content_ready_frontend",$this,'handle_frontend_render'); // label, function, priority  
     }
 
@@ -54,6 +55,21 @@ class Plugin_core_frontend_editbutton extends Plugin {
         } else {
             return $page_contents;
         }
+    }
+
+    public function handle_controller_render($page_contents, $params) {
+        $data = $this->get_data();
+
+        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false)){
+            $controllerConfig = DB::fetch("SELECT * FROM content_types WHERE controller_location = ?", $params[0]);
+            $page_contents = "
+                <div class='front_end_edit_wrap' >
+                    <a class='cfe_controller_edit' data-controllerid='{$controllerConfig->id}' href='#'>EDIT &ldquo;" . htmlspecialchars($controllerConfig->title) . "&rdquo;</a>
+                </div>
+            " . $page_contents;
+        }
+
+        return $page_contents;
     }
 
     private function handle_api_requests($data) {
