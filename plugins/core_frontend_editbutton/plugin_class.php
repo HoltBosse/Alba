@@ -394,7 +394,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                                             throw new Error('Failed to Load Controller/Widget Editor');
                                         }
                                     }).then((data) => {
-                                        console.log(data);
+                                        //console.log(data);
 
                                         let dialog = document.createElement("dialog");
                                         document.body.appendChild(dialog);
@@ -445,12 +445,12 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $contents = ob_get_clean();
 
             CMS::Instance()->head_entries[] = $contents;
-            CMS::Instance()->head_entries[] = "<style>" . file_get_contents(CMSPATH . "/plugins/core_frontend_editbutton/style.css") . "</style>";
+            //CMS::Instance()->head_entries[] = "<style>" . file_get_contents(CMSPATH . "/plugins/core_frontend_editbutton/style.css") . "</style>";
 
             $this->handle_api_requests($data);
 
-            $edit_navbar = $this->generate_editor_nav_bar($data);
-            $page_contents = $edit_navbar . $page_contents;
+            //$edit_navbar = $this->generate_editor_nav_bar($data);
+            //$page_contents = $edit_navbar . $page_contents;
         }
 
         return $page_contents;
