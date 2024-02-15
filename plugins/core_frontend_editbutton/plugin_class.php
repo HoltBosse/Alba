@@ -60,11 +60,11 @@ class Plugin_core_frontend_editbutton extends Plugin {
     public function handle_controller_render($page_contents, $params) {
         $data = $this->get_data();
 
-        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false)){
+        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false) && !ADMINPATH){
             $controllerConfig = DB::fetch("SELECT * FROM content_types WHERE controller_location = ?", $params[0]);
             $page_contents = "
                 <div class='front_end_edit_wrap' >
-                    <a class='cfe_controller_edit' data-controllerid='{$controllerConfig->id}' href='#'>EDIT &ldquo;" . htmlspecialchars($controllerConfig->title) . "&rdquo;</a>
+                    <a class='cfe_controller_edit' data-pageid='" . CMS::Instance()->page->id . "' href='#'>EDIT &ldquo;" . htmlspecialchars($controllerConfig->title) . "&rdquo;</a>
                 </div>
             " . $page_contents;
         }
@@ -176,6 +176,71 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
             DB::exec("UPDATE widgets set options=? where id=?", [$options_json, $widgetid]);
 
+
+
+            header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+            die;
+
+        }
+
+        if(Input::getvar("cfe_controller_fields")) {
+            ob_get_clean();
+
+            //header('Content-Type: application/json; charset=utf-8');
+
+            $pageid = Input::getvar("cfe_pageid");
+
+            if(!$pageid) {
+                http_response_code(500); //500 so js fetch catch works
+                die;
+            }
+
+            $page = new Page();
+            $page->load_from_id($pageid);
+
+            if ($page->view>0) {
+                $content_loc = Content::get_content_location($page->content_type);
+                $view_loc = Content::get_view_location($page->view);
+                // OLD method
+                //include_once (CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options.php");
+                // NEW uses json forms
+                $options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
+                // set options form values from json stored in view_configuration
+                $options_form->deserialize_json($page->view_configuration);
+                $options_form->display_front_end();
+            } else {
+                die;
+            }
+
+            die;
+
+        }
+
+        if(Input::getvar("cfe_controller_fields_submit")) {
+            
+            $pageid = Input::getvar("cfe_pageid");
+
+            if(!$pageid) {
+                http_response_code(500); //500 so js fetch catch works
+                die;
+            }
+
+            $page = new Page();
+            $page->load_from_id($pageid);
+
+            if ($page->view>0) {
+                $content_loc = Content::get_content_location($page->content_type);
+                $view_loc = Content::get_view_location($page->view);
+
+                $options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
+                $options_form->set_from_submit();
+                $page->view_configuration = $options_form->serialize_json();
+
+                $page->save();
+
+            } else {
+                die;
+            }
 
 
             header("Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
@@ -303,27 +368,41 @@ class Plugin_core_frontend_editbutton extends Plugin {
                             });
 
                             document.body.addEventListener("click", (e)=>{
-                                if(e.target.classList.contains("cfe_widget_edit")) {
+                                if(e.target.classList.contains("cfe_widget_edit") || e.target.classList.contains("cfe_controller_edit")) {
                                     e.preventDefault();
-                                    console.log("widget editable");
+                                    console.log("controller/widget editable");
+
+                                    let isWidget = e.target.classList.contains("cfe_widget_edit");
+                                    let isController = e.target.classList.contains("cfe_controller_edit");
 
                                     const formData = new FormData();
-                                    formData.append("cfe_widget_fields", true);
-                                    formData.append("cfe_widgetid", e.target.dataset.widgetid);
+                                    if(isWidget) {
+                                        formData.append("cfe_widget_fields", true);
+                                        formData.append("cfe_widgetid", e.target.dataset.widgetid);
+                                    } else if(isController) {
+                                        formData.append("cfe_controller_fields", true);
+                                        formData.append("cfe_pageid", e.target.dataset.pageid);
+                                    }
 
                                     fetch(window.location.href, {
                                         method: "POST",
                                         body: formData,
-                                    }).then(response => response.text()).then((data) => {
-                                        //console.log(data);
+                                    }).then((response) => {
+                                        if(response.ok) {
+                                            return response.text();
+                                        } else {
+                                            throw new Error('Failed to Load Controller/Widget Editor');
+                                        }
+                                    }).then((data) => {
+                                        console.log(data);
 
                                         let dialog = document.createElement("dialog");
                                         document.body.appendChild(dialog);
                                         dialog.innerHTML = `
                                             <h5>${e.target.innerText.replace("EDIT", "EDITING")} <span class="cfe_closeme">X</span></h5>
                                             <form method="post">
-                                                <input type='hidden' name='cfe_widget_fields_submit' value='true'>
-                                                <input type="hidden" name="cfe_widgetid" value="${e.target.dataset.widgetid}">
+                                                <input type='hidden' name='${ isWidget ? "cfe_widget_fields_submit" : "cfe_controller_fields_submit"}' value='true'>
+                                                <input type="hidden" name="${ isWidget ? "cfe_widgetid" : "cfe_pageid"}" value="${isWidget ? e.target.dataset.widgetid : e.target.dataset.pageid}">
                                                 ${data}
                                                 <br><br>
                                                 <button type="submit">Submit</submit>
@@ -355,7 +434,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
                                         dialog.showModal();
                                     }).catch((e)=>{
-                                        alert("Failed to Load Widget Editor");
+                                        alert("Failed to Load Controller/Widget Editor");
                                         window.location.reload();
                                     });
                                 }
