@@ -67,7 +67,7 @@ foreach ($all_content_types as $content_type) {
         if (!$col_exists) {
             // create column - use mediumtext if not defined in json
             $coltype = $f->coltype ?? null ? $f->coltype : " mediumtext " ;
-            DB::exec('ALTER TABLE `' . $table_name . '` ADD COLUMN ' . $f->name . ' ' . $coltype);
+            DB::exec('ALTER TABLE `' . $table_name . '` ADD COLUMN `' . $f->name . '` ' . $coltype);
             $response.="<p>Created column: {$f->name}</p>";
         }
         // todo: alter column checks or just leave to end-user/admin to manually change if different from column creation?
@@ -135,3 +135,5 @@ foreach ($all_content_types as $content_type) {
         $response.="<p>All data already in new flat table</p>";
     }
 }
+
+
