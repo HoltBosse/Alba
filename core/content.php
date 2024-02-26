@@ -129,7 +129,7 @@ class Content {
 			CMS::pprint_r ($this); die();
 			CMS::show_error('Unknown table name'); // shouldn't get here, but catching during dev
 		}
-		$query = "select {$field_name} as v from {$this->table_name} where id=?";
+		$query = "select `{$field_name}` as v from {$this->table_name} where id=?";
 		$value = DB::fetch($query, [$this->id])->v; // todo: can we make col name param?
 		if ($value) {
 			return $value; 
