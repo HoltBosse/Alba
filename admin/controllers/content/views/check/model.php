@@ -46,8 +46,8 @@ foreach ($all_content_types as $content_type) {
         `category` int(11) NOT NULL DEFAULT 0,
         `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()";
         
-        DB::exec("create table " . $table_name . 
-        " (
+        DB::exec("create table `" . $table_name . 
+        "` (
             {$required_fields_query} 
         )");
 
@@ -67,7 +67,7 @@ foreach ($all_content_types as $content_type) {
         if (!$col_exists) {
             // create column - use mediumtext if not defined in json
             $coltype = $f->coltype ?? null ? $f->coltype : " mediumtext " ;
-            DB::exec('ALTER TABLE ' . $table_name . ' ADD COLUMN ' . $f->name . ' ' . $coltype);
+            DB::exec('ALTER TABLE `' . $table_name . '` ADD COLUMN `' . $f->name . '` ' . $coltype);
             $response.="<p>Created column: {$f->name}</p>";
         }
         // todo: alter column checks or just leave to end-user/admin to manually change if different from column creation?
@@ -77,7 +77,7 @@ foreach ($all_content_types as $content_type) {
 
     // check non-flat data exists in flat table
     $og_count = DB::fetch("select count(id) as c from content where content_type=?",$content_type->id)->c;
-    $flat_count = DB::fetch("select count(id) as c from " . $table_name)->c;
+    $flat_count = DB::fetch("select count(id) as c from `" . $table_name . "`")->c;
     if ($og_count > $flat_count) {
         $all_og_ids = DB::fetchAll('select id from content where content_type=?',$content_type->id);
         // brute force synch
@@ -124,7 +124,7 @@ foreach ($all_content_types as $content_type) {
             // create params list string
             $params_string = implode(",",$params_list_arr);
 
-            $query = 'insert ignore into ' . $table_name . ' (' . $col_string . ') values (' . $params_string . ')';
+            $query = 'insert ignore into `' . $table_name . '` (' . $col_string . ') values (' . $params_string . ')';
 
             $count++;
             DB::exec($query, $data);

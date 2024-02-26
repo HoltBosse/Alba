@@ -133,7 +133,7 @@ class Content_Search {
 		if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {
 				//$select .= " ,f_{$field}_t.content as f_{$field}";
-				$select .= " ,c.{$field} as {$field}"; 
+				$select .= " ,c.{$field} as `{$field}`"; 
 			}
 		}
 		$count_select = " count(*) as c ";
