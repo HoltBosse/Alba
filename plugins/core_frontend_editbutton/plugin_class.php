@@ -41,7 +41,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             if(Config::enable_experimental_frontend_edit() ?? false) {
                 $page_contents = "
                     <div class='front_end_edit_wrap' >
-                        <a class='cfe_widget_edit' data-widgetid='{$params[0]->id}' href='#'>EDIT &ldquo;" . htmlspecialchars($params[0]->title) . "&rdquo;</a>
+                        <a class='cfe_widget_edit' id='editpointid_{$params[0]->id}' data-widgetid='{$params[0]->id}' href='#'>EDIT &ldquo;" . htmlspecialchars($params[0]->title) . "&rdquo;</a>
                     </div>
                 " . $page_contents;
             } else {
@@ -64,7 +64,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $controllerConfig = DB::fetch("SELECT * FROM content_types WHERE controller_location = ?", $params[0]);
             $page_contents = "
                 <div class='front_end_edit_wrap' >
-                    <a class='cfe_controller_edit' data-pageid='" . CMS::Instance()->page->id . "' href='#'>EDIT &ldquo;" . htmlspecialchars($controllerConfig->title) . "&rdquo;</a>
+                    <a class='cfe_controller_edit' id='editpointid_" . CMS::Instance()->page->id . "' data-pageid='" . CMS::Instance()->page->id . "' href='#'>EDIT &ldquo;" . htmlspecialchars($controllerConfig->title) . "&rdquo;</a>
                 </div>
             " . $page_contents;
         }
@@ -142,7 +142,24 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 }
             }
 
-            $form->display_front_end();
+            require_once(CMSPATH . "/admin/templates/clean/headlibraries.php");
+
+            echo "
+                <style>
+                    html {
+                        /* bulma dumb */
+                        overflow-y: auto !important;
+                    }
+                </style>
+                <form method='post' target='_parent'>
+                    <input type='hidden' name='cfe_widget_fields_submit' value='true'>
+                    <input type='hidden' name='cfe_widgetid' value='$widgetid'>
+            ";
+                    $form->display_front_end();
+            echo "
+                    <button class='button is-success'>Submit</button>
+                </form>
+            ";
 
             die;
 
@@ -207,7 +224,25 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 $options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
                 // set options form values from json stored in view_configuration
                 $options_form->deserialize_json($page->view_configuration);
-                $options_form->display_front_end();
+
+                require_once(CMSPATH . "/admin/templates/clean/headlibraries.php");
+
+                echo "
+                    <style>
+                        html {
+                            /* bulma dumb */
+                            overflow-y: auto !important;
+                        }
+                    </style>
+                    <form method='post' target='_parent'>
+                        <input type='hidden' name='cfe_controller_fields_submit' value='true'>
+                        <input type='hidden' name='cfe_pageid' value='$pageid'>
+                ";
+                    $options_form->display_front_end();
+                echo "
+                        <button class='button is-success'>Submit</button>
+                    </form>
+                ";
             } else {
                 die;
             }
@@ -306,7 +341,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                         }
 
                         .cfe_widget_dialog {
-                            max-width: 75%;
+                            /* max-width: 75%; */
 
                             &::backdrop {
                                 background: rgba(0,0,0,0.8);
@@ -384,7 +419,34 @@ class Plugin_core_frontend_editbutton extends Plugin {
                                         formData.append("cfe_pageid", e.target.dataset.pageid);
                                     }
 
-                                    fetch(window.location.href, {
+                                    const queryString = new URLSearchParams(formData).toString();
+                                    //console.log(queryString);
+
+                                    let dialog = document.createElement("dialog");
+                                    document.body.appendChild(dialog);
+                                    dialog.classList.add("cfe_widget_dialog");
+                                    dialog.innerHTML = `
+                                        <h5>${e.target.innerText.replace("EDIT", "EDITING")} <span class="cfe_closeme">X</span></h5>
+                                        <iframe style="min-width: 90vw; max-width: 90vw; max-height: 80vh;" src="${window.location.href.includes("?") ? "&"+queryString : "?"+queryString}"></iframe>
+                                        <br>
+                                    `;
+
+                                    //fix the height hack
+                                    dialog.querySelector("iframe").addEventListener("load", (ei)=>{
+                                        ei.target.height = ei.target.contentWindow.document.body.scrollHeight+"px";
+                                        ei.target.contentWindow.document.querySelector("form").setAttribute("action", window.location.href+"#"+e.target.id);
+                                    })
+
+                                    dialog.querySelector(".cfe_closeme").addEventListener("click", (e)=>{
+                                        let parentDialog = e.target.closest("dialog");
+                                        parentDialog.close();
+                                        document.body.removeChild(parentDialog);
+                                        window.location.reload(); //reloading because readding the js would potentially cause issues
+                                    });
+
+                                    dialog.showModal();
+
+                                    /* fetch(window.location.href, {
                                         method: "POST",
                                         body: formData,
                                     }).then((response) => {
@@ -436,7 +498,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                                     }).catch((e)=>{
                                         alert("Failed to Load Controller/Widget Editor");
                                         window.location.reload();
-                                    });
+                                    }); */
                                 }
                             });
                         })
