@@ -434,7 +434,12 @@ class Plugin_core_frontend_editbutton extends Plugin {
                                     //fix the height hack
                                     dialog.querySelector("iframe").addEventListener("load", (ei)=>{
                                         ei.target.height = ei.target.contentWindow.document.body.scrollHeight+"px";
-                                        ei.target.contentWindow.document.querySelector("form").setAttribute("action", window.location.href+"#"+e.target.id);
+                                        let link = window.location.href;
+                                        if(link.includes("#")) {
+                                            link = link.split("#")[0];
+                                        }
+
+                                        ei.target.contentWindow.document.querySelector("form").setAttribute("action", link+"#"+e.target.id);
                                     })
 
                                     dialog.querySelector(".cfe_closeme").addEventListener("click", (e)=>{
