@@ -86,7 +86,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $contentdata = Input::getvar("cfe_contentdata");
 
             if(!$contentid || !$contenttype || !$contentfield || !$contentdata) {
-                http_response_code(500); //500 so js fetch catch works
+                http_response_code(500); 
                 die;
             }
 
@@ -99,7 +99,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
             //safety check that we arent getting a mess
             if(!in_array($contentfield, $fieldNames)) {
-                http_response_code(500); //500 so js fetch catch works
+                http_response_code(500); 
                 die;
             }
 
@@ -118,12 +118,10 @@ class Plugin_core_frontend_editbutton extends Plugin {
         if(Input::getvar("cfe_widget_fields")) {
             ob_get_clean();
 
-            //header('Content-Type: application/json; charset=utf-8');
-
             $widgetid = Input::getvar("cfe_widgetid");
 
             if(!$widgetid) {
-                http_response_code(500); //500 so js fetch catch works
+                http_response_code(500);
                 die;
             }
 
@@ -170,7 +168,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $widgetid = Input::getvar("cfe_widgetid");
 
             if(!$widgetid) {
-                http_response_code(500); //500 so js fetch catch works
+                http_response_code(500); 
                 die;
             }
 
@@ -208,7 +206,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $pageid = Input::getvar("cfe_pageid");
 
             if(!$pageid) {
-                http_response_code(500); //500 so js fetch catch works
+                http_response_code(500); 
                 die;
             }
 
@@ -256,7 +254,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $pageid = Input::getvar("cfe_pageid");
 
             if(!$pageid) {
-                http_response_code(500); //500 so js fetch catch works
+                http_response_code(500); 
                 die;
             }
 
@@ -284,38 +282,6 @@ class Plugin_core_frontend_editbutton extends Plugin {
         }
     }
 
-    private function generate_editor_nav_bar($data) {
-        ob_start();
-            ?>
-                <section class="cfe_design">
-                    <ul class="nb_nav">
-                        <li class="nb_item nb_has_dd">
-                            A
-                            <ul class="nb_dd">
-                                <li class="nb_dd_item"><a href="https://holtbosse.com/" target="_blank">Holt Bosse</a></li>
-                                <li class="nb_dd_item"><a href="https://alba.holtbosse.com/" target="_blank">Alba</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="nb_item"><a href="<?php echo Config::uripath() . "/"; ?>">Home</a></li>
-                        <li class="nb_item"><a href="#">Edit Page</a></li>
-
-                        <li class="nb_item nb_has_dd">
-                            New
-                            <ul class="nb_dd">
-                                <li class="nb_dd_item"><a href="#">Page</a></li>
-                                <li class="nb_dd_item"><a href="#">Widget</a></li>
-                                <li class="nb_dd_item"><a href="#">Stuff?</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="nb_item nb_end">Welcome, <?php echo CMS::Instance()->user->username; ?></li>
-                    </ul>
-                </section>
-            <?php
-        return ob_get_clean();
-    }
-
     public function handle_frontend_render($page_contents, $params) {
         $data = $this->get_data();
 
@@ -341,7 +307,6 @@ class Plugin_core_frontend_editbutton extends Plugin {
                         }
 
                         .cfe_widget_dialog {
-                            /* max-width: 75%; */
 
                             &::backdrop {
                                 background: rgba(0,0,0,0.8);
@@ -451,59 +416,6 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
                                     dialog.showModal();
 
-                                    /* fetch(window.location.href, {
-                                        method: "POST",
-                                        body: formData,
-                                    }).then((response) => {
-                                        if(response.ok) {
-                                            return response.text();
-                                        } else {
-                                            throw new Error('Failed to Load Controller/Widget Editor');
-                                        }
-                                    }).then((data) => {
-                                        //console.log(data);
-
-                                        let dialog = document.createElement("dialog");
-                                        document.body.appendChild(dialog);
-                                        dialog.innerHTML = `
-                                            <h5>${e.target.innerText.replace("EDIT", "EDITING")} <span class="cfe_closeme">X</span></h5>
-                                            <form method="post">
-                                                <input type='hidden' name='${ isWidget ? "cfe_widget_fields_submit" : "cfe_controller_fields_submit"}' value='true'>
-                                                <input type="hidden" name="${ isWidget ? "cfe_widgetid" : "cfe_pageid"}" value="${isWidget ? e.target.dataset.widgetid : e.target.dataset.pageid}">
-                                                ${data}
-                                                <br><br>
-                                                <button type="submit">Submit</submit>
-                                            </form>
-                                        `;
-
-                                        dialog.classList.add("cfe_widget_dialog");
-
-                                        //fix injected script tags
-                                        Array.from(dialog.querySelectorAll("script")).forEach( oldScriptEl => {
-                                            const newScriptEl = document.createElement("script");
-                                            
-                                            Array.from(oldScriptEl.attributes).forEach( attr => {
-                                                newScriptEl.setAttribute(attr.name, attr.value) 
-                                            });
-                                            
-                                            const scriptText = document.createTextNode(oldScriptEl.innerHTML);
-                                            newScriptEl.appendChild(scriptText);
-                                            
-                                            oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
-                                        });
-
-                                        dialog.querySelector(".cfe_closeme").addEventListener("click", (e)=>{
-                                            let parentDialog = e.target.closest("dialog");
-                                            parentDialog.close();
-                                            document.body.removeChild(parentDialog);
-                                            window.location.reload(); //reloading because readding the js would potentially cause issues
-                                        });
-
-                                        dialog.showModal();
-                                    }).catch((e)=>{
-                                        alert("Failed to Load Controller/Widget Editor");
-                                        window.location.reload();
-                                    }); */
                                 }
                             });
                         })
@@ -512,12 +424,8 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $contents = ob_get_clean();
 
             CMS::Instance()->head_entries[] = $contents;
-            //CMS::Instance()->head_entries[] = "<style>" . file_get_contents(CMSPATH . "/plugins/core_frontend_editbutton/style.css") . "</style>";
 
             $this->handle_api_requests($data);
-
-            //$edit_navbar = $this->generate_editor_nav_bar($data);
-            //$page_contents = $edit_navbar . $page_contents;
         }
 
         return $page_contents;
