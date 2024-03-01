@@ -467,9 +467,13 @@ final class CMS {
 		// called by template index.php to display main content
 
 		// determine controller (if any)
-		$controller = $this->get_controller();
-		if ($controller) {
-			include_once (CURPATH . "/controllers/" . $controller . "/controller.php");
+		$controllerName = $this->get_controller();
+		if ($controllerName) {
+			ob_start();
+				include_once (CURPATH . "/controllers/" . $controllerName . "/controller.php");
+			$output = ob_get_clean();
+			$output = Hook::execute_hook_filters('on_controller_render', $output, $controllerName);
+			echo $output;
 		}
 		else {
 			// no controller - pages don't require one, just means that

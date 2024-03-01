@@ -1,0 +1,52 @@
+.cfe_design {
+    --page_background: #121212;
+    --content_background: #1e1e1e;
+    --text_color: #aaa;
+    --accent_text_color: #0a8dd1;
+
+    
+    & .nb_nav {
+        list-style-type: none;
+        margin: 0;
+        padding: 0 0.25rem;
+    
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        background: var(--content_background);
+        color: var(--text_color);
+
+        & .nb_end {
+            margin-left: auto;
+        }
+
+        & a {
+            color: var(--accent_text_color);
+        }
+
+        & .nb_has_dd:hover .nb_dd   {
+            display: block;
+        }
+
+        & .nb_item {
+            padding: 0.25rem 0;
+        }
+
+        & .nb_dd {
+            display: none;
+            position: absolute;
+            margin-top: 0.25rem;
+            margin-left: -0.25rem;
+            z-index: 9999999999999999999999999999999999999999;
+    
+            background: var(--content_background);
+            color: var(--text_color);
+
+            & .nb_dd_item {
+                padding: 0.1rem 0.5rem;
+            }
+        }
+    }
+
+}
