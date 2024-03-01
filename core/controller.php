@@ -41,4 +41,11 @@ class Controller {
 			}
 		}
 	}
+
+	public function get_controller_config() {
+		$ePath = explode("/", $this->path);
+		$controllerLocation = $ePath[sizeof($ePath)-1];
+
+		return DB::fetch("SELECT * FROM content_types WHERE controller_location = ?", $controllerLocation);
+	}
 }
