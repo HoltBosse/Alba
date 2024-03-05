@@ -12,16 +12,16 @@ class Field_TagMultiple extends Field {
 		$this->default = "";
 		$this->content_type="";
 		$this->type = "TagMultiple";
-		$this->$tag_cache = [];
+		$this->tag_cache = [];
 	}
 
 	private function get_parent_tag($input) {
 		if ($input->parent != 0) {
-			if($this->$tag_cache[$input->parent]) {
-				return $this->$tag_cache[$input->parent];
+			if($this->tag_cache[$input->parent]) {
+				return $this->tag_cache[$input->parent];
 			} else {
 				$parent_tag = DB::fetch("SELECT * FROM tags WHERE id=?", $input->parent);
-				$this->$tag_cache[$parent_tag->id] = $parent_tag;
+				$this->tag_cache[$parent_tag->id] = $parent_tag;
 				return $parent_tag;
 			}
 		} else {
