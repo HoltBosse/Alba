@@ -170,6 +170,7 @@ class Field_Image extends Field {
 			document.getElementById('clear_media_selector_search').addEventListener('click',function(e){
 				document.getElementById('media_selector_modal_search').value="";
 				window.cur_media_searchtext = null;
+				window.cur_media_page = 1;
 				fetch_images(null, null); // string, no tags, num pages, always page 1
 			});
 			// handle pages
