@@ -28,8 +28,9 @@ if ($segments[1]=='list_images') {
 				}
 				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
 			}
-			$query.=") LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
+			$query.=")";
 		}
+		$query.=" LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute(["%$searchtext%","%$searchtext%"]);
 		//DB::exec($query, ["%$searchtext%","%$searchtext%"]);

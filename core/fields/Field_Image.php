@@ -146,6 +146,7 @@ class Field_Image extends Field {
 			document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
 				var searchtext = document.getElementById('media_selector_modal_search').value;
 				window.cur_media_page = 1;
+				window.cur_media_searchtext = searchtext ?? null;
 				fetch_images(searchtext, null); // string, no tags
 			});
 			// press return
@@ -153,6 +154,7 @@ class Field_Image extends Field {
 				if (e.key==="Enter") {
 					window.cur_media_page = 1;
 					var searchtext = document.getElementById('media_selector_modal_search').value;
+					window.cur_media_searchtext = searchtext ?? null;
 					fetch_images(searchtext, null); // string, no tags
 				}
 			});
