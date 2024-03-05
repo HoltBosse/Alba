@@ -3,11 +3,65 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 // api style controller - end output
 ob_end_clean();
-
+ob_end_clean(); // not a mistake, a safety net
 // router
 
 $segments = CMS::Instance()->uri_segments;
 $segsize = sizeof($segments);
+
+// handle list api request
+if ($segments[1]=='list_images') {
+	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING'))) ?? null;
+	$searchtext = Input::getvar('searchtext','STRING');
+	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
+	$page = Input::getvar('page','INT') ?? 1;
+	if ($searchtext=='null') {
+		$searchtext=null;
+	}
+	if ($searchtext) {
+		$query = "select * from media where title like ? or alt like ?";
+		if ($mimetypes) {
+			$query.=" AND mimetype in (";
+			for ($n=0; $n<sizeof($mimetypes); $n++) {
+				if ($n>0) {
+					$query .= ",";
+				}
+				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
+			}
+			$query.=") LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
+		}
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(["%$searchtext%","%$searchtext%"]);
+		//DB::exec($query, ["%$searchtext%","%$searchtext%"]);
+	}
+	else {
+		$query = "select * from media";
+		if ($mimetypes) {
+			$query.=" where id>0 ";
+		}
+		if ($mimetypes) {
+			// TODO: ensure valid mimetypes from JSON?
+			$query.=" AND mimetype in (";
+			for ($n=0; $n < sizeof($mimetypes); $n++) {
+				if ($n>0) {
+					$query .= ",";
+				}
+				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
+			}
+			$query.=") ";
+		} 
+		$query .= " ORDER BY id DESC LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page; // newest first, honor (safe) page limit
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute(array());
+	}
+		
+	$list = $stmt->fetchAll();
+	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).'}';
+	exit(0);
+	die();
+}
+
+// end list api
 
 // get width
 if ($segsize>=3) {
