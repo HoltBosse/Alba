@@ -19,9 +19,9 @@ if ($segments[1]=='list_images') {
 		$searchtext=null;
 	}
 	if ($searchtext) {
-		$query = "select * from media where title like ? or alt like ?";
+		$query = "SELECT * FROM `media` WHERE `title` LIKE ? OR alt LIKE ?";
 		if ($mimetypes) {
-			$query.=" AND mimetype in (";
+			$query.=" AND mimetype IN (";
 			for ($n=0; $n<sizeof($mimetypes); $n++) {
 				if ($n>0) {
 					$query .= ",";
@@ -36,7 +36,7 @@ if ($segments[1]=='list_images') {
 		//DB::exec($query, ["%$searchtext%","%$searchtext%"]);
 	}
 	else {
-		$query = "select * from media";
+		$query = "SELECT * FROM `media`";
 		if ($mimetypes) {
 			$query.=" where id>0 ";
 		}
