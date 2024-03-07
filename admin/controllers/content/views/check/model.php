@@ -82,7 +82,7 @@ foreach ($all_content_types as $content_type) {
         $all_og_ids = DB::fetchAll('select id from content where content_type=?',$content_type->id);
         // brute force synch
         // get all required + saveable field names
-        $field_names = ["id","state","ordering","title","alias","content_type","start","end","created_by","updated_by","note","category"];
+        $field_names = ["id","state","ordering","title","alias","content_type","start","end","created_by","created","updated_by","note","category"];
         foreach ($custom_fields->fields as $f) {
             if (property_exists($f, 'save')) {
                 if ($f->save===false) {
