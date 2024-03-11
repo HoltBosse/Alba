@@ -31,14 +31,12 @@ if ($segments[1]=='list_images') {
 			$query.=")";
 		}
 		$query.=" LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(["%$searchtext%","%$searchtext%"]);
-		//DB::exec($query, ["%$searchtext%","%$searchtext%"]);
+		$list = DB::fetchAll($query, ["%$searchtext%","%$searchtext%"]);
 	}
 	else {
 		$query = "SELECT * FROM `media`";
 		if ($mimetypes) {
-			$query.=" where id>0 ";
+			$query.=" WHERE id>0 ";
 		}
 		if ($mimetypes) {
 			// TODO: ensure valid mimetypes from JSON?
@@ -52,11 +50,10 @@ if ($segments[1]=='list_images') {
 			$query.=") ";
 		} 
 		$query .= " ORDER BY id DESC LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page; // newest first, honor (safe) page limit
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array());
+		$list = DB::fetchAll($query);
 	}
 		
-	$list = $stmt->fetchAll();
+	//$list = $stmt->fetchAll();
 	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).'}';
 	exit(0);
 	die();
