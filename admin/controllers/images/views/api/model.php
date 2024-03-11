@@ -2,6 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
+ob_end_clean(); // do it again, we may be inside another buffer due to reasons
 
 // TODO: endure logged in user is allowed to actually perform these tasks!
 
@@ -162,55 +163,6 @@ if ($action=='delete') {
 		echo '{"success":0,"msg":"Unable to remove image(s) from database"}';
 		exit(0);
 	}
-}
-
-if ($action=='list_images') {
-	// todo: pagination / search
-	
-	$searchtext = Input::getvar('searchtext','STRING');
-	if ($searchtext=='null') {
-		$searchtext=null;
-	}
-	if ($searchtext) {
-		$query = "select * from media where title like ? or alt like ?";
-		if ($mimetypes) {
-			$query.=" AND mimetype in (";
-			for ($n=0; $n<sizeof($mimetypes); $n++) {
-				if ($n>0) {
-					$query .= ",";
-				}
-				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
-			}
-			$query.=") ";
-		}
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(["%$searchtext%","%$searchtext%"]);
-		//DB::exec($query, ["%$searchtext%","%$searchtext%"]);
-	}
-	else {
-		$query = "select * from media";
-		if ($mimetypes) {
-			$query.=" where id>0 ";
-		}
-		if ($mimetypes) {
-			// TODO: ensure valid mimetypes from JSON?
-			$query.=" AND mimetype in (";
-			for ($n=0; $n < sizeof($mimetypes); $n++) {
-				if ($n>0) {
-					$query .= ",";
-				}
-				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
-			}
-			$query.=") ";
-		} 
-		$query .= " ORDER BY id DESC"; // newest first
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array());
-	}
-		
-	$list = $stmt->fetchAll();
-	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).'}';
-	exit(0);
 }
 
 if ($action=='rename_image') {
