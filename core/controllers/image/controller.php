@@ -11,7 +11,7 @@ $segsize = sizeof($segments);
 
 // handle list api request
 if ($segments[1]=='list_images') {
-	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING'))) ?? null;
+	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING') ?? [])) ?? null;
 	$searchtext = Input::getvar('searchtext','STRING');
 	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
 	$page = Input::getvar('page','INT') ?? 1;
@@ -22,12 +22,8 @@ if ($segments[1]=='list_images') {
 		$query = "SELECT * FROM `media` WHERE `title` LIKE ? OR alt LIKE ?";
 		if ($mimetypes) {
 			$query.=" AND mimetype IN (";
-			for ($n=0; $n<sizeof($mimetypes); $n++) {
-				if ($n>0) {
-					$query .= ",";
-				}
-				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
-			}
+			$result = "'" . implode ( "', '", $mimetypes ) . "'";
+			$query .= $result;
 			$query.=")";
 		}
 		$query.=" LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;

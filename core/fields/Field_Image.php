@@ -147,7 +147,7 @@ class Field_Image extends Field {
 				var searchtext = document.getElementById('media_selector_modal_search').value;
 				window.cur_media_page = 1;
 				window.cur_media_searchtext = searchtext ?? null;
-				fetch_images(searchtext, null); // string, no tags
+				fetch_images(searchtext); // string, no tags
 			});
 			// press return
 			document.getElementById('media_selector_modal_search').addEventListener('keyup',function(e){
@@ -155,7 +155,7 @@ class Field_Image extends Field {
 					window.cur_media_page = 1;
 					var searchtext = document.getElementById('media_selector_modal_search').value;
 					window.cur_media_searchtext = searchtext ?? null;
-					fetch_images(searchtext, null); // string, no tags
+					fetch_images(searchtext); // string, no tags
 				}
 			});
 			document.addEventListener('keyup',function(e){
@@ -171,12 +171,12 @@ class Field_Image extends Field {
 				document.getElementById('media_selector_modal_search').value="";
 				window.cur_media_searchtext = null;
 				window.cur_media_page = 1;
-				fetch_images(null, null); // string, no tags, num pages, always page 1
+				fetch_images(); // string, no tags, num pages, always page 1
 			});
 			// handle pages
 			document.getElementById('next_page').addEventListener('click',function(e){
 				window.cur_media_page++;
-				fetch_images(window.cur_media_searchtext, null);
+				fetch_images(window.cur_media_searchtext);
 			});
 			document.getElementById('prev_page').addEventListener('click',function(e){
 				window.cur_media_page--;
@@ -184,12 +184,12 @@ class Field_Image extends Field {
 					window.cur_media_page=1;
 					document.getElementById('prev_page').setAttribute('disabled',true);
 				}
-				fetch_images(window.cur_media_searchtext, null);
+				fetch_images(window.cur_media_searchtext);
 			});
 
-			fetch_images (null, null); // no search, all tags
+			fetch_images (); // no search, all tags
 
-			function fetch_images(searchtext, taglist) {
+			function fetch_images(searchtext=null, taglist=null) {
 			
 				// fetch images
 				postAjax('<?php echo Config::uripath();?>/image/list_images', {"action":"list_images","page":window.cur_media_page,"images_per_page":<?php echo $this->images_per_page;?>,"searchtext":searchtext<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>}, function(data) { 
