@@ -10,6 +10,7 @@ class Field_Honeypot extends Field {
 		$this->content_type="";
 		$this->nowrap = true;
 		$this->save=false;
+		$this->autocomplete = "nothingtoseehere";
 	}
 
 	public function display() {
@@ -17,13 +18,15 @@ class Field_Honeypot extends Field {
 		// tabindex is required as -1 for accessibility reasons, so might tip off some bots, but can't hurt screen readers etc
 		// set value to be ' ' (space) - allows us to use 'required' client-side, but whitespace might be more enticing to replace 
 		// set display/style attributes via js as another layer of obfuscation
+		// position: take up no space in document flow
+		// clipPath: sneaky invisible method that might hide from most bots
 		?>
-		<input required placeholder="Important information" type='text' tabindex="-1" autocomplete="nothingtoseehere" id='<?php echo $this->id;?>' <?php echo $this->get_rendered_name();?> value=' '/>
+		<input required placeholder="Important information" type='text' tabindex="-1" autocomplete="<?php echo $this->autocomplete;?>" id='<?php echo $this->id;?>' <?php echo $this->get_rendered_name();?> value=' '/>
 		<script>
 			let hp = document.getElementById('<?php echo $this->id;?>') ?? null;
 			if (hp) {
-				hp.style.position = 'absolute'; // take up no space in document flow
-				hp.style.clipPath = 'circle(0)'; // sneaky invisible method that might hide from most bots
+				hp.style.position = 'absolute'; 
+				hp.style.clipPath = 'circle(0)'; 
 			}
 		</script>
 		<?php
@@ -44,6 +47,7 @@ class Field_Honeypot extends Field {
 		$this->save = $config->save ?? false;
 		$this->fake_thanks_url ?? null;
 		$this->logic = $config->logic ?? ''; // make sure to set nowrap to false explicitly for this if logic is used - also use name+id fields in json
+		$this->autocomplete = $config->autocomplete ?? "nothingtoseehere";
 	}
 
 	public function validate() {
