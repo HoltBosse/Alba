@@ -104,6 +104,8 @@ function in_group ($group_id, $edit_user) {
 	echo "<script>new SlimSelect({ select: '#usertags' });</script>"; 
 	?>
 
+	<?php Hook::execute_hook_actions('display_user_fields_form',$edit_user); ?>
+
 	<?php if ($custom_user_fields_form) {
 		$custom_user_fields_form->display_front_end();
 	} ?>

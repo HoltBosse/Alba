@@ -29,7 +29,7 @@ $custom_fields = JSON::load_obj_from_file(CMSPATH . "/custom_user_fields.json");
 if ($custom_fields) {
 	$cols_added = [];
 	$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'custom_user_fields'";
-	$cols = DB::fetchallcolumn($query);
+	$cols = DB::fetchall($query, [], ["mode"=>PDO::FETCH_COLUMN]);
 	foreach ($custom_fields->fields as $f) {
 		if (!in_array($f->name, $cols)) {
 			// check if column is saveable
@@ -41,7 +41,7 @@ if ($custom_fields) {
 			}
 			// new column needed, try and get type from JSON obj
 			$coltype = $f->coltype ?? null ? $f->coltype : " mediumtext " ;
-			DB::exec('ALTER TABLE `custom_user_fields` ADD COLUMN ' . $f->name . ' ' . $coltype);
+			DB::exec('ALTER TABLE `custom_user_fields` ADD COLUMN `' . $f->name . '` ' . $coltype );
 			// add to report array
 			$cols_added[] = [$f->name];
 		}
@@ -72,16 +72,16 @@ $new_custom_fields_c = DB::fetch('SELECT COUNT(*) AS c FROM custom_user_fields')
 if ($old_custom_user_fields_table_exists && $custom_fields && ($user_c != $new_custom_fields_c)) {
 	// have old custom_fields table and we have user_fields in a json file
 	// also mismatch in number of rows vs user table
-	$all_user_ids = DB::fetchallcolumn('select id from users');
+	$all_user_ids = DB::fetchall('select id from users', [], ["mode"=>PDO::FETCH_COLUMN]);
 	$count = 0;
 	foreach ($all_user_ids as $user_id) {
 		// check if user data migrated
-		$already_done = DB::fetch('select user_id from custom_user_fields where user_id=?',[$user_id])->user_id ?? null;
+		$already_done = DB::fetch('SELECT user_id FROM `custom_user_fields` WHERE `user_id`=?',[$user_id])->user_id ?? null;
 		if ($already_done) {
 			continue; // skip user
 		}
 		// get all old custom user data
-		$old_user_fields_for_user = DB::fetchAll('select * from user_fields where user_id=?',[$user_id]);
+		$old_user_fields_for_user = DB::fetchAll('SELECT * FROM `user_fields` WHERE `user_id`=?',[$user_id]);
 		$done_at_least_one = false;
 		foreach ($custom_fields->fields as $f) {
 			if (!in_array($f->name, $cols)) {

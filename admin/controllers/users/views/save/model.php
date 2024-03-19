@@ -11,7 +11,7 @@ $user_ok = $user->load_from_post();
 if (!$user_ok) {
 	CMS::Instance()->queue_message('Failed to create user object from form data','danger',Config::uripath().'/admin/users');
 }
-//$response = Hook::execute_hook_actions('validate_user_fields_form');
+$response = Hook::execute_hook_actions('validate_user_fields_form');
 
 $custom_field_error = false; // only set to true if any errors occur during custom field saving
 
