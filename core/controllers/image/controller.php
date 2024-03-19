@@ -11,7 +11,7 @@ $segsize = sizeof($segments);
 
 // handle list api request
 if ($segments[1]=='list_images') {
-	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING') ?? [])) ?? null;
+	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING') ?? "")) ?? null;
 	$searchtext = Input::getvar('searchtext','STRING');
 	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
 	$page = Input::getvar('page','INT') ?? 1;
