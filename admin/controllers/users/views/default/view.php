@@ -3,40 +3,56 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
 <style>
-table.table {
-	width:100%;
-}
-.position_single_wrap {
-	font-size:70%;
-	padding-top:0.3rem;
-	border-top:1px solid rgba(0,0,0,0.1);
-	margin-top:0.3rem;
-	opacity:0.6;
-}
-span.position_single {
-	font-weight:bold;
-}
+	table.table {
+		width:100%;
+	}
+	.position_single_wrap {
+		font-size:70%;
+		padding-top:0.3rem;
+		border-top:1px solid rgba(0,0,0,0.1);
+		margin-top:0.3rem;
+		opacity:0.6;
+	}
+	span.position_single {
+		font-weight:bold;
+	}
 
 
-div.pull-right {
-	/* display:inline-block; */
-}
-#user_operations {
-	margin-right:2rem;
-}
-.state1 {
-	color:#00d1b2;
-}
-.state0 {
-	color:#f66;
-}
-.hidden_multi_edit {
-	display:none;
-	/* display:inline-block; */
-}
-.user_admin_row.selected {
-	background:rgba(200,255,200,0.3);
-}
+	div.pull-right {
+		/* display:inline-block; */
+	}
+	#user_operations {
+		margin-right:2rem;
+	}
+	.state1 {
+		color:#00d1b2;
+	}
+	.state0 {
+		color:#f66;
+	}
+	.hidden_multi_edit {
+		display:none;
+		/* display:inline-block; */
+	}
+	.user_admin_row.selected {
+		background:rgba(200,255,200,0.3);
+	}
+	.small-pagination-list a {
+		margin: 0;
+	}
+	.small-pagination-list li:not(:last-child) a {
+		border-right: 0px solid transparent;
+		border-top-right-radius: 0px;
+		border-bottom-right-radius: 0px;
+	}
+	.small-pagination-list li:not(:first-child) a {
+		border-top-left-radius: 0px;
+		border-bottom-left-radius: 0px;
+	}
+	.small-pagination-list li a.is-current {
+		font-weight: bold;
+		font-size: 1.075em;
+	}
 </style>
 
 <form id='searchform' action="" method="GET"></form>
@@ -222,25 +238,38 @@ if ($cur_page) {
 ?>
 
 <?php if ($user_count>$pagination_size && !$order_by):?>
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-	<?php if ($cur_page>1):?>
-		<a href='<?=$url_path . "?" . $prev_url_params;?>' class="pagination-previous">Previous</a>
-	<?php endif;?>
-	<?php if ( ($user_count>sizeof($all_users)) && !$order_by && ( ($cur_page*$pagination_size)<$user_count ) ):?>
-		<a href='<?=$url_path . "?" . $next_url_params;?>' class="pagination-next">Next page</a>
-	<?php endif; ?>
-	<ul class="pagination-list">
-		<?php for ($n=1; $n<=$num_pages; $n++):?>
-			<?php 
-			$url_query_params['page'] = $n;
-			$url_params = http_build_query($url_query_params);
+	<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+		<ul class="pagination-list small-pagination-list">
+			<?php
+				$url_query_params['page'] = 1;
+				$page_one_url_params = http_build_query($url_query_params);
+
+				$url_query_params['page'] = $num_pages;
+				$page_last_url_params = http_build_query($url_query_params);
 			?>
-		<li> 
-			<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='<?=$url_path . "?" . $url_params?>'><?php echo $n;?></a>
-		</li>
-		<?php endfor; ?>
-	</ul>
-</nav>
+			<li> 
+				<a class='pagination-link' href='<?=$url_path . "?" . $page_one_url_params?>'><<</a>
+			</li>
+			<li> 
+				<a class='pagination-link' href='<?=$url_path . "?" . ($cur_page!=1 ? $prev_url_params : $page_one_url_params)?>'><</a>
+			</li>
+			<?php for ($n=($cur_page-2>0 ? $cur_page-2 : 1); $n<=$num_pages && $n<=$cur_page+2; $n++):?>
+				<?php 
+					$url_query_params['page'] = $n;
+					$url_params = http_build_query($url_query_params);
+				?>
+				<li> 
+					<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='<?=$url_path . "?" . $url_params?>'><?php echo $n;?></a>
+				</li>
+			<?php endfor; ?>
+			<li> 
+				<a class='pagination-link' href='<?=$url_path . "?" . ($cur_page!=$num_pages ? $next_url_params : $page_last_url_params)?>'>></a>
+			</li>
+			<li> 
+				<a class='pagination-link' href='<?=$url_path . "?" . $page_last_url_params?>'>>></a>
+			</li>
+		</ul>
+	</nav>
 <?php endif; ?>
 
 <script>
