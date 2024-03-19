@@ -17,7 +17,7 @@ if (!$flat_custom_user_fields_table_exists) {
 	$create_table_query = "
 	CREATE TABLE `custom_user_fields` (
 		`user_id` int(11) NOT NULL,
-		PRIMARY KEY (id)
+		PRIMARY KEY (user_id)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 	$table_created_ok = DB::exec($create_table_query);
 	if (!$table_created_ok) {
@@ -97,8 +97,8 @@ if ($old_custom_user_fields_table_exists && $custom_fields && ($user_c != $new_c
 				foreach ($old_user_fields_for_user as $old_field) {
 					// check if f->name is a col returned from user_fields (old) check
 					if ($old_field->name === $f->name) {
+						$old_value = $old_field->content ?? null;
 						$insert_query = 'INSERT INTO `custom_user_fields` (user_id, ' . $f->name . ') VALUES (?,?) ON DUPLICATE KEY UPDATE ' . $f->name . '=?';
-						//CMS::pprint_r ($insert_query); die();
 						DB::exec($insert_query, [$user_id, $old_value, $old_value]);
 						$done_at_least_one = true;
 						$count++;
