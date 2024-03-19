@@ -106,6 +106,10 @@ function in_group ($group_id, $edit_user) {
 
 	<?php Hook::execute_hook_actions('display_user_fields_form',$edit_user); ?>
 
+	<?php if ($custom_user_fields_form) {
+		$custom_user_fields_form->display_front_end();
+	} ?>
+
 	<div class="clear control">
 		<button type="submit" class="button is-primary">Save</button>
 	</div>
