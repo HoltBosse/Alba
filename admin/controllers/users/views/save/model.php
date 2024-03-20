@@ -48,7 +48,10 @@ if ($custom_user_fields_form) {
 					$field->default = null;
 				}
 			}
-			$result = DB::exec("UPDATE `custom_user_fields` SET `{$field->name}`=? WHERE `user_id`=?", [$field->default, $user->id]);
+			$result = DB::exec(
+				"INSERT INTO `custom_user_fields` (user_id, `{$field->name}`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `{$field->name}`=?",
+				[$user->id, $field->default, $field->default]
+			);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
 				CMS::Instance()->log("Error saving: " . $field->name);
