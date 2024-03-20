@@ -25,7 +25,7 @@ if (!$flat_custom_user_fields_table_exists) {
 	}
 }
 // check for missing custom_user_fields columns based on loaded JSON
-$custom_fields = JSON::load_obj_from_file(CMSPATH . "/custom_user_fields.json");
+$custom_fields = file_exists(CMSPATH . "/custom_user_fields.json") ? JSON::load_obj_from_file(CMSPATH . "/custom_user_fields.json") : null;
 if ($custom_fields) {
 	$cols_added = [];
 	$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'custom_user_fields'";
