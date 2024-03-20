@@ -9,18 +9,20 @@ foreach(File::$image_types as $type => $value) {
     array_push($valid_image_types, "'$type'");
 }
 
+$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
+$cur_page = Input::getvar('page','INT','1');
 
 $searchtext = Input::getvar('searchtext','TEXT',null);
 
-$query = "select * from media where mimetype in (" . implode(",", $valid_image_types) . ") ";
+$query = "FROM media WHERE mimetype IN (" . implode(",", $valid_image_types) . ") ";
+$params = [];
 if ($searchtext) {
-    $query .= " and title like ? or alt like ? or filename like ?";
-    $all_images = DB::fetchall($query, ["%".$searchtext."%", "%".$searchtext."%", "%".$searchtext."%"]);
-}
-else {
-    $all_images = DB::fetchall($query);
+    $query .= " AND title LIKE ? OR alt LIKE ? OR filename LIKE ?";
+    $params = ["%".$searchtext."%", "%".$searchtext."%", "%".$searchtext."%"];
 }
 
+$all_images = DB::fetchall("SELECT * " . $query . " LIMIT " . $pagination_size . " OFFSET " . ($cur_page-1)*$pagination_size, $params);
+$images_count = DB::fetch("SELECT count(*) as count " . $query, $params)->count;
 
 $image_tags = Content::get_applicable_tags ("-1");
 
