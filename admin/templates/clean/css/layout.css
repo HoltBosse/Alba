@@ -356,7 +356,6 @@ label.checkbox {
 h1.title.sticky {
 	position: sticky;
     top: 0;
-    background: white;
     z-index: 2;
     padding-bottom: 0.5em;
 	padding-top: 0.5em;
