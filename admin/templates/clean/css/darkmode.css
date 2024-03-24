@@ -27,4 +27,19 @@
     .fixed-control-bar {
         background-color: var(--bulma-body-background-color) !important;
     }
+
+    /* custom state button */
+    .button.state_button {
+        button {
+            background-color: hsl(var(--bulma-button-h),var(--bulma-button-s),calc(var(--bulma-button-background-l) + var(--bulma-button-background-l-delta))) !important;
+        }
+
+        .navbar-dropdown {
+            z-index: 1;
+
+            form {
+                margin-bottom: 0;
+            }
+        }
+    }
 }
