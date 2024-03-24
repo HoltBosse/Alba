@@ -140,6 +140,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 }
             }
 
+            echo "<html data-theme='light'>";
             require_once(CMSPATH . "/admin/templates/clean/headlibraries.php");
 
             echo "
@@ -223,6 +224,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 // set options form values from json stored in view_configuration
                 $options_form->deserialize_json($page->view_configuration);
 
+                echo "<html data-theme='light'>";
                 require_once(CMSPATH . "/admin/templates/clean/headlibraries.php");
 
                 echo "
