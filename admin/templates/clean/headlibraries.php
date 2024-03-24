@@ -3,13 +3,11 @@ defined('CMSPATH') or die;
 ?>
 
 <script>window.uripath = "<?php echo Config::uripath();?>";</script>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/bulma.min.css"></link>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.0/css/bulma.min.css"></link>
+<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/darkmode.css"></link>
 <link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/dashboard.css"></link>
 <link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/layout.css"></link>
-<?php if(ADMINPATH) { ?>
-    <link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/darkmode.css"></link>
-<?php } ?>
 
 <script src="https://kit.fontawesome.com/e73dd5d55b.js" crossorigin="anonymous"></script>
 
