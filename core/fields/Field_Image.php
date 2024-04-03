@@ -125,7 +125,7 @@ class Field_Image extends Field {
 			media_selector.innerHTML =`
 			<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
 				<div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
-					<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
+					<button style="right: 1rem;" id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
 					<h1 style='color:white;'>Click image or search: </h1>
 					<div class='form-group' style='display:flex; gap:2rem;'>
 						<input id='media_selector_modal_search'/>
