@@ -192,8 +192,19 @@ class Field_Image extends Field {
 			function fetch_images(searchtext=null, taglist=null) {
 			
 				// fetch images
-				postAjax('<?php echo Config::uripath();?>/image/list_images', {"action":"list_images","page":window.cur_media_page,"images_per_page":<?php echo $this->images_per_page;?>,"searchtext":searchtext<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>}, function(data) { 
-					var image_list = JSON.parse(data);
+				fetch('<?php echo Config::uripath();?>/image/list_images',
+					{
+						method: "POST",
+						body: {
+							"action":"list_images",
+							"page":window.cur_media_page,
+							"images_per_page":<?php echo $this->images_per_page;?>,
+							"searchtext":searchtext
+							<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>
+						},
+					}
+				).then((res)=>res.json()).then((data)=>{
+					var image_list = data;//JSON.parse(data);
 					var image_list_markup = "<ul class='media_selector_list single'>";
 					if (image_list.images.length==0) {
 						image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
@@ -255,6 +266,8 @@ class Field_Image extends Field {
 
 						} // else clicked on container not on an anchor or it's children
 					});
+				}).catch((error) => {
+					console.log(error);
 				});
 			}
 		});
