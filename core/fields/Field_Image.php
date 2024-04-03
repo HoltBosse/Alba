@@ -125,7 +125,7 @@ class Field_Image extends Field {
 			media_selector.innerHTML =`
 			<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
 				<div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
-					<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
+					<button style="right: 1rem;" id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
 					<h1 style='color:white;'>Click image or search: </h1>
 					<div class='form-group' style='display:flex; gap:2rem;'>
 						<input id='media_selector_modal_search'/>
@@ -190,10 +190,28 @@ class Field_Image extends Field {
 			fetch_images (); // no search, all tags
 
 			function fetch_images(searchtext=null, taglist=null) {
+
+				let fetchParams = {
+					"action":"list_images",
+					"page":window.cur_media_page,
+					"images_per_page":<?php echo $this->images_per_page;?>,
+					"searchtext":searchtext
+					<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>
+					<?php echo $this->tags ? ',"tags": "' . "$this->tags" . '"' : "";?>
+				};
+
+				let fetchFormData = new FormData();
+				Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
 			
 				// fetch images
-				postAjax('<?php echo Config::uripath();?>/image/list_images', {"action":"list_images","page":window.cur_media_page,"images_per_page":<?php echo $this->images_per_page;?>,"searchtext":searchtext<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>}, function(data) { 
-					var image_list = JSON.parse(data);
+				fetch('<?php echo Config::uripath();?>/image/list_images',
+					{
+						method: "POST",
+						body: fetchFormData,
+					}
+				).then((res)=>res.json()).then((data)=>{
+					console.log(data);
+					var image_list = data;//JSON.parse(data);
 					var image_list_markup = "<ul class='media_selector_list single'>";
 					if (image_list.images.length==0) {
 						image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
@@ -255,6 +273,8 @@ class Field_Image extends Field {
 
 						} // else clicked on container not on an anchor or it's children
 					});
+				}).catch((error) => {
+					console.log(error);
 				});
 			}
 		});
@@ -292,6 +312,7 @@ class Field_Image extends Field {
 		$this->coltype = $config->coltype ?? '';
 		$this->mimetypes = $config->mimetypes ?? null;
 		$this->images_per_page = $config->images_per_page ?? 50;
+		$this->tags = $config->tags ?? null;
 	}
 
 	public function validate() {
