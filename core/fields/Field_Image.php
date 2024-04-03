@@ -190,20 +190,27 @@ class Field_Image extends Field {
 			fetch_images (); // no search, all tags
 
 			function fetch_images(searchtext=null, taglist=null) {
+
+				let fetchParams = {
+					"action":"list_images",
+					"page":window.cur_media_page,
+					"images_per_page":<?php echo $this->images_per_page;?>,
+					"searchtext":searchtext
+					<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>
+					<?php echo $this->tags ? ',"tags": "' . "$this->tags" . '"' : "";?>
+				};
+
+				let fetchFormData = new FormData();
+				Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
 			
 				// fetch images
 				fetch('<?php echo Config::uripath();?>/image/list_images',
 					{
 						method: "POST",
-						body: {
-							"action":"list_images",
-							"page":window.cur_media_page,
-							"images_per_page":<?php echo $this->images_per_page;?>,
-							"searchtext":searchtext
-							<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>
-						},
+						body: fetchFormData,
 					}
 				).then((res)=>res.json()).then((data)=>{
+					console.log(data);
 					var image_list = data;//JSON.parse(data);
 					var image_list_markup = "<ul class='media_selector_list single'>";
 					if (image_list.images.length==0) {
@@ -305,6 +312,7 @@ class Field_Image extends Field {
 		$this->coltype = $config->coltype ?? '';
 		$this->mimetypes = $config->mimetypes ?? null;
 		$this->images_per_page = $config->images_per_page ?? 50;
+		$this->tags = $config->tags ?? null;
 	}
 
 	public function validate() {
