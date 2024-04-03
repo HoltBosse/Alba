@@ -15,16 +15,27 @@ if ($segments[1]=='list_images') {
 	$searchtext = Input::getvar('searchtext','STRING');
 	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
 	$page = Input::getvar('page','INT') ?? 1;
+	$tags = Input::getvar("tags");
 	if ($searchtext=='null') {
 		$searchtext=null;
 	}
 	if ($searchtext) {
-		$query = "SELECT * FROM `media` WHERE `title` LIKE ? OR alt LIKE ?";
+		$query = "SELECT * FROM `media` WHERE (`title` LIKE ? OR alt LIKE ?)";
 		if ($mimetypes) {
 			$query.=" AND mimetype IN (";
 			$result = "'" . implode ( "', '", $mimetypes ) . "'";
 			$query .= $result;
 			$query.=")";
+		}
+		if($tags) {
+			$explodedTags = explode(",", $tags);
+			foreach($explodedTags as &$tag) {
+				$tag = CMS::Instance()->pdo->quote($tag);
+				unset($tag);
+			}
+			$wrappedTags = implode(",", $explodedTags);
+			
+			$query.= " AND id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
 		}
 		$query.=" LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
 		$list = DB::fetchAll($query, ["%$searchtext%","%$searchtext%"]);
@@ -44,13 +55,23 @@ if ($segments[1]=='list_images') {
 				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
 			}
 			$query.=") ";
-		} 
+		}
+		if($tags && !$mimetypes) {
+			$explodedTags = explode(",", $tags);
+			foreach($explodedTags as &$tag) {
+				$tag = CMS::Instance()->pdo->quote($tag);
+				unset($tag);
+			}
+			$wrappedTags = implode(",", $explodedTags);
+			
+			$query.= " WHERE id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
+		}
 		$query .= " ORDER BY id DESC LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page; // newest first, honor (safe) page limit
 		$list = DB::fetchAll($query);
 	}
 		
 	//$list = $stmt->fetchAll();
-	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).'}';
+	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).', "tags": "' . ($tags ?? "none") . '", "query": "' . $query . '"}';
 	exit(0);
 	die();
 }

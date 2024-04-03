@@ -13,6 +13,7 @@ if (!$user_ok) {
 }
 $response = Hook::execute_hook_actions('validate_user_fields_form');
 
+$success = $user->save();
 $custom_field_error = false; // only set to true if any errors occur during custom field saving
 
 $custom_user_fields_form = new Form(CMSPATH . "/custom_user_fields.json");
@@ -61,8 +62,6 @@ if ($custom_user_fields_form) {
 	}
 }
 
-
-$success = $user->save();
 if ($success) {
 	Hook::execute_hook_actions('on_user_save',$user);
 	if (!$custom_field_error) {
