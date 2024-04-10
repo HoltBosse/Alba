@@ -98,8 +98,15 @@ class Field_ContentPickerOrdered extends Field {
                             <ul class='twocol_picker_ul'>
                                 <?php foreach ($options_all_articles as $item):?>
                                     <li 
-									<?php if (in_array($item->id, $existing_arr)) { echo " style='display:none;' ";} ?>
-                                    class='draggable_content_item twocol_picker_source_item' 
+									<?php if (in_array($item->id, $existing_arr)) { 
+										echo " style='display:none;' ";
+										$picked_class = " picked";
+									}
+									else {
+										$picked_class = "";
+									}
+									?>
+                                    class='draggable_content_item twocol_picker_source_item <?php echo $picked_class; ?>' 
                                     draggable 
                                     data-content_id='<?php echo $item->id;?>'
                                     data-content_title='<?php echo $item->title;?>'
@@ -147,7 +154,7 @@ class Field_ContentPickerOrdered extends Field {
 						if (searchstring) {
 							// filter
 							picker_<?php echo $this->id;?>.querySelectorAll('.twocol_picker_source_item').forEach(el => {
-								if (el.innerText.toLowerCase().includes(searchstring.toLowerCase())) {
+								if (el.innerText.toLowerCase().includes(searchstring.toLowerCase()) && !el.classList.contains('picked')) {
 									el.style.display = 'block';
 								}
 								else {
@@ -158,7 +165,12 @@ class Field_ContentPickerOrdered extends Field {
 						else {
 							// show all
 							picker_<?php echo $this->id;?>.querySelectorAll('.twocol_picker_source_item').forEach(el => {
-								el.style.display = 'block';
+								if (el.classList.contains('picked')) {
+									el.style.display = 'none';
+								}
+								else {
+									el.style.display = 'block';
+								}
 							});
 						}
 					});
@@ -167,7 +179,12 @@ class Field_ContentPickerOrdered extends Field {
 						e.target.closest('.contentpicker_search_wrap').querySelector('.pickersearch').value = '';
 						// show all
 						picker_<?php echo $this->id;?>.querySelectorAll('.twocol_picker_source_item').forEach(el => {
-							el.style.display = 'block';
+							if (el.classList.contains('picked')) {
+								el.style.display = 'none';
+							}
+							else {
+								el.style.display = 'block';
+							}
 						});
 					});
 					// apply drag drop to server rendered lis
@@ -245,6 +262,7 @@ class Field_ContentPickerOrdered extends Field {
 							hidden_input.value = csv_arr.join(",");
 							// hide original clicked element - ready to restore if clicked in right column
 							e.target.style.display='none';
+							e.target.classList.add('picked');
                         }
 						else {
 							if (e.target.nodeName=="LI") {
@@ -265,8 +283,17 @@ class Field_ContentPickerOrdered extends Field {
 								let picker = e.target.closest('.twocol_picker');
 								let left_col_el = picker.querySelector('.twocol_picker_left li[data-content_id="' + id + '"]');
 								left_col_el.style.display = 'block';
+								left_col_el.classList.remove('picked');
 								// remove right hand element, no longer needed
 								e.target.remove();
+								// check if matches filter
+								let searchstring = picker_<?php echo $this->id;?>.querySelector('.pickersearch')?.value;
+								if (searchstring) {
+									if (!left_col_el.innerText.toLowerCase().includes(searchstring.toLowerCase()) ) {
+										// no match - hide
+										left_col_el.style.display = 'none';
+									}
+								}
 							}
 						}
                     });
