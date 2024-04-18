@@ -335,7 +335,13 @@ table.dragging .before_after_wrap {
 	<table class='table'>
 		<thead>
 			<tr>
-				<th>State</th><th>Title</th>
+				<th>State</th>
+				<?php
+					if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+						echo "<th>Id</th>";
+					}
+				?>
+				<th>Title</th>
 
 				<?php if ($content_list_fields):?>
 					<?php foreach ($content_list_fields as $content_list_field):?>
@@ -426,6 +432,11 @@ table.dragging .before_after_wrap {
 						</div>
 						</div>
 					</td>
+					<?php
+						if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+							echo "<td>$content_item->id</td>";
+						}
+					?>
 					<td>
 						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo $content_item->title; ?></a>
 						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
