@@ -157,6 +157,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<table id='all_users_table' class="table">
 		<thead>
 			<th>Status</th>
+			<?php
+				if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+					echo "<th>Id</th>";
+				}
+			?>
 			<th>Name</th>
 			<th>Email</th>
 			<?php if (!$group_id):?><th>Group(s)</th><?php endif; ?>
@@ -180,6 +185,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						} ?>
 					</button>
 				</td>
+				<?php
+					if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+						echo "<td>$user->id</td>";
+					}
+				?>
 				<td>
 					<a class='edit_user' href='<?php echo Config::uripath();?>/admin/users/edit/<?php echo $user->id;?>'><?php echo $user->username; ?></a>
 				</td>
