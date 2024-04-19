@@ -19,7 +19,11 @@ require_once (CMSPATH . "/admin/admin_config.php");
 if (Config::debug()) {
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
-	error_reporting(E_ALL);
+	if(Config::debugwarnings()) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ERROR);
+	}
 }
 
 
