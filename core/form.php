@@ -20,7 +20,7 @@ class Form {
 			$obj = json_decode($this->json);
 		} else {
 			echo "<h5>File {$path} not found or invalid data passed</h5>";
-			if (Config::debug()) {
+			if (Config::debugwarnings()) {
 				echo "<p class='help'>Called from /core/form.php load_json function</p>";
 			}
 		}

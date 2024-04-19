@@ -75,6 +75,6 @@
 	<footer>
 		<?php CMS::Instance()->render_widgets('Footer');?>
 	</footer>
-	<?php if (Config::debug()) { CMS::Instance()->showinfo();} ?>
+	<?php if (Config::debugwarnings()) { CMS::Instance()->showinfo();} ?>
 </body>
 </html>

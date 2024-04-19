@@ -7,7 +7,7 @@ $segments = CMS::Instance()->uri_segments;
 $view_id = CMS::Instance()->page->view;
 CMS::Instance()->page->view_configuration_object = json_decode(CMS::Instance()->page->view_configuration);
 
-if (Config::debug()) {
+if (Config::debugwarnings()) {
 	echo "<hr>";
 	echo "<h5>View Config:</h5>";
 	CMS::pprint_r (CMS::Instance()->page->view_configuration_object);

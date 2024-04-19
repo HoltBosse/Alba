@@ -33,8 +33,9 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
-				CMS::pprint_r(debug_backtrace()); die();
-				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r(debug_backtrace());
+				die();
 			}
 			else {
 				//CMS::pprint_r(debug_backtrace()); die();
@@ -60,8 +61,9 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
-				CMS::pprint_r(debug_backtrace()); die();
-				CMS::show_error("Error performing query: " . $e->getMessage());
+				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r(debug_backtrace());
+				die();
 			}
 			else {
 				//CMS::pprint_r(debug_backtrace()); die();
@@ -86,8 +88,9 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
-				CMS::pprint_r(debug_backtrace()); die();
-				CMS::show_error("Error performing query: " . $e->getMessage());
+				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r(debug_backtrace());
+				die();
 			}
 			else {
 				//CMS::pprint_r(debug_backtrace()); die();

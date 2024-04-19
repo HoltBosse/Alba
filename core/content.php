@@ -19,7 +19,13 @@ class Content {
 
 	public static function get_table_name_for_content_type($type_id) {
 		if (!is_numeric($type_id)) {
-			CMS::show_error('Unable to determine table name for non-numeric content type');
+			if (Config::debug()) {
+				CMS::pprint_r("Unable to determine table name for non-numeric content type");
+				CMS::pprint_r(debug_backtrace());
+				die();
+			} else {
+				CMS::Instance()->show_error('Unable to determine table name for non-numeric content type');
+			}
 		}
 		else {
 			$location = Content::get_content_location($type_id);
@@ -29,7 +35,13 @@ class Content {
 				return $table_name;
 			}
 			else {
-				CMS::show_error('Unable to determine table name for content id ' . $type_id);
+				if (Config::debug()) {
+					CMS::pprint_r('Unable to determine table name for content id ' . $type_id);
+					CMS::pprint_r(debug_backtrace());
+					die();
+				} else {
+					CMS::Instance()->show_error('Unable to determine table name for content id ' . $type_id);
+				}
 			}
 		}
 	}
@@ -63,7 +75,13 @@ class Content {
 				// try and get type id
 				$content_type = Content::get_content_type_id($content_type);
 				if (!$content_type) {
-					CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					if (Config::debug()) {
+						CMS::pprint_r('Unable to determine content type when retrieving count');
+						CMS::pprint_r(debug_backtrace());
+						die();
+					} else {
+						CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					}
 				}
 			}
 			return DB::fetch('select count(*) as c from content where (title like ? OR note like ?) and state>0 and content_type=?',array($like,$like,$content_type))->c;
@@ -77,7 +95,13 @@ class Content {
 				// try and get type id
 				$content_type = Content::get_content_type_id($content_type);
 				if (!$content_type) {
-					CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					if (Config::debug()) {
+						CMS::pprint_r('Unable to determine content type when retrieving count');
+						CMS::pprint_r(debug_backtrace());
+						die();
+					} else {
+						CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					}
 				}
 			}
 			return DB::fetch('select count(*) as c from content where state>? and content_type=?',array($state, $content_type))->c;

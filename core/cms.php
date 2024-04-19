@@ -19,7 +19,11 @@ require_once (CMSPATH . "/admin/admin_config.php");
 if (Config::debug()) {
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
-	error_reporting(E_ALL);
+	if(Config::debugwarnings()) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ERROR);
+	}
 }
 
 
@@ -478,7 +482,7 @@ final class CMS {
 		else {
 			// no controller - pages don't require one, just means that
 			// only widgets will be rendered on page
-			if (Config::debug()) {
+			if (Config::debugwarnings()) {
 				echo "<h5>No controller found for URL. (normal!)</h5>";
 			}
 		}
@@ -667,7 +671,7 @@ final class CMS {
 						$this->raise_404();
 					}
 				}
-				if (Config::debug()) {
+				if (Config::debugwarnings()) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
 					echo "<h5>Segments passed to controller:</h5>";
 					$this->pprint_r ($this->uri_segments);
