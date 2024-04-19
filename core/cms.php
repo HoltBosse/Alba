@@ -482,7 +482,7 @@ final class CMS {
 		else {
 			// no controller - pages don't require one, just means that
 			// only widgets will be rendered on page
-			if (Config::debug()) {
+			if (Config::debugwarnings()) {
 				echo "<h5>No controller found for URL. (normal!)</h5>";
 			}
 		}
@@ -671,7 +671,7 @@ final class CMS {
 						$this->raise_404();
 					}
 				}
-				if (Config::debug()) {
+				if (Config::debugwarnings()) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
 					echo "<h5>Segments passed to controller:</h5>";
 					$this->pprint_r ($this->uri_segments);
