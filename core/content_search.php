@@ -74,7 +74,13 @@ class Content_Search {
 			if (!is_numeric($this->type_filter)) {
 				$this->type_filter= Content::get_content_type_id($this->type_filter);
 				if (!$this->type_filter) {
-					CMS::Instance()->show_error('Unable to determine content type');
+					if (Config::debug()) {
+						CMS::pprint_r('Unable to determine content type');
+						CMS::pprint_r(debug_backtrace());
+						die();
+					} else {
+						CMS::Instance()->show_error('Unable to determine content type');
+					}
 				}
 			}
 			$location = Content::get_content_location($this->type_filter);
@@ -126,7 +132,13 @@ class Content_Search {
 			}
 		} 
 		else {
-			CMS::show_error('No content type filter provided for content search');
+			if (Config::debug()) {
+				CMS::pprint_r('No content type filter provided for content search');
+				CMS::pprint_r(debug_backtrace());
+				die();
+			} else {
+				CMS::Instance()->show_error('No content type filter provided for content search');
+			}
 		}
 		$query = "select";
 		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note, c.category, cat.title  as catname";

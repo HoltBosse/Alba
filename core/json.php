@@ -9,10 +9,11 @@ class JSON {
 				$obj = json_decode($json);
 				if (!$obj) {
 					if (Config::debug()) {
-						CMS::show_error('Error decoding JSON in file &ldquo;' . $file . '&rdquo;');
-					}
-					else {
-						CMS::show_error('JSON decode error');
+						CMS::pprint_r('Error decoding JSON in file &ldquo;' . $file . '&rdquo;');
+						CMS::pprint_r(debug_backtrace());
+						die();
+					} else {
+						CMS::Instance()->show_error('JSON decode error');
 					}
 				}
 				else {
@@ -20,17 +21,19 @@ class JSON {
 				}
 			}
 			if (Config::debug()) {
-				CMS::show_error('Cannot read JSON file &ldquo;' . $file . '&rdquo;');
-			}
-			else {
-				CMS::show_error('JSON decode error');
+				CMS::pprint_r('Cannot read JSON file &ldquo;' . $file . '&rdquo;');
+				CMS::pprint_r(debug_backtrace());
+				die();
+			} else {
+				CMS::Instance()->show_error('JSON decode error');
 			}
 		}
 		if (Config::debug()) {
-			CMS::show_error('Cannot find JSON file &ldquo;' . $file . '&rdquo;');
-		}
-		else {
-			CMS::show_error('JSON decode error');
+			CMS::pprint_r('Cannot find JSON file &ldquo;' . $file . '&rdquo;');
+			CMS::pprint_r(debug_backtrace());
+			die();
+		} else {
+			CMS::Instance()->show_error('JSON decode error');
 		}
 	}
 }

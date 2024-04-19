@@ -52,7 +52,13 @@ class Category {
 				// try and get type id
 				$content_type = Content::get_content_type_id($content_type);
 				if (!$content_type) {
-					CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					if (Config::debug()) {
+						CMS::pprint_r("Unable to determine content type when retrieving count");
+						CMS::pprint_r(debug_backtrace());
+						die();
+					} else {
+						CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					}
 				}
 			}
 			return DB::fetch('select count(*) as c from categories where (title like ?) and state>0 and content_type=?',array($like,$content_type))->c;
@@ -66,7 +72,13 @@ class Category {
 				// try and get type id
 				$content_type = Content::get_content_type_id($content_type);
 				if (!$content_type) {
-					CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					if (Config::debug()) {
+						CMS::pprint_r("Unable to determine content type when retrieving count");
+						CMS::pprint_r(debug_backtrace());
+						die();
+					} else {
+						CMS::Instance()->show_error('Unable to determine content type when retrieving count');
+					}
 				}
 			}
 			return DB::fetch('select count(*) as c from categories where state>0 and content_type=?',array($content_type))->c;

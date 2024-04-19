@@ -14,7 +14,7 @@ $latest->version = null;
 $update_domain = Config::$updatedomain ?? "alba.holtbosse.com";
 $latest_json = file_get_contents("https://" . $update_domain . "/version.json");
 
-if (Config::debug()) {
+if (Config::debugwarnings()) {
 	CMS::pprint_r ($latest_json);
 }
 if ($latest_json) {
