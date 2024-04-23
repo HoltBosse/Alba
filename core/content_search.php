@@ -152,7 +152,7 @@ class Content_Search {
 
 		$select = Hook::execute_hook_filters('custom_content_search_select', $select, $this->type_filter); 
 
-		$from = " from ( " . $table_name . " c ";
+		$from = " from ( `" . $table_name . "` c ";
 
 		// if custom field exists as filter - needs to be added in from/where not as left join
 		// also save filter value to filter_pdo_params
