@@ -45,7 +45,15 @@ class Field {
 	}
 
 	public function is_missing() {
-		$value = Input::getvar($this->name, $this->filter);
+		if ($this->in_repeatable_form ?? null) {
+			// value will be in array
+			// TODO: apply filter before testing?
+			$value = Input::getvar($this->name)[0] ?? null;
+		}
+		else {
+			// can apply filter correctly for non-repeatable value
+			$value = Input::getvar($this->name, $this->filter);
+		}
 		if ($value===false && $this->required) {
 			return true;
 		}
