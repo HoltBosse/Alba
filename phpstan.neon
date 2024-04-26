@@ -1,0 +1,9 @@
+parameters:
+	level: 0
+	paths:
+		- core
+		- admin
+		- controllers
+		- plugins
+		- widgets
+		- config.php
