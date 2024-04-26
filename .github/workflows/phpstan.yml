@@ -13,3 +13,4 @@ jobs:
         uses: php-actions/phpstan@v3
         with:
           path: core/
+          php_version: 8.0
