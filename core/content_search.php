@@ -92,7 +92,7 @@ class Content_Search {
 				if ($this->fetch_all) {
 					// get all saveable, not explicitly ignored fields
 					foreach ($custom_fields->fields as $custom_field) {
-						if (!in_array($custom_field_name,$this->ignore_fields)) {
+						if (!in_array($custom_field->name,$this->ignore_fields)) {
 							if (isset($custom_field->save)) {
 								if ($custom_field->save===true) {
 									$this->list_fields[] = $custom_field->name;
@@ -111,7 +111,7 @@ class Content_Search {
 					// checking it's not ignored and is an actual saveable field
 					if (property_exists($custom_fields,'list')) {
 						foreach ($custom_fields->list as $list_name) {
-							if (!in_array($custom_field_name,$this->ignore_fields)) {
+							if (!in_array($custom_field->name,$this->ignore_fields)) {
 								// check if field is explicitly saveable or no saveable option set
 								foreach ($custom_fields->fields as $custom_field) {
 									if ($custom_field->name==$list_name) {
