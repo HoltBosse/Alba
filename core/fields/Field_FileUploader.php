@@ -6,6 +6,18 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // TODO: test in repeatable
 class Field_FileUploader extends Field {
 
+	public $select_options;
+	public $mime_type;
+	public $placeholder;
+	public $max_size;
+	public $post_max_size;
+	public $multiple;
+	public $input_type;
+	public $max;
+	public $minlength;
+	public $maxlength;
+	public $attribute_list;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";

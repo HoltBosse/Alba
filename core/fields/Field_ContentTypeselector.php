@@ -3,6 +3,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_ContentTypeselector extends Field {
 
+	public $showmedia;
+	public $showusers;
+	public $maxlength;
+	public $minlength;
+
 	public function display() {
 		$all_contenttypes = Content::get_all_content_types();
 		/* CMS::pprint_r ($this); */

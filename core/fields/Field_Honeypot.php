@@ -3,6 +3,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Honeypot extends Field {
 
+	public $html;
+	public $nowrap;
+	public $save;
+	public $maxlength;
+	public $autocomplete;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";
@@ -56,7 +62,7 @@ class Field_Honeypot extends Field {
 		if ($this->default!==" ") {
 			// our default value of space has been altered, invalid form
 			if ($this->fake_thanks_url ?? null) {
-				CMS::queue_message('Form Submitted!','success',$this->fake_thanks_url);
+				CMS::Instance()->queue_message('Form Submitted!','success',$this->fake_thanks_url);
 				return false;
 			}
 			else {

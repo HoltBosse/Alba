@@ -3,6 +3,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Pageselector extends Field {
 
+	public $maxlength;
+	public $minlength;
+	public $multiple;
+
 	public function display() {
 		$all_pages = Page::get_all_pages_by_depth();
 		//CMS::pprint_r ($this);

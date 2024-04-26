@@ -230,10 +230,6 @@ class Page {
 				return true;
 			}
 			else {
-				if (Config::debug()) {
-					echo "<code>" . $e->getMessage() . "</code>";
-					exit(0);
-				}
 				return false;
 			}
 		}

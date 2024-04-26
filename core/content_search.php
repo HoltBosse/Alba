@@ -19,6 +19,7 @@ class Content_Search {
 	public $searchtext;
 	public $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
 	public $page_size;
+	public $custom_field_name;
 	public $category; // category id to match
 	public $tags; // array of tag ids to match 
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] 
