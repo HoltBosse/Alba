@@ -5,7 +5,7 @@ on: [push]
 jobs:
   phpstan:
     runs-on: ubuntu-latest
-    if: "false" # FIXME
+
 
     steps:
       - uses: actions/checkout@v3
@@ -14,5 +14,4 @@ jobs:
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
         with:
-          path: core/
           php_version: 8.0
