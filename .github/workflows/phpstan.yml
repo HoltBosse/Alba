@@ -5,7 +5,6 @@ on: [push]
 jobs:
   phpstan:
     runs-on: ubuntu-latest
-    if: "false" # FIXME
 
     steps:
       - uses: actions/checkout@v3
