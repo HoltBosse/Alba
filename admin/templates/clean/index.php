@@ -158,7 +158,7 @@ require_once (CMSPATH . "/core/cms.php");
 		<?php 
 		if (Config::debugwarnings()) {
 			echo "<h1>Debug FYI</h1>";
-			CMS::showinfo();
+			CMS::Instance()->showinfo();
 		} ?>
        
 		

@@ -5,6 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class View_Options {
 	public $component_path;
 	public $component_view;
+	public $options;
 
 	public function __construct($component_path, $component_view, $options) {
 		$this->component_path = $component_path;

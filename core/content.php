@@ -16,6 +16,11 @@ class Content {
 	public $tags;
 	public $alias;
 	public $category;
+	public $custom_fields;
+	public $table_name;
+	public $start;
+	public $end;
+	public $content_location;
 
 	public static function get_table_name_for_content_type($type_id) {
 		if (!is_numeric($type_id)) {

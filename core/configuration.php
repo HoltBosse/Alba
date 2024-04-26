@@ -5,6 +5,7 @@ class Configuration {
 	public $id;
 	public $name; 
 	public $configuration;
+	public $form;
 
 	static public function get_configuration_value ($form_name, $setting_name, $pdo=null) {
 		// pdo can be passed so this function works inside of core cms.php file during construction

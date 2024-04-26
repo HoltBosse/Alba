@@ -111,4 +111,3 @@ else {
 <h2 class='title is-2'>PHP Info</h2>
 
 <?php embedded_phpinfo(); ?>
-

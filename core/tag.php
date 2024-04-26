@@ -7,6 +7,16 @@ class Tag {
 	public $title;
 	public $state;
 	public $alias;
+	public $form;
+	public $note;
+	public $filter;
+	public $description;
+	public $image;
+	public $public;
+	public $parent;
+	public $category;
+	public $custom_fields;
+	public $contenttypes;
 
 	public function show_admin_form() {
 		$this->form = new Form();

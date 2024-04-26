@@ -15,8 +15,7 @@ class Page {
 	public $updated;
 	public $view_configuration;
 	public $page_options; // json string from db / or serialized from form submission
-
-
+	public $page_options_form;
 
 	public function __construct() {
 		$this->id = 0;

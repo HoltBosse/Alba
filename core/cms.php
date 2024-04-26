@@ -38,7 +38,11 @@ final class CMS {
 	public $markup; // TODO: rendered html for current content item/page
 	public $messages ;
 	public $page_contents;
+	public $page;
 	public $page_id;
+	public $protocol;
+	public $cache;
+	public $enabled_plugins;
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;

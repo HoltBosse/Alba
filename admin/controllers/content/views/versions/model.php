@@ -33,7 +33,7 @@ function version_field_preview ($field, $prop) {
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$content_id = $segments[2];
 	
-	$content = new content();
+	$content = new Content();
 	$content->load($content_id);
 	$new_content = false;
 
@@ -44,7 +44,7 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 elseif (sizeof($segments)==4 && $segments[2]=='restore' && is_numeric($segments[3])) {
 	$content_id = $segments[3];
 	
-	$content = new content();
+	$content = new Content();
 	$content->load($content_id);
 	$new_content = false;
 

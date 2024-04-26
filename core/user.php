@@ -3,13 +3,15 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class User {
+	public $id;
 	public $groups;
 	public $username;
 	public $password;
 	public $email;
 	public $tags;
 	public $state;
-
+	public $registered;
+	public $created;
 
 	public function __construct() {
 		$this->email = false;
