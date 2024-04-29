@@ -16,6 +16,11 @@ class Content {
 	public $tags;
 	public $alias;
 	public $category;
+	public $custom_fields;
+	public $table_name;
+	public $start;
+	public $end;
+	public $content_location;
 
 	public static function get_table_name_for_content_type($type_id) {
 		if (!is_numeric($type_id)) {
@@ -506,7 +511,6 @@ class Content {
 		$location = Content::get_content_location($old_content->content_type);
 		//CMS::pprint_r ("Loading: " . CMSPATH . '/controllers/' . $location . "/custom_fields.json");
 		$content_form = new Form (CMSPATH . '/controllers/' . $location . "/custom_fields.json");
-		$table_name = "controller_" . $custom_fields->id ;
 		//CMS::pprint_r ($content_form);exit(0);
 		foreach ($content_form->fields as $field) {
 			// insert field info
@@ -532,7 +536,7 @@ class Content {
 		$version_json = json_encode($content_form->fields); // only saveable fields encoded :)
 		
 		$content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
-		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
+		if (is_numeric($content_versions) && $content_versions>0) {
 			$params = [$old_content->id, CMS::Instance()->user->id, $version_json];
 			$query = "insert into content_versions (content_id, created_by, fields_json) VALUES (?,?,?)";
 			$ok = DB::exec($query, $params);

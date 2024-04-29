@@ -105,10 +105,7 @@ class Widget_crowdriff extends Widget {
 			
 		</style>
 		<?php 
-		$fullwidthclass="";
-		if (!$fullwidth) {
-			$fullwidthclass=" fullwidth ";
-		}
+		$fullwidthclass=" fullwidth ";
 		?>
 		<section id="crowdriff" class="<?php echo $fullwidthclass; ?>">
 			<div class='contains'>

@@ -1,0 +1,18 @@
+parameters:
+	level: 0
+	paths:
+		- core
+		- admin
+		- controllers/basic_article
+		- plugins/core_autoyear
+		- plugins/core_frontend_editbutton
+		- plugins/core_google_login
+		- plugins/core_google_login_jwt
+		- plugins/core_user_verify
+		- plugins/core_widget
+		- widgets/html
+		- widgets/menu
+		- widgets/crowdriff
+		- config.php
+	excludePaths:
+		- core/controllers # note this ignores the /image directory....

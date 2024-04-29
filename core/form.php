@@ -2,7 +2,9 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class Form {
+	public $id;
 	public $fields;
+	public $json;
 	public $repeatable;
 
 	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
@@ -12,7 +14,6 @@ class Form {
 	}
 
 	public function load_json($path = CMSPATH . "/testform.json") {
-		$obj;
 		if (gettype($path)=="object") {
 			$obj = $path;
 		} elseif (is_file($path)) {

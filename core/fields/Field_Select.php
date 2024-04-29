@@ -4,6 +4,15 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Select extends Field {
 
 	public $select_options;
+	public $config;
+	public $slimselect;
+	public $multiple;
+	public $placeholder;
+	public $slimselect_ajax;
+	public $slimselect_ajax_minchar;
+	public $slimselect_ajax_maxchar;
+	public $slimselect_ajax_url;
+	public $empty_string;
 
 	function __construct($id="") {
 		$this->id = $id;

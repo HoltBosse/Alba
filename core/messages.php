@@ -61,11 +61,6 @@ class Messages {
 		
 		if( !isset($_SESSION['flash_messages']) ) return false;
 		
-		if( $type == 'g' || $type == 'growl' ) {
-			$this->displayGrowlMessages();
-			return true;
-		}
-		
 		// Print a certain type of message?
 		if( in_array($type, $this->msgTypes) ) {
 			foreach( $_SESSION['flash_messages'][$type] as $msg ) {
