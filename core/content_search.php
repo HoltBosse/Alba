@@ -19,6 +19,7 @@ class Content_Search {
 	public $searchtext;
 	public $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
 	public $page_size;
+	public $custom_field_name;
 	public $category; // category id to match
 	public $tags; // array of tag ids to match 
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] 
@@ -91,7 +92,7 @@ class Content_Search {
 				if ($this->fetch_all) {
 					// get all saveable, not explicitly ignored fields
 					foreach ($custom_fields->fields as $custom_field) {
-						if (!in_array($custom_field_name,$this->ignore_fields)) {
+						if (!in_array($custom_field->name,$this->ignore_fields)) {
 							if (isset($custom_field->save)) {
 								if ($custom_field->save===true) {
 									$this->list_fields[] = $custom_field->name;
@@ -110,7 +111,7 @@ class Content_Search {
 					// checking it's not ignored and is an actual saveable field
 					if (property_exists($custom_fields,'list')) {
 						foreach ($custom_fields->list as $list_name) {
-							if (!in_array($custom_field_name,$this->ignore_fields)) {
+							if (!in_array($custom_field->name,$this->ignore_fields)) {
 								// check if field is explicitly saveable or no saveable option set
 								foreach ($custom_fields->fields as $custom_field) {
 									if ($custom_field->name==$list_name) {

@@ -75,3 +75,5 @@ adminer.php
 user_classes/**
 !user_classes/User_User.php
 custom_user_fields.json
+vendor/*
+vendor/

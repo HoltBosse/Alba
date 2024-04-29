@@ -4,6 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Category extends Field {
 
 	public $select_options;
+	public $self_id;
 
 	function __construct($tagid="") {
 		$this->id = "";

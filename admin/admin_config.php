@@ -11,5 +11,6 @@ class Admin_Config {
         "categories" => [1, 2],
         "images" => [1, 2]
     ];
+    static $show_ids_in_tables = false;
 
 }

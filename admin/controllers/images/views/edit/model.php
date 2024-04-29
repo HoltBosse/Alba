@@ -5,12 +5,12 @@ $segments = CMS::Instance()->uri_segments;
 
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$tag_id = $segments[2];
-	$tag = new tag();
+	$tag = new Tag();
 	$tag->load($tag_id);
 	$new_tag = false;
 }
 elseif(sizeof($segments)==3 && $segments[2]=='new') {
-	$tag = new tag();
+	$tag = new Tag();
 	$new_tag = true;
 }
 else {

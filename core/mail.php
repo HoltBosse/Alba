@@ -12,6 +12,7 @@ class Mail {
 	public $html;
 	public $text;
 	private $bcc;
+	private $cc;
 	public $attachments;
 
 	public function __construct() {
@@ -82,9 +83,6 @@ class Mail {
 
 		
 		// setup PHPMailer
-		require_once CMSPATH . "/core/thirdparty/PHPMailer/Exception.php";
-		require_once CMSPATH . "/core/thirdparty/PHPMailer/PHPMailer.php";
-		require_once CMSPATH . "/core/thirdparty/PHPMailer/SMTP.php";
 		//Instantiation and passing `true` enables exceptions
 		$mail = new PHPMailer(true);
 
@@ -162,6 +160,6 @@ class Mail {
 	}
 
 	public static function is_available() {
-		return file_exists(CMSPATH . "/thirdparty/PHPMailer/PHPMailer.php");
+		return file_exists(CMSPATH . "/vendor/phpmailer/phpmailer/src/PHPMailer.php");
 	}
 }

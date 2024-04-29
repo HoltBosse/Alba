@@ -38,7 +38,11 @@ final class CMS {
 	public $markup; // TODO: rendered html for current content item/page
 	public $messages ;
 	public $page_contents;
+	public $page;
 	public $page_id;
+	public $protocol;
+	public $cache;
+	public $enabled_plugins;
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
@@ -361,6 +365,7 @@ final class CMS {
 				}
 			}
 		}
+		// @phpstan-ignore-next-line
 		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
 			// check if caching is turned on and we are on front-end 
 			// admin will never create caches, so no point in even checking
@@ -716,6 +721,7 @@ final class CMS {
 
 				// create full page cache if needed
 				// only if no messages in queue and user is not logged in and not a core controller
+				// @phpstan-ignore-next-line
 				if ( (Config::$caching ?? null) && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}

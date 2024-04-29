@@ -3,6 +3,15 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Text extends Field {
 
+	public $select_options;
+	public $placeholder;
+	public $pattern;
+	public $input_type;
+	public $min;
+	public $max;
+	public $attribute_list;
+	public $step;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";

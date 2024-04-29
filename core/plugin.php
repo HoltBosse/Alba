@@ -8,6 +8,7 @@ class Plugin {
     public $options;
     public $location;
     public $description;
+	public $form;
 
     public function __construct($plugin_info) {
         // $plugin_info should be object containing select * info from plugins table for this plugin

@@ -4,6 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_ContentPicker extends Field {
 
 	public $select_options;
+	public $array_values;
 
 	function __construct($tagid="") {
 		$this->id = "";

@@ -3,6 +3,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Textarea extends Field {
 
+	public $maxlength;
+	public $minlength;
+	public $placeholder;
+	public $select_options;
+	public $input_type;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";

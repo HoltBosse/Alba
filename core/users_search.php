@@ -11,6 +11,7 @@ class Users_Search {
 	public $page;
 	public $searchtext;
 	public $page_size;
+	public $created_by_cur_user;
 	public $tags; // array of tag ids to match 
 	public $groups; // array of group_ids to match
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix

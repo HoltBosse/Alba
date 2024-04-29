@@ -9,6 +9,12 @@ class Widget {
 	public $type;
 	public $state;
 	public $options;
+	public $note;
+	public $ordering;
+	public $position_control;
+	public $global_position;
+	public $page_list;
+	public $form;
 	public $form_data;
 
 	public function render_edit() {

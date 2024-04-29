@@ -1,7 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-class db {
+class DB {
 	public $pdo;
 
 	public function __construct() {
