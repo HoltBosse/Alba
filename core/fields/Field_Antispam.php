@@ -1,6 +1,8 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+/* Note: this field does NOT currently support checking fields/names within a repeatable form section */
+
 class Field_Antispam extends Field {
 
 	function __construct($default_content="") {
@@ -28,15 +30,13 @@ class Field_Antispam extends Field {
 		$this->label = $config->label ?? '';
 		$this->required = $config->required ?? true;
 		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
 		$this->filter = $config->filter ?? 'STRING';
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? $this->default;
-		$this->nowrap = $config->nowrap ?? true;
 		$this->save = $config->save ?? false;
 		$this->fieldname = $config->fieldname ?? null;
-		$this->use_blacklist = $config->useblacklist ?? false;
+		$this->use_blacklist = $config->use_blacklist ?? false;
 		$this->block_urls =  $config->block_urls ?? false;
 		$this->blacklist_location = $config->blacklist_location ?? "/blacklist.txt";
 		$this->charset_check = $config->charset_check ?? false;
@@ -55,13 +55,15 @@ class Field_Antispam extends Field {
 					$search_string = strtolower($value);
 
 					while (($line = fgets($file)) !== false) {
-						if (strpos($line, $search_string) !== false) {
-							// found match in blacklist, no need to look more
-							$in_blacklist = true;
-							break;
+						$words = explode(" ", $search_string);
+						foreach ($words as $word) {
+							if (strpos($line, $word) !== false) {
+								// found match in blacklist, no need to look more
+								$in_blacklist = true;
+								break 2; // break both loops
+							}
 						}
 					}
-					fclose($file);
 				}
 			}
 		}
@@ -69,6 +71,10 @@ class Field_Antispam extends Field {
 	}
 
 	public function validate() {
+		// safety net for repeatables
+		if ($this->in_repeatable_form ?? null) {
+			return true; // cannot determine if invalid for now, assume good
+		}
 		$valid = true; // assume good to start
 		if ($this->fieldname) {
 			$val = Input::getvar($this->fieldname);
