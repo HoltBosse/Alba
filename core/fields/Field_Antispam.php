@@ -57,7 +57,8 @@ class Field_Antispam extends Field {
 					while (($line = fgets($file)) !== false) {
 						$words = explode(" ", $search_string);
 						foreach ($words as $word) {
-							if (strpos($line, $word) !== false) {
+							if (preg_match("/\b$word\b/i", $line)) {
+								// \b = word boundaries, /i ensure case insensitive
 								// found match in blacklist, no need to look more
 								$in_blacklist = true;
 								break 2; // break both loops
