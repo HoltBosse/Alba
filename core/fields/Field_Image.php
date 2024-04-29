@@ -4,6 +4,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Image extends Field {
 
 	public $select_options;
+	public $mimetypes;
+	public $image_id;
+	public $images_per_page;
+	public $tags;
+	public $coltype;
 
 	function __construct($id="") {
 		$this->id = $id;

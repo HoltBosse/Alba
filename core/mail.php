@@ -12,6 +12,7 @@ class Mail {
 	public $html;
 	public $text;
 	private $bcc;
+	private $cc;
 	public $attachments;
 
 	public function __construct() {

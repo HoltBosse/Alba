@@ -16,3 +16,9 @@ Native PHP zip + 'fopen' PHP function availablity required for automatic updates
 4. Follow instructions on screen
 
 That's it, now browse to /admin to start. See [wiki](https://github.com/HoltBosse/Alba/wiki) for more info.
+
+## For dev work/testing
+
+### PHPSTAN test command
+
+`composer albatest`

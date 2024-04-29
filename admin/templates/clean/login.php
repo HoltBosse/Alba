@@ -118,7 +118,7 @@ if ($protocol=="http") {
 		//CMS::pprint_r (CMS::Instance());
 		?>
 		<div class='container'>
-			<?php CMS::display_messages();?>
+			<?php CMS::Instance()->display_messages();?>
 			
 		</div>
 		<div id="login" class='container '>

@@ -3,6 +3,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Tree extends Field {
 
+	public $dataset;
+	public $maxlength;
+	public $minlength;
+	public $input_type;
+	public $sql;
+
 	public function display() {
 		?>
 	

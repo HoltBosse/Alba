@@ -4,6 +4,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_ContentPickerOrdered extends Field {
 
 	public $select_options;
+	public $list_unpublished;
+	public $tags;
+	public $searchable;
+	public $empty_string;
 
 	function __construct($content_type=1) {
 		$this->id = "";

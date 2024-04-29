@@ -10,7 +10,7 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	$content_id = $segments[2];
 	$content_type = $segments[3];
 	
-	$content = new content();
+	$content = new Content();
 	$content->load($content_id, $content_type);
 	$new_content = false;
 

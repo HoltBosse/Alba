@@ -3,6 +3,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_HTML extends Field {
 
+	public $html;
+	public $nowrap;
+	public $save;
+	public $maxlength;
+	public $select_options;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";

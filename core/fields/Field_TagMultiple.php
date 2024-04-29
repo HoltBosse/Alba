@@ -4,6 +4,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_TagMultiple extends Field {
 
 	public $select_options;
+	public $tag_cache;
+	public $array_values;
 
 	function __construct($tagid="") {
 		$this->id = "";

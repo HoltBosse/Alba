@@ -6,6 +6,18 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // TODO: test in repeatable
 class Field_FileUploader extends Field {
 
+	public $select_options;
+	public $mime_type;
+	public $placeholder;
+	public $max_size;
+	public $post_max_size;
+	public $multiple;
+	public $input_type;
+	public $max;
+	public $minlength;
+	public $maxlength;
+	public $attribute_list;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";
@@ -15,28 +27,28 @@ class Field_FileUploader extends Field {
 		$this->content_type="";
 		$this->placeholder="";
 
-		// for converting .ini config value to bytes. see https://www.php.net/manual/en/function.ini-get.php
-		function get_bytes($val) {
-			$val = strtolower($val);
-			$val = trim($val);
-			$last = substr($val, -1);
-			if (!is_numeric($last)) {
-				$val = substr($val, 0, -1);
-				$val = intval($val);
-				switch ($last) {	// absence of break runs code in consecutive cases
-					case "g":
-						$val *= 1024;
-					case "m":
-						$val *= 1024;
-					case "k":
-						$val *= 1024;
-				}
-			}
-			return $val;
-		}
+		$this->max_size = $this->get_bytes(ini_get("upload_max_filesize"));
+		$this->post_max_size = $this->get_bytes(ini_get("post_max_size"));
+	}
 
-		$this->max_size = get_bytes(ini_get("upload_max_filesize"));
-		$this->post_max_size = get_bytes(ini_get("post_max_size"));
+	// for converting .ini config value to bytes. see https://www.php.net/manual/en/function.ini-get.php
+	public function get_bytes($val) {
+		$val = strtolower($val);
+		$val = trim($val);
+		$last = substr($val, -1);
+		if (!is_numeric($last)) {
+			$val = substr($val, 0, -1);
+			$val = intval($val);
+			switch ($last) {	// absence of break runs code in consecutive cases
+				case "g":
+					$val *= 1024;
+				case "m":
+					$val *= 1024;
+				case "k":
+					$val *= 1024;
+			}
+		}
+		return $val;
 	}
 
 	public function display() {

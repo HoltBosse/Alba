@@ -37,7 +37,3 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	</tbody>
 </table>
 <?php endif; ?>
-	
-
-
-

@@ -5,13 +5,20 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field {
 	public $id;
 	public $title;
+	public $label;
 	public $name; // unique id for form submit
+	public $description;
 	public $required;
 	public $valid;
 	public $default;
 	public $filter;
 	public $type;
+	public $logic;
+	public $missingconfig;
+	public $content_type;
 	public $in_repeatable_form;
+	public $maxlength;
+	public $minlength;
 
 	public function display() {
 		echo "<label class='label'>Field Label</label>";

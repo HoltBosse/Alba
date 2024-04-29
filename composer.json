@@ -4,6 +4,9 @@
             "cp configTESTBACKUP.php config.php",
             "cp htaccess.txt .htaccess",
             "cp .htaccess ./admin/.htaccess"
+        ],
+        "albatests": [
+            "vendor/bin/phpstan analyse"
         ]
     },
     "require-dev": {

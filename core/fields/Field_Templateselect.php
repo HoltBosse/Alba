@@ -5,6 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Templateselect extends Field {
 
 	public $select_options;
+	public $config;
 
 	function __construct($id="") {
 		$this->id = $id;

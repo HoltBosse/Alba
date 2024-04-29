@@ -4,6 +4,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Contentselector extends Field {
 
 	public $select_options;
+	public $list_unpublished;
+	public $tags;
+	public $empty_string;
 
 	function __construct($content_type=false) {
 		$this->id = "";
