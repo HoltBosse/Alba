@@ -5,14 +5,28 @@
             "cp htaccess.txt .htaccess",
             "cp .htaccess ./admin/.htaccess"
         ],
-        "albatests": [
+        "alba_phpstan": [
             "vendor/bin/phpstan analyse"
+        ],
+        "alba_pest": [
+            "./vendor/bin/pest"
         ]
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "pestphp/pest": "^2.34"
     },
     "require": {
         "phpmailer/phpmailer": "6.5.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests"
+        ]
     }
 }
