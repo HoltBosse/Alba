@@ -5,6 +5,15 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Antispam extends Field {
 
+	public $nowrap;
+	public $save;
+	public $blacklist_location;
+	public $use_blacklist;
+	public $fieldname;
+	public $block_urls;
+	public $charset_check;
+	public $fake_thanks_url;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";
