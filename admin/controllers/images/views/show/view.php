@@ -279,6 +279,12 @@ dialog::backdrop {
 
 				$url_query_params['page'] = $num_pages;
 				$page_last_url_params = http_build_query($url_query_params);
+
+				$cur_page = Input::getvar('page','INT','1');
+				$url_query_params['page'] = $cur_page+1;
+				$next_url_params = http_build_query($url_query_params);
+				$url_query_params['page'] = $cur_page-1;
+				$prev_url_params = http_build_query($url_query_params);
 			?>
 			<li> 
 				<a class='pagination-link' href='<?=$url_path . "?" . $page_one_url_params?>'><<</a>
