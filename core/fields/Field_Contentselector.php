@@ -43,8 +43,8 @@ class Field_Contentselector extends Field {
 			}
 			if (!$this->tags) {
 				// default order is alphabetical
-				$query = "select * from " . $table_name . " where state >={$min_state} order by title ASC";
-				$options_all_articles = CMS::Instance()->pdo->query($query)->fetchAll();
+				$query = "SELECT * FROM `$table_name` WHERE state >={$min_state} ORDER BY title ASC";
+				$options_all_articles = DB::fetchall($query);
 				/* CMS::pprint_r ($query);
 				CMS::pprint_r ($options_all_articles); */
 			}
