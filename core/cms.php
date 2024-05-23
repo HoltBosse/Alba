@@ -366,12 +366,13 @@ final class CMS {
 			}
 		}
 		// @phpstan-ignore-next-line
-		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
+		if ( !Config::debugwarnings() && !Config::debug() && (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
 			// check if caching is turned on and we are on front-end 
 			// admin will never create caches, so no point in even checking
 			// also never serve cache if messages waiting to be viewed potentially
 			// and never serve if any user is logged in
 			// also never serve if this is a core controller
+			// and don't serve if debugging / or debugwarnings are turned on 
 			$this->cache = new Cache();
 			$cached_page_file = $this->cache->is_cached($request, 'url');
 			if ($cached_page_file) {
@@ -720,9 +721,9 @@ final class CMS {
 				echo $this->page_contents;
 
 				// create full page cache if needed
-				// only if no messages in queue and user is not logged in and not a core controller
+				// only if no messages in queue and user is not logged in and not a core controller and not debugging currently
 				// @phpstan-ignore-next-line
-				if ( (Config::$caching ?? null) && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
+				if ( !Config::debugwarnings() && !Config::debug() && (Config::$caching ?? null) && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}
 			}	
