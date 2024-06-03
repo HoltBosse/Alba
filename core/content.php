@@ -116,7 +116,7 @@ class Content {
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
-			$results = DB::fetchall("select * from {$this->table_name} where alias=? and content_type=?", [$this->alias, $this->content_type] );
+			$results = DB::fetchall("select * from `{$this->table_name}` where alias=? and content_type=?", [$this->alias, $this->content_type] );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
 			if ($this->id) {
@@ -158,7 +158,7 @@ class Content {
 			CMS::pprint_r ($this); die();
 			CMS::show_error('Unknown table name'); // shouldn't get here, but catching during dev
 		}
-		$query = "select `{$field_name}` as v from {$this->table_name} where id=?";
+		$query = "select `{$field_name}` as v from `{$this->table_name}` where id=?";
 		$value = DB::fetch($query, [$this->id])->v; // todo: can we make col name param?
 		if ($value) {
 			return $value; 
@@ -170,7 +170,7 @@ class Content {
 
 	public function load($id, $content_type) {
 		$table_name = Content::get_table_name_for_content_type($content_type);
-		$info = DB::fetch('select * from ' . $table_name . ' where id=?',array($id));
+		$info = DB::fetch('select * from `' . $table_name . '` where id=?',array($id));
 		if ($info) {
 			$this->id = $info->id;
 			$this->title = $info->title;
@@ -195,7 +195,7 @@ class Content {
 
 	public function load_from_alias($alias, $content_type) {
 		$table_name = Content::get_table_name_for_content_type($content_type);
-		$info = DB::fetch('select * from ' . $table_name . ' where alias=?',array($alias));
+		$info = DB::fetch('select * from `' . $table_name . '` where alias=?',array($alias));
 		if ($info) {
 			$this->table_name = $table_name;
 			$this->id = $info->id;
@@ -257,7 +257,7 @@ class Content {
 				// $dup_query = 'update ' . $table_name . " as o set o." . $field->name . " = (select c.{$field->name} from {$table_name} c where c.id={$original_id}) where o.id=?";
 				// above query does not work - query optimizer makes it so sql see table as same, and cannot update from self selection
 				// leaving for future us to learn from repeatedly
-				$dup_query = "update {$table_name} as n inner join {$table_name} as o on o.id=? and n.id=? set n.{$field->name} = o.{$field->name}";
+				$dup_query = "update `{$table_name}` as n inner join {$table_name} as o on o.id=? and n.id=? set n.{$field->name} = o.{$field->name}";
 				//CMS::pprint_r ($dup_query); CMS::pprint_r ($this->id); die();
 				DB::exec($dup_query, [$original_id, $this->id]); 
 			}
