@@ -3,17 +3,17 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 
 
-if(file_exists(CMSPATH . "/config.php")) {
-	// load config
+/* if(file_exists(CMSPATH . "/config.php")) {
+	// load config */
 	require_once (CMSPATH . "/config.php");
-} else {
+/* } else {
 	//config from env vars
 	class Config {
 		public static function __callStatic($name, $args) {
 			return getenv("alba_" . $name);
 		}
 	}
-}
+} */
 require_once (CMSPATH . "/admin/admin_config.php");
 
 if (Config::debug()) {
