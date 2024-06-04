@@ -198,6 +198,23 @@ CREATE TABLE `content_versions` (
   `fields_json` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `redirects`;
+CREATE TABLE `redirects` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `old_url` varchar(2048) NOT NULL,
+  `new_url` varchar(255) DEFAULT NULL,
+  `referer` varchar(2048) NOT NULL,
+  `comment` varchar(255) NOT NULL DEFAULT '',
+  `hits` int(10) unsigned NOT NULL DEFAULT 0,
+  `published` tinyint(4) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `header` smallint(3) NOT NULL DEFAULT 301,
+  PRIMARY KEY (`id`),
+  KEY `link_modifed` (`updated`),
+  KEY `old_url` (`old_url`(100))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
