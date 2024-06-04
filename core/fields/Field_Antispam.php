@@ -33,6 +33,17 @@ class Field_Antispam extends Field {
 		echo "<!-- https://giphy.com/gifs/artists-on-tumblr-foxadhd-xLhloTgdu7i92 -->";
 	}
 
+	public static function ends_with_ru($string) {
+		$length = strlen($string);
+		$ruLength = strlen('.ru');
+		if ($length < $ruLength) {
+		  return false;
+		}
+		$offset = $length - $ruLength;
+		$offsetString = substr($string, $offset);
+		return $offsetString === '.ru';
+	}
+
 	public function load_from_config($config) {
 		$this->name = $config->name ?? 'error!!!';
 		$this->id = $config->id ?? $this->name;
@@ -50,6 +61,7 @@ class Field_Antispam extends Field {
 		$this->blacklist_location = $config->blacklist_location ?? "/blacklist.txt";
 		$this->charset_check = $config->charset_check ?? false;
 		$this->fake_thanks_url = $config->fake_thanks_url ?? null;
+		$this->ends_with_ru_check = $config->ends_with_ru_check ?? false;
 	}
 
 	private function in_blacklist ($value) {
@@ -112,6 +124,12 @@ class Field_Antispam extends Field {
 			if ($this->block_urls) {
 				$contains_url = preg_match('/https?:\/\/[^\s]+/i', $val);
 				if ($contains_url) {
+					$valid = false;
+				}
+			}
+			// test string for ending with ru if required
+			if ($this->ends_with_ru_check) {
+				if ($this->ends_with_ru($val)) {
 					$valid = false;
 				}
 			}
