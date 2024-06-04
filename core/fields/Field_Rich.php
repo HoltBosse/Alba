@@ -874,11 +874,11 @@ class Field_Rich extends Field {
 		if (!Config::debug()) {
 			echo "<style>.editor_raw {display:none;}</style>";
 		}
-		echo "<div class='field'>";
+		$required="";
+		if ($this->required) {$required=" required ";}
+		echo "<div class='field {$required}'>";
 			echo "<label class='label'>{$this->label}</label>";
 			echo "<div class='control'>";
-				$required="";
-				if ($this->required) {$required=" required ";}
 				?>
 				<!-- toolbar -->
 				<div class='hbcms_editor_toolbar' id='editor_toolbar_for_<?php echo $this->name; ?>'>
