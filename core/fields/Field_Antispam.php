@@ -13,6 +13,7 @@ class Field_Antispam extends Field {
 	public $block_urls;
 	public $charset_check;
 	public $fake_thanks_url;
+	public $ends_with_ru_check;
 
 	function __construct($default_content="") {
 		$this->id = "";
@@ -22,11 +23,6 @@ class Field_Antispam extends Field {
 		$this->nowrap = true;
 		$this->save=false;
 		$this->blacklist_location = null; // relative to CMS root
-		$this->use_blacklist;
-		$this->fieldname;
-		$this->block_urls;
-		$this->charset_check;
-		$this->fake_thanks_url;
 	}
 
 	public function display() {
