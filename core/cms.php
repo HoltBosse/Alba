@@ -70,11 +70,19 @@ final class CMS {
 
 	public static function raise_404() {
 		ob_end_clean ();
-		if (file_exists(CMSPATH . "/my_404.php")) {
-			include('my_404.php'); // provide your own HTML for the error page
+		// check if we need to redirect this page
+		$full_url = CMS::Instance()->protocol . CMS::Instance()->domain . CMS::Instance()->request; 
+		$redirect = DB::fetch("SELECT * FROM redirects WHERE old_url=?", $full_url);
+		if ($redirect) {
+			header('Location: '.$redirect->new_url, true, $redirect->header);
 		}
 		else {
-			CMS::show_error("Oops, something went wrong &#129300", "404");
+			if (file_exists(CMSPATH . "/my_404.php")) {
+				include('my_404.php'); // provide your own HTML for the error page
+			}
+			else {
+				CMS::show_error("Oops, something went wrong &#129300", "404");
+			}
 		}
 		exit(0);
 	}
@@ -226,14 +234,14 @@ final class CMS {
 
 		// routing and session checking
 		// first strip base uri path (from config) out of path
-		$request = $_SERVER['REQUEST_URI'];
+		$this->request = $_SERVER['REQUEST_URI'];
 		$to_remove = Config::uripath();
 		if (ADMINPATH) {
 			$to_remove .= "/admin/";
 		}
-		$request = str_ireplace($to_remove, "", $request);
+		$this->request = str_ireplace($to_remove, "", $this->request);
 		// split into array of segments
-		$this->uri_segments = preg_split('@/@', parse_url($request, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
+		$this->uri_segments = preg_split('@/@', parse_url($this->request, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
 
 		
 		if (@$this->uri_segments[0]=='image') {
@@ -373,7 +381,7 @@ final class CMS {
 			// also never serve if this is a core controller
 			// and don't serve if debugging / or debugwarnings are turned on 
 			$this->cache = new Cache();
-			$cached_page_file = $this->cache->is_cached($request, 'url');
+			$cached_page_file = $this->cache->is_cached($this->request, 'url');
 			if ($cached_page_file) {
 				$this->cache->serve_page($cached_page_file);
 			}
