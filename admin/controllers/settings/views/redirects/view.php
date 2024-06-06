@@ -270,7 +270,7 @@ table.dragging .before_after_wrap {
 				<th>Created By</th>
 				<th>Updated</th>
 				<th>Updated By</th>
-				<th>Hits</th>
+				<th><a href="?order_by=hits">Hits</a></th>
 				<th>Header</th>
 				<th>Note</th>
 			</tr>
