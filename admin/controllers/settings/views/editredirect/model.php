@@ -83,7 +83,6 @@ if ($required_details_form->is_submitted()) {
 	//CMS::Instance()->queue_message('content saved','success',Config::uripath() . '/admin/content/show');
 }
 else {
-	// set category field content_type based on current new/edited content type
 	// set defaults if needed
 	if (!$new_content) {
 		$required_details_form->get_field_by_name('state')->default = $redirect->state;
