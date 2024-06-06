@@ -16,11 +16,11 @@ elseif(sizeof($segments)==3 && $segments[2]=='new') {
 	$new_content = true;
 }
 else {
-	CMS::Instance()->queue_message('Unkown content operation','danger',Config::uripath().'/admin/settings/redirects');
+	CMS::Instance()->queue_message('Unkown content operation','danger',Config::uripath().'/admin/redirects');
 	exit(0);
 }
 
-$required_details_obj = json_decode(file_get_contents(ADMINPATH . '/controllers/settings/views/editredirect/required_fields_form.json'));
+$required_details_obj = json_decode(file_get_contents(ADMINPATH . '/controllers/redirects/views/edit/required_fields_form.json'));
 foreach($required_details_obj->fields as $field) {
 	if($field->name == "state") {
 		foreach($custom_fields->states as $state) {
