@@ -21,10 +21,9 @@
 			"id":"old_url",
 			"type":"Text",
 			"filter":"TEXT",
-			"maxlength":255,
+			"maxlength":4096,
 			"description":"",
-			"required":true,
-			"coltype":"VARCHAR (255)"
+			"required":true
 		},
 		{
 			"label":"New URL",
@@ -32,10 +31,9 @@
 			"id":"new_url",
 			"type":"Text",
 			"filter":"TEXT",
-			"maxlength":255,
+			"maxlength":4096,
 			"description":"",
-			"required":true,
-			"coltype":"VARCHAR (255)"
+			"required":true
 		},
 		{
 			"type":"Select",
