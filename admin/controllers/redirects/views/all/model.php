@@ -49,5 +49,5 @@ if (!is_null($state)) {
     $query.= " {$and_or_where} state=? ";
     $params[] = $state;
 }
-$content_count = DB::fetch($query, $params)->c ?? 0;
+$redirect_count = DB::fetch($query, $params)->c ?? 0;
 

@@ -183,7 +183,6 @@ td.limitwidth {
 
 
 <form action='' method='post' name='redirect_action' id='redirect_action_form'>
-<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
 <h1 class='title is-1'>Redirects
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/redirects/edit/new'>New Redirect</a>
 	<!-- content operation toolbar -->
@@ -284,30 +283,23 @@ td.limitwidth {
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ($redirects as $content_item):?>
-				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
-				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
+			<?php foreach ($redirects as $redirect_item):?>
+				<?php CMS::Instance()->listing_content_id = $redirect_item->id; ?>
+				<tr id='row_id_<?php echo $redirect_item->id;?>' data-itemid="<?php echo $redirect_item->id;?>" data-ordering="<?php echo $redirect_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 					<div class="center_state">
-						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $content_item->id; ?>'/>
-						<?php if ($order_by && $content_type_filter):?>
-						<div draggable="true"  data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>"  ondragend="dragend_handler(event)" ondragstart="dragstart_handler(event)" class="grip"><i class="fas fa-grip-lines"></i></div>
-						<div class='before_after_wrap'>
-							<span droppable='true' class='drop_before order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">Before</span><br>
-							<span droppable='true' class='drop_after order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">After</span>
-						</div>
-						<?php endif; ?>
+						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $redirect_item->id; ?>'/>
 						<div class='button state_button'>
-							<button <?php if($content_item->state==0 || $content_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/redirects/action/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
+							<button <?php if($redirect_item->state==0 || $redirect_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/redirects/action/toggle' name='id[]' value='$redirect_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
 								<?php 
-									if ($content_item->state==1) { 
+									if ($redirect_item->state==1) { 
 										echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
 									}
-									elseif ($content_item->state==0) {
+									elseif ($redirect_item->state==0) {
 										echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
 									} else {
 										foreach($custom_fields->states as $state) {
-											if($content_item->state==$state->state) {
+											if($redirect_item->state==$state->state) {
 												echo "<i style='color:$state->color' class='fas fa-times-circle' aria-hidden='true'></i>";
 												$ok = true;
 											}
@@ -323,15 +315,15 @@ td.limitwidth {
 								<a class="navbar-link"></a>
 								<div class="navbar-dropdown">
 									<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
-										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
-										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<input type='hidden' name='content_type' value='<?= $redirect_item->content_type;?>'/>
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $redirect_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
 											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
 										</button>
 									</form>
 									<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
-										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
-										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+										<input type='hidden' name='content_type' value='<?= $redirect_item->content_type;?>'/>
+										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $redirect_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
 											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
 										</button>
@@ -340,8 +332,8 @@ td.limitwidth {
 									<hr class="dropdown-divider">
 									<?php foreach($custom_fields->states as $state) { ?>
 										<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
-											<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
-											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
+											<input type='hidden' name='content_type' value='<?= $redirect_item->content_type;?>'/>
+											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $redirect_item->id; ?>'/>
 											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
 												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
 											</button>
@@ -355,21 +347,21 @@ td.limitwidth {
 					</td>
 					<?php
 						if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
-							echo "<td>$content_item->id</td>";
+							echo "<td>$redirect_item->id</td>";
 						}
 					?>
 
 					
-					<td class='limitwidth'><a href='<?php echo Config::uripath(); ?>/admin/redirects/edit/<?php echo $content_item->id;?>/'><?php echo $content_item->old_url; ?></a></td>
-					<td class='limitwidth'><?php echo $content_item->new_url; ?></td>
-					<td class='unimportant'><?php echo $content_item->referer; ?></td>
-					<td class='unimportant'><?php echo $content_item->created; ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
-					<td class='unimportant'><?php echo $content_item->updated; ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($content_item->updated_by); ?></td>
-					<td class='unimportant'><?php echo $content_item->hits; ?></td>
-					<td class='unimportant'><?php echo $content_item->header; ?></td>
-					<td class='unimportant'><?php echo $content_item->note; ?></td>
+					<td class='limitwidth'><a href='<?php echo Config::uripath(); ?>/admin/redirects/edit/<?php echo $redirect_item->id;?>/'><?php echo $redirect_item->old_url; ?></a></td>
+					<td class='limitwidth'><?php echo $redirect_item->new_url; ?></td>
+					<td class='unimportant'><?php echo $redirect_item->referer; ?></td>
+					<td class='unimportant'><?php echo $redirect_item->created; ?></td>
+					<td class='unimportant'><?php echo User::get_username_by_id($redirect_item->created_by); ?></td>
+					<td class='unimportant'><?php echo $redirect_item->updated; ?></td>
+					<td class='unimportant'><?php echo User::get_username_by_id($redirect_item->updated_by); ?></td>
+					<td class='unimportant'><?php echo $redirect_item->hits; ?></td>
+					<td class='unimportant'><?php echo $redirect_item->header; ?></td>
+					<td class='unimportant'><?php echo $redirect_item->note; ?></td>
 				</tr>
 				
 			<?php endforeach; ?>
@@ -380,11 +372,8 @@ td.limitwidth {
 </form>
 
 <?php 
-/* CMS::pprint_r ($content_count);
-CMS::pprint_r ($pagination_size);
-CMS::pprint_r ($order_by);
-CMS::pprint_r (sizeof($all_content)); */
-$num_pages = ceil($content_count/$page_size);
+
+$num_pages = ceil($redirect_count/$page_size);
 
 //$url_query_params = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
 $url_query_params = $_GET;
@@ -402,7 +391,7 @@ if ($cur_page) {
 
 ?>
 
-<?php if ($content_count>$page_size && !$order_by):?>
+<?php if ($redirect_count>$page_size && !$order_by):?>
 	<style>
 		.small-pagination-list a {
 			margin: 0;
@@ -465,83 +454,4 @@ if ($cur_page) {
 			hidden_checkbox.checked = !hidden_checkbox.checked;
 		});
 	});
-
-	// ordering js
-
-	function dragstart_handler(e) {
-		//e.preventDefault();
-		data = e.target.dataset.itemid;
-		console.log(data);
-		e.dataTransfer.dropEffect = "move";
-		e.dataTransfer.setData("text/plain", data);
-		e.target.closest('table').classList.add('dragging');
-		e.target.closest('tr').classList.add('dragging');
-		//console.log(e);
-	}
-
-	function dragover_handler(e) {
-		e.preventDefault();
-		e.dataTransfer.dropEffect = "move";
-		e.target.classList.add('ready');
-	}
-
-	function dragleave_handler(e) {
-		e.preventDefault();
-		//e.dataTransfer.dropEffect = "move";
-		e.target.classList.remove('ready');
-	}
-
-	function drop_handler(e) {
-		e.preventDefault();
-		//console.log(e);
-		e.preventDefault();
-		// get required info
-		var source_id = e.dataTransfer.getData('text/plain');
-		var dest_id = e.target.closest('tr').dataset.itemid;
-		if (e.target.classList.contains('drop_before')) {
-			var insert_position = 'before';
-		}
-		else {
-			var insert_position = 'after';
-		}
-		//console.log('Insert',source_id, insert_position, dest_id);
-		// perform ajax action silently
-		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position,"content_type":'<?php echo $content_type_filter; ?>'};
-		postAjax('<?php echo Config::uripath();?>/admin/redirects/api', api_data, function(data){
-			response = JSON.parse(data);
-			if (response.success=='1') {
-				// do nothing - assume it worked
-			}
-			else {
-				console.log(response); 
-				alert('Ordering failed.');
-			}
-		});
-
-		// move dom rows - regardless of success of ajax - report failures
-		source_row = document.getElementById('row_id_' + source_id);
-		dest_row = document.getElementById('row_id_' + dest_id);
-		tbody = source_row.closest('tbody');
-		tbody.removeChild(source_row);
-		if (insert_position=='after') {
-			tbody.insertAfter(source_row, dest_row);
-		}
-		else {
-			tbody.insertBefore(source_row, dest_row);
-		}
-		// clean up grips - TODO: cleaner version for single grip in drop_handler
-		var grips = document.querySelectorAll('.grip');
-		grips.forEach(grip => {
-			grip.classList.remove('ready');
-		});
-	}
-
-	function dragend_handler(e) {
-		e.preventDefault();
-		console.log(e);
-		e.target.closest('table').classList.remove('dragging');
-		e.target.closest('tr').classList.remove('dragging');
-	}
-
-	// end ordering js
 </script>
