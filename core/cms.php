@@ -72,22 +72,22 @@ final class CMS {
 	public static function raise_404() {
 		ob_end_clean ();ob_end_clean ();
 		// check if we need to redirect this page
-		$full_url = CMS::Instance()->protocol . CMS::Instance()->domain . CMS::Instance()->request; 
-		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=?", $full_url);
+		$relative_url = CMS::Instance()->request; 
+		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=?", $relative_url);
 		if ($valid_redirect) {
 			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
 		}
 		else {
 			// handle redirect/404 capturing
 			if (Config::capture_404s()) {
-				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=?', $full_url)->id ?? false;
+				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=?', $relative_url)->id ?? false;
 				if ($existing_redirect_id) {
 					// increment hit for 404
 					DB::exec('UPDATE redirects SET hits=hits+1 WHERE id=?', $existing_redirect_id);
 				}
 				else {
 					// create new redirect
-					$params = [$full_url, $_SERVER['HTTP_REFERER'], CMS::Instance()->user->id, CMS::Instance()->user->id];
+					$params = [$relative_url, $_SERVER['HTTP_REFERER'], CMS::Instance()->user->id, CMS::Instance()->user->id];
 					DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits) VALUES(0,?,?,?,?,"auto",1)', $params);
 				}
 			}
