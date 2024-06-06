@@ -167,6 +167,15 @@ table.dragging .before_after_wrap {
 		display: none;
 	}
 }
+
+td.limitwidth {
+    max-width: 50ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.form_field.field.field_id_old_url,.form_field.field.field_id_new_url {
+    width: 100%;
+}
 </style>
 
 <form id='searchform' action="" method="GET"></form>
@@ -351,8 +360,8 @@ table.dragging .before_after_wrap {
 					?>
 
 					
-					<td class=''><a href='<?php echo Config::uripath(); ?>/admin/redirects/edit/<?php echo $content_item->id;?>/'><?php echo $content_item->old_url; ?></a></td>
-					<td class=''><?php echo $content_item->new_url; ?></td>
+					<td class='limitwidth'><a href='<?php echo Config::uripath(); ?>/admin/redirects/edit/<?php echo $content_item->id;?>/'><?php echo $content_item->old_url; ?></a></td>
+					<td class='limitwidth'><?php echo $content_item->new_url; ?></td>
 					<td class='unimportant'><?php echo $content_item->referer; ?></td>
 					<td class='unimportant'><?php echo $content_item->created; ?></td>
 					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>

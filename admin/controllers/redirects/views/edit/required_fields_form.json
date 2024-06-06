@@ -23,7 +23,9 @@
 			"filter":"TEXT",
 			"maxlength":4096,
 			"description":"",
-			"required":true
+			"required":true,
+			"wrapclass":"bigtext",
+			"nowrap":false
 		},
 		{
 			"label":"New URL",
@@ -33,7 +35,9 @@
 			"filter":"TEXT",
 			"maxlength":4096,
 			"description":"",
-			"required":true
+			"required":true,
+			"wrapclass":"bigtext",
+			"nowrap":false
 		},
 		{
 			"type":"Select",

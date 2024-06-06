@@ -16,7 +16,7 @@ elseif(sizeof($segments)==3 && $segments[2]=='new') {
 	$new_content = true;
 }
 else {
-	CMS::Instance()->queue_message('Unkown content operation','danger',Config::uripath().'/admin/redirects');
+	CMS::Instance()->queue_message('Unknown content operation','danger',Config::uripath().'/admin/redirects');
 	exit(0);
 }
 
