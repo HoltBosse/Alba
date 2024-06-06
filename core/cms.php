@@ -33,6 +33,7 @@ final class CMS {
 	public $domain;
 	public $pdo;
 	public $user;
+	public $request;
 	public $uri_segments; // remaining segments of uri after controller found
 	public $uri_path_segments; // uri path of found controller/page
 	public $markup; // TODO: rendered html for current content item/page
