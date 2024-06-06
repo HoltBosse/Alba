@@ -3,8 +3,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
 
-$version_count = 0;
-
 $new_content = false;
 
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
