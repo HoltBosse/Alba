@@ -179,10 +179,10 @@ table.dragging .before_after_wrap {
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/settings/editredirect/new'>New Redirect</a>
 	<!-- content operation toolbar -->
 	<div id="content_operations" class="pull-right buttons has-addons">
-		<button formaction='<?php echo Config::uripath();?>/admin/redirects/action/publish' class='button is-primary' type='submit'>Publish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/redirects/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/redirects/action/duplicate' class='button is-info' type='submit'>Duplicate</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/redirects/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/settings/redirectaction/publish' class='button is-primary' type='submit'>Publish</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/settings/redirectaction/unpublish' class='button is-warning' type='submit'>Unpublish</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/settings/redirectaction/duplicate' class='button is-info' type='submit'>Duplicate</button>
+		<button formaction='<?php echo Config::uripath();?>/admin/settings/redirectaction/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 	</div>
 </h1>
 
@@ -290,7 +290,7 @@ table.dragging .before_after_wrap {
 						</div>
 						<?php endif; ?>
 						<div class='button state_button'>
-							<button <?php if($content_item->state==0 || $content_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/redirects/action/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
+							<button <?php if($content_item->state==0 || $content_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/settings/redirectaction/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
 								<?php 
 									if ($content_item->state==1) { 
 										echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -314,27 +314,27 @@ table.dragging .before_after_wrap {
 							<div class="navbar-item has-dropdown is-hoverable">
 								<a class="navbar-link"></a>
 								<div class="navbar-dropdown">
-									<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
+									<form action='<?php echo Config::uripath();?>/admin/settings/redirectaction/togglestate' method="post">
 										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
-										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/settings/redirectaction/togglestate' name='togglestate[]' value='0' class="navbar-item">
 											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
 										</button>
 									</form>
-									<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
+									<form action='<?php echo Config::uripath();?>/admin/settings/redirectaction/togglestate' method="post">
 										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
-										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
+										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/settings/redirectaction/togglestate' name='togglestate[]' value='1' class="navbar-item">
 											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
 										</button>
 									</form>
 									
 									<hr class="dropdown-divider">
 									<?php foreach($custom_fields->states as $state) { ?>
-										<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
+										<form action='<?php echo Config::uripath();?>/admin/settings/redirectaction/togglestate' method="post">
 											<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
-											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
+											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/settings/redirectaction/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
 												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
 											</button>
 										</form>
