@@ -203,7 +203,7 @@ CREATE TABLE `redirects` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `state` tinyint NOT NULL,
   `old_url` varchar(2048) CHARACTER SET utf8mb4 NOT NULL,
-  `new_url` varchar(2048) CHARACTER SET utf8mb4 NULL,
+  `new_url` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL,
   `referer` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL,
   `note` varchar(255) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
   `hits` int unsigned NOT NULL DEFAULT '0',
