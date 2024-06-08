@@ -391,7 +391,7 @@ if ($cur_page) {
 
 ?>
 
-<?php if ($redirect_count>$page_size && !$order_by):?>
+<?php if ($redirect_count>$page_size):?>
 	<style>
 		.small-pagination-list a {
 			margin: 0;
