@@ -65,7 +65,7 @@ if ($required_details_form->is_submitted()) {
 				$msg = "Quicksave successful";
 			}
 			else {
-				$redirect_to = Config::uripath() . "/admin/settings/redirects/";
+				$redirect_to = Config::uripath() . "/admin/redirects/";
 				$msg = "Redirect saved";
 			}
 			CMS::Instance()->queue_message($msg, 'success', $redirect_to);
