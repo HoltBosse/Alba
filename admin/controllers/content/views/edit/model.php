@@ -24,7 +24,7 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 	$new_content = true;
 }
 else {
-	CMS::Instance()->queue_message('Unkown content operation','danger',Config::uripath().'/admin/content/show');
+	CMS::Instance()->queue_message('Unknown content operation','danger',Config::uripath().'/admin/content/show');
 	exit(0);
 }
 

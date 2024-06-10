@@ -24,7 +24,7 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 	$widget->load(-1, $segments[3]);
 }
 else {
-	CMS::Instance()->queue_message('Unkown widget operation','danger',Config::uripath().'/admin/widgets/show');
+	CMS::Instance()->queue_message('Unknown widget operation','danger',Config::uripath().'/admin/widgets/show');
 	exit(0);
 }
 

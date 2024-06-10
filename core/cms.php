@@ -33,6 +33,7 @@ final class CMS {
 	public $domain;
 	public $pdo;
 	public $user;
+	public $request;
 	public $uri_segments; // remaining segments of uri after controller found
 	public $uri_path_segments; // uri path of found controller/page
 	public $markup; // TODO: rendered html for current content item/page
@@ -69,12 +70,33 @@ final class CMS {
 	}
 
 	public static function raise_404() {
-		ob_end_clean ();
-		if (file_exists(CMSPATH . "/my_404.php")) {
-			include('my_404.php'); // provide your own HTML for the error page
+		ob_end_clean ();ob_end_clean ();
+		// check if we need to redirect this page
+		$relative_url = CMS::Instance()->request; 
+		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=?", $relative_url);
+		if ($valid_redirect) {
+			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
 		}
 		else {
-			CMS::show_error("Oops, something went wrong &#129300", "404");
+			// handle redirect/404 capturing
+			if (Config::capture_404s()) {
+				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=?', $relative_url)->id ?? false;
+				if ($existing_redirect_id) {
+					// increment hit for 404
+					DB::exec('UPDATE redirects SET hits=hits+1 WHERE id=?', $existing_redirect_id);
+				}
+				else {
+					// create new redirect
+					$params = [$relative_url, $_SERVER['HTTP_REFERER'], CMS::Instance()->user->id, CMS::Instance()->user->id];
+					DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits) VALUES(0,?,?,?,?,"auto",1)', $params);
+				}
+			}
+			if (file_exists(CMSPATH . "/my_404.php")) {
+				include('my_404.php'); // provide your own HTML for the error page
+			}
+			else {
+				CMS::show_error("Oops, something went wrong &#129300", "404");
+			}
 		}
 		exit(0);
 	}
@@ -226,14 +248,14 @@ final class CMS {
 
 		// routing and session checking
 		// first strip base uri path (from config) out of path
-		$request = $_SERVER['REQUEST_URI'];
+		$this->request = $_SERVER['REQUEST_URI'];
 		$to_remove = Config::uripath();
 		if (ADMINPATH) {
 			$to_remove .= "/admin/";
 		}
-		$request = str_ireplace($to_remove, "", $request);
+		$this->request = str_ireplace($to_remove, "", $this->request);
 		// split into array of segments
-		$this->uri_segments = preg_split('@/@', parse_url($request, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
+		$this->uri_segments = preg_split('@/@', parse_url($this->request, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
 
 		
 		if (@$this->uri_segments[0]=='image') {
@@ -373,7 +395,7 @@ final class CMS {
 			// also never serve if this is a core controller
 			// and don't serve if debugging / or debugwarnings are turned on 
 			$this->cache = new Cache();
-			$cached_page_file = $this->cache->is_cached($request, 'url');
+			$cached_page_file = $this->cache->is_cached($this->request, 'url');
 			if ($cached_page_file) {
 				$this->cache->serve_page($cached_page_file);
 			}

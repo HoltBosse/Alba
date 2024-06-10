@@ -84,11 +84,11 @@ else {
 	show_message ('Category Custom Fields Column','Category table updated.','is-warning');
 }
 
-if ($custom_fields_tag_ok) {
-	show_message ('Tag Custom Fields Column','Tag table OK.','is-success');
+if ($redirects_table_ok) {
+	show_message ('Redirects Table','Redirects table OK.','is-success');
 }
 else {
-	show_message ('Tag Custom Fields Column','Tag table updated.','is-warning');
+	show_message ('Redirects Table','Redirects table created.','is-warning');
 }
 
 

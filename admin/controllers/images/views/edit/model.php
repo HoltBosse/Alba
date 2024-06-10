@@ -14,7 +14,7 @@ elseif(sizeof($segments)==3 && $segments[2]=='new') {
 	$new_tag = true;
 }
 else {
-	CMS::Instance()->queue_message('Unkown tag operation','danger',Config::uripath().'/admin/tags/show');
+	CMS::Instance()->queue_message('Unknown tag operation','danger',Config::uripath().'/admin/tags/show');
 	exit(0);
 }
 
