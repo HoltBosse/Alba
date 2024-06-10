@@ -25,7 +25,7 @@ if ($action=='toggle') {
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
-	$result = DB::exec("UPDATE $table_name SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
+	$result = DB::exec("update `$table_name` SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		CMS::Instance()->queue_message('Toggled state of content','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -39,7 +39,7 @@ if ($action=='togglestate') {
 	if (!$togglestate) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
-	$result = DB::exec("UPDATE $table_name SET state = ? where id=?", [$togglestate[1], $togglestate[0]]); //first is id, second is state
+	$result = DB::exec("update `$table_name` SET state = ? where id=?", [$togglestate[1], $togglestate[0]]); //first is id, second is state
 	if ($result) {
 		CMS::Instance()->queue_message('Updated state of content','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -54,7 +54,7 @@ elseif ($action=='publish') {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
 	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE $table_name SET state = 1 where id in ({$idlist})"); 
+	$result = DB::exec("update `$table_name` SET state = 1 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published content','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -69,7 +69,7 @@ elseif ($action=='unpublish') {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
 	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE $table_name SET state = 0 where id in ({$idlist})"); 
+	$result = DB::exec("update `$table_name` SET state = 0 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished content','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -84,7 +84,7 @@ elseif ($action=='delete') {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
 	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE $table_name SET state = -1 where id in ({$idlist})"); 
+	$result = DB::exec("update `$table_name` SET state = -1 where id in ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted content','success', $_SERVER['HTTP_REFERER']);
 	}
