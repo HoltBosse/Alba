@@ -6,10 +6,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php if ($new_content):?>
 	<h1 class='title'>New Redirect</h1>
 <?php else:?>
-	<?php echo "<script>var redirect_id=" . $content_id . "</script>"; ?>
-
 	<h1 class='title'>Editing Redirect</h1>
-	
 <?php endif; ?>
 
 

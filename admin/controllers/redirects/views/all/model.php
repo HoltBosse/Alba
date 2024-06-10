@@ -19,12 +19,12 @@ $state = $filters['state'] ?? null;
 
 // get paginated / searched redirects
 $params=[];
-$query = "select * from redirects ";
+$query = "SELECT * FROM redirects ";
 if ($search) {
     $params[] = '%' . $search . '%';
     $params[] = '%' . $search . '%';
     $params[] = '%' . $search . '%'; // 3x for both urls + note
-    $query.= " where (old_url like ? or new_url like ? or note like ?) ";
+    $query.= " WHERE (old_url LIKE ? OR new_url LIKE ? OR note LIKE ?) ";
 }
 if (!is_null($state)) {
     $and_or_where = $search ? " and " : " where ";
@@ -38,12 +38,12 @@ $redirects = DB::fetchAll($query, $params);
 
 // get total count
 $params=[];
-$query = "select count(*) as c from redirects ";
+$query = "SELECT COUNT(*) AS c FROM redirects ";
 if ($search) {
     $params[] = '%' . $search . '%';
     $params[] = '%' . $search . '%';
     $params[] = '%' . $search . '%'; // 3x for both urls + note
-    $query.= " where (old_url like ? or new_url like ? or note like ?) ";
+    $query.= " WHERE (old_url LIKE ? OR new_url LIKE ? OR note LIKE ?) ";
 }
 if (!is_null($state)) {
     $query.= " {$and_or_where} state=? ";

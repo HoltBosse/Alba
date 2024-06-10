@@ -7,7 +7,7 @@ $new_content = false;
 
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$redirect_id = $segments[2];
-	$redirect = DB::fetch('select * from redirects where id=?',$redirect_id);
+	$redirect = DB::fetch('SELECT * FROM redirects WHERE id=?',$redirect_id);
 	
 }
 elseif(sizeof($segments)==3 && $segments[2]=='new') {
