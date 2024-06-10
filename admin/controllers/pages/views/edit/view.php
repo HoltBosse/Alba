@@ -278,10 +278,16 @@ div.position_tag_wrap.active {
 						// OLD method
 						//include_once (CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options.php");
 						// NEW uses json forms
-						$options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
-						// set options form values from json stored in view_configuration
-						$options_form->deserialize_json($page->view_configuration);
-						$options_form->display_front_end();
+						$options_form_filepath = CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json";
+						if (is_file($options_form_filepath)) {
+							$options_form = new Form($options_form_filepath);
+							// set options form values from json stored in view_configuration
+							$options_form->deserialize_json($page->view_configuration);
+							$options_form->display_front_end();
+						}
+						else {
+							echo "<p>No options for this view.</p>";
+						}
 					}
 					else {
 						echo "<p>Choose a view first to see display options.</p>";
