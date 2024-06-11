@@ -132,18 +132,15 @@ class Content {
 				if ($this->id) {
 					// add id to alias to make unique for existing content item
 					$this->alias = $this->alias . "-" . $this->id;
-					CMS::Instance()->queue_message('Added content id as suffix to "URL Friendly" field to ensure uniqueness.','warning');
+					if (ADMINPATH) {
+						CMS::Instance()->queue_message('Added content id as suffix to "URL Friendly" field to ensure uniqueness.','warning');
+					}
 				}
 				else {
-					// really awful ugly way of making a somewhat unique alias for new content item
-					// if you have 9000 aliases identical except for this random
-					// suffix, this will loop infinitely, and even before then 
-					// will slow down as it approaches this point waiting to find
-					// a unique suffix
-					// I leave this is a relatively easily solved gift to future me
-					$fourRandomDigit = mt_rand(1000,9999);
-					$this->alias = $this->alias . "-" . $fourRandomDigit;
-					CMS::Instance()->queue_message('Added random suffix to "URL Friendly" field to ensure uniqueness.','warning');
+					$this->alias = $this->alias . "-" . uniqid();
+					if (ADMINPATH) {
+						CMS::Instance()->queue_message('Added random suffix to "URL Friendly" field to ensure uniqueness.','warning');
+					}
 				}
 			}
 			else {
