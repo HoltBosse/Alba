@@ -119,7 +119,7 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	exit(0);
 }
 
-function make_thumb ($src, $dest, $desired_width, $file, $quality=75, $mimetype) {
+function make_thumb ($src, $dest, $desired_width, $file, $quality, $mimetype) {
 	if ($file->mimetype=='image/jpeg') {
 		$source_image = imagecreatefromjpeg($src);
 	}
