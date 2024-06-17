@@ -8,6 +8,7 @@ class Field_ContentPicker extends Field_Select {
 
 		$this->content_type = $config->content_type ?? false;
 		$this->slimselect = $config->content_type ?? true;
+		$this->multiple = $config->multiple ?? true;
 
 		if ($this->content_type) {
 			if (!is_numeric($this->content_type)) {
