@@ -439,7 +439,12 @@ table.dragging .before_after_wrap {
 					?>
 					<td>
 						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo $content_item->title; ?></a>
-						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
+						<br>
+						<span class='unimportant'>
+							<?php
+								echo Hook::execute_hook_filters('display_alias_override', $content_item->alias, $content_item);
+							?>
+						</span>
 					</td>
 
 					<?php if ($content_list_fields):?>
