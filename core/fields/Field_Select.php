@@ -50,6 +50,10 @@ class Field_Select extends Field {
 							$placeholder = $this->placeholder ?? $this->label;
 							echo "<option value='' >{$placeholder}</option>";
 						}
+						elseif ($this->empty_string) {
+							// not required, but we need a 0 value top option to signify nothing
+							echo "<option value='0' >{$this->empty_string}</option>";
+						}
 						foreach ($this->select_options as $select_option) {
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
