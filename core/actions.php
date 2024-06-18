@@ -53,7 +53,9 @@ class Actions {
         }
     }
 
-    public function render_row($url, $message, $viewmore) {
+    public function render_row($url, $message, $trashme) {
+        $viewmore = DB::fetch("SELECT * FROM user_actions_details WHERE action_id=?", $this->id);
+
         echo "<tr>";
             echo "<td>" . $this->render_user() . "</td>";
             echo "<td>";
@@ -66,7 +68,7 @@ class Actions {
                 }
             echo "</td>";
             if($viewmore) {
-                echo "<td><a href='#'>See More</a></td>";
+                echo "<td><a href='" . Config::uri_path() . "/admin/audit/more/$viewmore->id'>View</a></td>";
             } else {
                 echo "<td></td>";
             }
