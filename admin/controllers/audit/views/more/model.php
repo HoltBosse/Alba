@@ -13,9 +13,9 @@ $actionDetails = DB::fetch("SELECT * FROM user_actions WHERE id=?", $viewmore->a
 $actionClassName = "Action_" . $actionDetails->type;
 $actionInstance = new $actionClassName($actionDetails);
 
-CMS::pprint_r($actionInstance);
+//CMS::pprint_r($actionInstance);
 //CMS::pprint_r($viewmore);
 
-foreach(json_decode($viewmore->json) as $item) {
+/* foreach(json_decode($viewmore->json) as $item) {
     CMS::pprint_r($item);
-}
+} */

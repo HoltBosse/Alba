@@ -3,7 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 ?>
 
-<h1 class="title is-1">TODO: WHAT IM EDITING</h1>
+<h1 class="title is-1">Edited Fields</h1>
 
 <br>
 
