@@ -211,6 +211,9 @@ class Page {
 
 	public function save() {
 		if ($this->id) {
+			Actions::add_action("pagecreate", (object) [
+				"affected_page"=>$this->id,
+			]);
 			// update
 			$query = "update pages set state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=? where id=?";
 			$result = CMS::Instance()->pdo->prepare($query)->execute(array(
@@ -262,6 +265,9 @@ class Page {
 			if ($result) {
 				// update page id with last pdo insert
 				$this->id = CMS::Instance()->pdo->lastInsertId();
+				Actions::add_action("pagecreate", (object) [
+					"affected_page"=>$this->id,
+				]);
 				return true;
 			}
 			else {
