@@ -60,6 +60,18 @@ class Action_contentcreate extends Actions {
             }
         }
 
-        return ob_get_clean();
+        $buffer = ob_get_clean();
+
+        if($buffer=="") {
+            return "
+                <tr>
+                    <td>empty</td>
+                    <td>empty</td>
+                    <td>empty</td>
+                </tr>
+            ";
+        } else {
+            return $buffer;
+        }
     }
 }
