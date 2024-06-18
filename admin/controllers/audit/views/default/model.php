@@ -13,5 +13,6 @@ foreach($actionClasses as $class) {
 $actionTypesString = "'" . implode("','", $actionTypes) . "'";
 
 $results = DB::fetchall("SELECT * FROM user_actions WHERE `type` IN ({$actionTypesString}) ORDER BY date DESC LIMIT {$pagination_size} OFFSET " . (($cur_page-1)*$pagination_size));
+$item_count = DB::fetch("SELECT count(*) AS count FROM user_actions WHERE `type` IN ({$actionTypesString})")->count;
 
 //CMS::pprint_r($results);

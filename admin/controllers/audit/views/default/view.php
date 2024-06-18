@@ -52,8 +52,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <?php
 
-$item_count = DB::fetch("SELECT count(*) AS count FROM user_actions")->count;
-
 $num_pages = ceil($item_count/$pagination_size);
 
 //$url_query_params = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
