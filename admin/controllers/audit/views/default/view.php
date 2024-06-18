@@ -3,6 +3,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 ?>
 
+<h1 class="title is-1">Audit Log</h1>
+
+<br>
+
 <table class="table is-striped is-fullwidth">
 	<thead>
 		<tr>
