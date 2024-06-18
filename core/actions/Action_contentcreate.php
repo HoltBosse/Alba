@@ -30,14 +30,42 @@ class Action_contentcreate extends Actions {
 
 
         $coreFields = ["id", "state", "ordering", "title", "alias", "content_type", "start", "end", "created_by", "updated_by", "note", "category"];
+        $coreFieldsRender = [
+            "state"=>function($input) {
+                if($input==1) {
+                    return "Published";
+                } elseif($input==0) {
+                    return "Unpublished";
+                } else {
+                    //TODO: handle custom statuses
+                    return $input;
+                }
+            },
+            "created_by"=>function($input) {
+                $user = DB::fetch("SELECT * FROM users WHERE id=?", $input ?? 0);
+                return $user ? "$user->username ($user->email)" : null;
+            },
+            "updated_by"=>function($input) {
+                $user = DB::fetch("SELECT * FROM users WHERE id=?", $input ?? 0);
+                return $user ? "$user->username ($user->email)" : null;
+            },
+            "category"=>function($input) {
+                if($input == 0) {
+                    return "none";
+                } else {
+                    $category = DB::fetch("SELECT * FROM categories WHERE id=?", $input ?? 0);
+                    return $category->title;
+                }
+            }
+        ];
         
         foreach(json_decode($viewmore->json) as $field=>$item) {
             if(in_array($field, $coreFields)) {
                 echo "
                     <tr>
                         <td>$field</td>
-                        <td>$item->before</td>
-                        <td>$item->after</td>
+                        <td>" . ($coreFieldsRender[$field] ? $coreFieldsRender[$field]($item->before) : $item->before) . "</td>
+                        <td>" . ($coreFieldsRender[$field] ? $coreFieldsRender[$field]($item->after) : $item->after) . "</td>
                     </tr>
                 ";
             } else {
