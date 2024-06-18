@@ -421,14 +421,14 @@ class Content {
 				];
 			}
 
-			Actions::add_action_details($actionId, (object) $userActionDiff);
-
 			$result = DB::exec("update `{$this->table_name}` set `{$field->name}`=? where id=?", [$field->default, $this->id]);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
 				CMS::Instance()->log("Error saving: " . $field->name);
 			}
 		}
+
+		Actions::add_action_details($actionId, (object) $userActionDiff);
 
 		if ($error_text) {
 			return false;
