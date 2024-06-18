@@ -30,8 +30,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<thead>
 		<tr>
 			<th>User</th>
-			<th>Message</th>
-			<th>See More</th>
+			<th>Item</th>
+			<th>Log</th>
 			<th>Time</th>
 		</tr>
 	</thead>
