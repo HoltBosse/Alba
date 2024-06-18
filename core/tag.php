@@ -142,6 +142,10 @@ class Tag {
 
 		if ($this->id) {
 
+			Actions::add_action("tagupdate", (object) [
+				"affected_tag"=>$this->id,
+			]);
+
 			// check we are not trying to make a child node a parent
 			if ($this->parent) {
 				$parent_id = $this->parent;
@@ -206,6 +210,11 @@ class Tag {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($new_id, $contenttype));
 				}
 				$this->id = $new_id;
+
+				Actions::add_action("tagcreate", (object) [
+					"affected_tag"=>$this->id,
+				]);
+
 				Hook::execute_hook_actions('on_tag_save', $this);
 				return true;	
 			}
