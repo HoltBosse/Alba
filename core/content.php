@@ -234,6 +234,12 @@ class Content {
 		$required_result = DB::exec("insert into ".$table_name." (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
 			$this->id = CMS::Instance()->pdo->lastInsertId();
+
+			Actions::add_action("contentcreate", (object) [
+				"content_id"=>$this->id,
+				"content_type"=>$this->content_type,
+			]);
+
 			// set tags
 			// note - $this->tags is already array - unlike code in save() function below
 			$tag_id_array=[];
@@ -311,6 +317,11 @@ class Content {
 		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
 		if ($this->id) {
+			Actions::add_action("contentupdate", (object) [
+				"content_id"=>$this->id,
+				"content_type"=>$this->content_type,
+			]);
+
 			// update
 			$params = array($this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id) ;
 			$required_result = DB::exec("update {$this->table_name} set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? where id=?", $params);
@@ -329,6 +340,11 @@ class Content {
 			if ($required_result) {
 				// update object id with inserted id
 				$this->id = CMS::Instance()->pdo->lastInsertId();
+
+				Actions::add_action("contentcreate", (object) [
+					"content_id"=>$this->id,
+					"content_type"=>$this->content_type,
+				]);
 			}
 		}
 		if (!$required_result) {
