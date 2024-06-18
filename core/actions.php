@@ -20,6 +20,12 @@ class Actions {
         if (!is_numeric($userid)) {$userid=0;} //triple check - cms can be dumb when a user is timed out
 
         DB::exec("INSERT INTO user_actions (userid, type, json) VALUES (?, ?, ?)", [$userid, $type, json_encode($action)]);
+
+        return DB::get_last_insert_id();
+    }
+
+    public static function add_action_details($actionid, $details) {
+        DB::exec("INSERT INTO user_actions_details (action_id, json) VALUES (?, ?)", [$actionid, json_encode($details)]);
     }
 
     public function render_user() {
