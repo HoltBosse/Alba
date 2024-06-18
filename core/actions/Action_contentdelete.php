@@ -9,6 +9,6 @@ class Action_contentdelete extends Actions {
 
         $contentTypeLabel = DB::fetch("SELECT * FROM content_types WHERE id=?", $contentDetails->content_type);
 
-        $this->render_row(null, "Deleted \"$contentTypeLabel->title\" Content: " . $contentDetails->title, false);
+        $this->render_row(null, "Deleted \"$contentTypeLabel->title\" Content: " . $contentDetails->title);
     }
 }

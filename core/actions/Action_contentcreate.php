@@ -14,7 +14,7 @@ class Action_contentcreate extends Actions {
 
         $contentTypeLabel = DB::fetch("SELECT * FROM content_types WHERE id=?", $contentDetails->content_type);
 
-        $this->render_row($url, "Created \"$contentTypeLabel->title\" Content: " . $contentDetails->title, false);
+        $this->render_row($url, "Created \"$contentTypeLabel->title\" Content: " . $contentDetails->title);
     }
 
     public function display_diff($viewmore) {

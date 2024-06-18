@@ -11,6 +11,6 @@ class Action_userupdate extends Actions {
             $url = "/admin/users/edit/" . $affectedUserDetails->id;
         }
 
-        $this->render_row($url, "Updated User $affectedUserDetails->username ($affectedUserDetails->email)", false);
+        $this->render_row($url, "Updated User $affectedUserDetails->username ($affectedUserDetails->email)");
     }
 }

@@ -53,7 +53,7 @@ class Actions {
         }
     }
 
-    public function render_row($url, $message, $trashme) {
+    public function render_row($url, $message) {
         $viewmore = DB::fetch("SELECT * FROM user_actions_details WHERE action_id=?", $this->id);
 
         echo "<tr>";
@@ -76,8 +76,9 @@ class Actions {
         echo "</tr>";
     }
 
-    //todo: maybe stub default display method???????????
-
+    public function display() {
+        $this->render_row(false, "unknown action occured");
+    }
 
     public function display_diff($viewmore) {
         return "
