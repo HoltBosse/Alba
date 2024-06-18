@@ -234,6 +234,12 @@ class Content {
 		$required_result = DB::exec("insert into ".$table_name." (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
 			$this->id = CMS::Instance()->pdo->lastInsertId();
+
+			Actions::add_action("contentcreate", (object) [
+				"content_id"=>$this->id,
+				"content_type"=>$this->content_type,
+			]);
+
 			// set tags
 			// note - $this->tags is already array - unlike code in save() function below
 			$tag_id_array=[];
@@ -267,6 +273,13 @@ class Content {
 
 	public function save($required_details_form, $content_form, $return_url='') {
 		// return URL not used anymore - left for now for legacy
+
+		$userActionDiff = [];
+		if ($this->id) {
+			$previousContentItem = DB::fetch("SELECT * FROM `{$this->table_name}` WHERE id=?", $this->id);
+		} else {
+			$previousContentItem = (object) [];
+		}
 		
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->get_field_by_name('title')->default;
@@ -311,6 +324,21 @@ class Content {
 		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
 		if ($this->id) {
+			$actionId = Actions::add_action("contentupdate", (object) [
+				"content_id"=>$this->id,
+				"content_type"=>$this->content_type,
+			]);
+
+			$checkFields = ["state", "title", "alias", "note", "updated_by", "category"];
+			foreach($checkFields as $field) {
+				if($this->$field != $previousContentItem->$field) {
+					$userActionDiff[$field] = (object) [
+						"before"=> $previousContentItem->$field,
+						"after"=> $this->$field,
+					];
+				}
+			}
+
 			// update
 			$params = array($this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id) ;
 			$required_result = DB::exec("update {$this->table_name} set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? where id=?", $params);
@@ -329,6 +357,19 @@ class Content {
 			if ($required_result) {
 				// update object id with inserted id
 				$this->id = CMS::Instance()->pdo->lastInsertId();
+
+				$actionId = Actions::add_action("contentcreate", (object) [
+					"content_id"=>$this->id,
+					"content_type"=>$this->content_type,
+				]);
+
+				$checkFields = ["state", "title", "alias", "note", "updated_by", "category"];
+				foreach($checkFields as $field) {
+					$userActionDiff[$field] = (object) [
+						"before"=> null,
+						"after"=> $this->$field,
+					];
+				}
 			}
 		}
 		if (!$required_result) {
@@ -371,12 +412,23 @@ class Content {
 					$field->default = null;
 				}
 			}
+
+			$fieldName = $field->name;
+			if($field->default != $previousContentItem->$fieldName) {
+				$userActionDiff[$fieldName] = (object) [
+					"before"=> $previousContentItem->$fieldName,
+					"after"=> $field->default,
+				];
+			}
+
 			$result = DB::exec("update `{$this->table_name}` set `{$field->name}`=? where id=?", [$field->default, $this->id]);
 			if (!$result) {
 				$error_text .= "Error saving: " . $field->name . " ";
 				CMS::Instance()->log("Error saving: " . $field->name);
 			}
 		}
+
+		Actions::add_action_details($actionId, (object) $userActionDiff);
 
 		if ($error_text) {
 			return false;

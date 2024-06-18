@@ -20,6 +20,9 @@ if ($action=='tag_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+		Actions::add_action("mediaupdate", (object) [
+			"affected_media"=>$image_id,
+		]);
 		// check if already tagged
 		$c = DB::fetch("select count(tag_id) as c from tagged where content_id=? and content_type_id=-1 and tag_id=?", [$image_id, $tag_id])->c;
 		if (!$c) {
@@ -47,6 +50,9 @@ if ($action=='cleartags_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+			Actions::add_action("mediaupdate", (object) [
+				"affected_media"=>$image_id,
+			]);
 			$ok = DB::exec("delete from tagged where content_id=? and content_type_id=-1", [$image_id]);
 			if ($ok) {
 				$image_ids_tagged[] = $image_id;
@@ -66,6 +72,9 @@ if ($action=='delete_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+		Actions::add_action("mediadelete", (object) [
+			"affected_media"=>$image_id,
+		]);
 		$filename_response = DB::fetch('select filename from media where id=?',$image_id);
 
 		// clear tags
@@ -101,6 +110,9 @@ if ($action=='untag_media') {
 	$tag_id = Input::getvar('tag_id','NUM');
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+		Actions::add_action("mediaupdate", (object) [
+			"affected_media"=>$image_id,
+		]);
 		// clear tags
 		$ok = DB::exec("delete from tagged where content_id=? and content_type_id=-1 and tag_id=?", [$image_id, $tag_id]);
 		if ($ok) {
@@ -169,6 +181,11 @@ if ($action=='rename_image') {
 	$title = Input::getvar('title','STRING');
 	$alt = Input::getvar('alt','STRING');
 	$image_id = Input::getvar('image_id','NUM');
+
+	Actions::add_action("mediaupdate", (object) [
+		"affected_media"=>$image_id,
+	]);
+
 	$result = DB::exec("update media set title=?, alt=? where id=?", [$title, $alt, $image_id]);
 	if ($result) {
 		echo '{"success":1,"msg":"Image renamed"}';

@@ -292,12 +292,12 @@ class Field_Image extends Field {
 	}
 
 	public function get_friendly_value($helpful_info) {
-		if (is_numeric($this->id)) {
-			$img = new Image($this->id);
-			$img->render('thumb','backend');
+		if (is_numeric($this->default)) {
+			$img = new Image($this->default);
+			return $img->render('thumb','backend', false);
 		}
 		else {
-			echo "<span>No Image</span>";
+			return "<span>No Image</span>";
 		}
 	}
 

@@ -12,6 +12,10 @@ if (!$id) {
 }
 
 if ($action=='toggle') {
+	Actions::add_action("categoryupdate", (object) [
+		"affected_category"=>$id[0],
+	]);
+
 	$result = DB::exec("UPDATE categories SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
 	if ($result) {
 		CMS::Instance()->queue_message('Toggled state of Category','success', $_SERVER['HTTP_REFERER']);
@@ -22,6 +26,11 @@ if ($action=='toggle') {
 }
 
 if ($action=='publish') {
+	foreach($id as $item) {
+		Actions::add_action("categoryupdate", (object) [
+			"affected_category"=>$item,
+		]);
+	}
 	$idlist = implode(',',$id);
 	$result = DB::exec("UPDATE categories SET state = 1 where id in ({$idlist})"); 
 	if ($result) {
@@ -33,6 +42,11 @@ if ($action=='publish') {
 }
 
 if ($action=='unpublish') {
+	foreach($id as $item) {
+		Actions::add_action("categoryupdate", (object) [
+			"affected_category"=>$item,
+		]);
+	}
 	$idlist = implode(',',$id);
 	$result = DB::exec("UPDATE categories SET state = 0 where id in ({$idlist})"); 
 	if ($result) {
@@ -44,6 +58,11 @@ if ($action=='unpublish') {
 }
 
 if ($action=='delete') {
+	foreach($id as $item) {
+		Actions::add_action("categorydelete", (object) [
+			"affected_category"=>$item,
+		]);
+	}
 	$idlist = implode(',',$id);
 	$result = DB::exec("DELETE FROM categories where id in ({$idlist})"); 
 	if ($result) {

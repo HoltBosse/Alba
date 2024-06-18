@@ -112,6 +112,9 @@ class Category {
 		$this->custom_fields = $custom_fields_form ? $custom_fields_form->serialize_json() : "";
 
 		if ($this->id) {
+			Actions::add_action("categoryupdate", (object) [
+				"affected_category"=>$this->id,
+			]);
 			// update
 			$required_result = DB::exec("update categories set state=?,  title=?, parent=?, custom_fields=? where id=?", [$this->state, $this->title, $this->parent, $this->custom_fields, $this->id]);
 		}
@@ -121,6 +124,10 @@ class Category {
 			if ($required_result) {
 				// update object id with inserted id
 				$this->id = CMS::Instance()->pdo->lastInsertId();
+
+				Actions::add_action("categorycreate", (object) [
+					"affected_category"=>$this->id,
+				]);
 			}
 		}
 		if (!$required_result) {

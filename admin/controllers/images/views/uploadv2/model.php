@@ -128,6 +128,12 @@ foreach ($_FILES["file-upload"]["error"] as $key => $error) {
 }
 $uploaded_files = implode(",",$uploaded_files);
 
+foreach($img_ids as $id) {
+	Actions::add_action("mediacreate", (object) [
+		"affected_media"=>$id,
+	]);
+}
+
 
 // return json to javascript uploaded and
 CMS::Instance()->queue_message('Images uploaded','success');

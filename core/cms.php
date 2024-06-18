@@ -194,9 +194,8 @@ final class CMS {
 	}
 
 	public static function show_error($text, $http_code="500") {
-		if (ob_get_length()) {
-			ob_end_clean();
-		}
+		ob_end_clean();
+		ob_end_clean();
 		http_response_code($http_code);
 		?>
 			<!DOCTYPE html>
@@ -761,6 +760,7 @@ spl_autoload_register(function($class_name)
 	$is_widget_class = strpos($class_name, "Widget_");
 	$is_user_class = strpos($class_name, "User_");
 	$is_plugin_class = strpos($class_name, "Plugin_");
+	$is_action_class = strpos($class_name, "Action_");
 
 	if ($is_field_class===0) {
 		$path = CMSPATH . "/core/fields/" . $class_name . ".php";
@@ -775,6 +775,9 @@ spl_autoload_register(function($class_name)
 	elseif ($is_plugin_class===0) {
 		$plugin_class_location = str_replace('Plugin_','',$class_name);
 		$path = CMSPATH . "/plugins/" . $plugin_class_location . "/plugin_class.php";
+	}
+	elseif($is_action_class===0) {
+		$path = CMSPATH . "/core/actions/" . $class_name . ".php";
 	}
 	else {
 		$path = CMSPATH . "/core/" . strtolower($class_name) . ".php";
