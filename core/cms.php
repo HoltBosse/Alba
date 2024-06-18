@@ -194,9 +194,8 @@ final class CMS {
 	}
 
 	public static function show_error($text, $http_code="500") {
-		if (ob_get_length()) {
-			ob_end_clean();
-		}
+		ob_end_clean();
+		ob_end_clean();
 		http_response_code($http_code);
 		?>
 			<!DOCTYPE html>
