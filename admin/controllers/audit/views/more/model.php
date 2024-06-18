@@ -9,4 +9,13 @@ if(!$viewmore) {
     CMS::show_error("Details not found", 404);
 }
 
-CMS::pprint_r($viewmore);
+$actionDetails = DB::fetch("SELECT * FROM user_actions WHERE id=?", $viewmore->action_id);
+$actionClassName = "Action_" . $actionDetails->type;
+$actionInstance = new $actionClassName($actionDetails);
+
+CMS::pprint_r($actionInstance);
+//CMS::pprint_r($viewmore);
+
+foreach(json_decode($viewmore->json) as $item) {
+    CMS::pprint_r($item);
+}

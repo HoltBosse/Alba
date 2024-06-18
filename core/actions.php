@@ -75,4 +75,17 @@ class Actions {
             echo "<td>" . $this->render_time() . "</td>";
         echo "</tr>";
     }
+
+    //todo: maybe stub default display method???????????
+
+
+    public function display_diff($viewmore) {
+        return "
+            <tr>
+                <td>unknown</td>
+                <td>unknown</td>
+                <td>unknown</td>
+            </tr>
+        ";
+    }
 }
