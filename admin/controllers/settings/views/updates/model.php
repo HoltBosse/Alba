@@ -133,6 +133,20 @@ if (!$user_actions_table_ok) {
 	");
 }
 
+// ensure user_actions_details table exists
+$user_actions_details_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'user_actions_details' LIMIT 1");
+if (!$user_actions_details_table_ok) {
+	DB::exec("DROP TABLE IF EXISTS `user_actions_details`;");
+	DB::exec("
+	CREATE TABLE `user_actions_details` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`action_id` int(11) NOT NULL,
+		`json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`json`)),
+		PRIMARY KEY (`id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+	");
+}
+
 // Perform update if required
 
 if ($submitted) { 

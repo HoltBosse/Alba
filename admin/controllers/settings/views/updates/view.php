@@ -97,3 +97,10 @@ if ($user_actions_table_ok) {
 else {
 	show_message ('User Actions Table','User Actions table created.','is-warning');
 }
+
+if ($user_actions_details_table_ok) {
+	show_message ('User Actions Details Table','User Actions table OK.','is-success');
+}
+else {
+	show_message ('User Actions Details Table','User Actions table created.','is-warning');
+}
