@@ -49,6 +49,7 @@ require_once (CMSPATH . "/core/cms.php");
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/settings/info">System Information</a>
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/settings/backups">Backups</a>
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/redirects">Redirects</a>
+								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/audit">Audit Log</a>
 							</div>
 						</div>
 						<?php endif; ?>
