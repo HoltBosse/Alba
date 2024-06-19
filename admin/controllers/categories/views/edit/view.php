@@ -6,7 +6,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php if ($new_cat):?>
 	<h1 class='title'>New &ldquo;<?php echo Content::get_content_type_title($cat->content_type);?>&rdquo; Category</h1>
 <?php else:?>
-	<?php echo "<script>var content_id=" . $content_id . "</script>"; ?>
 	<h1 class='title'>Editing &ldquo;<?php echo $cat->title; ?>&rdquo; - A &ldquo;<?php echo Content::get_content_type_title($cat->content_type);?>&rdquo; Category</h1>
 <?php endif; ?>
 
