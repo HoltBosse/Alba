@@ -216,7 +216,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <?php
 	if (!$order_by) {
-		component::create_pagination($user_count, $pagination_size, $cur_page);
+		Component::create_pagination($user_count, $pagination_size, $cur_page);
 	}
 ?>
 

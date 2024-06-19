@@ -248,7 +248,7 @@ dialog::backdrop {
 	<?php endforeach; ?>
 </div>
 
-<?php component::create_pagination($images_count, $pagination_size, $cur_page); ?>
+<?php Component::create_pagination($images_count, $pagination_size, $cur_page); ?>
 
 <?php endif; // skipped display of all images if filter==upload ?>
 
