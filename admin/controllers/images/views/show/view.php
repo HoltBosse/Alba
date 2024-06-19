@@ -248,68 +248,7 @@ dialog::backdrop {
 	<?php endforeach; ?>
 </div>
 
-<?php if ($images_count>$pagination_size):?>
-	<style>
-		.small-pagination-list a {
-			margin: 0;
-		}
-		.small-pagination-list li:not(:last-child) a {
-			border-right: 0px solid transparent;
-			border-top-right-radius: 0px;
-			border-bottom-right-radius: 0px;
-		}
-		.small-pagination-list li:not(:first-child) a {
-			border-top-left-radius: 0px;
-			border-bottom-left-radius: 0px;
-		}
-		.small-pagination-list li a.is-current {
-			font-weight: bold;
-    		font-size: 1.075em;
-		}
-	</style>
-	<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-		<ul class="pagination-list small-pagination-list">
-			<?php
-				$url_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-				$num_pages = ceil($images_count/$pagination_size);
-				$url_query_params = $_GET;
-
-				$url_query_params['page'] = 1;
-				$page_one_url_params = http_build_query($url_query_params);
-
-				$url_query_params['page'] = $num_pages;
-				$page_last_url_params = http_build_query($url_query_params);
-
-				$cur_page = Input::getvar('page','INT','1');
-				$url_query_params['page'] = $cur_page+1;
-				$next_url_params = http_build_query($url_query_params);
-				$url_query_params['page'] = $cur_page-1;
-				$prev_url_params = http_build_query($url_query_params);
-			?>
-			<li> 
-				<a class='pagination-link' href='<?=$url_path . "?" . $page_one_url_params?>'><<</a>
-			</li>
-			<li> 
-				<a class='pagination-link' href='<?=$url_path . "?" . ($cur_page!=1 ? $prev_url_params : $page_one_url_params)?>'><</a>
-			</li>
-			<?php for ($n=($cur_page-2>0 ? $cur_page-2 : 1); $n<=$num_pages && $n<=$cur_page+2; $n++):?>
-				<?php 
-					$url_query_params['page'] = $n;
-					$url_params = http_build_query($url_query_params);
-				?>
-				<li> 
-					<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='<?=$url_path . "?" . $url_params?>'><?php echo $n;?></a>
-				</li>
-			<?php endfor; ?>
-			<li> 
-				<a class='pagination-link' href='<?=$url_path . "?" . ($cur_page!=$num_pages ? $next_url_params : $page_last_url_params)?>'>></a>
-			</li>
-			<li> 
-				<a class='pagination-link' href='<?=$url_path . "?" . $page_last_url_params?>'>>></a>
-			</li>
-		</ul>
-	</nav>
-<?php endif; ?>
+<?php Element::create_pagination($images_count, $pagination_size, $cur_page); ?>
 
 <?php endif; // skipped display of all images if filter==upload ?>
 
