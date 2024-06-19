@@ -391,7 +391,7 @@ if ($cur_page) {
 
 ?>
 
-<?php Element::create_pagination($redirect_count, $page_size, $cur_page); ?>
+<?php component::create_pagination($redirect_count, $page_size, $cur_page); ?>
 
 <script>
 	admin_rows = document.querySelectorAll('.content_admin_row');

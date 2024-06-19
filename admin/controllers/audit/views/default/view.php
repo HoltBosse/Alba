@@ -31,4 +31,4 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <br><br>
 
-<?php Element::create_pagination($item_count, $pagination_size, $cur_page); ?>
+<?php component::create_pagination($item_count, $pagination_size, $cur_page); ?>

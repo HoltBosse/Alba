@@ -1,7 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-class Element {
+class Component {
     public static function create_pagination($item_count, $pagination_size, $cur_page) {
         $num_pages = ceil($item_count/$pagination_size);
 

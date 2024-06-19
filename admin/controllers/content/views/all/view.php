@@ -516,7 +516,7 @@ if ($cur_page) {
 
 <?php
 	if (!$order_by) {
-		Element::create_pagination($content_count, $pagination_size, $cur_page);
+		component::create_pagination($content_count, $pagination_size, $cur_page);
 	}
 ?>
 
