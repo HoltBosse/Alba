@@ -64,7 +64,7 @@ if ($action=='delete') {
 		]);
 	}
 	$idlist = implode(',',$id);
-	$result = DB::exec("DELETE FROM categories where id in ({$idlist})"); 
+	$result = DB::exec("UPDATE categories SET state = -1 WHERE id IN ({$idlist})"); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted Categories','success', $_SERVER['HTTP_REFERER']);
 	}
