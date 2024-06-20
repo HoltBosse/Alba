@@ -69,50 +69,6 @@ class Content {
 		$this->category=0;
 	}
 
-	public function get_content_count($content_type, $search="", $state=0) {
-		if ($search) {
-			$like = '%' . $search . '%';
-			if (!$content_type) {
-				// return count of all content
-				return DB::fetch('select count(*) as c from content where (title like ? OR note like ?) and state>?',array($like,$like,$state))->c;
-			}
-			if (!is_numeric($content_type)) {
-				// try and get type id
-				$content_type = Content::get_content_type_id($content_type);
-				if (!$content_type) {
-					if (Config::debug()) {
-						CMS::pprint_r('Unable to determine content type when retrieving count');
-						CMS::pprint_r(debug_backtrace());
-						die();
-					} else {
-						CMS::Instance()->show_error('Unable to determine content type when retrieving count');
-					}
-				}
-			}
-			return DB::fetch('select count(*) as c from content where (title like ? OR note like ?) and state>0 and content_type=?',array($like,$like,$content_type))->c;
-		}
-		else {
-			if (!$content_type) {
-				// return count of all content
-				return DB::fetch('select count(*) as c from content where state>?',array($state))->c;
-			}
-			if (!is_numeric($content_type)) {
-				// try and get type id
-				$content_type = Content::get_content_type_id($content_type);
-				if (!$content_type) {
-					if (Config::debug()) {
-						CMS::pprint_r('Unable to determine content type when retrieving count');
-						CMS::pprint_r(debug_backtrace());
-						die();
-					} else {
-						CMS::Instance()->show_error('Unable to determine content type when retrieving count');
-					}
-				}
-			}
-			return DB::fetch('select count(*) as c from content where state>? and content_type=?',array($state, $content_type))->c;
-		}
-	}
-
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
