@@ -6,6 +6,22 @@ class Field_Contentselector extends Field_Select {
 	public $list_unpublished;
 	public $tags;
 
+	public function get_friendly_value($helpful_info) {
+		// content_type already checked for being numeric in load_from_config function
+		$table_name = Content::get_table_name_for_content_type($this->content_type);
+		if (!$table_name) {
+			return $this->default;
+		}
+		$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
+		$val = DB::fetch($query, $this->default)->val ?? false;
+		if ($val) {
+			return $val;
+		}
+		else {
+			return $this->default;
+		}
+	}
+
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 
