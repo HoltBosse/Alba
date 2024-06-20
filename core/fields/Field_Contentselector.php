@@ -15,15 +15,15 @@ class Field_Contentselector extends Field_Select {
 		}
 		$table_name = Content::get_table_name_for_content_type($content_type_id);
 		if (!$table_name) {
-			echo $this->default;
+			return $this->default;
 		}
 		$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
 		$val = DB::fetch($query, $this->default)->val ?? false;
 		if ($val) {
-			echo $val;
+			return $val;
 		}
 		else {
-			echo $this->default;
+			return $this->default;
 		}
 	}
 
