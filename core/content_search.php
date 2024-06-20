@@ -155,16 +155,6 @@ class Content_Search {
 
 		$from = " from ( `" . $table_name . "` c ";
 
-		// if custom field exists as filter - needs to be added in from/where not as left join
-		// also save filter value to filter_pdo_params
-		foreach ($this->list_fields as $field) {
-
-			if (array_key_exists($field, $this->filters ?? [])) {
-				$this->filter_pdo_params[] = $this->filters[$field];
-				//$from .= ", content_fields f_{$field}_t "; // no longer needs all in one table now
-			}
-		}
-
 		$from .= " ) left join categories cat on c.category=cat.id ";
 
 		$from = Hook::execute_hook_filters('custom_content_search_from', $from, $this->type_filter); 
