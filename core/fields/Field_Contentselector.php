@@ -8,7 +8,7 @@ class Field_Contentselector extends Field_Select {
 
 	public function get_friendly_value($helpful_info) {
 		// content_type already checked for being numeric in load_from_config function
-		$table_name = Content::get_table_name_for_content_type($content_type);
+		$table_name = Content::get_table_name_for_content_type($this->content_type);
 		if (!$table_name) {
 			return $this->default;
 		}
