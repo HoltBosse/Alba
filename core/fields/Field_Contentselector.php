@@ -6,6 +6,27 @@ class Field_Contentselector extends Field_Select {
 	public $list_unpublished;
 	public $tags;
 
+	public function get_friendly_value($helpful_info) {
+		if (is_numeric($helpful_info->content_type)) {
+			$content_type_id = $helpful_info->content_type;
+		}
+		else {
+			$content_type_id = Content::get_content_type_id($helpful_info->content_type);
+		}
+		$table_name = Content::get_table_name_for_content_type($content_type_id);
+		if (!$table_name) {
+			echo $this->default;
+		}
+		$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
+		$val = DB::fetch($query, $this->default)->val ?? false;
+		if ($val) {
+			echo $val;
+		}
+		else {
+			echo $this->default;
+		}
+	}
+
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 
