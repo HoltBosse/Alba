@@ -30,6 +30,9 @@ if (!is_null($state)) {
     $and_or_where = $search ? " and " : " where ";
     $query.= " {$and_or_where} state=? ";
     $params[] = $state;
+} else {
+    $and_or_where = $search ? " and " : " where ";
+    $query.= " {$and_or_where} state>=0 ";
 }
 $params[] = $page_size;
 $params[] = ($cur_page-1)*$page_size; // offset
@@ -48,6 +51,8 @@ if ($search) {
 if (!is_null($state)) {
     $query.= " {$and_or_where} state=? ";
     $params[] = $state;
+} else {
+    $query.= " {$and_or_where} state>=0 ";
 }
 $redirect_count = DB::fetch($query, $params)->c ?? 0;
 
