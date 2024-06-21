@@ -658,7 +658,7 @@ class Field_Rich extends Field {
 
 								window.cur_media_page = 1;
 								window.cur_media_searchtext = null;
-								window.images_per_page = ;
+								window.images_per_page = 50;
 
 								// do initial listing
 								rich_fetch_images (null, null); // no search, all tags
