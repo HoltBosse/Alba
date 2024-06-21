@@ -71,4 +71,17 @@ class Component {
             </nav>
         <?php endif;
     }
+
+    public static function addon_button_group($id, $location, $buttons=["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]) {
+        echo "<div id='$id' class='pull-right buttons has-addons'>";
+            foreach($buttons as $button=>$class) {
+                echo    "<button
+                            formaction='" . Config::uripath() . "/admin/$location/action/$button'
+                            class='button is-$class'
+                            type='submit'
+                            " . ($button=="delete" ? "onclick='return window.confirm(\"Are you sure?\")'" : "") . "
+                        >" . ucwords($button) . "</button>";
+            }
+        echo "</div>";
+    }
 }

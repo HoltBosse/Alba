@@ -69,15 +69,8 @@ div.pull-right {
 			</span>
 			<span>New Page</span>
 		</a>
-		<!-- page operation toolbar -->
-		<div id="page_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::uripath();?>/admin/pages/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/pages/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/pages/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
-		</div>
+		<?php Component::addon_button_group("page_operations", "pages"); ?>
 	</h1>
-
-
 
 	<table id='all_pages_table' class="table">
 		<thead>
