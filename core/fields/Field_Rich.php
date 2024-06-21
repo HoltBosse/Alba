@@ -3,6 +3,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Rich extends Field {
 
+	public $mimetypes;
+	public $tags;
+
 	function __construct($id="") {
 		$this->mimetypes = [];
 		$this->tags = [];
