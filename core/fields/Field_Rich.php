@@ -3,6 +3,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Rich extends Field {
 
+	function __construct($id="") {
+		$this->mimetypes = [];
+		$this->tags = [];
+	}
+
 	public function display() {
 		?>
 		<style>
@@ -650,7 +655,7 @@ class Field_Rich extends Field {
 
 								window.cur_media_page = 1;
 								window.cur_media_searchtext = null;
-								window.images_per_page = 50;
+								window.images_per_page = ;
 
 								// do initial listing
 								rich_fetch_images (null, null); // no search, all tags
