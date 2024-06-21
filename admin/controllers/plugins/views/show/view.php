@@ -43,13 +43,7 @@ div.pull-right {
 <form action='' method='post' name='plugin_action' id='plugin_action_form'>
 
 	<h1 class='title'>Plugins
-		
-		<!-- plugin operation toolbar -->
-		<div id="plugin_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::uripath();?>/admin/plugins/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/plugins/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/plugins/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
-		</div>
+		<?php Component::addon_button_group("plugin_operations", "plugins"); ?>
 	</h1>
 
 	<table class='table'>
