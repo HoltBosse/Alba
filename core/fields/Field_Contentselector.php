@@ -10,10 +10,24 @@ class Field_Contentselector extends Field_Select {
 		// content_type already checked for being numeric in load_from_config function
 		$content_type = $this->content_type ?? $helpful_info->content_type;
 		$table_name = Content::get_table_name_for_content_type($content_type);
-		$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
-		$val = DB::fetch($query, $this->default)->val ?? false;
-		if ($val) {
-			return $val;
+		$field_value = json_decode($this->default);
+		if (is_numeric($this->default)) {
+			$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
+			$val = DB::fetch($query, $this->default)->val ?? false;
+			if ($val) {
+				return $val;
+			}
+		}
+		elseif (is_array($this->default)) {
+			$title_arr = [];
+			foreach ($this->default as $content_id) {
+				$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
+				$val = DB::fetch($query, $content_id)->val ?? false;
+				if ($val) {
+					$title_arr[] = $val;
+				}
+			}
+			return explode(", ", $title_arr);
 		}
 		else {
 			return $this->default;
