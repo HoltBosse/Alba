@@ -72,7 +72,7 @@ final class CMS {
 	public static function raise_404() {
 		ob_end_clean ();ob_end_clean ();
 		// check if we need to redirect this page
-		$relative_url = CMS::Instance()->request; 
+		$relative_url = rtrim(CMS::Instance()->request, '/');
 		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=?", $relative_url);
 		if ($valid_redirect) {
 			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
