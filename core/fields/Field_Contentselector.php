@@ -11,14 +11,14 @@ class Field_Contentselector extends Field_Select {
 		$content_type = $this->content_type ?? $helpful_info->content_type;
 		$table_name = Content::get_table_name_for_content_type($content_type);
 		$field_value = json_decode($this->default);
-		if (is_numeric($this->default)) {
+		if (is_numeric($field_value)) {
 			$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
 			$val = DB::fetch($query, $this->default)->val ?? false;
 			if ($val) {
 				return $val;
 			}
 		}
-		elseif (is_array($this->default)) {
+		elseif (is_array($field_value)) {
 			$title_arr = [];
 			foreach ($this->default as $content_id) {
 				$query = 'SELECT `title` AS val FROM `' . $table_name . '` WHERE id=?';
@@ -27,7 +27,7 @@ class Field_Contentselector extends Field_Select {
 					$title_arr[] = $val;
 				}
 			}
-			return explode(", ", $title_arr);
+			return implode(", ", $title_arr);
 		}
 		else {
 			return $this->default;
