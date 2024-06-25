@@ -12,6 +12,9 @@ Header always set X-Content-Type-Options "nosniff"
 # Options +FollowSymlinks
 Options -Indexes
 
+Header always append X-Frame-Options SAMEORIGIN
+Header set X-Content-Type-Options nosniff
+
 ## Mod_rewrite in use.
 
 RewriteEngine On
