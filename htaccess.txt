@@ -6,14 +6,12 @@
 ## Suppress mime type detection in browsers for unknown types
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
+Header always append X-Frame-Options SAMEORIGIN
 </IfModule>
 
 ## Can be commented out if causes errors, see notes above.
 # Options +FollowSymlinks
 Options -Indexes
-
-Header always append X-Frame-Options SAMEORIGIN
-Header set X-Content-Type-Options nosniff
 
 ## Mod_rewrite in use.
 
