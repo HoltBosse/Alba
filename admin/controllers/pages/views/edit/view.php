@@ -118,6 +118,7 @@ div.position_tag_wrap.active {
 
 <form method="POST" onSubmit="return validate_view_options();" action="<?php echo Config::uripath() . "/admin/pages/save";?>" id="page_form">
 		<input name="id" type="hidden" value="<?php echo $page->id;?>"/>
+		<input name="state" type="hidden" value="<?php echo $page->state;?>"/>
 
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap <?php if ($page->id) { echo " hidden ";}?>'>		
