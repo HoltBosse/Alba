@@ -131,10 +131,7 @@ class Page {
 
 	public function load_from_post() {
 		$this->title = Input::getvar('title','TEXT');
-		$this->state = Input::getvar('state','NUM');
-		if ($this->state === null) {
-			$this->state = 1;
-		}
+		$this->state = Input::getvar('state','NUM', 1);
 		$this->template_id = Input::getvar('template','NUM');
 		$this->alias = Input::getvar('alias','TEXT');
 		if (!$this->alias) {
