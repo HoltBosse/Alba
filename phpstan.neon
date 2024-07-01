@@ -1,5 +1,5 @@
 parameters:
-	level: 0
+	level: 1
 	paths:
 		- core
 		- admin
@@ -14,5 +14,9 @@ parameters:
 		- widgets/menu
 		- widgets/crowdriff
 		- config.php
+		- index.php
 	excludePaths:
 		- core/controllers # note this ignores the /image directory....
+	ignoreErrors:
+		- '#Call to an undefined static method Config::[a-zA-Z0-9\\_]()#'
+		- '#Variable \$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]* might not be defined#'

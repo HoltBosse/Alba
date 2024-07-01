@@ -7,6 +7,7 @@ class Field_Rich extends Field {
 	public $tags;
 
 	function __construct($id="") {
+		$this->id = $id;
 		$this->mimetypes = [];
 		$this->tags = [];
 	}

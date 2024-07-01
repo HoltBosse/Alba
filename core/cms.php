@@ -107,7 +107,7 @@ final class CMS {
 		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
 		if (!isset($GLOBALS['hooks'][$hook_label])) {
 			// hook not already registered, make new hook
-			$GLOBALS['hooks'][$hook_label] = new Hook ($hook_label);
+			$GLOBALS['hooks'][$hook_label] = new Hook ();
 		}
 		// add action to hook
 		$action = new stdClass();
@@ -120,9 +120,9 @@ final class CMS {
 
 	public static function get_admin_template() {
 		$template="clean";
-		if (null !== config::admintemplate() && config::admintemplate()) {
-			if (file_exists(CURPATH . '/templates/' . config::admintemplate() . "/index.php")) {
-				$template = config::admintemplate();
+		if (null !== Config::admintemplate() && Config::admintemplate()) {
+			if (file_exists(CURPATH . '/templates/' . Config::admintemplate() . "/index.php")) {
+				$template = Config::admintemplate();
 			}
 		}
 		return $template;

@@ -9,8 +9,8 @@ class Field_Tab extends Field {
 	public $input_type;
 	public $nowrap;
 
-	function __construct($default_content="") {
-		$this->id = "";
+	function __construct($id="") {
+		$this->id = $id;
 		$this->name = "";
 		$this->tabs = [];
 		$this->default = [];

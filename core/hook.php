@@ -7,7 +7,7 @@ class Hook {
     public $actions;
     public $arg_count;
 
-	public function __construct($label) {
+	public function __construct() {
 		$this->label = false;
 		$this->actions = [];
 	}
