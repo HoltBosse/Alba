@@ -119,7 +119,7 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	exit(0);
 }
 
-function make_thumb ($src, $dest, $desired_width, $file, $quality, $mimetype) {
+function image_make_thumb ($src, $dest, $desired_width, $file, $quality, $mimetype) {
 	if ($file->mimetype=='image/jpeg') {
 		$source_image = imagecreatefromjpeg($src);
 	}
@@ -232,7 +232,7 @@ if ($segsize>1 || ($req_width||$req_format||$req_quality<>75)) {
 			$newsize_path = CMSPATH . "/images/processed/q_" . $req_quality . "_" . $size . "w_" . $image->filename . $newsize_path_suffix;
 			//echo "<h5>Path: " . $newsize_path . "</h5>"; CMS::pprint_r ($mimetype); exit(0);
 			if (!file_exists($newsize_path)) {
-				make_thumb($original_path, $newsize_path, $size, $image, $req_quality, $mimetype); 
+				image_make_thumb($original_path, $newsize_path, $size, $image, $req_quality, $mimetype); 
 			}
 			// set mimetype in image object to match requested mimetype (might already be same...)
 			// this makes sure header is correct 
