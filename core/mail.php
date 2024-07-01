@@ -89,7 +89,7 @@ class Mail {
 
 		try {
 			//Server settings
-			$mail->SMTPDebug = false;                      //Enable verbose debug output with SMTP::DEBUG_SERVER
+			$mail->SMTPDebug = 0;                      //Enable verbose debug output with SMTP::DEBUG_SERVER
 			$mail->isSMTP();                                            //Send using SMTP
 			$mail->Host       = $smtp_server;                     //Set the SMTP server to send through
 			$mail->SMTPAuth   = $authenticate==true;                                   //Enable SMTP authentication if required
