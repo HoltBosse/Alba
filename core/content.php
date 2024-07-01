@@ -518,6 +518,7 @@ class Content {
 		$content_form = new Form (CMSPATH . '/controllers/' . $location . "/custom_fields.json");
 		//CMS::pprint_r ($content_form);exit(0);
 		foreach ($content_form->fields as $field) {
+			/** @var Field $field */
 			// insert field info
 			if (isset($field->save)) {
 				if ($field->save===false) {
@@ -630,6 +631,7 @@ class Content {
 			}
 			$form = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 			foreach($form->fields as $field) {
+				/** @var Field $field */
 				if (isset($field->save)) {
 					if ($field->save===true) {
 						$list_fields[] = $field->name;

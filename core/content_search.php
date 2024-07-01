@@ -92,6 +92,7 @@ class Content_Search {
 				if ($this->fetch_all) {
 					// get all saveable, not explicitly ignored fields
 					foreach ($custom_fields->fields as $custom_field) {
+						/** @var Field $custom_field */
 						if (!in_array($custom_field->name,$this->ignore_fields)) {
 							if (isset($custom_field->save)) {
 								if ($custom_field->save===true) {

@@ -55,13 +55,16 @@ class Field_Select extends Field {
 							echo "<option value='0' >{$this->empty_string}</option>";
 						}
 						foreach ($this->select_options as $select_option) {
+							/** @var object{text: mixed, value: mixed, UpdateSelect: mixed} $select_option */
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
 							} elseif ($select_option->value == $this->default) {
 								$selected="selected";
 							}
-							if (isset($select_option->UpdateSelect)) { $UpdateSelect[$select_option->value] = $select_option->UpdateSelect;}
+							if (isset($select_option->UpdateSelect)) {
+								$UpdateSelect[$select_option->value] = $select_option->UpdateSelect;
+							}
 							echo "<option {$selected} value='{$select_option->value}'>{$select_option->text}</option>";
 						}
 						if ($this->slimselect_ajax) {

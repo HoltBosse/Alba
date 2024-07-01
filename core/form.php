@@ -6,6 +6,7 @@ class Form {
 	public $fields;
 	public $json;
 	public $repeatable;
+	public $form_path;
 
 	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
 		$this->fields = array();
