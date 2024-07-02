@@ -235,32 +235,6 @@ table.dragging .before_after_wrap {
 
 </form>
 
-<?php 
-/* CMS::pprint_r ($content_count);
-CMS::pprint_r ($pagination_size);
-CMS::pprint_r ($order_by);
-CMS::pprint_r (sizeof($all_content)); */
-$num_pages = ceil($content_count/$pagination_size);
-?>
-
-<?php if ($content_count>$pagination_size && !$order_by):?>
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-	<?php if ($cur_page>1):?>
-		<a href='?page=<?php echo $cur_page-1;?><?php if ($search) { echo "&search=" . $search; }?>' class="pagination-previous">Previous</a>
-	<?php endif;?>
-	<?php if ( ($content_count>sizeof($all_content)) && !$order_by && ( ($cur_page*$pagination_size)<$content_count ) ):?>
-		<a href='?page=<?php echo $cur_page+1;?><?php if ($search) { echo "&search=" . $search; }?>' class="pagination-next">Next page</a>
-	<?php endif; ?>
-	<ul class="pagination-list">
-		<?php for ($n=1; $n<=$num_pages; $n++):?>
-		<li>
-			<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='?page=<?php echo $n;?><?php if ($search) { echo "&search=" . $search; }?>'><?php echo $n;?></a>
-		</li>
-		<?php endfor; ?>
-	</ul>
-</nav>
-<?php endif; ?>
-
 <script>
 	admin_rows = document.querySelectorAll('.content_admin_row');
 	admin_rows.forEach(row => {

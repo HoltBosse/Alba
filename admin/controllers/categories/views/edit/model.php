@@ -58,7 +58,7 @@ if ($required_details_form->is_submitted()) {
 
 	// validate
 	if ($required_details_form->validate()) {
-		if (!$custom_fields_form || ($custom_fields_form && $custom_fields_form->validate()) ) {
+		if (!$custom_fields_form->id || ($custom_fields_form && $custom_fields_form->validate()) ) {
 			// forms are valid, save info
 			$saved = $cat->save($required_details_form, $custom_fields_form);
 			if ($saved) {

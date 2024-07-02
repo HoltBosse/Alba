@@ -11,7 +11,7 @@ $segsize = sizeof($segments);
 
 // handle list api request
 if ($segments[1]=='list_images') {
-	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING') ?? "")) ?? null;
+	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING')));
 	$searchtext = Input::getvar('searchtext','STRING');
 	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
 	$page = Input::getvar('page','INT') ?? 1;
@@ -73,7 +73,6 @@ if ($segments[1]=='list_images') {
 	//$list = $stmt->fetchAll();
 	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).', "tags": "' . ($tags ?? "none") . '", "query": "' . $query . '"}';
 	exit(0);
-	die();
 }
 
 // end list api
@@ -186,8 +185,8 @@ if ($segsize==2 && !$req_width && !$req_format && $req_quality==75) {
 }
 
 // reach here, got either segments for size or we have get 1 or more params
+// we already have $req_width or $req_format due to the if handling them them missing above
 
-if ($segsize>1 || ($req_width||$req_format||$req_quality<>75)) {
 	$image = get_image ($segments[1]);
 	if ($image) {
 		$original_path = CMSPATH . "/images/processed/" . $image->filename;
@@ -249,6 +248,6 @@ if ($segsize>1 || ($req_width||$req_format||$req_quality<>75)) {
 		http_response_code(404); // was h1 echo before. not great.
 		exit(0);
 	}
-}
+
 exit(0);
 

@@ -249,6 +249,7 @@ final class CMS {
 		// first strip base uri path (from config) out of path
 		$this->request = $_SERVER['REQUEST_URI'];
 		$to_remove = Config::uripath();
+		// @phpstan-ignore-next-line
 		if (ADMINPATH) {
 			$to_remove .= "/admin/";
 		}
@@ -340,6 +341,7 @@ final class CMS {
 				
 				if ($session_user_id) {
 					// needs to be instance as messages not invoked yet
+					// @phpstan-ignore-next-line
 					if (ADMINPATH) {
 						$_SESSION['redirect_url'] = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::uripath() . '/admin');
@@ -378,6 +380,7 @@ final class CMS {
 		// small performance hit, but only way to alleviate potential security issues for following checks
 
 		// check for core controller - save folder name if found for include during rendering
+		// @phpstan-ignore-next-line
 		if(!ADMINPATH) {
 			foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
 				if($this->uri_segments[0] == $folder) {
@@ -386,6 +389,7 @@ final class CMS {
 				}
 			}
 		}
+		// @phpstan-ignore-next-line
 		if ( !Config::debugwarnings() && !Config::debug() && Config::caching() && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
 			// check if caching is turned on and we are on front-end 
 			// admin will never create caches, so no point in even checking
@@ -401,7 +405,7 @@ final class CMS {
 		}
 	}
 
-	private function showinfo() {
+	public function showinfo() {
 
 		$this->pprint_r($_SESSION);
 
@@ -437,7 +441,7 @@ final class CMS {
 
 	public function has_messages() {
 		return false;
-		return ($this->messages->hasMessages());
+		//return ($this->messages->hasMessages());
 	}
 
 	public static function pprint_r ($o) {
@@ -454,6 +458,7 @@ final class CMS {
 		// returns name/location of controller (if any)
 		// if controller found, it is set in $this->page->controller object
 		// called by render_controller function
+		// @phpstan-ignore-next-line
 		if (ADMINPATH) {
 			// works different here boys and girls
 			// controller name is first part of segment
@@ -559,12 +564,14 @@ final class CMS {
 		//$this->include_once_content (CMSPATH .'/templates/' . $template . '/index.php');
 		// if ADMIN but guest, show login
 	
+		// @phpstan-ignore-next-line
 		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::frontendlogin()) ) {
 			// check for login attempt
 			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
 			$password = Input::getvar('password','RAW');
 			$login_user = new User();
 			$redirect_path = Config::uripath() . "/";
+			// @phpstan-ignore-next-line
 			if (ADMINPATH) {
 				$redirect_path = Config::uripath() . '/admin';
 			}
@@ -614,6 +621,7 @@ final class CMS {
 					$this->queue_message('Incorrect email or password','danger', $redirect_path);
 				}
 			}
+			// @phpstan-ignore-next-line
 			if (ADMINPATH) {
 				// force switch to admin template login 
 				$template = $this->get_admin_template();
@@ -625,6 +633,7 @@ final class CMS {
 		}
 
 		else {
+			// @phpstan-ignore-next-line
 			if (ADMINPATH) {
 				//check the users access rights
 				if (!Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
@@ -742,6 +751,7 @@ final class CMS {
 
 				// create full page cache if needed
 				// only if no messages in queue and user is not logged in and not a core controller and not debugging currently
+				// @phpstan-ignore-next-line
 				if ( !Config::debugwarnings() && !Config::debug() && Config::caching() && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}

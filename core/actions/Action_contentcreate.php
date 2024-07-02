@@ -64,8 +64,8 @@ class Action_contentcreate extends Actions {
                 echo "
                     <tr>
                         <td>$field</td>
-                        <td>" . ($coreFieldsRender[$field] ? $coreFieldsRender[$field]($item->before) : $item->before) . "</td>
-                        <td>" . ($coreFieldsRender[$field] ? $coreFieldsRender[$field]($item->after) : $item->after) . "</td>
+                        <td>" . $coreFieldsRender[$field]($item->before) . "</td>
+                        <td>" . $coreFieldsRender[$field]($item->after) . "</td>
                     </tr>
                 ";
             } else {

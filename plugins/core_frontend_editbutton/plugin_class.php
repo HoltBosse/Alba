@@ -60,7 +60,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
     public function handle_controller_render($page_contents, $params) {
         $data = $this->get_data();
 
-        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false) && !ADMINPATH){
+        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false) && ADMINPATH===false){
             $controllerConfig = DB::fetch("SELECT * FROM content_types WHERE controller_location = ?", $params[0]);
             $page_contents = "
                 <div class='front_end_edit_wrap' >

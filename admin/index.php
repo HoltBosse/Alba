@@ -6,6 +6,9 @@ define ("CMSPATH", realpath(dirname(__DIR__, 1)));
 define ("ADMINPATH",realpath(dirname(__FILE__)));
 define ("CURPATH",ADMINPATH);
 
+//handle composer dependencies
+include_once(CMSPATH . '/vendor/autoload.php');
+
 // bootstrap CMS
 require_once (CMSPATH . "/core/cms.php");
 

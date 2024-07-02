@@ -8,7 +8,6 @@ use PHPMailer\PHPMailer\Exception;
 class Mail {
 	private $to;
 	public $subject;
-	private $from;
 	public $html;
 	public $text;
 	private $bcc;
