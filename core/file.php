@@ -116,7 +116,4 @@ class File {
 		return (int)$val;
 	}
 
-	private function import_into_db() {
-	}
-
 }
