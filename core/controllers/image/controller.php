@@ -186,7 +186,7 @@ if ($segsize==2 && !$req_width && !$req_format && $req_quality==75) {
 
 // reach here, got either segments for size or we have get 1 or more params
 // we already have $req_width or $req_format due to the if handling them them missing above
-if ($req_quality!=75) {
+
 	$image = get_image ($segments[1]);
 	if ($image) {
 		$original_path = CMSPATH . "/images/processed/" . $image->filename;
@@ -248,6 +248,6 @@ if ($req_quality!=75) {
 		http_response_code(404); // was h1 echo before. not great.
 		exit(0);
 	}
-}
+
 exit(0);
 
