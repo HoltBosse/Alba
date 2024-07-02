@@ -45,9 +45,6 @@ if ($custom_user_fields_form) {
 			// make sure INT is good
 			if ($field->coltype=="INTEGER") {
 				$field->default = (int)$field->default;
-				if (!is_numeric($field->default)) {
-					$field->default = null;
-				}
 			}
 			$result = DB::exec(
 				"INSERT INTO `custom_user_fields` (user_id, `{$field->name}`) VALUES (?, ?) ON DUPLICATE KEY UPDATE `{$field->name}`=?",
