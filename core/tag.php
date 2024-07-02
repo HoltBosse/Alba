@@ -66,18 +66,8 @@ class Tag {
 	}
 
 	public function get_depth() {
-		$depth=0;
-		$parent_id = $this->parent;
+		//legacy compat
 		return 0;
-		while ($parent_id) {
-			//CMS::pprint_r ($this); 
-			$depth++;
-			$parent = new Tag();
-			$parent->load($parent_id);
-			//CMS::pprint_r ($parent); return 1;
-			$parent_id = $parent->parent;
-		}
-		return $depth;
 	}
 
 	public static function get_all_tags() {
