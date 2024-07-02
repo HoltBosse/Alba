@@ -405,7 +405,7 @@ final class CMS {
 		}
 	}
 
-	private function showinfo() {
+	public function showinfo() {
 
 		$this->pprint_r($_SESSION);
 
