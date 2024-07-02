@@ -88,12 +88,14 @@ class Content {
 				if ($this->id) {
 					// add id to alias to make unique for existing content item
 					$this->alias = $this->alias . "-" . $this->id;
+					// @phpstan-ignore-next-line
 					if (ADMINPATH) {
 						CMS::Instance()->queue_message('Added content id as suffix to "URL Friendly" field to ensure uniqueness.','warning');
 					}
 				}
 				else {
 					$this->alias = $this->alias . "-" . uniqid();
+					// @phpstan-ignore-next-line
 					if (ADMINPATH) {
 						CMS::Instance()->queue_message('Added random suffix to "URL Friendly" field to ensure uniqueness.','warning');
 					}
@@ -108,8 +110,14 @@ class Content {
 	public function get_field($field_name) {
 		//CMS::pprint_r ($this);
 		if (!$this->table_name) {
-			CMS::pprint_r ($this); die();
-			CMS::show_error('Unknown table name'); // shouldn't get here, but catching during dev
+			if(Config::debug()) {
+				CMS::pprint_r ($this);
+				CMS::pprint_r(debug_backtrace());
+				die();
+			} else {
+				CMS::show_error('Unknown table name', 500);
+				die();
+			}
 		}
 		$query = "select `{$field_name}` as v from `{$this->table_name}` where id=?";
 		$value = DB::fetch($query, [$this->id])->v; // todo: can we make col name param?
@@ -364,9 +372,6 @@ class Content {
 			// make sure INT is good
 			if ($field->coltype=="INTEGER") {
 				$field->default = (int)$field->default;
-				if (!is_numeric($field->default)) {
-					$field->default = null;
-				}
 			}
 
 			$fieldName = $field->name;
@@ -388,11 +393,9 @@ class Content {
 
 		if ($error_text) {
 			return false;
-			return false;
 		}
 		else {
 			Hook::execute_hook_actions('on_content_save', $this);
-			return true;
 			return true;
 		}
 	}
