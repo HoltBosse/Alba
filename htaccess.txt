@@ -47,6 +47,11 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # internally rewrite the request to the index.php script
 RewriteRule .* index.php [L]
 
+# send composer related requests to 404 page
+RedirectMatch 404 composer.json
+RedirectMatch 404 composer.lock
+RedirectMatch 404 /vendor
+
 # match anything in .git folder or .gitignore files, etc
 RedirectMatch 404 /\.git
 # any file matching readme
