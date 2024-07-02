@@ -24,7 +24,6 @@ class Content_Search {
 	public $tags; // array of tag ids to match 
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] 
 	private $count; // set after query is exec() shows total potential row count for paginated calls
-	private $search_pdo_params;
 	private $filter_pdo_params;
 	private $custom_search_params;
 
@@ -43,7 +42,6 @@ class Content_Search {
 		$this->category = null;
 		$this->tags=[];
 		$this->filter_pdo_params = [];
-		$this->search_pdo_params = [];
 		$this->custom_search_params = [];
 		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
