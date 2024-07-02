@@ -441,7 +441,7 @@ final class CMS {
 
 	public function has_messages() {
 		return false;
-		return ($this->messages->hasMessages());
+		//return ($this->messages->hasMessages());
 	}
 
 	public static function pprint_r ($o) {
@@ -751,6 +751,7 @@ final class CMS {
 
 				// create full page cache if needed
 				// only if no messages in queue and user is not logged in and not a core controller and not debugging currently
+				// @phpstan-ignore-next-line
 				if ( !Config::debugwarnings() && !Config::debug() && Config::caching() && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}
