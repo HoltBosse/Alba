@@ -16,7 +16,6 @@ class Users_Search {
 	public $groups; // array of group_ids to match
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	private $count; // set after query is exec() shows total potential row count for paginated calls
-	private $search_pdo_params;
 	private $filter_pdo_params;
 
 	public function __construct() {
@@ -32,7 +31,6 @@ class Users_Search {
 		$this->tags=[];
 		$this->groups=[];
 		$this->filter_pdo_params = [];
-		$this->search_pdo_params = [];
 		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
