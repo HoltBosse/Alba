@@ -120,14 +120,13 @@ class Input {
 						}
 					}
 				}
-				if ($ok) {
-					return $foo;
-				}
-				else {
+				if (!$ok) {
 					CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
 					return false;
 				}
-				return $foo;
+				else {
+					return $foo;
+				}
 			}
 			else {
 				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
