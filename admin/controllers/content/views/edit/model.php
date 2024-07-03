@@ -24,7 +24,7 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 	$new_content = true;
 }
 else {
-	CMS::Instance()->queue_message('Unknown content operation','danger',Config::uripath().'/admin/content/show');
+	CMS::Instance()->queue_message('Unknown content operation','danger',Config::uripath().'/admin');
 	exit(0);
 }
 
@@ -95,7 +95,7 @@ if ($required_details_form->is_submitted()) {
 			}
 			else {
 				$redirect_to = Config::uripath() . "/admin/content/all/" . $content->content_type;
-				$msg = 'Content <a href="' . Config::uripath() . '/admin/content/edit/'.  $content->id . '/'. $content_type . '">' . $content->title .'</a> saved';
+				$msg = 'Content <a href="' . Config::uripath() . '/admin/content/edit/'.  $contentt->id . '/'. $content_type . '">' . $content->title .'</a> saved';
 			}
 			CMS::Instance()->queue_message($msg, 'success', $redirect_to);
 		}
