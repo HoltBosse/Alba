@@ -47,7 +47,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             } else {
                 $page_contents = "
                     <div class='front_end_edit_wrap' >
-                        <a style='' target='_blank' href='/admin/widgets/edit/{$params[0]->id}'>EDIT &ldquo;" . htmlspecialchars($params[0]->title) . "&rdquo;</a>
+                        <a style='' href='/admin/widgets/edit/{$params[0]->id}'>EDIT &ldquo;" . htmlspecialchars($params[0]->title) . "&rdquo;</a>
                     </div>
                 " . $page_contents;
             }
