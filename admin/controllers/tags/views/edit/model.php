@@ -39,8 +39,10 @@ if ($required_details_form->is_submitted()) {
 		if (!$custom_fields_form->id || ($custom_fields_form && $custom_fields_form->validate()) ) {
 			// forms are valid, save info
 			$saved = $tag->save($required_details_form, $custom_fields_form);
+			// CMS::pprint_r($tag); die;
 			if ($saved) {
-				CMS::Instance()->queue_message('Tag saved','success', "/admin/tags");
+				$msg = 'Tag <a href="' . Config::uripath() . '/admin/tags/edit/' . $tag->id . '">' . $tag->title . '</a> ' . ($new_tag ? 'created' : 'updated');
+				CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/tags');
 			}
 			else {
 				CMS::Instance()->queue_message('Failed to save tag','danger',$_SERVER['REQUEST_URI']);
