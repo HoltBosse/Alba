@@ -114,10 +114,7 @@ class Input {
 					}
 					else {
 						$bar = (int)$bar; // note to bob - returns number 0 if not a number
-						if ($bar!==0||is_numeric($bar)) { 
-							// cast to a non-zero number fine
-						}
-						else { 
+						if ($bar===0) { 
 							// cast returned 0 so not a number of string representation of number
 							$ok = false;
 						}
