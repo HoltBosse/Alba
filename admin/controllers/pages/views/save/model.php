@@ -12,6 +12,7 @@ if (!$success) {
 }
 
 if(Input::getvar("id")==0) {
+	$new_page = true;
 	$existing_page = DB::fetch("SELECT * FROM pages WHERE alias=? AND parent=?", [$page->alias, $page->parent]);
 	if($existing_page) {
 		CMS::Instance()->queue_message('Page already exists (user created)','danger',Config::uripath().'/admin/pages');
@@ -56,10 +57,9 @@ if ($success) {
 		$data = array( $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n], $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n] );
 		$override_success = DB::exec("insert into page_widget_overrides (page_id, position, widgets) values (?,?,?) on duplicate key update page_id=?, position=?, widgets=?", $data);
 	}
-	
-	
 
-	CMS::Instance()->queue_message('Page created/updated','success',Config::uripath().'/admin/pages');
+	$msg = 'Page <a href="' . Config::uripath() . '/admin/pages/edit/' . $page->id . '/' . $page->content_type . '/' . $page->view . '">' . $page->title . '</a> ' . $status . ($new_page ? 'created' : 'updated');
+	CMS::Instance()->queue_message($msg, 'success', Config::uripath().'/admin/pages');
 }
 else {
 	CMS::Instance()->queue_message('Page creation/update failed','danger',Config::uripath().'/admin/pages');
