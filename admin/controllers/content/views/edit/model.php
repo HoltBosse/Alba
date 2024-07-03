@@ -95,7 +95,7 @@ if ($required_details_form->is_submitted()) {
 			}
 			else {
 				$redirect_to = Config::uripath() . "/admin/content/all/" . $content->content_type;
-				$msg = "Content saved";
+				$msg = 'Content <a href="' . Config::uripath() . '/admin/content/edit/'.  $content->id . '/'. $content_type . '">' . $content->title .'</a> saved';
 			}
 			CMS::Instance()->queue_message($msg, 'success', $redirect_to);
 		}
