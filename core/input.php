@@ -107,29 +107,29 @@ class Input {
 		}
 		elseif ($filter=="ARRAYOFINT"||$filter=="ARRAYNUM") {
 			if (is_array($foo)) {
-				// disablenote: this code below always ended up returning true, so have commented it out to be revisted at a future point
-				/* $ok = true;
+				$ok = true;
 				foreach ($foo as $bar) {
-					if ($bar===0||is_numeric($bar)) { // disablenote: move on if its already an int
-						// this one is fine
+					if ($bar==="0"||$bar===0||is_numeric($bar)) { 
+						// is actual number or string representation of 0
 					}
-					else { // disablenote: but if it isnt an int....
-						$bar = (int)$bar; // disablenote: ...... force it to be one anyways
-						if ($bar===0||is_numeric($bar)) { // disablenote: pointless since php will force it to an int no matter what
-							// cast to int ok
+					else {
+						$bar = (int)$bar; // note to bob - returns number 0 if not a number
+						if ($bar!==0||is_numeric($bar)) { 
+							// cast to a non-zero number fine
 						}
-						else { // disablenote: pointless, see previous disablenote
+						else { 
+							// cast returned 0 so not a number of string representation of number
 							$ok = false;
 						}
 					}
 				}
-				if ($ok) { // disablenote: as stated in previous comments, the value will never actually be changed from true, so we always return $foo
+				if ($ok) {
 					return $foo;
 				}
 				else {
 					CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
 					return false;
-				} */
+				}
 				return $foo;
 			}
 			else {
