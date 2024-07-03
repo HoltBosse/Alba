@@ -144,6 +144,9 @@ class Field_Rich extends Field {
 			border-radius: 0.25rem;
 			pointer-events: none;
 		}
+		.editorfieldwrapper:has(textarea:invalid) .editor.content {
+			border: 2px dashed red;
+		}
 		</style>
 		<script>
 			// TODO: make id/agnostic for repeatable + live additions
@@ -1011,7 +1014,7 @@ class Field_Rich extends Field {
 		}
 		$required="";
 		if ($this->required) {$required=" required ";}
-		echo "<div class='field {$required}'>";
+		echo "<div class='field {$required} editorfieldwrapper'>";
 			echo "<label class='label'>{$this->label}</label>";
 			echo "<div class='control'>";
 				?>
