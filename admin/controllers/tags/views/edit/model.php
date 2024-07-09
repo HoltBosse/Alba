@@ -41,7 +41,7 @@ if ($required_details_form->is_submitted()) {
 			$saved = $tag->save($required_details_form, $custom_fields_form);
 			// CMS::pprint_r($tag); die;
 			if ($saved) {
-				$msg = 'Tag <a href="' . Config::uripath() . '/admin/tags/edit/' . $tag->id . '">' . $tag->title . '</a> ' . ($new_tag ? 'created' : 'updated');
+				$msg = "Tag <a href='" . Config::uripath() . "/admin/tags/edit/{$tag->id}'>{$tag->title}</a> " . ($new_tag ? 'created' : 'updated');
 				CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/tags');
 			}
 			else {

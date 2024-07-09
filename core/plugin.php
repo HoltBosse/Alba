@@ -85,7 +85,7 @@ class Plugin {
 			$result = DB::exec("update plugins set options=? where id=?", [$options_json, $this->id]);
 			
 			if ($result) {
-				$msg = 'Plugin <a href="' . Config::uripath() . '/admin/plugins/edit/' . $this->id . '">' . $this->title . '</a> ' . 'updated';
+				$msg = "Plugin <a href='" . Config::uripath() . "/admin/plugins/edit/{$this->id}'>{$this->title}</a> updated";	
 				CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/plugins/show');
 			}
 			else {

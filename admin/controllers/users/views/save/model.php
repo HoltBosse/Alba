@@ -63,7 +63,7 @@ if ($custom_user_fields_form) {
 if ($success) {
 	Hook::execute_hook_actions('on_user_save',$user);
 	if (!$custom_field_error) {
-		$msg = 'User <a href="' . Config::uripath() . '/admin/users/edit/' . $user->id . '">' . $user->username . '</a> ' . ($new_user ? 'created' : 'updated');
+		$msg = "User <a href='" . Config::uripath() . "/admin/users/edit/{$user->id}'>{$user->username}</a> " . ($new_user ? 'created' : 'updated');
 		CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/users');
 	}
 	else {
