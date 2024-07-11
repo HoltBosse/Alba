@@ -13,6 +13,7 @@
         "phpstan/phpstan": "^1.10"
     },
     "require": {
-        "phpmailer/phpmailer": "6.5.1"
+        "phpmailer/phpmailer": "6.5.1",
+        "erusev/parsedown": "^1.7"
     }
 }

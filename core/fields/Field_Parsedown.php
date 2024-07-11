@@ -13,10 +13,10 @@ class Field_Parsedown extends Field {
 					box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
 					max-width: 100%;
 					width: 100%;
-					background-color: #fff;
+					/* background-color: #fff; */
 					border-color: #dbdbdb;
 					border-radius: 4px;
-					color: #363636;
+					/* color: #363636; */
 					-webkit-appearance: none;
 					align-items: center;
 					border: 1px solid;
