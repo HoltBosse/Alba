@@ -1,0 +1,22 @@
+parameters:
+	level: 4
+	paths:
+		- core
+		- admin
+		- controllers/basic_article
+		- plugins/core_autoyear
+		- plugins/core_frontend_editbutton
+		- plugins/core_google_login
+		- plugins/core_google_login_jwt
+		- plugins/core_user_verify
+		- plugins/core_widget
+		- widgets/html
+		- widgets/menu
+		- widgets/crowdriff
+		- config.php
+		- index.php
+	excludePaths:
+		- core/controllers/adminer
+	ignoreErrors:
+		- '#Call to an undefined static method Config::[a-zA-Z0-9\\_]#'
+		- '#Variable \$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]* might not be defined#'

@@ -2,8 +2,11 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class Form {
+	public $id;
 	public $fields;
+	public $json;
 	public $repeatable;
+	public $form_path;
 
 	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
 		$this->fields = array();
@@ -12,7 +15,6 @@ class Form {
 	}
 
 	public function load_json($path = CMSPATH . "/testform.json") {
-		$obj;
 		if (gettype($path)=="object") {
 			$obj = $path;
 		} elseif (is_file($path)) {
@@ -20,7 +22,7 @@ class Form {
 			$obj = json_decode($this->json);
 		} else {
 			echo "<h5>File {$path} not found or invalid data passed</h5>";
-			if (Config::debug()) {
+			if (Config::debugwarnings()) {
 				echo "<p class='help'>Called from /core/form.php load_json function</p>";
 			}
 		}
@@ -233,15 +235,18 @@ class Form {
 		
 		echo "</div>";
 
+		// @phpstan-ignore-next-line
+		$jsSafeVariableId = preg_replace("^[^a-zA-Z_$]|[^\\w$]", "_safety_", $this->id);
+
 		// add logic js
 		echo "
 			<script>
-			var form_el_{$this->id} = document.getElementById('{$this->id}');
-			if (form_el_{$this->id}) {
+			var form_el_{$jsSafeVariableId} = document.getElementById('{$this->id}');
+			if (form_el_{$jsSafeVariableId}) {
 				// create logic function
-				function logic_for_{$this->id} () {
+				function logic_for_{$jsSafeVariableId} () {
 					//console.log('Doing logic checks');
-					var logic_els = form_el_{$this->id}.querySelectorAll('.haslogic');
+					var logic_els = form_el_{$jsSafeVariableId}.querySelectorAll('.haslogic');
 					if (logic_els) {
 						//console.log('LOGIC ELS',logic_els);
 						logic_els.forEach((e)=>{
@@ -334,14 +339,14 @@ class Form {
 				}
 
 				// listen for changes on this form container
-				form_el_{$this->id}.addEventListener('input',function(e){
+				form_el_{$jsSafeVariableId}.addEventListener('input',function(e){
 					let form_wrap_el = e.target.closest('.form_contain');
 					// do logic checks
-					logic_for_{$this->id}();
+					logic_for_{$jsSafeVariableId}();
 				});
 
 				// call logic checks on pageload to ensure correct visibility
-				logic_for_{$this->id}();
+				logic_for_{$jsSafeVariableId}();
 			}
 			else {
 				console.warn('Form element not found - validation / visibility logic may not work!');

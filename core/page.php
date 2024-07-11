@@ -15,8 +15,7 @@ class Page {
 	public $updated;
 	public $view_configuration;
 	public $page_options; // json string from db / or serialized from form submission
-
-
+	public $page_options_form;
 
 	public function __construct() {
 		$this->id = 0;
@@ -132,10 +131,7 @@ class Page {
 
 	public function load_from_post() {
 		$this->title = Input::getvar('title','TEXT');
-		$this->state = Input::getvar('state','NUM');
-		if (!$this->state) {
-			$this->state = 1;
-		}
+		$this->state = Input::getvar('state','NUM', 1);
 		$this->template_id = Input::getvar('template','NUM');
 		$this->alias = Input::getvar('alias','TEXT');
 		if (!$this->alias) {
@@ -157,7 +153,6 @@ class Page {
 		$this->id = Input::getvar('id','NUM');
 
 		$this->page_options_form->set_from_submit();
-
 		return true;
 	}
 
@@ -212,6 +207,9 @@ class Page {
 
 	public function save() {
 		if ($this->id) {
+			Actions::add_action("pagecreate", (object) [
+				"affected_page"=>$this->id,
+			]);
 			// update
 			$query = "update pages set state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=? where id=?";
 			$result = CMS::Instance()->pdo->prepare($query)->execute(array(
@@ -231,10 +229,6 @@ class Page {
 				return true;
 			}
 			else {
-				if (Config::debug()) {
-					echo "<code>" . $e->getMessage() . "</code>";
-					exit(0);
-				}
 				return false;
 			}
 		}
@@ -267,6 +261,9 @@ class Page {
 			if ($result) {
 				// update page id with last pdo insert
 				$this->id = CMS::Instance()->pdo->lastInsertId();
+				Actions::add_action("pagecreate", (object) [
+					"affected_page"=>$this->id,
+				]);
 				return true;
 			}
 			else {

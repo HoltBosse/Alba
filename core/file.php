@@ -11,6 +11,7 @@ class File {
 	public $alt;
 	public $filename;
 	public $mimetype;
+	public $original_width;
 	
 	/*
 		state 0: invalid
@@ -94,7 +95,7 @@ class File {
 		if (!in_array($suffix,array('P','T','G','M','K'))){
 			return (int)$php_size;  
 		} 
-		$val = substr($php_size, 0, -1);
+		$val = (int) substr($php_size, 0, -1);
 		switch ($suffix) {
 			case 'P':
 				$val *= 1024;
@@ -113,9 +114,6 @@ class File {
 				break;
 		}
 		return (int)$val;
-	}
-
-	private function import_into_db() {
 	}
 
 }

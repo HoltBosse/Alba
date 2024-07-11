@@ -107,28 +107,30 @@ class Input {
 		}
 		elseif ($filter=="ARRAYOFINT"||$filter=="ARRAYNUM") {
 			if (is_array($foo)) {
-				$ok = true;
+				// disablenote: this code below always ended up returning true, so have commented it out to be revisted at a future point
+				/* $ok = true;
 				foreach ($foo as $bar) {
-					if ($bar===0||is_numeric($bar)) {
+					if ($bar===0||is_numeric($bar)) { // disablenote: move on if its already an int
 						// this one is fine
 					}
-					else {
-						$bar = (int)$bar;
-						if ($bar===0||is_numeric($bar)) {
+					else { // disablenote: but if it isnt an int....
+						$bar = (int)$bar; // disablenote: ...... force it to be one anyways
+						if ($bar===0||is_numeric($bar)) { // disablenote: pointless since php will force it to an int no matter what
 							// cast to int ok
 						}
-						else {
+						else { // disablenote: pointless, see previous disablenote
 							$ok = false;
 						}
 					}
 				}
-				if ($ok) {
+				if ($ok) { // disablenote: as stated in previous comments, the value will never actually be changed from true, so we always return $foo
 					return $foo;
 				}
 				else {
 					CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');
 					return false;
-				}
+				} */
+				return $foo;
 			}
 			else {
 				CMS::Instance()->queue_message('Cannot convert non-array to array in ARRAYOFINT','danger',Config::uripath() . '/admin');

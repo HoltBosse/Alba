@@ -14,7 +14,7 @@ $latest->version = null;
 $update_domain = Config::$updatedomain ?? "alba.holtbosse.com";
 $latest_json = file_get_contents("https://" . $update_domain . "/version.json");
 
-if (Config::debug()) {
+if (Config::debugwarnings()) {
 	CMS::pprint_r ($latest_json);
 }
 if ($latest_json) {
@@ -77,10 +77,10 @@ $tag_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE 
 if (!$tag_category_ok) {
 	DB::exec("ALTER TABLE tags ADD COLUMN `category` int(11) DEFAULT 0");
 }
-$content_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'content' AND COLUMN_NAME = 'category'");
+/* $content_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'content' AND COLUMN_NAME = 'category'");
 if (!$content_category_ok) {
 	DB::exec("ALTER TABLE content ADD COLUMN `category` int(11) DEFAULT 0");
-}
+} */
 
 // ensure custom_fields col exist in category and tags tables
 $custom_fields_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'categories' AND COLUMN_NAME = 'custom_fields'");
@@ -92,6 +92,60 @@ if (!$custom_fields_tag_ok) {
 	DB::exec("ALTER TABLE tags ADD COLUMN `custom_fields` text");
 }
 
+// ensure redirects table exists
+$redirects_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'redirects' LIMIT 1");
+if (!$redirects_table_ok) {
+	DB::exec("DROP TABLE IF EXISTS `redirects`;");
+	DB::exec("
+	CREATE TABLE `redirects` (
+	  `id` int unsigned NOT NULL AUTO_INCREMENT,
+	  `state` tinyint NOT NULL,
+	  `old_url` varchar(2048) CHARACTER SET utf8mb4 NOT NULL,
+	  `new_url` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL,
+	  `referer` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL,
+	  `note` varchar(255) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+	  `hits` int unsigned NOT NULL DEFAULT '0',
+	  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	  `created_by` int unsigned NOT NULL DEFAULT '0',
+	  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	  `updated_by` int unsigned NOT NULL DEFAULT '0',
+	  `header` smallint NOT NULL DEFAULT '301',
+	  PRIMARY KEY (`id`),
+	  KEY `link_modifed` (`updated`),
+	  KEY `old_url` (`old_url`(100))
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+	");
+}
+
+// ensure user_actions table exists
+$user_actions_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'user_actions' LIMIT 1");
+if (!$user_actions_table_ok) {
+	DB::exec("DROP TABLE IF EXISTS `user_actions`;");
+	DB::exec("
+	CREATE TABLE `user_actions` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`userid` int(11) NOT NULL,
+		`date` timestamp NOT NULL DEFAULT current_timestamp(),
+		`type` varchar(255) NOT NULL,
+		`json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+		PRIMARY KEY (`id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+	");
+}
+
+// ensure user_actions_details table exists
+$user_actions_details_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'user_actions_details' LIMIT 1");
+if (!$user_actions_details_table_ok) {
+	DB::exec("DROP TABLE IF EXISTS `user_actions_details`;");
+	DB::exec("
+	CREATE TABLE `user_actions_details` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`action_id` int(11) NOT NULL,
+		`json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`json`)),
+		PRIMARY KEY (`id`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+	");
+}
 
 // Perform update if required
 

@@ -8,6 +8,7 @@ class Plugin {
     public $options;
     public $location;
     public $description;
+	public $form;
 
     public function __construct($plugin_info) {
         // $plugin_info should be object containing select * info from plugins table for this plugin
@@ -16,7 +17,7 @@ class Plugin {
         $this->description = $plugin_info->description;
         $this->location = $plugin_info->location;
         $this->id = $plugin_info->id;
-        $this->options = json_decode($plugin_info->options);
+        $this->options = json_decode((string)$plugin_info->options);
         $this->init();
     }
     
@@ -84,7 +85,8 @@ class Plugin {
 			$result = DB::exec("update plugins set options=? where id=?", [$options_json, $this->id]);
 			
 			if ($result) {
-				CMS::Instance()->queue_message('Plugin options updated','success',Config::uripath() . '/admin/plugins/show');	
+				$msg = "Plugin <a href='" . Config::uripath() . "/admin/plugins/edit/{$this->id}'>{$this->title}</a> updated";	
+				CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/plugins/show');
 			}
 			else {
 				CMS::Instance()->queue_message('Plugin failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	

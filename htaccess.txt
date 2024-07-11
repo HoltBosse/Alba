@@ -6,6 +6,7 @@
 ## Suppress mime type detection in browsers for unknown types
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
+Header always append X-Frame-Options SAMEORIGIN
 </IfModule>
 
 ## Can be commented out if causes errors, see notes above.
@@ -45,6 +46,11 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 # internally rewrite the request to the index.php script
 RewriteRule .* index.php [L]
+
+# send composer related requests to 404 page
+RedirectMatch 404 composer.json
+RedirectMatch 404 composer.lock
+RedirectMatch 404 /vendor
 
 # match anything in .git folder or .gitignore files, etc
 RedirectMatch 404 /\.git

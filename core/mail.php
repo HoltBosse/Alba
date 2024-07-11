@@ -8,10 +8,10 @@ use PHPMailer\PHPMailer\Exception;
 class Mail {
 	private $to;
 	public $subject;
-	private $from;
 	public $html;
 	public $text;
 	private $bcc;
+	private $cc;
 	public $attachments;
 
 	public function __construct() {
@@ -82,16 +82,13 @@ class Mail {
 
 		
 		// setup PHPMailer
-		require_once CMSPATH . "/core/thirdparty/PHPMailer/Exception.php";
-		require_once CMSPATH . "/core/thirdparty/PHPMailer/PHPMailer.php";
-		require_once CMSPATH . "/core/thirdparty/PHPMailer/SMTP.php";
 		//Instantiation and passing `true` enables exceptions
 		$mail = new PHPMailer(true);
 
 
 		try {
 			//Server settings
-			$mail->SMTPDebug = false;                      //Enable verbose debug output with SMTP::DEBUG_SERVER
+			$mail->SMTPDebug = 0;                      //Enable verbose debug output with SMTP::DEBUG_SERVER
 			$mail->isSMTP();                                            //Send using SMTP
 			$mail->Host       = $smtp_server;                     //Set the SMTP server to send through
 			$mail->SMTPAuth   = $authenticate==true;                                   //Enable SMTP authentication if required
@@ -162,6 +159,6 @@ class Mail {
 	}
 
 	public static function is_available() {
-		return file_exists(CMSPATH . "/thirdparty/PHPMailer/PHPMailer.php");
+		return file_exists(CMSPATH . "/vendor/phpmailer/phpmailer/src/PHPMailer.php");
 	}
 }

@@ -34,6 +34,8 @@ testing/
 !/plugins/core_widget/**
 !/plugins/core_user_verify/
 !/plugins/core_user_verify/**
+!/plugins/core_frontend_editbutton/
+!/plugins/core_frontend_editbutton/**
 # testing admin templates
 admin/templates/testadmintemplate/**
 # ignore custom controllers - note: add future default controllers here!
@@ -71,3 +73,9 @@ cache/**
 templates/**
 !templates/basic/
 !templates/basic/**
+adminer.php
+user_classes/**
+!user_classes/User_User.php
+custom_user_fields.json
+vendor/*
+vendor/

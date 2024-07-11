@@ -68,7 +68,7 @@ class Plugin_core_user_verify extends Plugin {
                                     <h1 style='text-align: center;  font-size: 24px;'>
                                         Verify Your Account
                                     </h1>
-                                    <p>Your email was just used to register for an account with <a href=\"https://organizationalorbits.org\" style=\"color: " . $link_color . "\">" . Config::sitename() . '</a>. If this was you:</p>
+                                    <p>Your email was just used to register for an account with <a href=\"https://" . $_SERVER["SERVER_NAME"] . "\" style=\"color: " . $link_color . "\">" . Config::sitename() . '</a>. If this was you:</p>
                                     <br>
                                     <div style="text-align: center;">
                                         <a style="text-align: center;  text-decoration: none;  background-color: ' . $cta_color . '; color: white; padding: 10px 15px; border-radius: 5px; font-size: 16px;" href="https://' . ($redirect ?? $_SERVER['SCRIPT_URL']) . "?key=" . $key . "\">Verify Your Account</a>

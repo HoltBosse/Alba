@@ -4,6 +4,15 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Select extends Field {
 
 	public $select_options;
+	public $config;
+	public $slimselect;
+	public $multiple;
+	public $placeholder;
+	public $slimselect_ajax;
+	public $slimselect_ajax_minchar;
+	public $slimselect_ajax_maxchar;
+	public $slimselect_ajax_url;
+	public $empty_string;
 
 	function __construct($id="") {
 		$this->id = $id;
@@ -37,18 +46,25 @@ class Field_Select extends Field {
 			echo "<div class='control'>";
 				echo "<div class='" . ($this->slimselect ? "slimselect_select" : "select") . "'>";
 					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} " . ($this->multiple ? "multiple" : false) . ">";
-						if ($this->required) {
+						if ($this->required || $this->placeholder) {
 							$placeholder = $this->placeholder ?? $this->label;
 							echo "<option value='' >{$placeholder}</option>";
 						}
+						elseif ($this->empty_string) {
+							// not required, but we need a 0 value top option to signify nothing
+							echo "<option value='0' >{$this->empty_string}</option>";
+						}
 						foreach ($this->select_options as $select_option) {
+							/** @var object{text: mixed, value: mixed, UpdateSelect: mixed} $select_option */
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
 							} elseif ($select_option->value == $this->default) {
 								$selected="selected";
 							}
-							if (isset($select_option->UpdateSelect)) { $UpdateSelect[$select_option->value] = $select_option->UpdateSelect;}
+							if (isset($select_option->UpdateSelect)) {
+								$UpdateSelect[$select_option->value] = $select_option->UpdateSelect;
+							}
 							echo "<option {$selected} value='{$select_option->value}'>{$select_option->text}</option>";
 						}
 						if ($this->slimselect_ajax) {
@@ -163,7 +179,7 @@ class Field_Select extends Field {
 
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		// TODO: select fields need to store config somewhere to retrieve friendly values
 		// for now return id
 		return $this->id;

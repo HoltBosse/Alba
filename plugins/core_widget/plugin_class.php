@@ -27,7 +27,7 @@ class Plugin_core_widget extends Plugin {
 				    $widget_of_type->load ($widget->id);
                     // output widget into buffer and store
                     ob_start();
-                    $widget_of_type->render();
+                    $widget_of_type->internal_render();
                     $widget_markup = ob_get_contents();
                     ob_end_clean();
                 }

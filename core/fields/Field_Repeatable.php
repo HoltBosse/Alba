@@ -6,6 +6,9 @@ class Field_Repeatable extends Field {
 	// $this->default = saved serialized json from repeated form 
 
 	public $form_path;
+	public $form;
+	public $forms;
+	public $repeatable;
 
 	public function display() {
 		/* 
@@ -188,6 +191,6 @@ class Field_Repeatable extends Field {
 			}
 		}
 		return true;
-		return $all_valid;
+		//return $all_valid;
 	}
 }

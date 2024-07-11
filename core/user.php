@@ -3,13 +3,15 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class User {
+	public $id;
 	public $groups;
 	public $username;
 	public $password;
 	public $email;
 	public $tags;
 	public $state;
-
+	public $registered;
+	public $created;
 
 	public function __construct() {
 		$this->email = false;
@@ -38,7 +40,13 @@ class User {
 			return $id;
 		}
 		else {
-			CMS::show_error('Unable to create new user');
+			if (Config::debug()) {
+				CMS::pprint_r('Unable to create new user');
+				CMS::pprint_r(debug_backtrace());
+				die();
+			} else {
+				CMS::Instance()->show_error('Unable to create new user');
+			}
 		}
 	}
 	
@@ -226,6 +234,10 @@ class User {
 
 	public function save() {
 		if ($this->id) {
+			Actions::add_action("userupdate", (object) [
+				"affected_user"=>$this->id,
+			]);
+
 			// update
 			$this->registered = DB::fetch("SELECT created FROM users WHERE id=?", $this->id)->created;
 			if ($this->password==null) {
@@ -292,6 +304,11 @@ class User {
 			if ($result) {
 				$new_user_id = CMS::Instance()->pdo->lastInsertId();
 				$this->id = $new_user_id;
+
+				Actions::add_action("usercreate", (object) [
+					"affected_user"=>$this->id,
+				]);
+
 				// user tags
 				foreach ($this->tags as $tag) {
 					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($new_user_id, $tag));

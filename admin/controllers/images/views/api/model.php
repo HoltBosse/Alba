@@ -2,13 +2,14 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
+ob_end_clean(); // do it again, we may be inside another buffer due to reasons
 
 // TODO: endure logged in user is allowed to actually perform these tasks!
 
 // TODO: remove front-end images api model????
 
 $action = Input::getvar('action','STRING');
-$mimetypes = array_filter(explode(',',Input::getvar('mimetypes'))); // array_filter ensures empty array if mimetypes is null
+$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING'))); // array_filter ensures empty array if mimetypes is null
 // TODO sanitize mimetypes against whitelist
 
 if ($action=='tag_media') {
@@ -19,6 +20,9 @@ if ($action=='tag_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+		Actions::add_action("mediaupdate", (object) [
+			"affected_media"=>$image_id,
+		]);
 		// check if already tagged
 		$c = DB::fetch("select count(tag_id) as c from tagged where content_id=? and content_type_id=-1 and tag_id=?", [$image_id, $tag_id])->c;
 		if (!$c) {
@@ -46,6 +50,9 @@ if ($action=='cleartags_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+			Actions::add_action("mediaupdate", (object) [
+				"affected_media"=>$image_id,
+			]);
 			$ok = DB::exec("delete from tagged where content_id=? and content_type_id=-1", [$image_id]);
 			if ($ok) {
 				$image_ids_tagged[] = $image_id;
@@ -65,6 +72,9 @@ if ($action=='delete_media') {
 	$image_ids_failed=[];
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+		Actions::add_action("mediadelete", (object) [
+			"affected_media"=>$image_id,
+		]);
 		$filename_response = DB::fetch('select filename from media where id=?',$image_id);
 
 		// clear tags
@@ -100,6 +110,9 @@ if ($action=='untag_media') {
 	$tag_id = Input::getvar('tag_id','NUM');
 	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
+		Actions::add_action("mediaupdate", (object) [
+			"affected_media"=>$image_id,
+		]);
 		// clear tags
 		$ok = DB::exec("delete from tagged where content_id=? and content_type_id=-1 and tag_id=?", [$image_id, $tag_id]);
 		if ($ok) {
@@ -164,58 +177,15 @@ if ($action=='delete') {
 	}
 }
 
-if ($action=='list_images') {
-	// todo: pagination / search
-	
-	$searchtext = Input::getvar('searchtext','STRING');
-	if ($searchtext=='null') {
-		$searchtext=null;
-	}
-	if ($searchtext) {
-		$query = "select * from media where title like ? or alt like ?";
-		if ($mimetypes) {
-			$query.=" AND mimetype in (";
-			for ($n=0; $n<sizeof($mimetypes); $n++) {
-				if ($n>0) {
-					$query .= ",";
-				}
-				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
-			}
-			$query.=") ";
-		}
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(["%$searchtext%","%$searchtext%"]);
-		//DB::exec($query, ["%$searchtext%","%$searchtext%"]);
-	}
-	else {
-		$query = "select * from media";
-		if ($mimetypes) {
-			$query.=" where id>0 ";
-		}
-		if ($mimetypes) {
-			$query.=" AND mimetype in (";
-			for ($n=0; $n < sizeof($mimetypes); $n++) {
-				if ($n>0) {
-					$query .= ",";
-				}
-				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
-			}
-			$query.=") ";
-		} 
-		$query .= " ORDER BY id DESC"; // newest first
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array());
-	}
-		
-	$list = $stmt->fetchAll();
-	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).'}';
-	exit(0);
-}
-
 if ($action=='rename_image') {
 	$title = Input::getvar('title','STRING');
 	$alt = Input::getvar('alt','STRING');
 	$image_id = Input::getvar('image_id','NUM');
+
+	Actions::add_action("mediaupdate", (object) [
+		"affected_media"=>$image_id,
+	]);
+
 	$result = DB::exec("update media set title=?, alt=? where id=?", [$title, $alt, $image_id]);
 	if ($result) {
 		echo '{"success":1,"msg":"Image renamed"}';

@@ -10,6 +10,7 @@ class Cache {
     }
 
     public function ignore($request, $type=null) {
+        // @phpstan-ignore-next-line
         foreach (Config::$caching['ignore'] as $partial_path) {
             if (strpos($request, $partial_path)===0) {
                 // ignore
@@ -43,6 +44,7 @@ class Cache {
         if (file_exists($fullpath)) {
             $curtime = time();
             $filetime = filemtime($fullpath);
+            // @phpstan-ignore-next-line
             $file_stale_time = $filetime + (Config::$caching['time'] * 60);
             if ($filetime && is_numeric($file_stale_time)) {
                 if ($file_stale_time > $curtime) {

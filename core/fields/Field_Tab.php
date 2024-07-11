@@ -3,8 +3,14 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Tab extends Field {
 
-	function __construct($default_content="") {
-		$this->id = "";
+	public $tabs;
+	public $mode;
+	public $tabsid;
+	public $input_type;
+	public $nowrap;
+
+	function __construct($id="") {
+		$this->id = $id;
 		$this->name = "";
 		$this->tabs = [];
 		$this->default = [];

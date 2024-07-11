@@ -18,7 +18,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <hr>
 
-<form method="POST" action="">
+<form method="POST" action="" enctype="multipart/form-data">
 
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap '>

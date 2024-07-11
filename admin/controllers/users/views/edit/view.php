@@ -62,6 +62,10 @@ function in_group ($group_id, $edit_user) {
 		<?php if ($edit_user->email):?><p class="help">Leave blank if no password change required</p><?php endif; ?>
 	</div>
 
+	<?php if ($custom_user_fields_form) {
+		$custom_user_fields_form->display_front_end();
+	} ?>
+
 	<h2 class="title">User Groups</h2>
 	<p class='help'>At least one group should be selected, but this is not enforced.</p><br>
 	<div class="field">

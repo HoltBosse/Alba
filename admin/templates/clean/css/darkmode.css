@@ -1,5 +1,4 @@
 @media (prefers-color-scheme: dark) {
-
     /* scrollbar */
     ::-webkit-scrollbar { width: 0.5rem;}
     ::-webkit-scrollbar-button { background-color: rgb(255 255 255 / 15%); height: 0.5rem; }
@@ -120,46 +119,38 @@
         border-color: #aaa;
     }
 
-    /* slim select */
-    .ss-main .ss-multi-selected, .ss-main .ss-single-selected {
-        background-color: #121212 !important;
-        color: white;
-    }
-    .ss-content {
-        background-color: #121212 !important;
-        color: white !important;
-    }
-    .ss-search input {
-        background-color: #111 !important;
-        color: white !important;
+    /* slimselect */
+    .ss-main .ss-multi-selected, .ss-main .ss-single-selected, .ss-content, .ss-search input {
+        background-color: var(--bulma-body-background-color) !important;
+        color: hsl(var(--bulma-input-h),var(--bulma-input-s),var(--bulma-input-color-l));
     }
     .ss-content .ss-list .ss-option.ss-disabled {
+        /* TODO: fixme */
         background-color: rgb(255 255 255 / 15%) !important;
         color: black !important;
     }
     .ss-main .ss-multi-selected .ss-values .ss-value {
+        /* TODo: fixme */
         background-color: #0a8dd1 !important;
     }
 
-    /* modals */
-    .modal-content .box, .modal-card, input, .modal-content form.form {
-        background-color: #222;
-    }
-    .modal-card-title, h1.title.sticky {
-        background-color: rgba(0,0,0,0);
+    /* top of page bar */
+    .fixed-control-bar {
+        background-color: var(--bulma-body-background-color) !important;
     }
 
-    /* state button */
-    .state_button button {
-		background-color: #121212 !important;
-	}
-
-    @media screen and (max-width: 1023px) {
-        .navbar-menu {
-            background-color: inherit;
+    /* custom state button */
+    .button.state_button {
+        button {
+            background-color: hsl(var(--bulma-button-h),var(--bulma-button-s),calc(var(--bulma-button-background-l) + var(--bulma-button-background-l-delta))) !important;
         }
-        nav {
-            background-color: #222 !important;
+
+        .navbar-dropdown {
+            z-index: 1;
+
+            form {
+                margin-bottom: 0;
+            }
         }
     }
 }

@@ -3,40 +3,40 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
 <style>
-table.table {
-	width:100%;
-}
-.position_single_wrap {
-	font-size:70%;
-	padding-top:0.3rem;
-	border-top:1px solid rgba(0,0,0,0.1);
-	margin-top:0.3rem;
-	opacity:0.6;
-}
-span.position_single {
-	font-weight:bold;
-}
+	table.table {
+		width:100%;
+	}
+	.position_single_wrap {
+		font-size:70%;
+		padding-top:0.3rem;
+		border-top:1px solid rgba(0,0,0,0.1);
+		margin-top:0.3rem;
+		opacity:0.6;
+	}
+	span.position_single {
+		font-weight:bold;
+	}
 
 
-div.pull-right {
-	/* display:inline-block; */
-}
-#user_operations {
-	margin-right:2rem;
-}
-.state1 {
-	color:#00d1b2;
-}
-.state0 {
-	color:#f66;
-}
-.hidden_multi_edit {
-	display:none;
-	/* display:inline-block; */
-}
-.user_admin_row.selected {
-	background:rgba(200,255,200,0.3);
-}
+	div.pull-right {
+		/* display:inline-block; */
+	}
+	#user_operations {
+		margin-right:2rem;
+	}
+	.state1 {
+		color:#00d1b2;
+	}
+	.state0 {
+		color:#f66;
+	}
+	.hidden_multi_edit {
+		display:none;
+		/* display:inline-block; */
+	}
+	.user_admin_row.selected {
+		background:rgba(200,255,200,0.3);
+	}
 </style>
 
 <form id='searchform' action="" method="GET"></form>
@@ -141,6 +141,11 @@ div.pull-right {
 	<table id='all_users_table' class="table">
 		<thead>
 			<th>Status</th>
+			<?php
+				if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+					echo "<th>Id</th>";
+				}
+			?>
 			<th>Name</th>
 			<th>Email</th>
 			<?php if (!$group_id):?><th>Group(s)</th><?php endif; ?>
@@ -164,6 +169,11 @@ div.pull-right {
 						} ?>
 					</button>
 				</td>
+				<?php
+					if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+						echo "<td>$user->id</td>";
+					}
+				?>
 				<td>
 					<a class='edit_user' href='<?php echo Config::uripath();?>/admin/users/edit/<?php echo $user->id;?>'><?php echo $user->username; ?></a>
 				</td>
@@ -204,44 +214,11 @@ div.pull-right {
 
 </form>
 
-<?php 
-
-$num_pages = ceil($user_count/$pagination_size);
-
-//$url_query_params = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
-$url_query_params = $_GET;
-$url_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-
-if ($cur_page) {
-	// not ordering view and page url is either 1 or no passed and assumed to be 1 in model
-	$url_query_params['page'] = $cur_page+1;
-	$next_url_params = http_build_query($url_query_params);
-	$url_query_params['page'] = $cur_page-1;
-	$prev_url_params = http_build_query($url_query_params);
-}
+<?php
+	if (!$order_by) {
+		Component::create_pagination($user_count, $pagination_size, $cur_page);
+	}
 ?>
-
-<?php if ($user_count>$pagination_size && !$order_by):?>
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-	<?php if ($cur_page>1):?>
-		<a href='<?=$url_path . "?" . $prev_url_params;?>' class="pagination-previous">Previous</a>
-	<?php endif;?>
-	<?php if ( ($user_count>sizeof($all_users)) && !$order_by && ( ($cur_page*$pagination_size)<$user_count ) ):?>
-		<a href='<?=$url_path . "?" . $next_url_params;?>' class="pagination-next">Next page</a>
-	<?php endif; ?>
-	<ul class="pagination-list">
-		<?php for ($n=1; $n<=$num_pages; $n++):?>
-			<?php 
-			$url_query_params['page'] = $n;
-			$url_params = http_build_query($url_query_params);
-			?>
-		<li> 
-			<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='<?=$url_path . "?" . $url_params?>'><?php echo $n;?></a>
-		</li>
-		<?php endfor; ?>
-	</ul>
-</nav>
-<?php endif; ?>
 
 <script>
 	admin_rows = document.querySelectorAll('.user_admin_row');

@@ -19,11 +19,11 @@ class Content_Search {
 	public $searchtext;
 	public $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
 	public $page_size;
+	public $custom_field_name;
 	public $category; // category id to match
 	public $tags; // array of tag ids to match 
-	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
+	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] 
 	private $count; // set after query is exec() shows total potential row count for paginated calls
-	private $search_pdo_params;
 	private $filter_pdo_params;
 	private $custom_search_params;
 
@@ -42,22 +42,9 @@ class Content_Search {
 		$this->category = null;
 		$this->tags=[];
 		$this->filter_pdo_params = [];
-		$this->search_pdo_params = [];
 		$this->custom_search_params = [];
 		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
-	}	
-
-	private function field_in_filters($field_name) {
-		//CMS::pprint_r ("checking if {$field_name} is in: ");
-		//CMS::pprint_r ($this->filters);
-		$field_name = "f_" . $field_name;
-		foreach ($this->filters as $filter) {
-			if ($filter[0]==$field_name) {
-				return $filter[1];
-			}
-		}
-		return false;
 	}
 
 	public function get_count() {
@@ -74,17 +61,25 @@ class Content_Search {
 			if (!is_numeric($this->type_filter)) {
 				$this->type_filter= Content::get_content_type_id($this->type_filter);
 				if (!$this->type_filter) {
-					CMS::Instance()->show_error('Unable to determine content type');
+					if (Config::debug()) {
+						CMS::pprint_r('Unable to determine content type');
+						CMS::pprint_r(debug_backtrace());
+						die();
+					} else {
+						CMS::Instance()->show_error('Unable to determine content type');
+					}
 				}
 			}
 			$location = Content::get_content_location($this->type_filter);
 			$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
+			$table_name = "controller_" . $custom_fields->id ;
 			if (!$this->list_fields || $this->fetch_all) {
 				// no fields request, so see if we need to get all or just get list items from json
 				if ($this->fetch_all) {
 					// get all saveable, not explicitly ignored fields
 					foreach ($custom_fields->fields as $custom_field) {
-						if (!in_array($custom_field_name,$this->ignore_fields)) {
+						/** @var Field $custom_field */
+						if (!in_array($custom_field->name,$this->ignore_fields)) {
 							if (isset($custom_field->save)) {
 								if ($custom_field->save===true) {
 									$this->list_fields[] = $custom_field->name;
@@ -103,7 +98,7 @@ class Content_Search {
 					// checking it's not ignored and is an actual saveable field
 					if (property_exists($custom_fields,'list')) {
 						foreach ($custom_fields->list as $list_name) {
-							if (!in_array($custom_field_name,$this->ignore_fields)) {
+							if (!in_array($custom_field->name,$this->ignore_fields)) {
 								// check if field is explicitly saveable or no saveable option set
 								foreach ($custom_fields->fields as $custom_field) {
 									if ($custom_field->name==$list_name) {
@@ -124,26 +119,36 @@ class Content_Search {
 				}
 			}
 		} 
+		else {
+			if (Config::debug()) {
+				CMS::pprint_r('No content type filter provided for content search');
+				CMS::pprint_r(debug_backtrace());
+				die();
+			} else {
+				CMS::Instance()->show_error('No content type filter provided for content search');
+			}
+		}
 		$query = "select";
 		$select = " c.id, c.state, c.content_type, c.title, c.alias, c.ordering, c.start, c.end, c.created_by, c.updated_by, c.note, c.category, cat.title  as catname";
 		if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {
-				$select .= " ,f_{$field}_t.content as f_{$field}";
+				//$select .= " ,f_{$field}_t.content as f_{$field}";
+				$select .= " ,c.{$field} as `{$field}`"; 
 			}
 		}
 		$count_select = " count(*) as c ";
 
 		$select = Hook::execute_hook_filters('custom_content_search_select', $select, $this->type_filter); 
 
-		$from = " from ( content c ";
+		$from = " from ( `" . $table_name . "` c ";
 
 		// if custom field exists as filter - needs to be added in from/where not as left join
 		// also save filter value to filter_pdo_params
 		foreach ($this->list_fields as $field) {
 
-			if (array_key_exists($field, $this->filters)) {
+			if (array_key_exists($field, $this->filters ?? [])) {
 				$this->filter_pdo_params[] = $this->filters[$field];
-				$from .= ", content_fields f_{$field}_t ";
+				//$from .= ", content_fields f_{$field}_t "; // no longer needs all in one table now
 			}
 		}
 
@@ -153,13 +158,15 @@ class Content_Search {
 
 		// left join custom field fields
 		// ONLY where not in filters
-		if ($this->list_fields) {	
+
+		// no longer needed in flag tables
+		/* if ($this->list_fields) {	
 			foreach ($this->list_fields as $field) {
 				if (!array_key_exists($field, $this->filters)) {
 					$from .= " left join content_fields f_{$field}_t on f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
 				}
 			}
-		}
+		} */
 
 		$where = ' where ';
 
@@ -189,26 +196,23 @@ class Content_Search {
 			}
 		}
 
-		
-		if ($this->type_filter && is_numeric($this->type_filter)) {
-			$where .= " and c.content_type={$this->type_filter} ";
-		}
-
 		// custom fields being filtered
-		if ($this->list_fields) {
+		// no longer care - treat all fields the same
+		/* if ($this->list_fields) {
 			foreach ($this->list_fields as $field) {			
 				if (array_key_exists('f_' . $field, $this->filters)) {
 					//CMS::pprint_r ('Got filter for custom field ' . $field);
 					$this->filter_pdo_params[] = $this->filters['f_'.$field];
-					$where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
-					$where .= " and f_{$field}_t.content = ? ";
+					/* $where .= " and f_{$field}_t.content_id=c.id and f_{$field}_t.name='{$field}' ";	
+					$where .= " and f_{$field}_t.content = ? "; 
 				}
 			}
-		}
+		} */
 
 		// required fields filter
 		foreach ($this->filters as $key => $value) {
-			if (strpos($key,'f_')===false) {
+			// old
+			/* if (strpos($key,'f_')===false) {
 				// not custom field
 				// check if core field (nb - content type handled elsewhere in class, as more common)
 				if (in_array($key,['state','id','alias','title','category','created_by','created','updated_by','updated','note','start','end'])) {
@@ -216,7 +220,10 @@ class Content_Search {
 					$this->filter_pdo_params[] = $value;
 					$where .= " and c." . $key . " = ? " ;
 				}
-			}
+			} */
+			// new flat table
+			$this->filter_pdo_params[] = $value;
+			$where .= " and c." . $key . " = ? " ;
 		}
 
 		if ($this->category && is_numeric($this->category)) {
@@ -224,7 +231,7 @@ class Content_Search {
 		}
 
 		if ($this->created_by_cur_user) {
-			$where .= " AND created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
+			$where .= " AND c.created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
 		}
 
 		$where = Hook::execute_hook_filters('custom_content_search_where', $where, $this->type_filter); 
@@ -249,13 +256,15 @@ class Content_Search {
 		//CMS::pprint_r ($this->filter_pdo_params);
 		//CMS::pprint_r ($query); die(); 
 
-		/* CMS::pprint_r ($this->custom_search_params);
+		/* echo "<p>custom search param</p>";
+		CMS::pprint_r ($this->custom_search_params);
+		echo "<p>filters</p>";
 		CMS::pprint_r ($this->filters);
+		echo "<p>list fields</p>";
 		CMS::pprint_r ($this->list_fields);
-		if ($this->filters) {
-			CMS::pprint_r ($query); die(); 
-		}
-		CMS::pprint_r ($query); die(); */ 
+		echo "<p>query</p>";
+		CMS::pprint_r ($query); die();  */
+		
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';

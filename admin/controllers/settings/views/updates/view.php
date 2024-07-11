@@ -84,11 +84,23 @@ else {
 	show_message ('Category Custom Fields Column','Category table updated.','is-warning');
 }
 
-if ($custom_fields_tag_ok) {
-	show_message ('Tag Custom Fields Column','Tag table OK.','is-success');
+if ($redirects_table_ok) {
+	show_message ('Redirects Table','Redirects table OK.','is-success');
 }
 else {
-	show_message ('Tag Custom Fields Column','Tag table updated.','is-warning');
+	show_message ('Redirects Table','Redirects table created.','is-warning');
 }
 
+if ($user_actions_table_ok) {
+	show_message ('User Actions Table','User Actions table OK.','is-success');
+}
+else {
+	show_message ('User Actions Table','User Actions table created.','is-warning');
+}
 
+if ($user_actions_details_table_ok) {
+	show_message ('User Actions Details Table','User Actions table OK.','is-success');
+}
+else {
+	show_message ('User Actions Details Table','User Actions table created.','is-warning');
+}

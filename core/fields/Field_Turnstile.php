@@ -3,6 +3,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Turnstile extends Field {
 
+	public $maxlength;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";

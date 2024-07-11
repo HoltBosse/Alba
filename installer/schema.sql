@@ -6,8 +6,8 @@ CREATE TABLE `configurations` (
   `configuration` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `content`;
-CREATE TABLE `content` (
+DROP TABLE IF EXISTS `controller_basic_html`;
+CREATE TABLE `controller_basic_html` (
   `id` int(11) NOT NULL,
   `state` tinyint(2) NOT NULL DEFAULT '1',
   `ordering` int(11) NOT NULL DEFAULT '1',
@@ -21,16 +21,15 @@ CREATE TABLE `content` (
   `note` varchar(255) DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT current_timestamp(),
   `category` int(11) NOT NULL DEFAULT 0,
-  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `markup` mediumtext,
+  `og_description` mediumtext,
+  `seo_keywords` mediumtext,
+  `og_title` mediumtext,
+  `og_image` mediumtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `content_fields`;
-CREATE TABLE `content_fields` (
-  `content_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL COMMENT 'from name attr in form',
-  `field_type` varchar(255) NOT NULL,
-  `content` mediumtext COMMENT 'Maybe make JSON?'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `content_types`;
 CREATE TABLE `content_types` (
@@ -112,7 +111,8 @@ CREATE TABLE `tags` (
   `description` mediumtext DEFAULT NULL,
   `note` varchar(255) DEFAULT NULL,
   `parent` int(11) DEFAULT NULL,
-  `category` int(11) NOT NULL DEFAULT 0
+  `category` int(11) NOT NULL DEFAULT 0,
+  `custom_fields` text NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `tag_content_type`;
@@ -198,13 +198,32 @@ CREATE TABLE `content_versions` (
   `fields_json` mediumtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `redirects`;
+CREATE TABLE `redirects` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `state` tinyint NOT NULL,
+  `old_url` varchar(2048) CHARACTER SET utf8mb4 NOT NULL,
+  `new_url` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `referer` varchar(2048) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `note` varchar(255) CHARACTER SET utf8mb4 NOT NULL DEFAULT '',
+  `hits` int unsigned NOT NULL DEFAULT '0',
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int unsigned NOT NULL DEFAULT '0',
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_by` int unsigned NOT NULL DEFAULT '0',
+  `header` smallint NOT NULL DEFAULT '301',
+  PRIMARY KEY (`id`),
+  KEY `link_modifed` (`updated`),
+  KEY `old_url` (`old_url`(100))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `configurations`
   ADD PRIMARY KEY (`name`);
 
-ALTER TABLE `content`
+ALTER TABLE `controller_basic_html`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `content_types`
@@ -251,7 +270,7 @@ ALTER TABLE `plugins`
 ALTER TABLE `content_versions`
   ADD PRIMARY KEY (`id`);
 
-ALTER TABLE `content`
+ALTER TABLE `controller_basic_html`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `content_types`

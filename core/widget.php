@@ -9,6 +9,13 @@ class Widget {
 	public $type;
 	public $state;
 	public $options;
+	public $note;
+	public $ordering;
+	public $position_control;
+	public $global_position;
+	public $page_list;
+	public $form;
+	public $form_data;
 
 	public function render_edit() {
 		if (CMS::Instance()->user->is_member_of(1)) { ?>
@@ -23,6 +30,14 @@ class Widget {
 		echo "<h1>Hello, I'm a base class widget!</h1>";
 	}
 
+	public function internal_render() {
+		ob_start();
+		$this->render();
+		$output = ob_get_clean();
+		$output = Hook::execute_hook_filters('on_widget_render', $output, $this);
+		echo $output;
+	}
+
 	public static function get_all_widget_types() {
 		return CMS::Instance()->pdo->query('select * from widget_types')->fetchAll();
 	}
@@ -33,10 +48,6 @@ class Widget {
 		where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) 
 		and global_position=? and state>=0 ORDER BY ordering,id ASC';
 		return DB::fetchAll($query, [$page_id, $page_id, $position]);
-	}
-
-	public function get_type_object() {
-		$this->type = CMS::Instance()->pdo->query('select * from widget_types where id=' . $this->type_id)->fetch();
 	}
 
 	public function get_option_value($option_name) {
@@ -86,18 +97,28 @@ class Widget {
 		return false;
 	}
 
-	public function load($id) {
-		$info = CMS::Instance()->pdo->query('select * from widgets where id=' . $id)->fetch();
-		$this->id = $info->id;
-		$this->title = $info->title;
-		$this->type_id = $info->type;
-		$this->state = $info->state;
-		$this->note = $info->note;
-		$this->ordering = $info->ordering;
-		$this->options = json_decode($info->options);
-		$this->position_control = $info->position_control;
-		$this->global_position = $info->global_position;
-		$this->page_list = explode(',', $info->page_list);
+	public function load($id, $type_id=null) {
+		//id of -1 is a new widget
+		if($id!=-1) {
+			$info = CMS::Instance()->pdo->query('select * from widgets where id=' . $id)->fetch();
+			$this->id = $info->id;
+			$this->title = $info->title;
+			$this->type_id = $info->type;
+			$this->state = $info->state;
+			$this->note = $info->note;
+			$this->ordering = $info->ordering;
+			$this->options = json_decode($info->options);
+			$this->position_control = $info->position_control;
+			$this->global_position = $info->global_position;
+			$this->page_list = explode(',', $info->page_list);
+		} else {
+			$this->type_id = $type_id;
+		}
+
+		$this->type = CMS::Instance()->pdo->query('select * from widget_types where id=' . $this->type_id)->fetch();
+		$this->form_data = JSON::load_obj_from_file(CMSPATH . '/widgets/' . $this->type->location . '/widget_config.json');
+
+		Hook::execute_hook_actions('on_widget_load', $this, "thinggg");
 	}
 
 	public static function get_widget_type_title($widget_type_id) {
@@ -120,6 +141,10 @@ class Widget {
 
 	public function save($required_details_form, $widget_options_form, $position_options_form) {
 		// update this object with submitted and validated form info
+		$redirect_url = Config::uripath() . '/admin/widgets/show';
+		if (Input::getvar("http_referer_form") && Input::getvar("http_referer_form") != $_SERVER["HTTP_REFERER"]){
+			$redirect_url = Input::getvar("http_referer_form");
+		}
 		$this->title = $required_details_form->get_field_by_name('title')->default;
 		$this->state = $required_details_form->get_field_by_name('state')->default;
 		$this->note = $required_details_form->get_field_by_name('note')->default;
@@ -151,7 +176,7 @@ class Widget {
 			$result = DB::exec("update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=? where id=?", $params);
 			
 			if ($result) {
-				CMS::Instance()->queue_message('Widget updated','success',Config::uripath() . '/admin/widgets/show');	
+				CMS::Instance()->queue_message("Widget <a href='" . Config::uripath() . "/admin/widgets/edit/{$this->id}'>{$this->title}</a> updated", 'success', $redirect_url);
 			}
 			else {
 				CMS::Instance()->queue_message('Widget failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	
@@ -161,8 +186,9 @@ class Widget {
 			// new
 			$params = array($this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)) ;
 			$result = DB::exec("insert into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)", $params);
+			$new_widget_id = DB::get_last_insert_id();
 			if ($result) {
-				CMS::Instance()->queue_message('New widget saved','success',Config::uripath() . '/admin/widgets/show');	
+				CMS::Instance()->queue_message("Widget <a href='" . Config::uripath() . "/admin/widgets/edit/{$new_widget_id}'>{$this->title}</a> created", 'success', $redirect_url);	
 			}
 			else {
 				CMS::Instance()->queue_message('New widget failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	

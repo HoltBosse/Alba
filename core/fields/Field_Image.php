@@ -4,12 +4,18 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Image extends Field {
 
 	public $select_options;
+	public $mimetypes;
+	public $image_id;
+	public $images_per_page;
+	public $tags;
+	public $coltype;
 
 	function __construct($id="") {
 		$this->id = $id;
 		$this->name = $id;
 		$this->image_id = null;
 		$this->default = null;
+		$this->mimetypes = null;
 	}
 
 	public function display($repeatable_template=false) {
@@ -111,6 +117,9 @@ class Field_Image extends Field {
 			handle_img_editor();
 		})
 	
+		window.cur_media_page = 1;
+		window.cur_media_searchtext = null;
+		window.images_per_page = <?php echo $this->images_per_page; ?>;
 
 		// choose new image button event listener
 		var trigger_image_selector_<?php echo $this->id; ?> = document.getElementById('trigger_image_selector_<?php echo $this->id;?>');
@@ -121,12 +130,15 @@ class Field_Image extends Field {
 			media_selector.innerHTML =`
 			<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
 				<div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
-					<button id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
+					<button style="right: 1rem;" id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
 					<h1 style='color:white;'>Click image or search: </h1>
 					<div class='form-group' style='display:flex; gap:2rem;'>
 						<input id='media_selector_modal_search'/>
 						<button class='button btn is-small is-primary' type='button' id='trigger_media_selector_search'>Search</button>
 						<button class='button btn is-small' type='button' id='clear_media_selector_search'>Clear</button>
+						|
+						<button class='button btn is-small is-info' disabled id='prev_page'>Prev Page</button>
+						<button class='button btn is-small is-info' id='next_page'>Next Page</button>
 					</div>
 				</div>
 				<div class='media_selector'><h2>LOADING</h2></div>
@@ -138,13 +150,17 @@ class Field_Image extends Field {
 			//click button
 			document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
 				var searchtext = document.getElementById('media_selector_modal_search').value;
-				fetch_images(searchtext, null); // string, no tags
+				window.cur_media_page = 1;
+				window.cur_media_searchtext = searchtext ?? null;
+				fetch_images(searchtext); // string, no tags
 			});
 			// press return
 			document.getElementById('media_selector_modal_search').addEventListener('keyup',function(e){
 				if (e.key==="Enter") {
+					window.cur_media_page = 1;
 					var searchtext = document.getElementById('media_selector_modal_search').value;
-					fetch_images(searchtext, null); // string, no tags
+					window.cur_media_searchtext = searchtext ?? null;
+					fetch_images(searchtext); // string, no tags
 				}
 			});
 			document.addEventListener('keyup',function(e){
@@ -158,16 +174,49 @@ class Field_Image extends Field {
 			// handle clear
 			document.getElementById('clear_media_selector_search').addEventListener('click',function(e){
 				document.getElementById('media_selector_modal_search').value="";
-				fetch_images(null, null); // string, no tags
+				window.cur_media_searchtext = null;
+				window.cur_media_page = 1;
+				fetch_images(); // string, no tags, num pages, always page 1
+			});
+			// handle pages
+			document.getElementById('next_page').addEventListener('click',function(e){
+				window.cur_media_page++;
+				fetch_images(window.cur_media_searchtext);
+			});
+			document.getElementById('prev_page').addEventListener('click',function(e){
+				window.cur_media_page--;
+				if (window.cur_media_page==0) {
+					window.cur_media_page=1;
+					document.getElementById('prev_page').setAttribute('disabled',true);
+				}
+				fetch_images(window.cur_media_searchtext);
 			});
 
-			fetch_images (null, null); // no search, all tags
+			fetch_images (); // no search, all tags
 
-			function fetch_images(searchtext, taglist) {
+			function fetch_images(searchtext=null, taglist=null) {
+
+				let fetchParams = {
+					"action":"list_images",
+					"page":window.cur_media_page,
+					"images_per_page":<?php echo $this->images_per_page;?>,
+					"searchtext":searchtext
+					<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>
+					<?php echo $this->tags ? ',"tags": "' . "$this->tags" . '"' : "";?>
+				};
+
+				let fetchFormData = new FormData();
+				Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
 			
 				// fetch images
-				postAjax('<?php echo Config::uripath();?>/admin/images/api', {"action":"list_images","searchtext":searchtext}, function(data) { 
-					var image_list = JSON.parse(data);
+				fetch('<?php echo Config::uripath();?>/image/list_images',
+					{
+						method: "POST",
+						body: fetchFormData,
+					}
+				).then((res)=>res.json()).then((data)=>{
+					console.log(data);
+					var image_list = data;//JSON.parse(data);
 					var image_list_markup = "<ul class='media_selector_list single'>";
 					if (image_list.images.length==0) {
 						image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
@@ -188,6 +237,20 @@ class Field_Image extends Field {
 						var modal = e.target.closest('.media_selector_modal');
 						modal.parentNode.removeChild(modal);
 					});
+
+					// update page buttons
+					if (image_list.images.length < window.images_per_page) {
+						document.getElementById('next_page').setAttribute('disabled',true); 
+					}
+					else {
+						document.getElementById('next_page').removeAttribute('disabled');
+					}
+					if (window.cur_media_page==1) {
+						document.getElementById('prev_page').setAttribute('disabled',true);
+					}
+					else {
+						document.getElementById('prev_page').removeAttribute('disabled');
+					}
 					
 					// add click event handler to capture child selection clicks
 					media_selector.addEventListener('click',function(e){
@@ -215,6 +278,8 @@ class Field_Image extends Field {
 
 						} // else clicked on container not on an anchor or it's children
 					});
+				}).catch((error) => {
+					console.log(error);
 				});
 			}
 		});
@@ -226,13 +291,13 @@ class Field_Image extends Field {
 		
 	}
 
-	public function get_friendly_value() {
-		if (is_numeric($this->id)) {
-			$img = new Image($this->id);
-			$img->render('thumb','backend');
+	public function get_friendly_value($helpful_info) {
+		if (is_numeric($this->default)) {
+			$img = new Image($this->default);
+			return $img->render('thumb','backend', false);
 		}
 		else {
-			echo "<span>No Image</span>";
+			return "<span>No Image</span>";
 		}
 	}
 
@@ -249,6 +314,10 @@ class Field_Image extends Field {
 		$this->default = $config->default ?? null;
 		$this->type = $config->type ?? 'error!!!';
 		$this->logic = $config->logic ?? '';
+		$this->coltype = $config->coltype ?? '';
+		$this->mimetypes = $config->mimetypes ?? null;
+		$this->images_per_page = $config->images_per_page ?? 50;
+		$this->tags = $config->tags ?? null;
 	}
 
 	public function validate() {

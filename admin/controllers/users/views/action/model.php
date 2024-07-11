@@ -12,9 +12,17 @@ if (!$id) {
 }
 
 if ($action=='toggle') {
+	foreach($id as $uid) {
+		Actions::add_action("userupdate", (object) [
+			"affected_user"=>$uid,
+		]);
+	}
+
 	$result = DB::exec("UPDATE users SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
 	if ($result) {
-		CMS::Instance()->queue_message('Toggled state of user','success', $_SERVER['HTTP_REFERER']);
+		$user = DB::fetch('SELECT * FROM users WHERE id=?', [$id[0]]);
+		$msg = "User <a href='" . Config::uripath() . "/admin/users/edit/{$id[0]}'>{$user->username}</a> state toggled";
+		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
 	}
 	else {
 		CMS::Instance()->queue_message('Failed to toggle state of user','danger', $_SERVER['HTTP_REFERER']);
@@ -22,6 +30,12 @@ if ($action=='toggle') {
 }
 
 if ($action=='publish') {
+	foreach($id as $uid) {
+		Actions::add_action("userupdate", (object) [
+			"affected_user"=>$uid,
+		]);
+	}
+
 	$idlist = implode(',',$id);
 	$result = DB::exec("UPDATE users SET state = 1 where id in ({$idlist})"); 
 	if ($result) {
@@ -33,6 +47,12 @@ if ($action=='publish') {
 }
 
 if ($action=='unpublish') {
+	foreach($id as $uid) {
+		Actions::add_action("userupdate", (object) [
+			"affected_user"=>$uid,
+		]);
+	}
+
 	$idlist = implode(',',$id);
 	$result = DB::exec("UPDATE users SET state = 0 where id in ({$idlist})"); 
 	if ($result) {
@@ -44,6 +64,12 @@ if ($action=='unpublish') {
 }
 
 if ($action=='delete') {
+	foreach($id as $uid) {
+		Actions::add_action("userdelete", (object) [
+			"affected_user"=>$uid,
+		]);
+	}
+
 	$idlist = implode(',',$id);
 	$result = DB::exec("UPDATE users SET state = -1 where id in ({$idlist})"); 
 	if ($result) {

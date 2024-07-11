@@ -66,12 +66,7 @@ div.pull-right {
 				</div>
 			</div>
 		<?php endif; ?>
-		<!-- widget operation toolbar -->
-		<div id="widget_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::uripath();?>/admin/widgets/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/widgets/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/widgets/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
-		</div>
+		<?php Component::addon_button_group("widget_operations", "widgets"); ?>
 	</h1>
 
 	<table class='table'>

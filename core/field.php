@@ -5,13 +5,20 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field {
 	public $id;
 	public $title;
+	public $label;
 	public $name; // unique id for form submit
+	public $description;
 	public $required;
 	public $valid;
 	public $default;
 	public $filter;
 	public $type;
+	public $logic;
+	public $missingconfig;
+	public $content_type;
 	public $in_repeatable_form;
+	public $maxlength;
+	public $minlength;
 
 	public function display() {
 		echo "<label class='label'>Field Label</label>";
@@ -45,7 +52,15 @@ class Field {
 	}
 
 	public function is_missing() {
-		$value = Input::getvar($this->name, $this->filter);
+		if ($this->in_repeatable_form ?? null) {
+			// value will be in array
+			// TODO: apply filter before testing?
+			$value = Input::getvar($this->name)[0] ?? null;
+		}
+		else {
+			// can apply filter correctly for non-repeatable value
+			$value = Input::getvar($this->name, $this->filter);
+		}
 		if ($value===false && $this->required) {
 			return true;
 		}
@@ -83,9 +98,11 @@ class Field {
 		}
 	}
 
-	public function get_friendly_value() {
+	public function get_friendly_value($helpful_info) {
 		// return friendly (text) version of data represented by default/current value
 		// ostensibly used by 'list' item option in content listings for user driven columns
+		// helpful info can be anything, but something like the field config object
+		// can be used to determine, for example, a content type for a contentselector etc
 		return $this->default;
 	}
 

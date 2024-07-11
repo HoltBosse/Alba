@@ -12,7 +12,7 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$content_type = DB::fetch('select content_type from categories where id=?',array($cat_id));
 	//CMS::pprint_r ($content_type); exit(0);
 	if (!$content_type) {
-		CMS::Instance()->queue_message('Unkown category','danger',Config::uripath().'/admin/categories/show');
+		CMS::Instance()->queue_message('Unknown category','danger',Config::uripath().'/admin/categories/show');
 	}
 	$cat = new Category($content_type->content_type);
 	$cat->load($cat_id);
@@ -24,7 +24,7 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 	$new_cat = true;
 }
 else {
-	CMS::Instance()->queue_message('Unkown cat operation','danger',Config::uripath().'/admin/categories/show');
+	CMS::Instance()->queue_message('Unknown cat operation','danger',Config::uripath().'/admin/categories/show');
 	exit(0);
 }
 
@@ -58,11 +58,12 @@ if ($required_details_form->is_submitted()) {
 
 	// validate
 	if ($required_details_form->validate()) {
-		if (!$custom_fields_form || ($custom_fields_form && $custom_fields_form->validate()) ) {
+		if (!$custom_fields_form->id || ($custom_fields_form && $custom_fields_form->validate()) ) {
 			// forms are valid, save info
 			$saved = $cat->save($required_details_form, $custom_fields_form);
 			if ($saved) {
-				CMS::Instance()->queue_message('Category saved','danger',$_SERVER['REQUEST_URI']);
+				$msg = "Category <a href='" . Config::uripath() . "/admin/categories/edit/{$cat->id}'>{$cat->title}</a> " . ($new_cat ? 'created' : 'updated');	
+				CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/categories');
 			}
 			else {
 				CMS::Instance()->queue_message('Failed to save category','danger',$_SERVER['REQUEST_URI']);

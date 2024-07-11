@@ -3,11 +3,79 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 // api style controller - end output
 ob_end_clean();
-
+ob_end_clean(); // not a mistake, a safety net
 // router
 
 $segments = CMS::Instance()->uri_segments;
 $segsize = sizeof($segments);
+
+// handle list api request
+if ($segments[1]=='list_images') {
+	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING')));
+	$searchtext = Input::getvar('searchtext','STRING');
+	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
+	$page = Input::getvar('page','INT') ?? 1;
+	$tags = Input::getvar("tags");
+	if ($searchtext=='null') {
+		$searchtext=null;
+	}
+	if ($searchtext) {
+		$query = "SELECT * FROM `media` WHERE (`title` LIKE ? OR alt LIKE ?)";
+		if ($mimetypes) {
+			$query.=" AND mimetype IN (";
+			$result = "'" . implode ( "', '", $mimetypes ) . "'";
+			$query .= $result;
+			$query.=")";
+		}
+		if($tags) {
+			$explodedTags = explode(",", $tags);
+			foreach($explodedTags as &$tag) {
+				$tag = CMS::Instance()->pdo->quote($tag);
+				unset($tag);
+			}
+			$wrappedTags = implode(",", $explodedTags);
+			
+			$query.= " AND id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
+		}
+		$query.=" LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
+		$list = DB::fetchAll($query, ["%$searchtext%","%$searchtext%"]);
+	}
+	else {
+		$query = "SELECT * FROM `media`";
+		if ($mimetypes) {
+			$query.=" WHERE id>0 ";
+		}
+		if ($mimetypes) {
+			// TODO: ensure valid mimetypes from JSON?
+			$query.=" AND mimetype in (";
+			for ($n=0; $n < sizeof($mimetypes); $n++) {
+				if ($n>0) {
+					$query .= ",";
+				}
+				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
+			}
+			$query.=") ";
+		}
+		if($tags && !$mimetypes) {
+			$explodedTags = explode(",", $tags);
+			foreach($explodedTags as &$tag) {
+				$tag = CMS::Instance()->pdo->quote($tag);
+				unset($tag);
+			}
+			$wrappedTags = implode(",", $explodedTags);
+			
+			$query.= " WHERE id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
+		}
+		$query .= " ORDER BY id DESC LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page; // newest first, honor (safe) page limit
+		$list = DB::fetchAll($query);
+	}
+		
+	//$list = $stmt->fetchAll();
+	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).', "tags": "' . ($tags ?? "none") . '", "query": "' . $query . '"}';
+	exit(0);
+}
+
+// end list api
 
 // get width
 if ($segsize>=3) {
@@ -50,7 +118,7 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	exit(0);
 }
 
-function make_thumb ($src, $dest, $desired_width, $file, $quality=75, $mimetype) {
+function image_make_thumb ($src, $dest, $desired_width, $file, $quality, $mimetype) {
 	if ($file->mimetype=='image/jpeg') {
 		$source_image = imagecreatefromjpeg($src);
 	}
@@ -117,8 +185,8 @@ if ($segsize==2 && !$req_width && !$req_format && $req_quality==75) {
 }
 
 // reach here, got either segments for size or we have get 1 or more params
+// we already have $req_width or $req_format due to the if handling them them missing above
 
-if ($segsize>1 || ($req_width||$req_format||$req_quality<>75)) {
 	$image = get_image ($segments[1]);
 	if ($image) {
 		$original_path = CMSPATH . "/images/processed/" . $image->filename;
@@ -163,7 +231,7 @@ if ($segsize>1 || ($req_width||$req_format||$req_quality<>75)) {
 			$newsize_path = CMSPATH . "/images/processed/q_" . $req_quality . "_" . $size . "w_" . $image->filename . $newsize_path_suffix;
 			//echo "<h5>Path: " . $newsize_path . "</h5>"; CMS::pprint_r ($mimetype); exit(0);
 			if (!file_exists($newsize_path)) {
-				make_thumb($original_path, $newsize_path, $size, $image, $req_quality, $mimetype); 
+				image_make_thumb($original_path, $newsize_path, $size, $image, $req_quality, $mimetype); 
 			}
 			// set mimetype in image object to match requested mimetype (might already be same...)
 			// this makes sure header is correct 
@@ -180,6 +248,6 @@ if ($segsize>1 || ($req_width||$req_format||$req_quality<>75)) {
 		http_response_code(404); // was h1 echo before. not great.
 		exit(0);
 	}
-}
+
 exit(0);
 

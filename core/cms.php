@@ -19,7 +19,11 @@ require_once (CMSPATH . "/admin/admin_config.php");
 if (Config::debug()) {
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
-	error_reporting(E_ALL);
+	if(Config::debugwarnings()) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ERROR);
+	}
 }
 
 
@@ -29,12 +33,17 @@ final class CMS {
 	public $domain;
 	public $pdo;
 	public $user;
+	public $request;
 	public $uri_segments; // remaining segments of uri after controller found
 	public $uri_path_segments; // uri path of found controller/page
 	public $markup; // TODO: rendered html for current content item/page
 	public $messages ;
 	public $page_contents;
+	public $page;
 	public $page_id;
+	public $protocol;
+	public $cache;
+	public $enabled_plugins;
 	private static $instance = null;
 	private $core_controller = false;
 	private $need_session = true;
@@ -61,12 +70,33 @@ final class CMS {
 	}
 
 	public static function raise_404() {
-		ob_end_clean ();
-		if (file_exists(CMSPATH . "/my_404.php")) {
-			include('my_404.php'); // provide your own HTML for the error page
+		ob_end_clean ();ob_end_clean ();
+		// check if we need to redirect this page
+		$relative_url = rtrim(CMS::Instance()->request, '/');
+		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=?", $relative_url);
+		if ($valid_redirect) {
+			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
 		}
 		else {
-			CMS::show_error("Oops, something went wrong &#129300", "404");
+			// handle redirect/404 capturing
+			if (Config::capture_404s()) {
+				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=?', $relative_url)->id ?? false;
+				if ($existing_redirect_id) {
+					// increment hit for 404
+					DB::exec('UPDATE redirects SET hits=hits+1 WHERE id=?', $existing_redirect_id);
+				}
+				else {
+					// create new redirect
+					$params = [$relative_url, $_SERVER['HTTP_REFERER'], CMS::Instance()->user->id, CMS::Instance()->user->id];
+					DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits) VALUES(0,?,?,?,?,"auto",1)', $params);
+				}
+			}
+			if (file_exists(CMSPATH . "/my_404.php")) {
+				include('my_404.php'); // provide your own HTML for the error page
+			}
+			else {
+				CMS::show_error("Oops, something went wrong &#129300", "404");
+			}
 		}
 		exit(0);
 	}
@@ -77,7 +107,7 @@ final class CMS {
 		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
 		if (!isset($GLOBALS['hooks'][$hook_label])) {
 			// hook not already registered, make new hook
-			$GLOBALS['hooks'][$hook_label] = new Hook ($hook_label);
+			$GLOBALS['hooks'][$hook_label] = new Hook ();
 		}
 		// add action to hook
 		$action = new stdClass();
@@ -90,9 +120,9 @@ final class CMS {
 
 	public static function get_admin_template() {
 		$template="clean";
-		if (null !== config::admintemplate() && config::admintemplate()) {
-			if (file_exists(CURPATH . '/templates/' . config::admintemplate() . "/index.php")) {
-				$template = config::admintemplate();
+		if (null !== Config::admintemplate() && Config::admintemplate()) {
+			if (file_exists(CURPATH . '/templates/' . Config::admintemplate() . "/index.php")) {
+				$template = Config::admintemplate();
 			}
 		}
 		return $template;
@@ -156,7 +186,7 @@ final class CMS {
 				$widget_class_name = "Widget_" . $type_info->location;
 				$widget_of_type = new $widget_class_name();
 				$widget_of_type->load ($widget->id);
-				$widget_of_type->render();
+				$widget_of_type->internal_render();
 			}
 			//CMS::pprint_r ($widget_of_type); 
 		}
@@ -164,29 +194,36 @@ final class CMS {
 	}
 
 	public static function show_error($text, $http_code="500") {
-		if (ob_get_length()) {
-			ob_end_clean();
-		}
+		ob_end_clean();
+		ob_end_clean();
 		http_response_code($http_code);
 		?>
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-			<div style="display:flex; justify-content:center; align-items:center; height: 100%;">
-				<div style="max-width: 50%;">
-					<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
-						<?php 
-							$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
-							$logo_src = $logo_image_id ? Config::uripath() . "/image/" . $logo_image_id : Config::uripath() . "/admin/templates/clean/alba_logo.webp";
-						?>
-						<img src="<?php echo $logo_src;?>" >
-						<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+			<!DOCTYPE html>
+			<html style="height: 100%;" lang="en">
+				<head>
+					<title>Page not Found</title>
+					<meta name="viewport" content="width=device-width, initial-scale=1" />
+					<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+				</head>
+				<body style="display:flex; justify-content:center; align-items:center; height: 100%;">
+					<div style="max-width: 50%;">
+						<div style="display: flex; gap: 1rem; align-items:center; justify-content:center;">
+							<?php 
+								$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
+								$logo_src = $logo_image_id ? Config::uripath() . "/image/" . $logo_image_id : Config::uripath() . "/admin/templates/clean/alba_logo.webp";
+								$img_meta_string = Config::sitename() . " site logo";
+							?>
+							<img src="<?php echo $logo_src;?>" title="<?= $img_meta_string; ?>" alt="<?= $img_meta_string; ?>">
+							<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+						</div>
+						<br><br>
+						<div>
+							<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
+							<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;" hreflang="en">Visit Home</a></p>
+						</div>
 					</div>
-					<br><br>
-					<div>
-						<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
-						<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;">Visit Home</a></p>
-					</div>
-				</div>
-			</div>
+				</body>
+			</html>
 		<?php
 		die();
 	}
@@ -210,14 +247,15 @@ final class CMS {
 
 		// routing and session checking
 		// first strip base uri path (from config) out of path
-		$request = $_SERVER['REQUEST_URI'];
+		$this->request = $_SERVER['REQUEST_URI'];
 		$to_remove = Config::uripath();
+		// @phpstan-ignore-next-line
 		if (ADMINPATH) {
 			$to_remove .= "/admin/";
 		}
-		$request = str_ireplace($to_remove, "", $request);
+		$this->request = str_ireplace($to_remove, "", $this->request);
 		// split into array of segments
-		$this->uri_segments = preg_split('@/@', parse_url($request, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
+		$this->uri_segments = preg_split('@/@', parse_url($this->request, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
 
 		
 		if (@$this->uri_segments[0]=='image') {
@@ -277,7 +315,7 @@ final class CMS {
 				//$this->user->load_from_id(s::get('user_id'));
 				//$this->user->load_from_id($session_user_id); // cant use user class as it requires CMS - will call constructor twice!
 				// code below is almost same as 'load_from_id' in user class
-				$query = "select * from users where id=?";
+				$query = "select * from users where id=? and state>0";
 				$stmt = $this->pdo->prepare($query);
 				$stmt->execute(array($session_user_id));
 				$result = $stmt->fetch();
@@ -303,6 +341,7 @@ final class CMS {
 				
 				if ($session_user_id) {
 					// needs to be instance as messages not invoked yet
+					// @phpstan-ignore-next-line
 					if (ADMINPATH) {
 						$_SESSION['redirect_url'] = "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 						CMS::Instance()->queue_message('You were logged out due to inactivity.','danger',Config::uripath() . '/admin');
@@ -341,27 +380,32 @@ final class CMS {
 		// small performance hit, but only way to alleviate potential security issues for following checks
 
 		// check for core controller - save folder name if found for include during rendering
-		foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
-			if($this->uri_segments[0] == $folder) {
-				$this->core_controller = $folder;
-				break;
+		// @phpstan-ignore-next-line
+		if(!ADMINPATH) {
+			foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
+				if($this->uri_segments[0] == $folder) {
+					$this->core_controller = $folder;
+					break;
+				}
 			}
 		}
-		if ( (Config::$caching ?? null) && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
+		// @phpstan-ignore-next-line
+		if ( !Config::debugwarnings() && !Config::debug() && Config::caching() && !ADMINPATH && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
 			// check if caching is turned on and we are on front-end 
 			// admin will never create caches, so no point in even checking
 			// also never serve cache if messages waiting to be viewed potentially
 			// and never serve if any user is logged in
 			// also never serve if this is a core controller
+			// and don't serve if debugging / or debugwarnings are turned on 
 			$this->cache = new Cache();
-			$cached_page_file = $this->cache->is_cached($request, 'url');
+			$cached_page_file = $this->cache->is_cached($this->request, 'url');
 			if ($cached_page_file) {
 				$this->cache->serve_page($cached_page_file);
 			}
 		}
 	}
 
-	private function showinfo() {
+	public function showinfo() {
 
 		$this->pprint_r($_SESSION);
 
@@ -397,7 +441,7 @@ final class CMS {
 
 	public function has_messages() {
 		return false;
-		return ($this->messages->hasMessages());
+		//return ($this->messages->hasMessages());
 	}
 
 	public static function pprint_r ($o) {
@@ -414,6 +458,7 @@ final class CMS {
 		// returns name/location of controller (if any)
 		// if controller found, it is set in $this->page->controller object
 		// called by render_controller function
+		// @phpstan-ignore-next-line
 		if (ADMINPATH) {
 			// works different here boys and girls
 			// controller name is first part of segment
@@ -457,14 +502,18 @@ final class CMS {
 		// called by template index.php to display main content
 
 		// determine controller (if any)
-		$controller = $this->get_controller();
-		if ($controller) {
-			include_once (CURPATH . "/controllers/" . $controller . "/controller.php");
+		$controllerName = $this->get_controller();
+		if ($controllerName) {
+			ob_start();
+				include_once (CURPATH . "/controllers/" . $controllerName . "/controller.php");
+			$output = ob_get_clean();
+			$output = Hook::execute_hook_filters('on_controller_render', $output, $controllerName);
+			echo $output;
 		}
 		else {
 			// no controller - pages don't require one, just means that
 			// only widgets will be rendered on page
-			if (Config::debug()) {
+			if (Config::debugwarnings()) {
 				echo "<h5>No controller found for URL. (normal!)</h5>";
 			}
 		}
@@ -515,12 +564,14 @@ final class CMS {
 		//$this->include_once_content (CMSPATH .'/templates/' . $template . '/index.php');
 		// if ADMIN but guest, show login
 	
+		// @phpstan-ignore-next-line
 		if ( (ADMINPATH && $this->user->username=="guest") || ($this->user->username=="guest" && Config::frontendlogin()) ) {
 			// check for login attempt
 			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
 			$password = Input::getvar('password','RAW');
 			$login_user = new User();
 			$redirect_path = Config::uripath() . "/";
+			// @phpstan-ignore-next-line
 			if (ADMINPATH) {
 				$redirect_path = Config::uripath() . '/admin';
 			}
@@ -570,6 +621,7 @@ final class CMS {
 					$this->queue_message('Incorrect email or password','danger', $redirect_path);
 				}
 			}
+			// @phpstan-ignore-next-line
 			if (ADMINPATH) {
 				// force switch to admin template login 
 				$template = $this->get_admin_template();
@@ -581,10 +633,15 @@ final class CMS {
 		}
 
 		else {
+			// @phpstan-ignore-next-line
 			if (ADMINPATH) {
 				//check the users access rights
-				if (sizeof($this->uri_segments) >= 1 && !Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
-					$this->queue_message('You do not have access to this page','danger', Config::uripath() . "/admin");
+				if (!Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
+					if(CMS::Instance()->user && CMS::Instance()->user->groups && (CMS::Instance()->user->is_member_of(1) || CMS::Instance()->user->is_member_of(2))) {
+						$this->queue_message('You do not have access to this page','danger', Config::uripath() . "/admin");
+					} else {
+						$this->queue_message('You do not have access to this page','danger', Config::uripath() . "/");
+					}
 				}
 
 				ob_start();
@@ -649,7 +706,7 @@ final class CMS {
 						$this->raise_404();
 					}
 				}
-				if (Config::debug()) {
+				if (Config::debugwarnings()) {
 					echo "<h1>GOT ALIAS: {$alias}</h1>";
 					echo "<h5>Segments passed to controller:</h5>";
 					$this->pprint_r ($this->uri_segments);
@@ -682,6 +739,9 @@ final class CMS {
 				foreach ($this->head_entries as $he) {
 					$cms_head .= $he;
 				}
+				if(!str_contains($this->page_contents, "<!--CMSHEAD-->")) {
+					CMS::show_error("Failed to Load Head", 500);
+				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				if(Config::dev_banner() ?? null) {
 					$this->page_contents .= $this->render_dev_banner();
@@ -690,8 +750,9 @@ final class CMS {
 				echo $this->page_contents;
 
 				// create full page cache if needed
-				// only if no messages in queue and user is not logged in and not a core controller
-				if ( (Config::$caching ?? null) && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
+				// only if no messages in queue and user is not logged in and not a core controller and not debugging currently
+				// @phpstan-ignore-next-line
+				if ( !Config::debugwarnings() && !Config::debug() && Config::caching() && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}
 			}	
@@ -709,6 +770,7 @@ spl_autoload_register(function($class_name)
 	$is_widget_class = strpos($class_name, "Widget_");
 	$is_user_class = strpos($class_name, "User_");
 	$is_plugin_class = strpos($class_name, "Plugin_");
+	$is_action_class = strpos($class_name, "Action_");
 
 	if ($is_field_class===0) {
 		$path = CMSPATH . "/core/fields/" . $class_name . ".php";
@@ -723,6 +785,9 @@ spl_autoload_register(function($class_name)
 	elseif ($is_plugin_class===0) {
 		$plugin_class_location = str_replace('Plugin_','',$class_name);
 		$path = CMSPATH . "/plugins/" . $plugin_class_location . "/plugin_class.php";
+	}
+	elseif($is_action_class===0) {
+		$path = CMSPATH . "/core/actions/" . $class_name . ".php";
 	}
 	else {
 		$path = CMSPATH . "/core/" . strtolower($class_name) . ".php";

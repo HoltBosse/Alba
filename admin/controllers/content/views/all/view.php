@@ -128,7 +128,7 @@ table.dragging .before_after_wrap {
 
 .state_button button {
 	height: 100%;
-	padding: 0 0.75em;
+	padding: 1em 1em;
 	border: 1px solid transparent;
 	width: 100%;
 	background-color: #fff;
@@ -174,7 +174,7 @@ table.dragging .before_after_wrap {
 
 
 <form action='' method='post' name='content_action' id='content_action_form'>
-
+<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
 <h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
 	<?php if ($content_type_filter):?>
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
@@ -200,13 +200,7 @@ table.dragging .before_after_wrap {
 			</div>
 		</div>
 	<?php endif; ?>
-	<!-- content operation toolbar -->
-	<div id="content_operations" class="pull-right buttons has-addons">
-		<button formaction='<?php echo Config::uripath();?>/admin/content/action/publish' class='button is-primary' type='submit'>Publish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/content/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/content/action/duplicate' class='button is-info' type='submit'>Duplicate</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/content/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
-	</div>
+	<?php Component::addon_button_group("content_operations", "content", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]); ?>
 </h1>
 
 	<?php //CMS::pprint_r ($filters); ?>
@@ -335,7 +329,13 @@ table.dragging .before_after_wrap {
 	<table class='table'>
 		<thead>
 			<tr>
-				<th>State</th><th>Title</th>
+				<th>State</th>
+				<?php
+					if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+						echo "<th>Id</th>";
+					}
+				?>
+				<th>Title</th>
 
 				<?php if ($content_list_fields):?>
 					<?php foreach ($content_list_fields as $content_list_field):?>
@@ -396,12 +396,14 @@ table.dragging .before_after_wrap {
 								<a class="navbar-link"></a>
 								<div class="navbar-dropdown">
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
 											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
 										</button>
 									</form>
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+										<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
 											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
@@ -411,6 +413,7 @@ table.dragging .before_after_wrap {
 									<hr class="dropdown-divider">
 									<?php foreach($custom_fields->states as $state) { ?>
 										<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
+											<input type='hidden' name='content_type' value='<?= $content_item->content_type;?>'/>
 											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $content_item->id; ?>'/>
 											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/content/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
 												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
@@ -423,19 +426,33 @@ table.dragging .before_after_wrap {
 						</div>
 						</div>
 					</td>
+					<?php
+						if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {
+							echo "<td>$content_item->id</td>";
+						}
+					?>
 					<td>
-						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>"><?php echo $content_item->title; ?></a>
-						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
+						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo $content_item->title; ?></a>
+						<br>
+						<span class='unimportant'>
+							<?php
+								echo Hook::execute_hook_filters('display_alias_override', $content_item->alias, $content_item);
+							?>
+						</span>
 					</td>
 
 					<?php if ($content_list_fields):?>
 						<?php foreach ($content_list_fields as $content_list_field):?>
 							<td><?php 
-								$propname = "f_{$content_list_field->name}"; 
+								$propname = "{$content_list_field->name}"; 
 								$classname = "Field_" . $content_list_field->type;
 								$curfield = new $classname($content_item->$propname);
-								$curfield->default = $content_item->$propname;
-								echo $curfield->get_friendly_value();
+								$curfield->load_from_config($named_custom_fields[$propname]); // load config - useful for some fields
+								$curfield->default = $content_item->$propname; // set temp field value to current stored value
+								// TODO: pass precalc array of table names for content types to aid in performance of lookups 
+								// some fields will currently parse json config files to determine tables to query for friendly values
+								// PER row/field. not ideal.
+								echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
 								?></td>
 						<?php endforeach; ?>
 					<?php endif; ?>
@@ -492,27 +509,11 @@ if ($cur_page) {
 
 ?>
 
-<?php if ($content_count>$pagination_size && !$order_by):?>
-<nav class="pagination is-centered" role="navigation" aria-label="pagination">
-	<?php if ($cur_page>1):?>
-		<a href='<?=$url_path . "?" . $prev_url_params;?>' class="pagination-previous">Previous</a>
-	<?php endif;?>
-	<?php if ( ($content_count>sizeof($all_content)) && !$order_by && ( ($cur_page*$pagination_size)<$content_count ) ):?>
-		<a href='<?=$url_path . "?" . $next_url_params;?>' class="pagination-next">Next page</a>
-	<?php endif; ?>
-	<ul class="pagination-list">
-		<?php for ($n=1; $n<=$num_pages; $n++):?>
-			<?php 
-			$url_query_params['page'] = $n;
-			$url_params = http_build_query($url_query_params);
-			?>
-		<li> 
-			<a class='pagination-link <?php if ($n==$cur_page) {echo "is-current";}?>' href='<?=$url_path . "?" . $url_params?>'><?php echo $n;?></a>
-		</li>
-		<?php endfor; ?>
-	</ul>
-</nav>
-<?php endif; ?>
+<?php
+	if (!$order_by) {
+		Component::create_pagination($content_count, $pagination_size, $cur_page);
+	}
+?>
 
 <script>
 	admin_rows = document.querySelectorAll('.content_admin_row');
@@ -565,7 +566,7 @@ if ($cur_page) {
 		}
 		//console.log('Insert',source_id, insert_position, dest_id);
 		// perform ajax action silently
-		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position};
+		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position,"content_type":'<?php echo $content_type_filter; ?>'};
 		postAjax('<?php echo Config::uripath();?>/admin/content/api', api_data, function(data){
 			response = JSON.parse(data);
 			if (response.success=='1') {

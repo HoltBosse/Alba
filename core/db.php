@@ -1,7 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-class db {
+class DB {
 	public $pdo;
 
 	public function __construct() {
@@ -33,10 +33,14 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
-				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r(debug_backtrace());
+				die();
 			}
 			else {
-				CMS::show_error("Database query error - turn on debug for more information.");
+				//CMS::pprint_r(debug_backtrace()); die();
+				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
+				//CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
 		return $success;
@@ -57,10 +61,12 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
-				//print_r (debug_backtrace()); exit(0);
-				CMS::show_error("Error performing query: " . $e->getMessage());
+				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r(debug_backtrace());
+				die();
 			}
 			else {
+				//CMS::pprint_r(debug_backtrace()); die();
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}
@@ -82,9 +88,12 @@ class db {
 		}
 		catch (\PDOException $e) {
 			if (Config::debug()) {
-				CMS::show_error("Error performing query: " . $e->getMessage());
+				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
+				CMS::pprint_r(debug_backtrace());
+				die();
 			}
 			else {
+				//CMS::pprint_r(debug_backtrace()); die();
 				CMS::show_error("Database query error - turn on debug for more information.");
 			}
 		}

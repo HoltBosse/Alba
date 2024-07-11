@@ -3,6 +3,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_RecaptchaV2 extends Field {
 
+	public $maxlength;
+
 	function __construct($default_content="") {
 		$this->id = "";
 		$this->name = "";
@@ -17,7 +19,7 @@ class Field_RecaptchaV2 extends Field {
 			echo "<div class='g-recaptcha' data-sitekey='{$rc_sitekey}'></div>";
 		}
 		else {
-			"<h5><strong>NO RECAPTCHA SITEKEY</strong></h5>";
+			echo "<h5><strong>NO RECAPTCHA SITEKEY</strong></h5>";
 		}
 	}
 

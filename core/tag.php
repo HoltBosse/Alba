@@ -7,6 +7,16 @@ class Tag {
 	public $title;
 	public $state;
 	public $alias;
+	public $form;
+	public $note;
+	public $filter;
+	public $description;
+	public $image;
+	public $public;
+	public $parent;
+	public $category;
+	public $custom_fields;
+	public $contenttypes;
 
 	public function show_admin_form() {
 		$this->form = new Form();
@@ -56,18 +66,8 @@ class Tag {
 	}
 
 	public function get_depth() {
-		$depth=0;
-		$parent_id = $this->parent;
+		//legacy compat
 		return 0;
-		while ($parent_id) {
-			//CMS::pprint_r ($this); 
-			$depth++;
-			$parent = new Tag();
-			$parent->load($parent_id);
-			//CMS::pprint_r ($parent); return 1;
-			$parent_id = $parent->parent;
-		}
-		return $depth;
 	}
 
 	public static function get_all_tags() {
@@ -131,6 +131,10 @@ class Tag {
 		}
 
 		if ($this->id) {
+
+			Actions::add_action("tagupdate", (object) [
+				"affected_tag"=>$this->id,
+			]);
 
 			// check we are not trying to make a child node a parent
 			if ($this->parent) {
@@ -196,6 +200,11 @@ class Tag {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($new_id, $contenttype));
 				}
 				$this->id = $new_id;
+
+				Actions::add_action("tagcreate", (object) [
+					"affected_tag"=>$this->id,
+				]);
+
 				Hook::execute_hook_actions('on_tag_save', $this);
 				return true;	
 			}
