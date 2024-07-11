@@ -72,7 +72,6 @@ require_once (CMSPATH . "/core/cms.php");
 								<!-- removed all content view -->
 								<hr class="dropdown-divider">
 								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/check">Check Flat Tables</a>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/new">Create New Type</a>
 							</div>
 						</div>
 						<?php endif; ?>
