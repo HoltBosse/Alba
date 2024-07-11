@@ -18,7 +18,9 @@ if ($action=='toggle') {
 	]);
 	$result = DB::exec("UPDATE pages SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
-		CMS::Instance()->queue_message('Toggled state of page','success', $_SERVER['HTTP_REFERER']);
+		$page = DB::fetch('SELECT * FROM pages WHERE id=?', [$id[0]]);
+		$msg = "Page <a href='" . Config::uripath() . "/admin/pages/edit/{$id[0]}/{$page->content_type}/{$page->view}'>{$page->title}</a> state toggled";
+		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
 	}
 	else {
 		CMS::Instance()->queue_message('Failed to toggle state of page','danger', $_SERVER['HTTP_REFERER']);
