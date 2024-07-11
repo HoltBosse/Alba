@@ -141,6 +141,10 @@ class Widget {
 
 	public function save($required_details_form, $widget_options_form, $position_options_form) {
 		// update this object with submitted and validated form info
+		$redirect_url = Config::uripath() . '/admin/widgets/show';
+		if (Input::getvar("http_referer_form") && Input::getvar("http_referer_form") != $_SERVER["HTTP_REFERER"]){
+			$redirect_url = Input::getvar("http_referer_form");
+		}
 		$this->title = $required_details_form->get_field_by_name('title')->default;
 		$this->state = $required_details_form->get_field_by_name('state')->default;
 		$this->note = $required_details_form->get_field_by_name('note')->default;
@@ -172,7 +176,7 @@ class Widget {
 			$result = DB::exec("update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=? where id=?", $params);
 			
 			if ($result) {
-				CMS::Instance()->queue_message('Widget updated','success',Config::uripath() . '/admin/widgets/show');	
+				CMS::Instance()->queue_message("Widget <a href='" . Config::uripath() . "/admin/widgets/edit/{$this->id}'>{$this->title}</a> updated", 'success', $redirect_url);
 			}
 			else {
 				CMS::Instance()->queue_message('Widget failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	
@@ -182,8 +186,9 @@ class Widget {
 			// new
 			$params = array($this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)) ;
 			$result = DB::exec("insert into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)", $params);
+			$new_widget_id = DB::get_last_insert_id();
 			if ($result) {
-				CMS::Instance()->queue_message('New widget saved','success',Config::uripath() . '/admin/widgets/show');	
+				CMS::Instance()->queue_message("Widget <a href='" . Config::uripath() . "/admin/widgets/edit/{$new_widget_id}'>{$this->title}</a> created", 'success', $redirect_url);	
 			}
 			else {
 				CMS::Instance()->queue_message('New widget failed to save','danger',Config::uripath() . $_SERVER['REQUEST_URI']);	

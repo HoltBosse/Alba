@@ -12,6 +12,7 @@ if (!$user_ok) {
 	CMS::Instance()->queue_message('Failed to create user object from form data','danger',Config::uripath().'/admin/users');
 }
 $response = Hook::execute_hook_actions('validate_user_fields_form');
+$new_user = !$user->id; //check for new user
 
 $success = $user->save();
 $custom_field_error = false; // only set to true if any errors occur during custom field saving
@@ -62,7 +63,8 @@ if ($custom_user_fields_form) {
 if ($success) {
 	Hook::execute_hook_actions('on_user_save',$user);
 	if (!$custom_field_error) {
-		CMS::Instance()->queue_message('User saved','success',Config::uripath().'/admin/users');
+		$msg = "User <a href='" . Config::uripath() . "/admin/users/edit/{$user->id}'>{$user->username}</a> " . ($new_user ? 'created' : 'updated');
+		CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/users');
 	}
 	else {
 		CMS::Instance()->queue_message('User saved, additional fields had 1 or more errors. See Log.','warning',Config::uripath().'/admin/users');

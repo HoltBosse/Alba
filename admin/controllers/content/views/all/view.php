@@ -128,7 +128,7 @@ table.dragging .before_after_wrap {
 
 .state_button button {
 	height: 100%;
-	padding: 0 0.75em;
+	padding: 1em 1em;
 	border: 1px solid transparent;
 	width: 100%;
 	background-color: #fff;
