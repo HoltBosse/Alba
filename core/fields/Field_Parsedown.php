@@ -153,10 +153,10 @@ class Field_Parsedown extends Field {
 				#emote_popup {
 					display: none;
 					position: absolute;
-					border: 1px solid white;
+					border: 1px solid var(--bulma-body-color);
 					/* padding: 0.5rem; */
 					border-radius: 0.5rem;
-					background-color: #111;
+					background-color: var(--bulma-body-background-color);
 				}
 				#emote_popup.active {
 					display: block;
