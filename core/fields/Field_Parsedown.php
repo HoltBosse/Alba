@@ -146,6 +146,7 @@ class Field_Parsedown extends Field {
 						<i class="pd_text_option fas fa-quote-right" data-start_prefix="> " title="Quote"></i> <?php //fa-block-quote ?>
 						<i class="pd_text_option fas fa-code" data-start_prefix="`" data-end_prefix="`" title="Code"></i>
 						<i class="pd_text_option fas fa-link" data-start_prefix="[" data-end_prefix="](url)" title="Link"></i>
+						<div style="height: 2em; border-right: 1px solid;"></div>
 						<i class="pd_text_option fas fa-list" data-start_prefix="- " title="Bulleted List"></i>
 						<i class="pd_text_option fas fa-list" data-start_prefix="#. " title="Numeric List"></i> <?php //fa-list-ol - find better option ?>
 					</div>
@@ -215,15 +216,46 @@ class Field_Parsedown extends Field {
 						let start_offset=0;
 
 						const [start, end] = [editor_textarea.selectionStart, editor_textarea.selectionEnd];
-						if(e.target.dataset.start_prefix) {
-							editor_textarea.setRangeText(e.target.dataset.start_prefix, start, start);
-							start_offset = e.target.dataset.start_prefix.length;
+
+						let removeStatus = false;
+						if(e.target.dataset.start_prefix && e.target.dataset.start_prefix==editor_textarea.value.substring(start - e.target.dataset.start_prefix.length, start)) {
+							removeStatus = true;
+							
+							if(e.target.dataset.end_prefix && e.target.dataset.end_prefix==editor_textarea.value.substring(end, end + e.target.dataset.end_prefix.length)) {
+								removeStatus = true;
+							} else if(e.target.dataset.end_prefix) {
+								removeStatus = false;
+							}
 						}
-						if(e.target.dataset.end_prefix) {
-							editor_textarea.setRangeText(e.target.dataset.end_prefix, end+start_offset, end+start_offset);
+
+						if(removeStatus) {
+							let offset = 0;
+
+							if(e.target.dataset.start_prefix) {
+								const length = e.target.dataset.start_prefix.length;
+								editor_textarea.setRangeText("", start-length, start);
+								offset = -1*length;
+							}
+							if(e.target.dataset.end_prefix) {
+								const length = e.target.dataset.end_prefix.length;
+								editor_textarea.setRangeText("", end+offset, (end+offset)+length);
+							}
+
+							editor_textarea.focus();
+							editor_textarea.setSelectionRange(start+offset, end+offset);
+						} else {
+							if(e.target.dataset.start_prefix) {
+								editor_textarea.setRangeText(e.target.dataset.start_prefix, start, start);
+								start_offset = e.target.dataset.start_prefix.length;
+							}
+							if(e.target.dataset.end_prefix) {
+								editor_textarea.setRangeText(e.target.dataset.end_prefix, end+start_offset, end+start_offset);
+							}
+
+							editor_textarea.focus();
+							editor_textarea.setSelectionRange(start+start_offset, end+start_offset);
 						}
-						editor_textarea.focus();
-						editor_textarea.setSelectionRange(start+start_offset, end+start_offset);
+
 					}
 				});
 
