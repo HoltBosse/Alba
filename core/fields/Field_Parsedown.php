@@ -13,24 +13,15 @@ class Field_Parsedown extends Field {
 					box-shadow: inset 0 0.0625em 0.125em rgb(10 10 10 / 5%);
 					max-width: 100%;
 					width: 100%;
-					/* background-color: #fff; */
 					border-color: #dbdbdb;
 					border-radius: 4px;
-					/* color: #363636; */
 					-webkit-appearance: none;
 					align-items: center;
 					border: 1px solid;
-					/* display: inline-flex; */
 					font-size: 1rem;
-					/* height: 2.5em; */
-					/* justify-content: flex-start; */
 					line-height: 1.5;
 					padding-bottom: calc(0.5em - 1px);
-					/* padding-left: calc(0.75em - 1px);
-					padding-right: calc(0.75em - 1px); */
 					padding-top: calc(0.5em - 1px);
-					/* position: relative;
-					vertical-align: top; */
 				}
 
 				/* tab header stuff */
@@ -39,7 +30,6 @@ class Field_Parsedown extends Field {
 					gap: 1rem;
 					padding-left: calc(0.75em - 1px);
 					padding-right: calc(0.75em - 1px);
-					/* padding-bottom: calc(0.5em - 1px); */
 					border-bottom: 1px solid;
 				}
 
@@ -93,7 +83,6 @@ class Field_Parsedown extends Field {
 				}
 
 				/* markdown bulma fixing */
-				/* todo: finish this */
 				.preview_content {
 					margin-left: 1rem; /* fixes bulma removing space for lists and stuff */
 				}
@@ -148,7 +137,7 @@ class Field_Parsedown extends Field {
 						<i class="pd_text_option fas fa-link" data-start_prefix="[" data-end_prefix="](url)" title="Link"></i>
 						<div style="height: 2em; border-right: 1px solid;"></div>
 						<i class="pd_text_option fas fa-list" data-start_prefix="- " title="Bulleted List"></i>
-						<i class="pd_text_option fas fa-list" data-start_prefix="#. " title="Numeric List"></i> <?php //fa-list-ol - find better option ?>
+						<?php //<i class="pd_text_option fas fa-list" data-start_prefix="#. " title="Numeric List"></i> ?> <?php //fa-list-ol - find better option - disabled for now ?>
 					</div>
 				</div>
 				<div class="pd_content_header_row">
@@ -156,7 +145,7 @@ class Field_Parsedown extends Field {
 						<textarea class="input pd_parsedown_content" <?php echo $this->get_rendered_name(); ?> ><?php echo $this->default; ?></textarea>
 					</div>
 					<div class="pd_tab_content preview_content">
-						<p>some content here</p>
+						<p>Content Preview Loading...</p>
 					</div>
 				</div>
 			</section>
@@ -189,8 +178,7 @@ class Field_Parsedown extends Field {
 				}
 			</style>
 			<div id="emote_popup">
-				<p>test</p>
-				<p>test2 of thingsss?</p>
+				<p>Emotes Loading...</p>
 			</div>
 			<script>
 				let editor = document.getElementById("<?php echo $wrapper_id; ?>");
@@ -362,7 +350,7 @@ class Field_Parsedown extends Field {
 					},
 					"enable": ()=>{
 						window.emotemenu.active = true;
-						console.log("activated");
+						//console.log("activated");
 						//console.log(e.data);
 
 						let position = getCaretPosition(editor_textarea);
@@ -433,7 +421,7 @@ class Field_Parsedown extends Field {
 				editor_textarea.addEventListener("keydown", (e)=>{
 					if(e.key==="Enter" && window.emotemenu.isActive()) {
 						e.preventDefault();
-						console.log("take");
+						//console.log("take");
 						let substringone = editor_textarea.value.slice(0, editor_textarea.selectionStart-(window.emotemenu.buffer.length+1));
 						let substringtwo = editor_textarea.value.slice(editor_textarea.selectionStart);
 						editor_textarea.value = `${substringone}${window.emotemenu.element.querySelector("div").dataset.emote}${substringtwo}`;
@@ -448,7 +436,7 @@ class Field_Parsedown extends Field {
 					console.log("clicked");
 					console.log(e.target);
 					if(e.target.dataset.emote) {
-						console.log("thing");
+						//console.log("thing");
 						e.preventDefault();
 						let substringone = editor_textarea.value.slice(0, editor_textarea.selectionStart-(window.emotemenu.buffer.length+1));
 						let substringtwo = editor_textarea.value.slice(editor_textarea.selectionStart);
