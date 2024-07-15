@@ -464,9 +464,4 @@ class Field_Parsedown extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? '### New Text';
 	}
-
-	public function validate() {
-		// not a real field, just displays stuff :)
-		return true;
-	}
 }
