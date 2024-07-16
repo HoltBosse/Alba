@@ -147,7 +147,7 @@ class Field_Parsedown extends Field {
 						<?php if($this->imageapi) { ?>
 							<div style="height: 2em; border-right: 1px solid;"></div>
 							<label for="pd_file_<?php echo $wrapper_id; ?>">
-								<i class="pd_text_option fas fa-image" title="Italicise"></i>
+								<i class="pd_text_option fas fa-image" title="Image"></i>
 							</label>
 							<input type="file" id="pd_file_<?php echo $wrapper_id; ?>" style="display:none;">
 						<?php } ?>
