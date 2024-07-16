@@ -2,6 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Parsedown extends Field {
+	public $imageapi;
 
 	public function display() {
 		$wrapper_id = uniqid();
@@ -80,6 +81,11 @@ class Field_Parsedown extends Field {
 					min-height: 2.5rem;
 					height: 10rem;
 					min-width: 100%;
+				}
+
+				.pd_parsedown_content.filehover {
+					border-color: green;
+					background-color: rgba(0,128,0, 0.1);
 				}
 
 				/* markdown bulma fixing */
@@ -444,12 +450,70 @@ class Field_Parsedown extends Field {
 						window.emotemenu.disable();
 					}
 				});
-				
 			</script>
+
+			<?php if($this->imageapi) { ?>
+				<script>
+					editor_textarea.addEventListener("dragover", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.add('filehover');
+					});
+
+					editor_textarea.addEventListener("dragleave", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.remove('filehover');
+					});
+
+					editor_textarea.addEventListener("drop", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.remove('filehover');
+						//do_upload(e);
+						console.log("dropped");
+						console.log(e.dataTransfer.files);
+
+						//check e.dataTransfer.files length
+
+						const formData = new FormData();
+						formData.append("file-upload[]", e.dataTransfer.files[0]);
+						formData.append("alt[]", [""]);
+						formData.append("title[]", [""]);
+						formData.append("web_friendly[]", [0]);
+
+						console.log(e.dataTransfer.files[0]);
+						const startPosition = editor_textarea.selectionStart;
+						const fileName = e.dataTransfer.files[0].name;
+						const loadingText = `![Uploading ${fileName}...]()`;
+						editor_textarea.setRangeText(loadingText+"\n", startPosition, startPosition);
+						editor_textarea.disabled=true;
+
+						fetch(window.uripath + '<?php echo $this->imageapi ?>', {
+							method: "POST",
+							body: formData,
+						}).then((response) => response.json()).then((data) => {
+							console.log("uploaded");
+							console.log(data);
+							
+							editor_textarea.disabled=false;
+							editor_textarea.setRangeText(`![${fileName}](${data.urls})`, startPosition, startPosition+loadingText.length);
+							editor_textarea.focus();
+							editor_textarea.setSelectionRange(startPosition, startPosition);
+						}).catch((e)=>{
+							console.log("error");
+
+							editor_textarea.disabled=false;
+							editor_textarea.setRangeText("Error Uploading Image!!!", startPosition, startPosition+loadingText.length);
+							editor_textarea.focus();
+							editor_textarea.setSelectionRange(startPosition, startPosition);
+						});
+					});
+					
+				</script>
+			<?php } ?>
 		<?php
 	}
-
-
 
 	public function load_from_config($config) {
 		$this->name = $config->name ?? 'error!!!';
@@ -463,5 +527,13 @@ class Field_Parsedown extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? '### New Text';
+		// @phpstan-ignore-next-line
+		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (ADMINPATH ? "/admin/images/uploadv2" : null);
+		/*
+			if the property exists, use it even if null(disabled)
+			else fallback to:
+				if in adminpath use admin image uploader
+				else null(disabled)
+		*/
 	}
 }
