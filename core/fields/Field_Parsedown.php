@@ -2,6 +2,7 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Parsedown extends Field {
+	public $imageapi;
 
 	public function display() {
 		$wrapper_id = uniqid();
@@ -82,6 +83,11 @@ class Field_Parsedown extends Field {
 					min-width: 100%;
 				}
 
+				.pd_parsedown_content.filehover {
+					border-color: green;
+					background-color: rgba(0,128,0, 0.1);
+				}
+
 				/* markdown bulma fixing */
 				.preview_content {
 					margin-left: 1rem; /* fixes bulma removing space for lists and stuff */
@@ -138,6 +144,13 @@ class Field_Parsedown extends Field {
 						<div style="height: 2em; border-right: 1px solid;"></div>
 						<i class="pd_text_option fas fa-list" data-start_prefix="- " title="Bulleted List"></i>
 						<?php //<i class="pd_text_option fas fa-list" data-start_prefix="#. " title="Numeric List"></i> ?> <?php //fa-list-ol - find better option - disabled for now ?>
+						<?php if($this->imageapi) { ?>
+							<div style="height: 2em; border-right: 1px solid;"></div>
+							<label for="pd_file_<?php echo $wrapper_id; ?>">
+								<i class="pd_text_option fas fa-image" title="Image"></i>
+							</label>
+							<input type="file" id="pd_file_<?php echo $wrapper_id; ?>" style="display:none;">
+						<?php } ?>
 					</div>
 				</div>
 				<div class="pd_content_header_row">
@@ -444,12 +457,75 @@ class Field_Parsedown extends Field {
 						window.emotemenu.disable();
 					}
 				});
-				
 			</script>
+
+			<?php if($this->imageapi) { ?>
+				<script>
+					function handleFileUpload(file) {
+						console.log("dropped");
+						console.log(file);
+
+						const formData = new FormData();
+						formData.append("file-upload[]", file);
+						formData.append("alt[]", [""]);
+						formData.append("title[]", [""]);
+						formData.append("web_friendly[]", [0]);
+
+						console.log(file);
+						const startPosition = editor_textarea.selectionStart;
+						const fileName = file.name;
+						const loadingText = `![Uploading ${fileName}...]()`;
+						editor_textarea.setRangeText(loadingText+"\n", startPosition, startPosition);
+						editor_textarea.disabled=true;
+
+						fetch(window.uripath + '<?php echo $this->imageapi ?>', {
+							method: "POST",
+							body: formData,
+						}).then((response) => response.json()).then((data) => {
+							console.log("uploaded");
+							console.log(data);
+							
+							editor_textarea.disabled=false;
+							editor_textarea.setRangeText(`![${fileName}](${data.urls})`, startPosition, startPosition+loadingText.length);
+							editor_textarea.focus();
+							editor_textarea.setSelectionRange(startPosition, startPosition);
+						}).catch((e)=>{
+							console.log("error");
+
+							editor_textarea.disabled=false;
+							editor_textarea.setRangeText("Error Uploading Image!!!", startPosition, startPosition+loadingText.length);
+							editor_textarea.focus();
+							editor_textarea.setSelectionRange(startPosition, startPosition);
+						});
+					}
+
+					editor_textarea.addEventListener("dragover", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.add('filehover');
+					});
+
+					editor_textarea.addEventListener("dragleave", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.remove('filehover');
+					});
+
+					editor_textarea.addEventListener("drop", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.remove('filehover');
+						handleFileUpload(e.dataTransfer.files[0]);
+					});
+
+					document.querySelector("#pd_file_<?php echo $wrapper_id; ?>").addEventListener('change', (e)=>{
+						handleFileUpload(e.target.files[0]);
+					});
+					
+				</script>
+			<?php } ?>
 		<?php
 	}
-
-
 
 	public function load_from_config($config) {
 		$this->name = $config->name ?? 'error!!!';
@@ -463,5 +539,13 @@ class Field_Parsedown extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? '### New Text';
+		// @phpstan-ignore-next-line
+		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (ADMINPATH ? "/admin/images/uploadv2" : null);
+		/*
+			if the property exists, use it even if null(disabled)
+			else fallback to:
+				if in adminpath use admin image uploader
+				else null(disabled)
+		*/
 	}
 }
