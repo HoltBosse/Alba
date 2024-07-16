@@ -144,6 +144,13 @@ class Field_Parsedown extends Field {
 						<div style="height: 2em; border-right: 1px solid;"></div>
 						<i class="pd_text_option fas fa-list" data-start_prefix="- " title="Bulleted List"></i>
 						<?php //<i class="pd_text_option fas fa-list" data-start_prefix="#. " title="Numeric List"></i> ?> <?php //fa-list-ol - find better option - disabled for now ?>
+						<?php if($this->imageapi) { ?>
+							<div style="height: 2em; border-right: 1px solid;"></div>
+							<label for="pd_file_<?php echo $wrapper_id; ?>">
+								<i class="pd_text_option fas fa-image" title="Italicise"></i>
+							</label>
+							<input type="file" id="pd_file_<?php echo $wrapper_id; ?>" style="display:none;">
+						<?php } ?>
 					</div>
 				</div>
 				<div class="pd_content_header_row">
@@ -454,37 +461,19 @@ class Field_Parsedown extends Field {
 
 			<?php if($this->imageapi) { ?>
 				<script>
-					editor_textarea.addEventListener("dragover", (e)=>{
-						e.preventDefault();
-						e.stopPropagation();
-						e.target.classList.add('filehover');
-					});
-
-					editor_textarea.addEventListener("dragleave", (e)=>{
-						e.preventDefault();
-						e.stopPropagation();
-						e.target.classList.remove('filehover');
-					});
-
-					editor_textarea.addEventListener("drop", (e)=>{
-						e.preventDefault();
-						e.stopPropagation();
-						e.target.classList.remove('filehover');
-						//do_upload(e);
+					function handleFileUpload(file) {
 						console.log("dropped");
-						console.log(e.dataTransfer.files);
-
-						//check e.dataTransfer.files length
+						console.log(file);
 
 						const formData = new FormData();
-						formData.append("file-upload[]", e.dataTransfer.files[0]);
+						formData.append("file-upload[]", file);
 						formData.append("alt[]", [""]);
 						formData.append("title[]", [""]);
 						formData.append("web_friendly[]", [0]);
 
-						console.log(e.dataTransfer.files[0]);
+						console.log(file);
 						const startPosition = editor_textarea.selectionStart;
-						const fileName = e.dataTransfer.files[0].name;
+						const fileName = file.name;
 						const loadingText = `![Uploading ${fileName}...]()`;
 						editor_textarea.setRangeText(loadingText+"\n", startPosition, startPosition);
 						editor_textarea.disabled=true;
@@ -508,6 +497,29 @@ class Field_Parsedown extends Field {
 							editor_textarea.focus();
 							editor_textarea.setSelectionRange(startPosition, startPosition);
 						});
+					}
+
+					editor_textarea.addEventListener("dragover", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.add('filehover');
+					});
+
+					editor_textarea.addEventListener("dragleave", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.remove('filehover');
+					});
+
+					editor_textarea.addEventListener("drop", (e)=>{
+						e.preventDefault();
+						e.stopPropagation();
+						e.target.classList.remove('filehover');
+						handleFileUpload(e.dataTransfer.files[0]);
+					});
+
+					document.querySelector("#pd_file_<?php echo $wrapper_id; ?>").addEventListener('change', (e)=>{
+						handleFileUpload(e.target.files[0]);
 					});
 					
 				</script>
