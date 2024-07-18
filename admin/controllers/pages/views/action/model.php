@@ -27,36 +27,37 @@ if ($action=='toggle') {
 	}
 }
 
-if ($action=='publish') {
-	foreach($id as $item) {
-		Actions::add_action("pageupdate", (object) [
-			"affected_page"=>$item,
-		]);
-	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE pages SET state = 1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Published pages','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to publish pages','danger', $_SERVER['HTTP_REFERER']);
-	}
+function updatePagesState($id, $state, $action_text) {
+    foreach ($id as $item) {
+        Actions::add_action("pageupdate", (object) [
+            "affected_page" => $item,
+        ]);
+    }
+    $idlist = implode(',', $id);
+    $result = DB::exec("UPDATE pages SET state = ? WHERE id IN ({$idlist})", [$state]);
+    
+    if ($result) {
+        $page_links = [];
+        foreach ($id as $page_id) {
+            $page = DB::fetch('SELECT * FROM pages WHERE id=?', [$page_id]);
+            if ($page) {
+                $link = "<a target='_blank' href='" . Config::uripath() . "/admin/pages/edit/{$page_id}/{$page->content_type}/{$page->view}'>{$page->title}</a>";
+                $page_links[] = $link;
+            }
+        }
+        $messages = "Page(s) " . implode(', ', $page_links) . " {$action_text}";
+        CMS::Instance()->queue_message($messages, 'success', $_SERVER['HTTP_REFERER']);
+    } else {
+        CMS::Instance()->queue_message("Failed to {$action_text} pages", 'danger', $_SERVER['HTTP_REFERER']);
+    }
 }
 
-if ($action=='unpublish') {
-	foreach($id as $item) {
-		Actions::add_action("pageupdate", (object) [
-			"affected_page"=>$item,
-		]);
-	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE pages SET state = 0 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Unpublished pages','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to unpublish pages','danger', $_SERVER['HTTP_REFERER']);
-	}
+if ($action == 'publish') {
+    updatePagesState($id, 1, 'published');
+}
+
+if ($action == 'unpublish') {
+    updatePagesState($id, 0, 'unpublished');
 }
 
 if ($action=='delete') {
