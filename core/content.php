@@ -131,7 +131,7 @@ class Content {
 
 	public function load($id, $content_type) {
 		$table_name = Content::get_table_name_for_content_type($content_type);
-		$info = DB::fetch('select * from `' . $table_name . '` where id=?',array($id));
+		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE id=?",array($id));
 		if ($info) {
 			$this->id = $info->id;
 			$this->title = $info->title;
@@ -156,7 +156,7 @@ class Content {
 
 	public function load_from_alias($alias, $content_type) {
 		$table_name = Content::get_table_name_for_content_type($content_type);
-		$info = DB::fetch('select * from `' . $table_name . '` where alias=?',array($alias));
+		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE alias=?",array($alias));
 		if ($info) {
 			$this->table_name = $table_name;
 			$this->id = $info->id;
@@ -190,12 +190,12 @@ class Content {
 		$this->title = $this->title . " - Copy";
 		$this->make_alias_unique();
 		// ordering
-		$ordering = DB::fetch("select (max(ordering)+1) as ordering from " . $table_name)->ordering;
+		$ordering = DB::fetch("SELECT (max(ordering)+1) as ordering from `{$table_name}`")->ordering;
 		if (!$ordering) {
 			$ordering=1;
 		}
 		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category];
-		$required_result = DB::exec("insert into ".$table_name." (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
+		$required_result = DB::exec("INSERT into `{$table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
 			$this->id = CMS::Instance()->pdo->lastInsertId();
 
@@ -224,7 +224,7 @@ class Content {
 				// $dup_query = 'update ' . $table_name . " as o set o." . $field->name . " = (select c.{$field->name} from {$table_name} c where c.id={$original_id}) where o.id=?";
 				// above query does not work - query optimizer makes it so sql see table as same, and cannot update from self selection
 				// leaving for future us to learn from repeatedly
-				$dup_query = "update `{$table_name}` as n inner join {$table_name} as o on o.id=? and n.id=? set n.{$field->name} = o.{$field->name}";
+				$dup_query = "UPDATE `{$table_name}` AS n INNER JOIN `{$table_name}` AS o ON o.id=? AND n.id=? SET n.{$field->name} = o.{$field->name}";
 				//CMS::pprint_r ($dup_query); CMS::pprint_r ($this->id); die();
 				DB::exec($dup_query, [$original_id, $this->id]); 
 			}
@@ -305,7 +305,7 @@ class Content {
 
 			// update
 			$params = array($this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id) ;
-			$required_result = DB::exec("update {$this->table_name} set state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? where id=?", $params);
+			$required_result = DB::exec("UPDATE `{$this->table_name}` SET state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? WHERE id=?", $params);
 		}
 		else {
 			// new
@@ -579,7 +579,7 @@ class Content {
 		//$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
 		$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 		$table_name = "controller_" . $custom_fields->id ;
-		$result = DB::fetch("select * from " . $table_name . " where id=?", [$id]);
+		$result = DB::fetch("SELECT * FROM `{$table_name}` WHERE id=?", [$id]);
 
 		// check if default needs to be filled in for any custom fields
 		foreach ($custom_fields->fields as $f) {
