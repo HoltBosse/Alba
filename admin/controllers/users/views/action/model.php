@@ -1,82 +1,36 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+$actions = [
+	"toggle"=>["userupdate", "(CASE state WHEN 1 THEN 0 ELSE 1 END)", "toggled"],
+	"publish"=>["userupdate", 1, "published"],
+	"unpublish"=>["userupdate", 0, "unpublished"],
+	"delete"=>["userdelete", -1, "deleted"],
+];
+
 $action = CMS::Instance()->uri_segments[2];
-if (!$action) {
-	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
-}
-
 $id = Input::getvar('id','ARRAYOFINT');
-if (!$id) {
-	CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
+if (!$action || !$id || !$actions[$action]) {
+	CMS::Instance()->queue_message('Unknown action or items','danger', $_SERVER['HTTP_REFERER']);
 }
 
-if ($action=='toggle') {
-	foreach($id as $uid) {
-		Actions::add_action("userupdate", (object) [
+function exec_action($label, $state, $action_text, $ids) {
+	foreach($ids as $uid) {
+		Actions::add_action($label, (object) [
 			"affected_user"=>$uid,
 		]);
 	}
 
-	$result = DB::exec("UPDATE users SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
-	if ($result) {
-		$user = DB::fetch('SELECT * FROM users WHERE id=?', [$id[0]]);
-		$msg = "User <a href='" . Config::uripath() . "/admin/users/edit/{$id[0]}'>{$user->username}</a> state toggled";
-		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to toggle state of user','danger', $_SERVER['HTTP_REFERER']);
-	}
+	$injectionString = implode(",", array_map(function($input) {return "?";}, $ids));
+	$result = DB::exec("UPDATE users SET state = $state where id in ($injectionString)", $ids);
+
+	if(!$result) { CMS::Instance()->queue_message('Failed to complete action','danger', $_SERVER['HTTP_REFERER']); }
+
+	$users = DB::fetchall("SELECT * FROM users WHERE id in ($injectionString)", $ids);
+	$usersMsgString = implode(", ", array_map(function($input) { return "<a href='" . Config::uripath() . "/admin/users/edit/$input->id'>$input->username</a>"; }, $users));
+
+	CMS::Instance()->queue_message("User(s) " . ($label!="userdelete" ? $usersMsgString : "") . " " . str_replace("user", "", $label) . "d",'success', $_SERVER['HTTP_REFERER']);
 }
 
-if ($action=='publish') {
-	foreach($id as $uid) {
-		Actions::add_action("userupdate", (object) [
-			"affected_user"=>$uid,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE users SET state = 1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Published users','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to publish users','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='unpublish') {
-	foreach($id as $uid) {
-		Actions::add_action("userupdate", (object) [
-			"affected_user"=>$uid,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE users SET state = 0 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Unpublished users','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to unpublish users','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='delete') {
-	foreach($id as $uid) {
-		Actions::add_action("userdelete", (object) [
-			"affected_user"=>$uid,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE users SET state = -1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Deleted users','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to delete users','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
+$actionDetails = $actions[$action];
+exec_action($actionDetails[0], $actionDetails[1], $actionDetails[2], $id);
