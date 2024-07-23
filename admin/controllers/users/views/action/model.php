@@ -29,7 +29,7 @@ function exec_action($label, $state, $action_text, $ids) {
 	$users = DB::fetchall("SELECT * FROM users WHERE id in ($injectionString)", $ids);
 	$usersMsgString = implode(", ", array_map(function($input) { return "<a href='" . Config::uripath() . "/admin/users/edit/$input->id'>$input->username</a>"; }, $users));
 
-	CMS::Instance()->queue_message("User(s) " . ($label!="userdelete" ? $usersMsgString : "") . " " . str_replace("user", "", $label) . "d",'success', $_SERVER['HTTP_REFERER']);
+	CMS::Instance()->queue_message("User(s) " . ($label!="userdelete" ? $usersMsgString : "") . " $action_text",'success', $_SERVER['HTTP_REFERER']);
 }
 
 $actionDetails = $actions[$action];
