@@ -1,157 +1,70 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-$action = CMS::Instance()->uri_segments[2];
-if (!$action) {
-	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
-}
+$actions = [
+	"toggle"=>["contentupdate", "(CASE state WHEN 1 THEN 0 ELSE 1 END)", " toggled"],
+	"togglestate"=>["contentupdate", "?", "state updated"],
+	"publish"=>["contentupdate", 1, "published"],
+	"unpublish"=>["contentupdate", 0, "unpublished"],
+	"delete"=>["contentdelete", -1, "deleted"],
+	"duplicate"=>["contentduplicate", "", "duplicated"],
+];
 
+
+$action = CMS::Instance()->uri_segments[2];
+$id = Input::getvar('id','ARRAYOFINT');
 $content_type = Input::getvar('content_type','INT',null);
+$togglestate = Input::getvar('togglestate','ARRAYOFINT');
+
 if (!$content_type) {
 	CMS::Instance()->queue_message('Unknown content type','danger', $_SERVER['HTTP_REFERER']);
 }
-
-$location = Content::get_content_location($content_type);
-$custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-$table_name = "controller_" . $custom_fields->id ;
-if ($table_name=="controller_") {
-	CMS::Instance()->queue_message('Unable to determine content table name','danger', $_SERVER['HTTP_REFERER']);
-}
-
-
-
-if ($action=='toggle') {
-	$id = Input::getvar('id','ARRAYOFINT');
-	if (!$id) {
-		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
-	}
-
-	foreach($id as $entry) {
-		Actions::add_action("contentupdate", (object) [
-			"content_id"=>$entry,
-			"content_type"=>$content_type,
-		]);
-	}
-
-	$result = DB::exec("update `$table_name` SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
-	if ($result) {
-		$content = DB::fetch("SELECT * FROM `$table_name` WHERE id=?", [$id[0]]);
-		$msg = "Content <a href='" . Config::uripath() . "/admin/content/edit/{$id[0]}/{$content->content_type}'>{$content->title}</a> state toggled";
-		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to toggle state of content','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='togglestate') {
-	$togglestate = Input::getvar('togglestate','ARRAYOFINT');
-	if (!$togglestate) {
-		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
-	}
-
-	Actions::add_action("contentupdate", (object) [
-		"content_id"=>$togglestate[1],
-		"content_type"=>$content_type,
-	]);
-
-	$result = DB::exec("update `$table_name` SET state = ? where id=?", [$togglestate[1], $togglestate[0]]); //first is id, second is state
-	if ($result) {
-		CMS::Instance()->queue_message('Updated state of content','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to update state of content','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-elseif ($action=='publish') {
-	$id = Input::getvar('id','ARRAYOFINT');
-	if (!$id) {
-		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
-	}
-
-	foreach($id as $entry) {
-		Actions::add_action("contentupdate", (object) [
-			"content_id"=>$entry,
-			"content_type"=>$content_type,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = 1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Published content','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to publish content','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-elseif ($action=='unpublish') {
-	$id = Input::getvar('id','ARRAYOFINT');
-	if (!$id) {
-		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
-	}
-
-	foreach($id as $entry) {
-		Actions::add_action("contentupdate", (object) [
-			"content_id"=>$entry,
-			"content_type"=>$content_type,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = 0 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Unpublished content','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to unpublish content','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-elseif ($action=='delete') {
-	$id = Input::getvar('id','ARRAYOFINT');
-	if (!$id) {
-		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
-	}
-
-	foreach($id as $entry) {
-		Actions::add_action("contentdelete", (object) [
-			"content_id"=>$entry,
-			"content_type"=>$content_type,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = -1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Deleted content','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to delete content','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-elseif ($action=='duplicate') {
-	$ids = Input::getvar('id','ARRAYOFINT');
-	if (!$ids) {
-		//CMS::pprint_r ($ids);exit(0);
-		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
-	}
-	
-	foreach ($ids as $id) {
-		$orig = new Content();
-		$orig->load($id, Input::getvar('content_type','INT'));
-		$orig->duplicate();
-	}
-	// todo: nicely report on good or bad duplicates
-	CMS::Instance()->queue_message('Content duplicated','success', $_SERVER['HTTP_REFERER']);
-}
-
-
-
-else {
+if (!$action) {
 	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
 }
+if (!$id && !$togglestate) {
+	CMS::Instance()->queue_message('Unknown id and togglestate','danger', $_SERVER['HTTP_REFERER']);
+}
+if (!$actions[$action]) {
+	CMS::Instance()->queue_message('Unknown action items','danger', $_SERVER['HTTP_REFERER']);
+}
 
+
+function exec_action($label, $state, $action_text, $ids) {
+	$content_type = Input::getvar('content_type','INT',null);
+	$table_name = Content::get_table_name_for_content_type($content_type);
+	$togglestate = Input::getvar('togglestate','ARRAYOFINT');
+	
+	foreach($ids as $entry) {
+		Actions::add_action($label, (object) [
+			"content_id"=>$entry,
+			"content_type"=>$content_type
+		]);
+	}
+	
+	$injectionString = $ids ? implode(",", array_map(function($input) { return "?"; }, $ids)) : "?";
+
+	if ($action_text == "state updated") {
+		$injectionString = "?";
+		$result = DB::exec("UPDATE `{$table_name}` SET state = ? WHERE id = ?", [$togglestate[1], $togglestate[0]]);
+	} else if ($action_text == "duplicated") {
+		foreach ($ids as $id) {
+			$orig = new Content();
+			$orig->load($id, $content_type);
+			$orig->duplicate();
+		}
+		$result = true;
+	} else {
+		$result = DB::exec("UPDATE `{$table_name}` SET state = $state WHERE id IN ($injectionString)", $ids);
+	}
+	
+	if(!$result) { CMS::Instance()->queue_message('Failed to complete action','danger', $_SERVER['HTTP_REFERER']); }
+	
+	$content = DB::fetchall("SELECT * FROM `{$table_name}` WHERE id IN ($injectionString)", ($ids ? $ids : [$togglestate[0]]));
+	$contentMsgString = implode(", ", array_map(function($input) { return "<a href='" . Config::uripath() . "/admin/content/edit/{$input->id}/{$input->content_type}'>{$input->title}</a>"; }, $content));
+	CMS::Instance()->queue_message("Content " . ($label!="contentdelete" ? $contentMsgString : "") . " $action_text",'success', $_SERVER['HTTP_REFERER']);
+	
+}
+
+$actionDetails = $actions[$action];
+exec_action($actionDetails[0], $actionDetails[1], $actionDetails[2], $id);
