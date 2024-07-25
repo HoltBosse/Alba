@@ -1,77 +1,36 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+$actions = [
+	"toggle"=>["categoryupdate", "(CASE state WHEN 1 THEN 0 ELSE 1 END)", "toggled"],
+	"publish"=>["categoryupdate", 1, "published"],
+	"unpublish"=>["categoryupdate", 0, "unpublished"],
+	"delete"=>["categorydelete", -1, "deleted"],
+];
+
 $action = CMS::Instance()->uri_segments[2];
-if (!$action) {
-	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
-}
-
 $id = Input::getvar('id','ARRAYOFINT');
-if (!$id) {
-	CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
+if (!$action || !$id || !$actions[$action]) {
+	CMS::Instance()->queue_message('Unknown action or items','danger', $_SERVER['HTTP_REFERER']);
 }
 
-if ($action=='toggle') {
-	Actions::add_action("categoryupdate", (object) [
-		"affected_category"=>$id[0],
-	]);
-
-	$result = DB::exec("UPDATE categories SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
-	if ($result) {
-		$title = DB::fetch('SELECT title FROM categories WHERE id=?', [$id[1]])->title;
-		$msg = "Category <a href='" . Config::uripath() . "/admin/categories/edit/{$id[0]}'>{$title}</a> state toggled";	
-		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to toggle state of Category','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='publish') {
-	foreach($id as $item) {
-		Actions::add_action("categoryupdate", (object) [
-			"affected_category"=>$item,
+function exec_action($label, $state, $action_text, $ids) {
+	foreach($ids as $category) {
+		Actions::add_action($label, (object) [
+			"affected_category"=>$category,
 		]);
 	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE categories SET state = 1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Published Categories','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to publish Categories','danger', $_SERVER['HTTP_REFERER']);
-	}
+
+	$injectionString = implode(",", array_map(function($input) { return "?"; }, $ids));
+	$result = DB::exec("UPDATE categories SET state = $state where id in ($injectionString)", $ids);
+
+	if(!$result) { CMS::Instance()->queue_message('Failed to complete action','danger', $_SERVER['HTTP_REFERER']); }
+
+	$categories = DB::fetchall("SELECT * FROM categories WHERE id in ($injectionString)", $ids);
+	$categoriesMsgString = implode(", ", array_map(function($input) { return "<a target='_blank' href='" . Config::uripath() . "/admin/categories/edit/$input->id'>$input->title</a>"; }, $categories));
+
+	CMS::Instance()->queue_message("Category(s) " . ($state!=-1 ? $categoriesMsgString : "") . " $action_text",'success', $_SERVER['HTTP_REFERER']);
 }
 
-if ($action=='unpublish') {
-	foreach($id as $item) {
-		Actions::add_action("categoryupdate", (object) [
-			"affected_category"=>$item,
-		]);
-	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE categories SET state = 0 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Unpublished Categories','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to unpublish Categories','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='delete') {
-	foreach($id as $item) {
-		Actions::add_action("categorydelete", (object) [
-			"affected_category"=>$item,
-		]);
-	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE categories SET state = -1 WHERE id IN ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Deleted Categories','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to delete Categories','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
+$actionDetails = $actions[$action];
+exec_action($actionDetails[0], $actionDetails[1], $actionDetails[2], $id);
