@@ -22,12 +22,12 @@ function exec_action($label, $state, $action_text, $ids) {
 	}
 
 	$injectionString = implode(",", array_map(function($input) {return "?";}, $ids));
-	$result = DB::exec("UPDATE users SET state = $state where id in ($injectionString)", $ids);
+	$result = DB::exec("UPDATE users SET state = $state WHERE id IN ($injectionString)", $ids);
 
 	if(!$result) { CMS::Instance()->queue_message('Failed to complete action','danger', $_SERVER['HTTP_REFERER']); }
 
 	$users = DB::fetchall("SELECT * FROM users WHERE id in ($injectionString)", $ids);
-	$usersMsgString = implode(", ", array_map(function($input) { return "<a href='" . Config::uripath() . "/admin/users/edit/$input->id'>$input->username</a>"; }, $users));
+	$usersMsgString = implode(", ", array_map(function($input) { return "<a target='_blank' href='" . Config::uripath() . "/admin/users/edit/$input->id'>$input->username</a>"; }, $users));
 
 	CMS::Instance()->queue_message("User(s) " . ($label!="userdelete" ? $usersMsgString : "") . " $action_text",'success', $_SERVER['HTTP_REFERER']);
 }
