@@ -1,80 +1,37 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+$actions = [
+	"toggle"=>["tagupdate", "(CASE state WHEN 1 THEN 0 ELSE 1 END)", "toggled"],
+	"publish"=>["tagupdate", 1, "published"],
+	"unpublish"=>["tagupdate", 0, "unpublished"],
+	"delete"=>["tagdelete", -1, "deleted"],
+];
+
 $action = CMS::Instance()->uri_segments[2];
-if (!$action) {
-	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
-}
-
 $id = Input::getvar('id','ARRAYOFINT');
-if (!$id) {
-	CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
+if (!$action || !$id || !$actions[$action]) {
+	CMS::Instance()->queue_message('Unknown action or items','danger', $_SERVER['HTTP_REFERER']);
 }
 
-if ($action=='toggle') {
-	Actions::add_action("tagupdate", (object) [
-		"affected_tag"=>$id[0],
-	]);
-	
-	$result = DB::exec("UPDATE tags SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
-	if ($result) {
-		$tag = DB::fetch('SELECT * FROM tags WHERE id=?', [$id[0]]);
-		$msg = "Tag <a href='" . Config::uripath() . "/admin/tags/edit/{$id[0]}'>{$tag->title}</a> state toggled";
-		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to toggle state of tag','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='publish') {
-	foreach($id as $item) {
-		Actions::add_action("tagupdate", (object) [
-			"affected_tag"=>$item,
+function exec_action($label, $state, $action_text, $ids) {
+	foreach($ids as $tag) {
+		Actions::add_action($label, (object) [
+			"affected_tag"=>$tag,
 		]);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = 1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Published tags','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to publish tags','danger', $_SERVER['HTTP_REFERER']);
-	}
+	$injectionString = implode(",", array_map(function($input) { return "?"; }, $ids));
+	$result = DB::exec("UPDATE tags SET state = $state WHERE id IN ($injectionString)", $ids);
+
+	if(!$result) { CMS::Instance()->queue_message('Failed to complete action','danger', $_SERVER['HTTP_REFERER']); }
+
+	$tags = DB::fetchall("SELECT * FROM tags WHERE id in ($injectionString)", $ids);
+	$tagsMsgString = implode(", ", array_map(function($input) { return "<a target='_blank' href='" . Config::uripath() . "/admin/tags/edit/$input->id'>$input->title</a>"; }, $tags));
+
+	CMS::Instance()->queue_message("Tag(s) " . ($state!=-1 ? $tagsMsgString : "") . " $action_text",'success', $_SERVER['HTTP_REFERER']);
 }
 
-if ($action=='unpublish') {
-	foreach($id as $item) {
-		Actions::add_action("tagupdate", (object) [
-			"affected_tag"=>$item,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = 0 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Unpublished tags','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to unpublish tags','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='delete') {
-	foreach($id as $item) {
-		Actions::add_action("tagdelete", (object) [
-			"affected_tag"=>$item,
-		]);
-	}
-
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = -1 WHERE id IN ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Deleted tags','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to delete tags','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
+$actionDetails = $actions[$action];
+exec_action($actionDetails[0], $actionDetails[1], $actionDetails[2], $id);
 
