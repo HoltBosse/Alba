@@ -87,12 +87,12 @@ final class CMS {
 				}
 				else {
 					// check if URL ends in file suffix for certain file types and ignore for redirect storage
-					$ignore_suffixes = ['.zip', '.gz', '.tag', '.bz', '.sh', '.tar', '.well-known'];
-					$pattern = '/(' . implode('|', array_map('preg_quote', $ignore_suffixes)) . ')$/';
+					$ignore_suffixes = ['.zip', '.gz', '.tag', '.bz', '.sh', '.tar', '.gzip','.7z','.tgz','.exe','.bak','.iso'];
+					$pattern = '/(' . implode('|', array_map('preg_quote', $ignore_suffixes)) . ')$/i';
 					$ignore_file = preg_match($pattern, $relative_url);
 					// check if url contains, at any position, any of the following strings and ignore for redirect storage
-					$ignore_contains = ['wp-admin','wp-content','wp-includes','wp-login'];
-					$pattern = '/' . implode('|', array_map('preg_quote', $ignore_contains)) . '/';
+					$ignore_contains = ['wp-admin','wp-content','wp-includes','wp-login', '.well-known','adminer','phpmyadmin'];
+					$pattern = '/' . implode('|', array_map('preg_quote', $ignore_contains)) . '/i';
 					$ignore_request = preg_match($pattern, $relative_url);
 					if (!$ignore_file && !$ignore_request) {
 						// create new redirect
