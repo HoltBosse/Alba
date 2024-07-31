@@ -86,9 +86,19 @@ final class CMS {
 					DB::exec('UPDATE redirects SET hits=hits+1 WHERE id=?', $existing_redirect_id);
 				}
 				else {
-					// create new redirect
-					$params = [$relative_url, $_SERVER['HTTP_REFERER'], CMS::Instance()->user->id, CMS::Instance()->user->id];
-					DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits) VALUES(0,?,?,?,?,"auto",1)', $params);
+					// check if URL ends in file suffix for certain file types and ignore for redirect storage
+					$ignore_suffixes = ['.zip', '.gz', '.tag', '.bz', '.sh', '.tar', '.well-known'];
+					$pattern = '/(' . implode('|', array_map('preg_quote', $ignore_suffixes)) . ')$/';
+					$ignore_file = preg_match($pattern, $relative_url);
+					// check if url contains, at any position, any of the following strings and ignore for redirect storage
+					$ignore_contains = ['wp-admin','wp-content','wp-includes','wp-login'];
+					$pattern = '/' . implode('|', array_map('preg_quote', $ignore_contains)) . '/';
+					$ignore_request = preg_match($pattern, $relative_url);
+					if (!$ignore_file && !$ignore_request) {
+						// create new redirect
+						$params = [$relative_url, $_SERVER['HTTP_REFERER'], CMS::Instance()->user->id, CMS::Instance()->user->id];
+						DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits) VALUES(0,?,?,?,?,"auto",1)', $params);
+					}
 				}
 			}
 			if (file_exists(CMSPATH . "/my_404.php")) {
