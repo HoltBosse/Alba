@@ -96,7 +96,8 @@ final class CMS {
 					$ignore_request = preg_match($pattern, $relative_url);
 					if (!$ignore_file && !$ignore_request) {
 						// create new redirect
-						$params = [$relative_url, $_SERVER['HTTP_REFERER'], CMS::Instance()->user->id, CMS::Instance()->user->id];
+						$user_id_int = CMS::Instance()->user->id ? CMS::Instance()->user->id : 0;
+						$params = [$relative_url, $_SERVER['HTTP_REFERER'], $user_id_int , $user_id_int];
 						DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits) VALUES(0,?,?,?,?,"auto",1)', $params);
 					}
 				}
