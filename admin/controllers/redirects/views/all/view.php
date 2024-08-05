@@ -354,7 +354,7 @@ td.limitwidth {
 					
 					<td class='limitwidth'><a href='<?php echo Config::uripath(); ?>/admin/redirects/edit/<?php echo $redirect_item->id;?>/'><?php echo $redirect_item->old_url; ?></a></td>
 					<td class='limitwidth'><?php echo $redirect_item->new_url; ?></td>
-					<td class='unimportant'><?php echo $redirect_item->referer; ?></td>
+					<td class='limitwidth unimportant'><?php echo $redirect_item->referer; ?></td>
 					<td class='unimportant'><?php echo $redirect_item->created; ?></td>
 					<td class='unimportant'><?php echo User::get_username_by_id($redirect_item->created_by); ?></td>
 					<td class='unimportant'><?php echo $redirect_item->updated; ?></td>
