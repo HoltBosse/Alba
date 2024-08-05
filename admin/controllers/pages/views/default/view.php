@@ -69,7 +69,7 @@ div.pull-right {
 			</span>
 			<span>New Page</span>
 		</a>
-		<?php Component::addon_button_group("page_operations", "pages"); ?>
+		<?php Component::addon_button_group("page_operations", "pages", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"default","delete"=>"danger"]); ?>
 	</h1>
 
 	<table id='all_pages_table' class="table">

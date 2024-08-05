@@ -89,3 +89,23 @@ if ($action=='delete') {
 	}
 }
 
+if ($action=='duplicate') {
+	foreach($id as $item) {
+		Actions::add_action("pageduplicate", (object) [
+			"affected_page"=>$item,
+		]);
+		$page_info = DB::fetch("SELECT * FROM pages WHERE id=?",$item);
+		if ($page_info) {
+			$page_info->title = $page_info->title . " COPY"; // append copy in title
+			$page_info->alias = $page_info->alias . "-" . uniqid(); // make sure alias is unique
+			$params = [$page_info->state, $page_info->title, $page_info->alias, $page_info->content_type, $page_info->content_view, $page_info->parent, $page_info->template, $page_info->content_view_configuration, $page_info->note, $page_info->page_options];
+			DB::exec('INSERT INTO pages (`state`, `title`, `alias`, `content_type`, `content_view`, `parent`, `template`, `content_view_configuration`, `note`, `page_options`) VALUES (?,?,?,?,?,?,?,?,?,?)', $params);
+		}
+		// ignore duplicate failure for now
+	}
+	die();
+	CMS::Instance()->queue_message('Duplicated pages - please edit alias/URLs','success', $_SERVER['HTTP_REFERER']);
+}
+
+// reach here, unknown action
+CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
