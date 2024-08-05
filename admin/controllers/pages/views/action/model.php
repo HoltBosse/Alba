@@ -101,9 +101,8 @@ if ($action=='duplicate') {
 			$params = [$page_info->state, $page_info->title, $page_info->alias, $page_info->content_type, $page_info->content_view, $page_info->parent, $page_info->template, $page_info->content_view_configuration, $page_info->note, $page_info->page_options];
 			DB::exec('INSERT INTO pages (`state`, `title`, `alias`, `content_type`, `content_view`, `parent`, `template`, `content_view_configuration`, `note`, `page_options`) VALUES (?,?,?,?,?,?,?,?,?,?)', $params);
 		}
-		// ignore duplicate failure for now
+		// assume duplicate creations where possible work correctly for now
 	}
-	die();
 	CMS::Instance()->queue_message('Duplicated pages - please edit alias/URLs','success', $_SERVER['HTTP_REFERER']);
 }
 
