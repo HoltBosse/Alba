@@ -598,6 +598,9 @@ final class CMS {
 					$redirect_path = $_SESSION['redirect_url'];
 					unset($_SESSION['redirect_url']);
 				}
+				Actions::add_action("userlogin", (object) [
+					"user"=>$this->user->id,
+				], $this->user->id);
 				Hook::execute_hook_actions('user_logged_in'); 
 				$this->queue_message('Welcome ' . $this->user->username, 'success', $redirect_path);
 			}
@@ -621,6 +624,9 @@ final class CMS {
 							$redirect_path = $_SESSION['redirect_url'];
 							unset($_SESSION['redirect_url']);
 						}
+						Actions::add_action("userlogin", (object) [
+							"user"=>$login_user->id,
+						], $login_user->id);
 						Hook::execute_hook_actions('user_logged_in'); 
 						$this->queue_message('Welcome ' . $login_user->username, 'success', $redirect_path);
 					}
