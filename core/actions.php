@@ -30,7 +30,11 @@ class Actions {
 
     public function render_user() {
         $user = DB::fetch("SELECT * FROM users WHERE id=?", $this->userid);
-        return "$user->username ($user->email)";
+        if($user->id) {
+            return "$user->username ($user->email)";
+        } else {
+            return "unknown";
+        }
     }
 
     public function render_time() {
