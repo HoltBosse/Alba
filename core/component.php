@@ -86,7 +86,7 @@ class Component {
     }
 
     public static function render_admin_nav($navigation, $enable_overrides=true) {
-        //todo: override $navigation from admin config if applicable
+        //apply overrides from admin config if applicable
         if($enable_overrides) {
             $overrides = Admin_Config::$navigation ?? [];
             $addons = [];
@@ -116,6 +116,7 @@ class Component {
             $navigation = array_merge($navigation, $addons);
         }
 
+        //plugin hook if the config isnt powerful enough
         $navigation = Hook::execute_hook_filters('render_admin_nav', $navigation);
 
         //render the nav
