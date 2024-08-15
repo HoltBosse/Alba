@@ -84,4 +84,42 @@ class Component {
             }
         echo "</div>";
     }
+
+    public static function render_admin_nav($navigation) {
+        //todo: override $navigation from admin config if applicable
+
+        //render the nav
+        foreach($navigation as $label=>$config) {
+            if (Access::can_access(Admin_Config::$access[$label])) {
+                if($config["type"]=="addition_menu") {
+                    Component::render_admin_nav_menu($config["menu"]);
+                } elseif($config["type"]=="addition_link") {
+                    Component::render_admin_nav_link($config["link"]);
+                }
+            }
+        }
+    }
+
+    public static function render_admin_nav_menu($menu) {
+        ?>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link"><?php echo ucwords($menu["label"]); ?></a>
+                <div class="navbar-dropdown">
+                    <?php
+                        foreach($menu["links"] as $label=>$url) {
+                            if($label=="hr") {
+                                echo "<hr class='dropdown-divider'>";
+                            } else {
+                                echo "<a class='navbar-item' href='" . Config::uripath() . "$url'>" . ucwords($label) . "</a>";
+                            }
+                        }
+                    ?>
+                </div>
+            </div>
+        <?php
+    }
+
+    public static function render_admin_nav_link($link) {
+        echo "<a class='navbar-item' href='" . Config::uripath() . "{$link['url']}' class='navbar-link'>" . ucwords($link["label"]) . "</a>";
+    }
 }
