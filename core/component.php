@@ -85,8 +85,38 @@ class Component {
         echo "</div>";
     }
 
-    public static function render_admin_nav($navigation) {
+    public static function render_admin_nav($navigation, $enable_overrides=true) {
         //todo: override $navigation from admin config if applicable
+        if($enable_overrides) {
+            $overrides = Admin_Config::$navigation ?? [];
+            $addons = [];
+
+            foreach($overrides as $label=>$override) {
+                switch ($override["type"]) {
+                    case "disable":
+                        unset($navigation[$label]);
+                        break;
+                    case "override_menu":
+                        $override["type"] = "addition_menu";
+                        $navigation[$label] = $override;
+                        break;
+                    case "override_link":
+                        $override["type"] = "addition_link";
+                        $navigation[$label] = $override;
+                        break;
+                    case "addition_menu":
+                        $addons[$label] = $override;
+                        break;
+                    case "addition_link":
+                        $addons[$label] = $override;
+                        break;
+                }
+            }
+
+            $navigation = array_merge($navigation, $addons);
+        }
+
+        $navigation = Hook::execute_hook_filters('render_admin_nav', $navigation);
 
         //render the nav
         foreach($navigation as $label=>$config) {
