@@ -84,4 +84,74 @@ class Component {
             }
         echo "</div>";
     }
+
+    public static function render_admin_nav($navigation, $enable_overrides=true) {
+        //apply overrides from admin config if applicable
+        if($enable_overrides) {
+            //@phpstan-ignore-next-line
+            $overrides = property_exists('Admin_Config',"navigation") ? Admin_Config::$navigation : [];
+            $addons = [];
+
+            foreach($overrides as $label=>$override) {
+                switch ($override["type"]) {
+                    case "disable":
+                        unset($navigation[$label]);
+                        break;
+                    case "override_menu":
+                        $override["type"] = "addition_menu";
+                        $navigation[$label] = $override;
+                        break;
+                    case "override_link":
+                        $override["type"] = "addition_link";
+                        $navigation[$label] = $override;
+                        break;
+                    case "addition_menu":
+                        $addons[$label] = $override;
+                        break;
+                    case "addition_link":
+                        $addons[$label] = $override;
+                        break;
+                }
+            }
+
+            $navigation = array_merge($navigation, $addons);
+        }
+
+        //plugin hook if the config isnt powerful enough
+        $navigation = Hook::execute_hook_filters('render_admin_nav', $navigation);
+
+        //render the nav
+        foreach($navigation as $label=>$config) {
+            if (Access::can_access(Admin_Config::$access[$label])) {
+                if($config["type"]=="addition_menu") {
+                    Component::render_admin_nav_menu($config["menu"]);
+                } elseif($config["type"]=="addition_link") {
+                    Component::render_admin_nav_link($config["link"]);
+                }
+            }
+        }
+    }
+
+    public static function render_admin_nav_menu($menu) {
+        ?>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link"><?php echo ucwords($menu["label"]); ?></a>
+                <div class="navbar-dropdown">
+                    <?php
+                        foreach($menu["links"] as $label=>$url) {
+                            if($label=="hr") {
+                                echo "<hr class='dropdown-divider'>";
+                            } else {
+                                echo "<a class='navbar-item' href='" . Config::uripath() . "$url'>" . ucwords($label) . "</a>";
+                            }
+                        }
+                    ?>
+                </div>
+            </div>
+        <?php
+    }
+
+    public static function render_admin_nav_link($link) {
+        echo "<a class='navbar-item' href='" . Config::uripath() . "{$link['url']}' class='navbar-link'>" . ucwords($link["label"]) . "</a>";
+    }
 }

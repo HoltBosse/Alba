@@ -39,96 +39,10 @@ require_once (CMSPATH . "/core/cms.php");
 
 				<div id="navbarBasicExample" class="navbar-menu">
 					<div class="navbar-start">
-
-						<?php if (Access::can_access(Admin_Config::$access["settings"])):?>
-						<div class="navbar-item has-dropdown is-hoverable">
-							<a class="navbar-link">System</a>
-							<div class="navbar-dropdown">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/settings/general">General Settings</a>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/settings/updates">Check For Updates</a>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/settings/info">System Information</a>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/settings/backups">Backups</a>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/redirects">Redirects</a>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/audit">Audit Log</a>
-							</div>
-						</div>
-						<?php endif; ?>
-
-						<?php if (Access::can_access(Admin_Config::$access["users"])):?>
-						<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/users" class="navbar-link">Users</a>
-						<?php endif; ?>
-
-						<?php if (Access::can_access(Admin_Config::$access["pages"])):?>
-						<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/pages/">Pages</a>
-						<?php endif; ?>
-
-						<?php if (Access::can_access(Admin_Config::$access["content"])):?>
-						<div class="navbar-item has-dropdown is-hoverable">
-							<a class="navbar-link">Content</a>
-							<div class="navbar-dropdown">
-								<?php foreach (Content::get_all_content_types() as $content_type):?>
-									<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/all/<?php echo $content_type->id;?>"><?php echo $content_type->title;?></a>
-								<?php endforeach; ?>
-								<!-- removed all content view -->
-								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/content/check">Check Flat Tables</a>
-							</div>
-						</div>
-						<?php endif; ?>
-
-						<?php if (Access::can_access(Admin_Config::$access["widgets"])):?>
-						<!--<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/controllers/all">Controllers</a>-->
-						<div class="navbar-item has-dropdown is-hoverable">
-							<a class="navbar-link">Widgets</a>
-							<div class="navbar-dropdown">
-								<?php foreach (Widget::get_all_widget_types() as $widget_type):?>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/widgets/show/<?php echo $widget_type->id; ?>"><?php echo $widget_type->title; ?></a>
-								<?php endforeach; ?>
-								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/widgets/show/">All Widgets</a>
-							</div>
-						</div>
-						<?php endif; ?>
-
-						<?php if (Access::can_access(Admin_Config::$access["plugins"])):?>
-						<div class="navbar-item has-dropdown is-hoverable">
-							<a class="navbar-link">Plugins</a>
-							<div class="navbar-dropdown">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/plugins/show/">All Plugins</a>
-								<hr class="dropdown-divider">
-								<?php foreach (Plugin::get_all_plugins() as $plugin):?>
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/plugins/edit/<?php echo $plugin->id; ?>"><?php echo $plugin->title; ?></a>
-								<?php endforeach; ?>
-							</div>
-						</div>
-						<?php endif; ?>
-
-						<?php if (Access::can_access(Admin_Config::$access["tags"])):?>
-						<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/tags">Tags</a>
-						<div class="navbar-item has-dropdown is-hoverable">
-							<a class="navbar-link">Media</a>
-							<div class="navbar-dropdown">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/images/show/">Manage Images</a>
-								
-								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/images/discover">Process FTP/Uploaded Images</a>
-								
-							</div>
-						</div>
-						<?php endif; ?>
-
-						<?php if (Access::can_access(Admin_Config::$access["categories"])):?>
-						<div class="navbar-item has-dropdown is-hoverable">
-							<a href="<?php echo Config::uripath();?>/admin/categories/all"class="navbar-link">Categories</a>
-							<div class="navbar-dropdown">
-								<?php foreach (Content::get_all_content_types() as $content_type):?>
-									<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/categories/all/<?php echo $content_type->id;?>"><?php echo $content_type->title;?></a>
-								<?php endforeach; ?>
-								<hr class="dropdown-divider">
-								<a class="navbar-item" href="<?php echo Config::uripath();?>/admin/categories/all/-3">Tags</a>
-							</div>
-						</div>
-						<?php endif; ?>
+						<?php
+							require_once(CMSPATH . "/admin/templates/clean/navigation.php");
+							Component::render_admin_nav($navigation);
+						?>
 					
 					</div>
 
