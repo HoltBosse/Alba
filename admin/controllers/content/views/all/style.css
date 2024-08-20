@@ -15,9 +15,6 @@ span.page_list, td.note_td, .lighter_note, .usage {
 	font-size:70%; opacity:0.6;
 }
 
-div.pull-right {
-	/* display:inline-block; */
-}
 #content_operations {
 	margin-right:2rem;
 }
@@ -29,18 +26,10 @@ div.pull-right {
 }
 .hidden_multi_edit {
 	display:none;
-	/* display:inline-block; */
 }
 .content_admin_row.selected {
 	background:rgba(200,255,200,0.3);
 }
-
-/* table tr.droppable {
-	display:none;
-}
-table.dragging tr.droppable {
-	display:table-row;
-} */
 
 table tr.droppable td {
 	height: 0;
@@ -48,9 +37,6 @@ table tr.droppable td {
     border: none;
     margin: 0;
     transition: all 0.3s ease;
-}
-table.dragging tr.content_admin_row  {
-	/* height:1rem !important; */
 }
 table.dragging tr.droppable td {
 	height:1rem;
@@ -72,8 +58,6 @@ table.dragging tr.droppable.ready {
 .before_after_wrap {
 	margin-right:0rem;
 	transition:all 0.3s ease;
-	/* margin-left:1rem; */
-	/* display:none; */
 	width:0;
 	opacity:0;
 }
@@ -102,11 +86,6 @@ tr.dragging {
 
 .grip {
 	margin-right:1rem;
-}
-table.dragging .grip {
-	/* display:none; */
-	/* width:0;
-	opacity:0 ; */
 }
 table.dragging .before_after_wrap {
 	display:block;
