@@ -4,6 +4,23 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <style>
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/all/style.css"); ?>
+
+	@media screen and (min-width: 1024px) {
+		<?php
+			$baseGridCount = 11;
+			if(Admin_Config::$show_ids_in_tables) {
+				$baseGridCount++;
+			}
+			$baseGridCount += sizeof($content_list_fields);
+		?>
+		table.table tr {
+			grid-template-columns: repeat(<?php echo $baseGridCount; ?>, 1fr);
+		}
+
+		table.table td:nth-of-type(<?php echo Admin_Config::$show_ids_in_tables ? 3 : 2; ?>), table.table th:nth-of-type(<?php echo Admin_Config::$show_ids_in_tables ? 3 : 2; ?>) {
+			grid-column: span 3;
+		}
+	}
 </style>
 
 <form id='searchform' action="" method="GET"></form>
