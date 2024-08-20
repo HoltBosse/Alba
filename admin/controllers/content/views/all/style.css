@@ -157,6 +157,10 @@ table.dragging .before_after_wrap {
     table.table .drag_td {
         height: auto;
     }
+
+    table.table th, table.table td {
+        word-break: break-all;
+    }
 }
 
 .orderablerow {
