@@ -142,6 +142,31 @@ table.dragging .before_after_wrap {
 	}
 }
 
+@media screen and (min-width: 1024px) {
+    table.table, table.table thead, table.table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    table.table tr {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(11, 1fr);
+    }
+
+    table.table td:nth-of-type(2), table.table th:nth-of-type(2) {
+        grid-column: span 3;
+    }
+
+    table.table .drag_td {
+        height: auto;
+    }
+
+    table.table thead th label span {
+        white-space: nowrap;
+    }
+}
+
 .orderablerow {
     display: flex;
     justify-content: space-between;
