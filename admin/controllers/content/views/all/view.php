@@ -11,31 +11,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <form action='' method='post' name='content_action' id='content_action_form'>
 <input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
-<h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
-	<?php if ($content_type_filter):?>
+<h1 class='title is-1'>All <?php echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";?>Content
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
 	<span class='unimportant subheading'><?php $content_type_fields = Content::get_content_type_fields($content_type_filter);  echo $content_type_fields->description; ?></span>
-	<?php else: ?>
-		<div class='field pull-right'>
-			<label class='label'>New Content</label>
-			<div class='control'>
-				<div class='select'>
-					<select onchange="choose_new_content_type();" data-widget_type_id='0' id='new_content_type_selector'>
-						<option value='666'>Make selection:</option>
-						<?php foreach ($all_content_types as $content_type):?>
-						<option value='<?php echo $content_type->id;?>'><?php echo $content_type->title;?></option>
-						<?php endforeach; ?>
-					</select>
-					<script>
-					function choose_new_content_type() {
-						new_id = document.getElementById("new_content_type_selector").value;
-						window.location.href = "<?php echo Config::uripath();?>/admin/content/edit/new/" + new_id;
-					}
-					</script>
-				</div>
-			</div>
-		</div>
-	<?php endif; ?>
 	<?php Component::addon_button_group("content_operations", "content", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]); ?>
 </h1>
 
@@ -146,14 +124,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<h2>No content to show!</h2>
 <?php else:?>
 
-	<?php if ($content_type_filter):?>
-		<?php if ($order_by):?>
-			<a class='button is-primary is-outlined is-small' href='<?php echo $_SERVER['HTTP_REFERER'];?>'>FINISH ORDERING</a>
-		<?php else: ?>
-			<a class='button is-primary is-outlined is-small' href='?order_by=ordering'>MANAGE ORDERING</a>
-		<?php endif; ?>
+	<?php if ($order_by):?>
+		<a class='button is-primary is-outlined is-small' href='<?php echo $_SERVER['HTTP_REFERER'];?>'>FINISH ORDERING</a>
 	<?php else: ?>
-		<p class='help'>To manually manage ordering, please choose a specific content type from the content menu.</p>
+		<a class='button is-primary is-outlined is-small' href='?order_by=ordering'>MANAGE ORDERING</a>
 	<?php endif; ?>
 
 	<table class='table'>
