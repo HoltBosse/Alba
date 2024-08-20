@@ -1,6 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
+ob_end_clean();
 
 // TODO: endure logged in user is allowed to actually perform these tasks!
 
