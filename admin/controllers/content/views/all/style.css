@@ -154,16 +154,8 @@ table.dragging .before_after_wrap {
         grid-template-columns: repeat(11, 1fr);
     }
 
-    table.table td:nth-of-type(2), table.table th:nth-of-type(2) {
-        grid-column: span 3;
-    }
-
     table.table .drag_td {
         height: auto;
-    }
-
-    table.table thead th label span {
-        white-space: nowrap;
     }
 }
 
@@ -171,7 +163,6 @@ table.dragging .before_after_wrap {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
     
     & * {
         
