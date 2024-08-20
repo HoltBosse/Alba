@@ -3,203 +3,17 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
 <style>
-table.table {
-	width:100%;
-}
-.position_single_wrap {
-	font-size:70%;
-	padding-top:0.3rem;
-	border-top:1px solid rgba(0,0,0,0.1);
-	margin-top:0.3rem;
-	opacity:0.6;
-}
-span.position_single {
-	font-weight:bold;
-}
-span.page_list, td.note_td, .lighter_note, .usage {
-	font-size:70%; opacity:0.6;
-}
-
-div.pull-right {
-	/* display:inline-block; */
-}
-#content_operations {
-	margin-right:2rem;
-}
-.state1 {
-	color:#00d1b2;
-}
-.state0 {
-	color:#f66;
-}
-.hidden_multi_edit {
-	display:none;
-	/* display:inline-block; */
-}
-.content_admin_row.selected {
-	background:rgba(200,255,200,0.3);
-}
-
-/* table tr.droppable {
-	display:none;
-}
-table.dragging tr.droppable {
-	display:table-row;
-} */
-
-table tr.droppable td {
-	height: 0;
-    padding: 0;
-    border: none;
-    margin: 0;
-    transition: all 0.3s ease;
-}
-table.dragging tr.content_admin_row  {
-	/* height:1rem !important; */
-}
-table.dragging tr.droppable td {
-	height:1rem;
-	background:rgba(255,255,100,0.2);
-}
-table.dragging tr.droppable.ready {
-	height:2.2rem;
-	background:rgba(155,255,100,0.3);
-}
-.drag_td {
-	height: 0;
-}
-.center_state {
-	height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.before_after_wrap {
-	margin-right:0rem;
-	transition:all 0.3s ease;
-	/* margin-left:1rem; */
-	/* display:none; */
-	width:0;
-	opacity:0;
-}
-
-.order_drop {
-	color: white;
-    background: #aad;
-    padding: 0.3em;
-    font-size: 0.7rem;
-    border-radius: 0.2rem;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-}
-.order_drop:first-child {
-	margin-bottom:0.5rem;
-}
-.order_drop.ready {
-	background:#ada;
-}
-
-tr.dragging {
-	opacity:0.3;
-}
-
-.grip {
-	margin-right:1rem;
-}
-table.dragging .grip {
-	/* display:none; */
-	/* width:0;
-	opacity:0 ; */
-}
-table.dragging .before_after_wrap {
-	display:block;
-	margin-right:1rem;
-	width:auto;
-	max-width:15rem;
-	opacity:1;
-}
-
-/* state button css */
-.state_button {
-	padding: 0 !important;
-}
-
-.state_button button {
-	height: 100%;
-	padding: 1em 1em;
-	border: 1px solid transparent;
-	width: 100%;
-	background-color: #fff;
-}
-
-.state_button button:hover {
-	background-color: #f5f5f5;
-    cursor: pointer;
-}
-
-.state_button hr {
-	width: 1px;
-	height: 70%;
-}
-
-.state_button .navbar-link:not(.is-arrowless)::after {
-	right: auto;
-}
-
-.state_button .navbar-link:not(.is-arrowless) {
-	padding-right: 1.5em;
-}
-
-.state_button .navbar-item.has-dropdown {
-	height: 100%;
-}
-
-.state_button .navbar-item {
-	display: flex;
-	gap: 1em;
-}
-
-@media screen and (max-width: 1024px) {
-	/* disabled on mobile due to bulma lack of support */
-	.state_button .navbar-item.has-dropdown, .state_button hr {
-		display: none;
-	}
-}
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/all/style.css"); ?>
 </style>
 
 <form id='searchform' action="" method="GET"></form>
-
-
+<form id='orderform' action="" methpd="GET"></form>
 
 <form action='' method='post' name='content_action' id='content_action_form'>
 <input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
-<h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Content
-	<?php if ($content_type_filter):?>
+<h1 class='title is-1'>All <?php echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";?>Content
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
 	<span class='unimportant subheading'><?php $content_type_fields = Content::get_content_type_fields($content_type_filter);  echo $content_type_fields->description; ?></span>
-	<?php else: ?>
-		<div class='field pull-right'>
-			<label class='label'>New Content</label>
-			<div class='control'>
-				<div class='select'>
-					<select onchange="choose_new_content_type();" data-widget_type_id='0' id='new_content_type_selector'>
-						<option value='666'>Make selection:</option>
-						<?php foreach ($all_content_types as $content_type):?>
-						<option value='<?php echo $content_type->id;?>'><?php echo $content_type->title;?></option>
-						<?php endforeach; ?>
-					</select>
-					<script>
-					function choose_new_content_type() {
-						new_id = document.getElementById("new_content_type_selector").value;
-						window.location.href = "<?php echo Config::uripath();?>/admin/content/edit/new/" + new_id;
-					}
-					</script>
-				</div>
-			</div>
-		</div>
-	<?php endif; ?>
 	<?php Component::addon_button_group("content_operations", "content", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]); ?>
 </h1>
 
@@ -277,12 +91,6 @@ table.dragging .before_after_wrap {
 			</div>
 		</div>
 
-		<script>
-		new SlimSelect({
-			select:'#content_search_tags'
-		});
-		</script>
-
 		<?php Hook::execute_hook_actions('render_custom_content_search_filters', $content_type_filter); ?>
 		
 		<div class='field'>
@@ -306,24 +114,14 @@ table.dragging .before_after_wrap {
 		
 	</div>
 
-
-	
-	
-
-
-
 <?php if (!$all_content):?>
 	<h2>No content to show!</h2>
 <?php else:?>
 
-	<?php if ($content_type_filter):?>
-		<?php if ($order_by):?>
-			<a class='button is-primary is-outlined is-small' href='<?php echo $_SERVER['HTTP_REFERER'];?>'>FINISH ORDERING</a>
-		<?php else: ?>
-			<a class='button is-primary is-outlined is-small' href='?order_by=ordering'>MANAGE ORDERING</a>
-		<?php endif; ?>
+	<?php if ($order_by):?>
+		<a class='button is-primary is-outlined is-small' href='<?php echo $_SERVER['HTTP_REFERER'];?>'>FINISH ORDERING</a>
 	<?php else: ?>
-		<p class='help'>To manually manage ordering, please choose a specific content type from the content menu.</p>
+		<a class='button is-primary is-outlined is-small' href='?order_by=ordering'>MANAGE ORDERING</a>
 	<?php endif; ?>
 
 	<table class='table'>
@@ -335,7 +133,21 @@ table.dragging .before_after_wrap {
 						echo "<th>Id</th>";
 					}
 				?>
-				<th>Title</th>
+				<?php
+					//if in ordering mode or search, disable content listing order controls
+					if($order_by || $_GET["filters"]) {
+						echo "<style>
+								.orderablerow{
+									pointer-events: none;
+
+									i {
+										display: none !important;
+									}
+								}
+							</style>";
+					}
+				?>
+				<?php make_sortable_header("title"); ?>
 
 				<?php if ($content_list_fields):?>
 					<?php foreach ($content_list_fields as $content_list_field):?>
@@ -352,8 +164,14 @@ table.dragging .before_after_wrap {
 				<?php endif; ?>
 
 				<th>Tags</th>
-				<th>Category</th>
-				<?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
+				<?php
+					make_sortable_header("category");
+					make_sortable_header("start");
+					make_sortable_header("end");
+					make_sortable_header("created by");
+					make_sortable_header("updated by");
+				?>
+				<th>Note</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -468,10 +286,6 @@ table.dragging .before_after_wrap {
 					</td>
 
 					<td><?php echo $content_item->catname;?></td>
-
-					<?php if (!$content_type_filter):?>
-						<td><?php echo Content::get_content_type_title($content_item->content_type); ?></td>
-					<?php endif; ?>
 					<td class='unimportant'><?php echo $content_item->start; ?></td>
 					<td class='unimportant'><?php echo $content_item->end; ?></td>
 					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
@@ -516,92 +330,7 @@ if ($cur_page) {
 ?>
 
 <script>
-	admin_rows = document.querySelectorAll('.content_admin_row');
-	admin_rows.forEach(row => {
-		row.addEventListener('click',function(e){
-			tr = e.target.closest('tr');
-			tr.classList.toggle('selected');
-			hidden_checkbox = tr.querySelector('.hidden_multi_edit');
-			hidden_checkbox.checked = !hidden_checkbox.checked;
-		});
-	});
+	window.content_type_filter = <?php echo $content_type_filter; ?>;
 
-	// ordering js
-
-	function dragstart_handler(e) {
-		//e.preventDefault();
-		data = e.target.dataset.itemid;
-		console.log(data);
-		e.dataTransfer.dropEffect = "move";
-		e.dataTransfer.setData("text/plain", data);
-		e.target.closest('table').classList.add('dragging');
-		e.target.closest('tr').classList.add('dragging');
-		//console.log(e);
-	}
-
-	function dragover_handler(e) {
-		e.preventDefault();
-		e.dataTransfer.dropEffect = "move";
-		e.target.classList.add('ready');
-	}
-
-	function dragleave_handler(e) {
-		e.preventDefault();
-		//e.dataTransfer.dropEffect = "move";
-		e.target.classList.remove('ready');
-	}
-
-	function drop_handler(e) {
-		e.preventDefault();
-		//console.log(e);
-		e.preventDefault();
-		// get required info
-		var source_id = e.dataTransfer.getData('text/plain');
-		var dest_id = e.target.closest('tr').dataset.itemid;
-		if (e.target.classList.contains('drop_before')) {
-			var insert_position = 'before';
-		}
-		else {
-			var insert_position = 'after';
-		}
-		//console.log('Insert',source_id, insert_position, dest_id);
-		// perform ajax action silently
-		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position,"content_type":'<?php echo $content_type_filter; ?>'};
-		postAjax('<?php echo Config::uripath();?>/admin/content/api', api_data, function(data){
-			response = JSON.parse(data);
-			if (response.success=='1') {
-				// do nothing - assume it worked
-			}
-			else {
-				console.log(response); 
-				alert('Ordering failed.');
-			}
-		});
-
-		// move dom rows - regardless of success of ajax - report failures
-		source_row = document.getElementById('row_id_' + source_id);
-		dest_row = document.getElementById('row_id_' + dest_id);
-		tbody = source_row.closest('tbody');
-		tbody.removeChild(source_row);
-		if (insert_position=='after') {
-			tbody.insertAfter(source_row, dest_row);
-		}
-		else {
-			tbody.insertBefore(source_row, dest_row);
-		}
-		// clean up grips - TODO: cleaner version for single grip in drop_handler
-		var grips = document.querySelectorAll('.grip');
-		grips.forEach(grip => {
-			grip.classList.remove('ready');
-		});
-	}
-
-	function dragend_handler(e) {
-		e.preventDefault();
-		console.log(e);
-		e.target.closest('table').classList.remove('dragging');
-		e.target.closest('tr').classList.remove('dragging');
-	}
-
-	// end ordering js
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/all/script.js") ?>
 </script>
