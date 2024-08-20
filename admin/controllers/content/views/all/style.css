@@ -159,7 +159,7 @@ table.dragging .before_after_wrap {
     }
 
     table.table th, table.table td {
-        word-break: break-all;
+        word-break: break-word;
     }
 }
 
