@@ -170,8 +170,7 @@ table.dragging .before_after_wrap {
 </style>
 
 <form id='searchform' action="" method="GET"></form>
-
-
+<form id='orderform' action="" methpd="GET"></form>
 
 <form action='' method='post' name='content_action' id='content_action_form'>
 <input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
@@ -306,12 +305,6 @@ table.dragging .before_after_wrap {
 		
 	</div>
 
-
-	
-	
-
-
-
 <?php if (!$all_content):?>
 	<h2>No content to show!</h2>
 <?php else:?>
@@ -335,7 +328,76 @@ table.dragging .before_after_wrap {
 						echo "<th>Id</th>";
 					}
 				?>
-				<th>Title</th>
+				<style>
+					.orderablerow {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						gap: 1rem;
+						
+						& * {
+							
+							pointer-events: none;
+						}
+					}
+
+					th:has(.orderablerow) input {
+						display: none;
+					}
+
+					th:has(.orderablerow) i {
+						display: none;
+					}
+
+					th:has(input[value="regular"]:checked) i.fas.fa-sort {
+						display: inline-block;
+					}
+
+					th:has(input[value="asc"]:checked) i.fas.fa-sort-up {
+						display: inline-block;
+					}
+
+					th:has(input[value="desc"]:checked) i.fas.fa-sort-down {
+						display: inline-block;
+					}
+				</style>
+				<?php
+					if($order_by || $_GET["filters"]) {
+						echo "<style>
+								.orderablerow{
+									pointer-events: none;
+
+									i {
+										display: none !important;
+									}
+								}
+							</style>";
+					}
+				?>
+				<?php make_sortable_header("title"); ?>
+				<script>
+					window.addEventListener("load", ()=>{
+						document.addEventListener("click", (e)=>{
+							if(e.target.classList.contains("orderablerow")) {
+								let wrapper = e.target.closest("th");
+								let selectedRadio = wrapper.querySelector("input:checked");
+								//selectedRadio.checked = false;
+
+								document.querySelectorAll('th:has(.orderablerow) input[value="regular"]').forEach(item=>{
+									item.checked = true;
+								});
+
+								if(selectedRadio.nextElementSibling) {
+									selectedRadio.nextElementSibling.checked = true;
+								} else {
+									wrapper.querySelector("input").checked = true;
+								}
+								
+								document.getElementById(selectedRadio.getAttribute("form")).submit();
+							}
+						});
+					});
+				</script>
 
 				<?php if ($content_list_fields):?>
 					<?php foreach ($content_list_fields as $content_list_field):?>
@@ -352,8 +414,14 @@ table.dragging .before_after_wrap {
 				<?php endif; ?>
 
 				<th>Tags</th>
-				<th>Category</th>
-				<?php if (!$content_type_filter):?><th>Type</th><?php endif; ?><th>Start</th><th>End</th><th>Created By</th><th>Updated By</th><th>Note</th>
+				<?php
+					make_sortable_header("category");
+					make_sortable_header("start");
+					make_sortable_header("end");
+					make_sortable_header("created by");
+					make_sortable_header("updated by");
+				?>
+				<th>Note</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -468,10 +536,6 @@ table.dragging .before_after_wrap {
 					</td>
 
 					<td><?php echo $content_item->catname;?></td>
-
-					<?php if (!$content_type_filter):?>
-						<td><?php echo Content::get_content_type_title($content_item->content_type); ?></td>
-					<?php endif; ?>
 					<td class='unimportant'><?php echo $content_item->start; ?></td>
 					<td class='unimportant'><?php echo $content_item->end; ?></td>
 					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>

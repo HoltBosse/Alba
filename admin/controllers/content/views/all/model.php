@@ -39,6 +39,16 @@ $content_search->searchtext = $search;
 $content_search->type_filter = $content_type_filter;
 $content_search->page = $cur_page;
 
+foreach($_GET as $key=>$value) {
+	if(str_contains($key, "_order") && ($value=="asc" || $value=="desc")) {
+		$content_search->order_by = str_replace("_order", "", $key);
+		if($value=="asc") {
+			$content_search->order_direction = "ASC";
+		}
+		//is desc by default
+	}
+}
+
 if ($filters) {
 	$content_search->filters = $filters;
 }
@@ -101,5 +111,22 @@ if (property_exists($custom_fields,'list')) {
 		$content_list_fields[] = $custom_fields_list_item;
 	}
 	
+}
+
+function make_sortable_header($title) {
+	?>
+		<th>
+			<label class="orderablerow">
+				<span><?php echo ucwords($title); ?></span>
+				<i class="tableorder fas fa-sort"></i>
+				<i class="tableorder fas fa-sort-up"></i>
+				<i class="tableorder fas fa-sort-down"></i>
+			</label>
+			<?php $selectedTitle = $_GET[str_replace(" ", "_", $title) . "_order"] ?? "regular"; ?>
+			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="regular" <?php echo $selectedTitle=="regular" ? "checked" : ""; ?> />
+			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="asc" <?php echo $selectedTitle=="asc" ? "checked" : ""; ?> />
+			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="desc" <?php echo $selectedTitle=="desc" ? "checked" : ""; ?> />
+		</th>
+	<?php
 }
 
