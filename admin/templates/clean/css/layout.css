@@ -366,7 +366,7 @@ h1.title.sticky {
 }
 .modal-content form {
 	padding:1rem;
-	background:white;
+	background-color: var(--bulma-modal-card-head-background-color);
 	border-radius:0.5rem;
 }
 
