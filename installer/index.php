@@ -144,7 +144,7 @@ if (!$pdo) {
 		$pdo = get_pdo ($dbhost,$dbname, $dbuser, $dbpass, $dbchar);
 		if ($pdo) {
 			// credentials worked, save config
-			$newSettings = array(
+			$newSettings = [
 				'dbhost' => $dbhost,
 				'dbname' => $dbname,
 				'dbuser' => $dbuser,
@@ -158,7 +158,7 @@ if (!$pdo) {
 				'debug' => $debug,
 				'user_core_controllers'=>$user_core_controllers,
 				'session_length' => 15,
-			);
+			];
 			change_config_file_settings ($config_path, $newSettings);	
 		}
 	}
@@ -171,7 +171,7 @@ if ($pdo) {
 	// config db credentials in config at this point are good 
 	$query = "select count(*) as c FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'users'";
 	$stmt = $pdo->prepare($query);
-	$stmt->execute(array());
+	$stmt->execute([]);
 	$table_count = $stmt->fetch()->c;
 
 	if ($table_count==0) {
@@ -197,7 +197,7 @@ if ($pdo) {
 	// got here, db ok, tables ok
 	$query = "select count(*) as c from `groups`";
 	$stmt = $pdo->prepare($query);
-	$stmt->execute(array());
+	$stmt->execute([]);
 	$group_count = $stmt->fetch()->c;
 	if ($group_count) {
 		// RESTORE AFTER BUG FIXES
@@ -247,13 +247,13 @@ if ($pdo) {
 	// get admin group id
 	$query = "select id from `groups` where value='admin'";
 	$stmt = $pdo->prepare($query);
-	$stmt->execute(array());
+	$stmt->execute([]);
 	$admin_group_id = $stmt->fetch()->id;
 
 	// insert group mapping
 	$query = "insert into user_groups (user_id, group_id) values(?,?)";
 	$stmt = $pdo->prepare($query);
-	$stmt->execute(array($admin_group_id, $admin_user_id));
+	$stmt->execute([$admin_group_id, $admin_user_id]);
 	
 	if ($new_user_ok) {
 		show_error ('Installation complete!');

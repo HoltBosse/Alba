@@ -64,7 +64,7 @@ class Field_ContentTypeselector extends Field {
 			$this->default = $value;
 		}
 		else {
-			$this->default = array();
+			$this->default = [];
 		}
 	}
 

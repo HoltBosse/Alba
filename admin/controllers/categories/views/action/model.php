@@ -16,7 +16,7 @@ if ($action=='toggle') {
 		"affected_category"=>$id[0],
 	]);
 
-	$result = DB::exec("UPDATE categories SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
+	$result = DB::exec("UPDATE categories SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		$title = DB::fetch('SELECT title FROM categories WHERE id=?', [$id[1]])->title;
 		$msg = "Category <a href='" . Config::uripath() . "/admin/categories/edit/{$id[0]}'>{$title}</a> state toggled";	

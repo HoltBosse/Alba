@@ -22,7 +22,7 @@ if (!is_dir(CMSPATH . "/temp")) {
 	mkdir(CMSPATH . "/temp", 0755);
 }
 $backup_files = scandir(CMSPATH . "/backups");
-$backup_files = array_diff($backup_files, array('.', '..'));
+$backup_files = array_diff($backup_files, ['.', '..']);
 $db_backup_file = CMSPATH . "/temp/" . "db.sql";
 
 if ($submitted) { 

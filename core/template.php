@@ -15,7 +15,7 @@ class Template {
 			$id = $this->get_default_template()->id;
 		}
 		$stmt = CMS::Instance()->pdo->prepare("select * from templates where id=?");
-		$stmt->execute(array($id));
+		$stmt->execute([$id]);
 		$template = $stmt->fetch();
 		$this->id = $template->id;
 		$this->title = $template->title;

@@ -14,7 +14,7 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	$content->load($content_id, $content_type);
 	$new_content = false;
 
-	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?',array($content_id))->c;
+	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?', [$content_id])->c;
 	
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {

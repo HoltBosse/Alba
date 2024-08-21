@@ -9,7 +9,7 @@ class Form {
 	public $form_path;
 
 	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
-		$this->fields = array();
+		$this->fields = [];
 		$this->repeatable = $repeatable;
 		$this->load_json($path);
 	}
@@ -137,7 +137,7 @@ class Form {
 	}
 
 	public function serialize_json() {
-		$name_value_pairs = array();
+		$name_value_pairs = [];
 		foreach ($this->fields as $field) {
 			$pair = new stdClass();
 			$pair->name = $field->name;

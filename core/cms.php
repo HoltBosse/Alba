@@ -328,7 +328,7 @@ final class CMS {
 				// code below is almost same as 'load_from_id' in user class
 				$query = "select * from users where id=? and state>0";
 				$stmt = $this->pdo->prepare($query);
-				$stmt->execute(array($session_user_id));
+				$stmt->execute([$session_user_id]);
 				$result = $stmt->fetch();
 				if ($result) {
 					$this->user->username = $result->username;
@@ -339,7 +339,7 @@ final class CMS {
 					// get groups
 					$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
 					$stmt = $this->pdo->prepare($query);
-					$stmt->execute(array($session_user_id));
+					$stmt->execute([$session_user_id]);
 					$this->user->groups = $stmt->fetchAll();
 				}
 			}
@@ -375,7 +375,7 @@ final class CMS {
 		//CMS::pprint_r ($_SESSION);
 		/* session_unset();
 		session_destroy();
-		$_SESSION = array(); */
+		$_SESSION = []; */
 		//CMS::pprint_r (session_status()); echo "<br>0) not available 1) not started 2) started<br>";
 
 		// messages
@@ -495,7 +495,7 @@ final class CMS {
 				// get controller for current page
 				$query = "select controller_location from content_types where id=?";
 				$stmt = $this->pdo->prepare($query);
-				$stmt->execute(array($this->page->content_type));
+				$stmt->execute([$this->page->content_type]);
 				$result = $stmt->fetch();
 				if ($result) {
 					$this->page->controller = $result->controller_location;
@@ -694,7 +694,7 @@ final class CMS {
 					while ($this->uri_segments) {
 						$query = "select * from pages where parent=? and alias=? and state > 0";
 						$stmt = $this->pdo->prepare($query);
-						$stmt->execute(array($parent, $this->uri_segments[0]));
+						$stmt->execute([$parent, $this->uri_segments[0]]);
 						$result = $stmt->fetch();
 						if ($result) {
 							// found possible alias, will check for deeper match on next loop - if any

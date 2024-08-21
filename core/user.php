@@ -16,11 +16,11 @@ class User {
 	public function __construct() {
 		$this->email = false;
 		$this->password = false;
-		$this->groups = array();
+		$this->groups = [];
 		$this->username = 'guest';
 		$this->registered = date('Y-m-d H:i:s');
 		$this->id = false;
-		$this->tags = array();
+		$this->tags = [];
 		$this->state = 1;
 	}
 
@@ -75,7 +75,7 @@ class User {
 					Left Join `groups` g on ug.group_id = g.id 
 					WHERE g.id=? 
 					group by u.id";
-		return DB::fetchall($query, array($group_id));
+		return DB::fetchall($query, [$group_id]);
 	}
 
 	public static function get_all_groups_for_user($user_id) {
@@ -85,7 +85,7 @@ class User {
 
 	public static function get_group_name ($group_id) {
 		$query = "select display from `groups` where id=?";
-		$result = DB::fetch($query, array($group_id));
+		$result = DB::fetch($query, [$group_id]);
 		return $result->display;
 	}
 
@@ -93,7 +93,7 @@ class User {
 	public function update_password ($new_password) {
 		$hash = password_hash ($new_password, PASSWORD_DEFAULT);
 		$query = "update users set password=? where id=?";
-		DB::exec($query, array($hash, $this->id));
+		DB::exec($query, [$hash, $this->id]);
 		return true;
 	}
 
@@ -105,7 +105,7 @@ class User {
 			// by group name value
 			$query = "select id from `groups` where value=? and id in (select group_id from user_groups where user_id=?)";
 		}
-		$result = DB::fetchAll($query, array($group_value, $this->id));
+		$result = DB::fetchAll($query, [$group_value, $this->id]);
 		if ($result) {
 			return true;
 		}
@@ -139,7 +139,7 @@ class User {
 
 	public function load_from_id($id) {
 		$query = "select * from users where id=?";
-		$result = DB::fetch($query, array($id));
+		$result = DB::fetch($query, [$id]);
 		if ($result) {
 			$this->username = $result->username;
 			$this->password = $result->password;
@@ -149,11 +149,11 @@ class User {
 			$this->state = $result->state;
 			// get groups
 			$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
-			$this->groups = DB::fetchall($query, array($id));
+			$this->groups = DB::fetchall($query, [$id]);
 
 			// get tags
 			$query = "select tag_id from tagged where content_type_id=-2 and content_id=?";
-			$tag_obj_array = DB::fetchall($query, array($id));
+			$tag_obj_array = DB::fetchall($query, [$id]);
 			foreach ($tag_obj_array as $tag) {
 				$this->tags[] = $tag->tag_id;
 			}
@@ -167,20 +167,20 @@ class User {
 
 	
 	public static function get_username_by_id($id) {
-		$result = DB::fetch("select username from users where id=?", array($id));
+		$result = DB::fetch("select username from users where id=?", [$id]);
 		return $result->username;
 	}
 
 	public function check_password($password) {
 		$query = "select password from users where id=?";
-		$hash = DB::fetch($query, array($this->id));
+		$hash = DB::fetch($query, [$this->id]);
 		return password_verify($password, $hash->password);
 	}
 
 	public function load_from_email($email) {
 		//echo "<h5>Loading user object from db with email {$email}</h5>";
 		$query = "select * from users where email=?";
-		$result = DB::fetch($query, array($email));
+		$result = DB::fetch($query, [$email]);
 		if ($result) {
 			$this->username = $result->username;
 			$this->password = $result->password;
@@ -201,7 +201,7 @@ class User {
    		$addKey = substr(md5(uniqid(rand(),1)),3,10);
 		$key = $key . $addKey;
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
-		$ok = DB::exec($query, array($key, $this->id));
+		$ok = DB::exec($query, [$key, $this->id]);
 		if (!$ok) {
 			CMS::Instance()->queue_message('Error creating password reset key for ' . $this->username, 'error', Config::uripath()."/admin");
 			// should not get here
@@ -211,7 +211,7 @@ class User {
 
 	public function remove_reset_key() {
 		$query = "update users set reset_key=null, reset_key_expires=null where id=?";
-		$ok = DB::exec($query, array($this->id)); 
+		$ok = DB::exec($query, [$this->id]); 
 		if (!$ok) {
 			return false;
 		}
@@ -223,7 +223,7 @@ class User {
 	public function get_user_by_reset_key ($key) {
 		// get used for reset key - only returns anything if reset key has not expired
 		$query = "select * from users where reset_key=? and reset_key_expires>NOW() LIMIT 1";
-		$result = DB::fetch($query, array($key));
+		$result = DB::fetch($query, [$key]);
 		if ($result) {
 			return $this->load_from_id($result->id);
 		}
@@ -244,7 +244,7 @@ class User {
 				// no password change
 				$query = "update users set username=?, email=? where id=?";
 				try {
-					$result = CMS::Instance()->pdo->prepare($query)->execute(array($this->username, $this->email, $this->id));
+					$result = CMS::Instance()->pdo->prepare($query)->execute([$this->username, $this->email, $this->id]);
 				}
 				catch (PDOException $e) {
 					CMS::Instance()->queue_message('Username and/or email already exists','danger',Config::uripath().'/admin/users/');
@@ -257,13 +257,13 @@ class User {
 			else {
 				// new password
 				$query = "update users set username=?, password=?, email=? where id=?";
-				$result = CMS::Instance()->pdo->prepare($query)->execute(array($this->username, $this->password, $this->email, $this->id));
+				$result = CMS::Instance()->pdo->prepare($query)->execute([$this->username, $this->password, $this->email, $this->id]);
 			}
 			if ($result) {
 				// user tags
 				DB::exec("delete from tagged where content_id=?", [$this->id]);
 				foreach ($this->tags as $tag) {
-					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($this->id, $tag));
+					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", [$this->id, $tag]);
 				}
 			}
 			if ($result) {
@@ -271,12 +271,12 @@ class User {
 				// UDPATE GROUPS
 				// delete existing
 				// todo: sanity checks, don't trust post data etc...
-				DB::exec("delete from user_groups where user_id=?", array($this->id));
+				DB::exec("delete from user_groups where user_id=?", [$this->id]);
 				// re-add new config
 				foreach ($this->groups as $group) {
 					// todo: sanity check - make sure each group exists before insertion
 					// don't trust post data
-					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", array($this->id, $group));
+					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", [$this->id, $group]);
 				}
 				return true;
 			}
@@ -292,7 +292,7 @@ class User {
 			// insert new
 			$query = "insert into users (username,email,password) values(?,?,?)";
 			try {
-				$result = CMS::Instance()->pdo->prepare($query)->execute(array($this->username, $this->email, $this->password));	
+				$result = CMS::Instance()->pdo->prepare($query)->execute([$this->username, $this->email, $this->password]);	
 			}
 			catch (PDOException $e) {
 				CMS::Instance()->queue_message('Username and/or email already exists','danger',Config::uripath().'/admin/users/');
@@ -311,7 +311,7 @@ class User {
 
 				// user tags
 				foreach ($this->tags as $tag) {
-					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", array($new_user_id, $tag));
+					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", [$new_user_id, $tag]);
 				}
 			}
 			if ($result) {
@@ -320,7 +320,7 @@ class User {
 				foreach ($this->groups as $group) {
 					// todo: sanity check - make sure each group exists before insertion
 					// don't trust post data
-					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", array($new_user_id, $group));
+					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", [$new_user_id, $group]);
 				}
 				return true;
 			}

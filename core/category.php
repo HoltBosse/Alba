@@ -26,12 +26,12 @@ class Category {
 	public static function get_all_categories_by_depth($content_type, $parent=0, $depth=-1) {
 		
 		$depth = $depth+1;
-		$result=array();
+		$result=[];
 		if ($content_type) {
-			$children = DB::fetchall("select * from categories where content_type=? and state>-1 and parent=?", array($content_type, $parent));
+			$children = DB::fetchall("select * from categories where content_type=? and state>-1 and parent=?", [$content_type, $parent]);
 		}
 		else {
-			$children = DB::fetchall("select * from categories where state>-1 and parent=?", array($parent));
+			$children = DB::fetchall("select * from categories where state>-1 and parent=?", [$parent]);
 		}
 		foreach ($children as $child) {
 			$child->depth = $depth;
@@ -46,7 +46,7 @@ class Category {
 			$like = '%' . $search . '%';
 			if (!$content_type) {
 				// return count of all content
-				return DB::fetch('select count(*) as c from categories where (title like ? ) and state>0',array($like))->c;
+				return DB::fetch('select count(*) as c from categories where (title like ? ) and state>0',[$like])->c;
 			}
 			if (!is_numeric($content_type)) {
 				// try and get type id
@@ -61,12 +61,12 @@ class Category {
 					}
 				}
 			}
-			return DB::fetch('select count(*) as c from categories where (title like ?) and state>0 and content_type=?',array($like,$content_type))->c;
+			return DB::fetch('select count(*) as c from categories where (title like ?) and state>0 and content_type=?',[$like,$content_type])->c;
 		}
 		else {
 			if (!$content_type) {
 				// return count of all cats
-				return DB::fetch('select count(*) as c from categories where state>0',array())->c;
+				return DB::fetch('select count(*) as c from categories where state>0',[])->c;
 			}
 			if (!is_numeric($content_type)) {
 				// try and get type id
@@ -81,14 +81,14 @@ class Category {
 					}
 				}
 			}
-			return DB::fetch('select count(*) as c from categories where state>0 and content_type=?',array($content_type))->c;
+			return DB::fetch('select count(*) as c from categories where state>0 and content_type=?',[$content_type])->c;
 		}
 	}
 
 
 
 	public function load($id) {
-		$info = DB::fetch('select * from categories where id=?',array($id));
+		$info = DB::fetch('select * from categories where id=?',[$id]);
 		if ($info) {
 			$this->id = $info->id;
 			$this->title = $info->title;

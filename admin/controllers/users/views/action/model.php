@@ -18,7 +18,7 @@ if ($action=='toggle') {
 		]);
 	}
 
-	$result = DB::exec("UPDATE users SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
+	$result = DB::exec("UPDATE users SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		$user = DB::fetch('SELECT * FROM users WHERE id=?', [$id[0]]);
 		$msg = "User <a href='" . Config::uripath() . "/admin/users/edit/{$id[0]}'>{$user->username}</a> state toggled";

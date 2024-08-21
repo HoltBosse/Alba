@@ -6,7 +6,7 @@ if (CMS::Instance()->user->username=="guest") {
 }
 
 $directory = CMSPATH . '/images/upload';
-$all_image_files = array_diff(scandir($directory), array('..', '.','index.html'));
+$all_image_files = array_diff(scandir($directory), ['..', '.','index.html']);
 $all_image_files = array_values($all_image_files); // re-index array from 0 if .. and . are removed above
 //CMS::pprint_r ($all_image_files);
 

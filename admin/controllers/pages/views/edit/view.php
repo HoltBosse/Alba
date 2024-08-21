@@ -256,7 +256,7 @@ div.position_tag_wrap.active {
 						<select  id='content_type_controller_view' name='content_type_controller_view'>
 							<option value=''>Choose View:</option>
 							<?php
-							$all_views = DB::fetchall('select * from content_views where content_type_id=?',array($page->content_type));
+							$all_views = DB::fetchall('select * from content_views where content_type_id=?', [$page->content_type]);
 							foreach ($all_views as $view) {
 								$view_selected = "";
 								if ($page->view==$view->id) {

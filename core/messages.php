@@ -3,7 +3,7 @@ defined('CMSPATH') or die;
 class Messages {
 		
 	var $msgId;
-	var $msgTypes = array( 'info', 'success', 'danger', 'warning' );
+	var $msgTypes = ['info', 'success', 'danger', 'warning'];
 	var $msgClass = 'alert';
 	var $msgWrapper = "<div class='%s notification is-%s' role='alert'><button type='button' class='close delete' data-dismiss='alert' aria-label='Close'></button>\n%s</div>\n";
 	var $msgBefore = '<p>';
@@ -16,7 +16,7 @@ class Messages {
 		$this->msgId = md5(uniqid());
 		
 		// Create the session array if it doesnt already exist
-		if( !array_key_exists('flash_messages', $_SESSION) ) $_SESSION['flash_messages'] = array();
+		if( !array_key_exists('flash_messages', $_SESSION) ) $_SESSION['flash_messages'] = [];
 	
 
 	}
@@ -29,7 +29,7 @@ class Messages {
 
 		// Replace any shorthand codes with their full version
 		if( strlen(trim($type)) == 1 ) {
-			$type = str_replace( array('h', 'i', 'w', 'e', 's'), array('help', 'info', 'warning', 'error', 'success'), $type );
+			$type = str_replace( ['h', 'i', 'w', 'e', 's'], ['help', 'info', 'warning', 'error', 'success'], $type );
 		
 		} 
 		
@@ -37,7 +37,7 @@ class Messages {
 		if( !in_array($type, $this->msgTypes) ) die('"' . strip_tags($type) . '" is not a valid message type!' );
 		
 		// If the session array doesn't exist, create it
-		//if( !array_key_exists( $type, $_SESSION['flash_messages'] ) ) $_SESSION['flash_messages'][$type] = array();
+		//if( !array_key_exists( $type, $_SESSION['flash_messages'] ) ) $_SESSION['flash_messages'][$type] = [];
 		
 		$_SESSION['flash_messages'][$type][] = $message;
 
