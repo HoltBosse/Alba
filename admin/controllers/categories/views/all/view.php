@@ -287,15 +287,24 @@ table.dragging .before_after_wrap {
 		//console.log('Insert',source_id, insert_position, dest_id);
 		// perform ajax action silently
 		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position};
-		postAjax('<?php echo Config::uripath();?>/admin/categories/api', api_data, function(data){
-			response = JSON.parse(data);
-			if (response.success=='1') {
+		const formData = new FormData();
+		for (const [key, value] of Object.entries(api_data)) {
+			formData.append(key, value);
+		}
+
+		fetch('<?php echo Config::uripath();?>/admin/categories/api', {
+			method: "POST",
+			body: formData,
+		}).then(response=>response.json()).then((data)=>{
+			if (data.success=='1') {
 				// do nothing - assume it worked
 			}
 			else {
-				console.log(response); 
+				console.log(data); 
 				alert('Ordering failed.');
 			}
+		}).catch(()=>{
+			alert('Ordering failed.');
 		});
 
 		// move dom rows - regardless of success of ajax - report failures

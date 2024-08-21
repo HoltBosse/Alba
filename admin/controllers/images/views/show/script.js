@@ -48,12 +48,21 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 				// do ajax call to /admin/images/api
 				// action: tag, media ids: ids, tag id: tag_id
 				api_data = {"action":"tag_media","id_list":ids,"tag_id":tag_id};
-				postAjax(window.uripath + '/admin/images/api', api_data, function(data){
-					response = JSON.parse(data);
+				const formData = new FormData();
+				for (const [key, value] of Object.entries(api_data)) {
+					formData.append(key, value);
+				}
+
+				fetch(window.uripath + '/admin/images/api', {
+					method: "POST",
+					body: formData,
+				}).then(response=>response.json()).then((response)=>{
 					response.tagged.forEach(item => {
 						add_tag_to_media_item (tag_id, tag_title, item);
 					});
 					console.log(response); 
+				}).catch(()=>{
+					console.log("error");
 				});
 			}
 			else {
@@ -72,12 +81,21 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 				media_id = e.target.closest('.all_images_image_container').dataset.id;
 				console.log('deleting tag ',tag_id,' from image id ',media_id);
 				api_data = {"action":"untag_media","id_list":[media_id],"tag_id":tag_id};
-				postAjax(window.uripath + '/admin/images/api', api_data, function(data){
-					response = JSON.parse(data);
+				const formData = new FormData();
+				for (const [key, value] of Object.entries(api_data)) {
+					formData.append(key, value);
+				}
+
+				fetch(window.uripath + '/admin/images/api', {
+					method: "POST",
+					body: formData,
+				}).then(response=>response.json()).then((response)=>{
 					response.untagged.forEach(item => {
 						untag_media_item (tag_id, item);
 					});
-					console.log(response); 
+					console.log(response);
+				}).catch(()=>{
+					console.log("error");
 				});
 			}
 		});
@@ -204,9 +222,18 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 		modal.classList.remove('is-active');
 		// save data
 		api_data = {"action":"rename_image","title":title,"alt":alt,"image_id":image_id};
-		postAjax(window.uripath + '/admin/images/api', api_data, function(data){
-			response = JSON.parse(data);
+		const formData = new FormData();
+		for (const [key, value] of Object.entries(api_data)) {
+			formData.append(key, value);
+		}
+
+		fetch(window.uripath + '/admin/images/api', {
+			method: "POST",
+			body: formData,
+		}).then(response=>response.json()).then((response)=>{
 			console.log(response); // todo: handle errors
+		}).catch(()=>{
+			console.log("Error");
 		});
 	}
 
@@ -241,15 +268,22 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 				// do ajax call to /admin/images/api
 				// action: tag, media ids: ids, tag id: tag_id
 				api_data = {"action":"cleartags_media","id_list":ids};
-				postAjax(window.uripath + '/admin/images/api', api_data, function(data){
-					response = JSON.parse(data);
+				const formData = new FormData();
+				for (const [key, value] of Object.entries(api_data)) {
+					formData.append(key, value);
+				}
+
+				fetch(window.uripath + '/admin/images/api', {
+					method: "POST",
+					body: formData,
+				}).then(response=>response.json()).then((response)=>{
 					response.untagged.forEach(item => {
 						//clear_tags_media_item (tag_id, tag_title, item);
 						media_item_container = document.getElementById('media_item_id_' + item.toString());
 						media_item_container.querySelector('.image_tags').innerHTML="";
 					});
-					//console.log(response); 
-
+				}).catch(()=>{
+					console.log("Error");
 				});
 			}
 		}
@@ -266,16 +300,23 @@ var uploading_progress_dialog = document.getElementById('uploading_progress_dial
 				// do ajax call to /admin/images/api
 				// action: tag, media ids: ids, tag id: tag_id
 				api_data = {"action":"delete_media","id_list":ids};
-				postAjax(window.uripath + '/admin/images/api', api_data, function(data){
-					response = JSON.parse(data);
+				const formData = new FormData();
+				for (const [key, value] of Object.entries(api_data)) {
+					formData.append(key, value);
+				}
+
+				fetch(window.uripath + '/admin/images/api', {
+					method: "POST",
+					body: formData,
+				}).then(response=>response.json()).then((response)=>{
 					response.untagged.forEach(item => {
 						//clear media_item 
 						media_item_container = document.getElementById('media_item_id_' + item.toString());
 						media_item_container.closest('.all_images_image_container').innerHTML="";
 					});
 					window.location.reload();
-					//console.log(response); 
-
+				}).catch(()=>{
+					console.log("error");
 				});
 			}
 		}
