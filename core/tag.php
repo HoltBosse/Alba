@@ -25,7 +25,7 @@ class Tag {
 
 	public function load($id) {
 		//$info = CMS::Instance()->pdo->query('select * from tags where id=' . $id)->fetch();
-		$info = DB::fetch('select * from tags where id=?', array($id));
+		$info = DB::fetch('select * from tags where id=?', [$id]);
 		$this->id = $info->id;
 		$this->title = $info->title;
 		$this->state = $info->state;
@@ -40,28 +40,28 @@ class Tag {
 		$this->custom_fields = $info->custom_fields;
 		$query = "select content_type_id from tag_content_type where tag_id=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($this->id));
-		//$result = DB::fetchall("select content_type_id from tag_content_type where tag_id=?", array($this->id));
+		$stmt->execute([$this->id]);
+		//$result = DB::fetchall("select content_type_id from tag_content_type where tag_id=?", [$this->id));
 		$this->contenttypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
 	}
 
 	public static function get_tags_for_content($content_id, $content_type_id=-1) {
 		// default to media/image content type
-		$result = DB::fetchall("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", array($content_id, $content_type_id));
+		$result = DB::fetchall("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", [$content_id, $content_type_id]);
 		return $result;
 	}
 
 	public static function get_tags_available_for_content_type ($content_type_id) {
-		$result = DB::fetchall("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", array($content_type_id));
-		$result2 = DB::fetchall("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", array($content_type_id));
+		$result = DB::fetchall("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
+		$result2 = DB::fetchall("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
 		return array_merge ($result,$result2);
 	}
 
 	public static function set_tags_for_content($content_id, $tag_array, $content_type_id) {
-		DB::exec("delete from tagged where content_id=? and content_type_id=?", array($content_id,$content_type_id));
+		DB::exec("delete from tagged where content_id=? and content_type_id=?", [$content_id,$content_type_id]);
 		foreach ($tag_array as $tag_id) {
-			DB::exec("insert into tagged (tag_id, content_id, content_type_id) values (?,?,?)", array($tag_id, $content_id, $content_type_id));
+			DB::exec("insert into tagged (tag_id, content_id, content_type_id) values (?,?,?)", [$tag_id, $content_id, $content_type_id]);
 		}
 	}
 
@@ -78,8 +78,8 @@ class Tag {
 
 	public static function get_all_tags_by_depth($parent=0, $depth=-1) {
 		$depth = $depth+1;
-		$result=array();
-		$children = DB::fetchall("select t.*, cat.title as cat_title from (tags t) left join categories cat on t.category=cat.id where t.state>-1 and t.parent=?", array($parent));
+		$result=[];
+		$children = DB::fetchall("select t.*, cat.title as cat_title from (tags t) left join categories cat on t.category=cat.id where t.state>-1 and t.parent=?", [$parent]);
 		foreach ($children as $child) {
 			$child->depth = $depth;
 			$result[] = $child;
@@ -89,14 +89,14 @@ class Tag {
 	}
 
 	public static function get_tag_content_types($id) {
-		return DB::fetchall("select content_type_id from tag_content_type where tag_id=?", array($id));
+		return DB::fetchall("select content_type_id from tag_content_type where tag_id=?", [$id]);
 	}
 
 	public static function get_tag_content_type_titles($id) {
 		$tag = new Tag();
 		$tag->load($id);
-		$titles_obj = DB::fetchall("select title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", array($id));
-		$titles = array();
+		$titles_obj = DB::fetchall("select title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", [$id]);
+		$titles = [];
 		if (in_array('-1',$tag->contenttypes)) {
 			$titles[] = "Media";
 		}
@@ -162,16 +162,16 @@ class Tag {
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->custom_fields, $this->id ) ;
+			$params = [$this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->custom_fields, $this->id ] ;
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// clear any content types applicable to this tag from tag_content_type
 				
-				DB::exec("delete from tag_content_type where tag_id=?", array($this->id));
+				DB::exec("delete from tag_content_type where tag_id=?", [$this->id]);
 				
 				// insert new tag content_type relationships if required
 				foreach ($this->contenttypes as $contenttype) {
-					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($this->id, $contenttype));
+					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', [$this->id, $contenttype]);
 				}
 				Hook::execute_hook_actions('on_tag_save', $this);
 				return true;	
@@ -191,13 +191,13 @@ class Tag {
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = array($this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category, $this->custom_fields);
+			$params = [$this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category, $this->custom_fields];
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// insert new tag content_type relationships if required
 				$new_id = CMS::Instance()->pdo->lastInsertId();
 				foreach ($this->contenttypes as $contenttype) {
-					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', array($new_id, $contenttype));
+					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', [$new_id, $contenttype]);
 				}
 				$this->id = $new_id;
 

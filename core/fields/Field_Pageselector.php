@@ -74,7 +74,7 @@ class Field_Pageselector extends Field {
 			$this->default = $value;
 		}
 		else {
-			$this->default = array($value);
+			$this->default = [$value];
 		}
 	}
 

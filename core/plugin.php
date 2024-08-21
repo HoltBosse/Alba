@@ -70,7 +70,7 @@ class Plugin {
 
 	public function save($plugin_options_form) {
 		// update this object with submitted and validated form info
-		$this->options = array();
+		$this->options = [];
 		foreach ($plugin_options_form->fields as $option) {
 			$obj = new stdClass();
 			$obj->name = $option->name;

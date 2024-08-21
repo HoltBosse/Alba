@@ -8,7 +8,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 //CMS::pprint_r ($all_image_files);
 
-$unprocessed = array();
+$unprocessed = [];
 
 foreach ($all_image_files as $image_file) {
 	if (!image_in_db($image_file)) {

@@ -131,7 +131,7 @@ class Content {
 
 	public function load($id, $content_type) {
 		$table_name = Content::get_table_name_for_content_type($content_type);
-		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE id=?",array($id));
+		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE id=?",[$id]);
 		if ($info) {
 			$this->id = $info->id;
 			$this->title = $info->title;
@@ -156,7 +156,7 @@ class Content {
 
 	public function load_from_alias($alias, $content_type) {
 		$table_name = Content::get_table_name_for_content_type($content_type);
-		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE alias=?",array($alias));
+		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE alias=?",[$alias]);
 		if ($info) {
 			$this->table_name = $table_name;
 			$this->id = $info->id;
@@ -304,7 +304,7 @@ class Content {
 			}
 
 			// update
-			$params = array($this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id) ;
+			$params = [$this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id] ;
 			$required_result = DB::exec("UPDATE `{$this->table_name}` SET state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? WHERE id=?", $params);
 		}
 		else {
@@ -316,7 +316,7 @@ class Content {
 				$ordering=1;
 			}
 			$query = "insert into `{$this->table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
-			$params = array($this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $starttime, $endtime, $this->category);
+			$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $starttime, $endtime, $this->category];
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
 				// update object id with inserted id
@@ -347,7 +347,7 @@ class Content {
 		// now save fields
 		// first remove old field data if any exists
 		// NO MORE content_fields
-		// DB::exec("delete from content_fields where content_id=?", array($this->id));
+		// DB::exec("delete from content_fields where content_id=?", [$this->id));
 
 		$error_text="";
 		foreach ($content_form->fields as $field) {
@@ -427,7 +427,7 @@ class Content {
 		if ($content_type=="-3") {
 			return "Tag";
 		}
-		$result = DB::fetch("select title from content_types where id=?", array($content_type));
+		$result = DB::fetch("select title from content_types where id=?", [$content_type]);
 		if ($result) {
 			return $result->title;
 		}
@@ -440,7 +440,7 @@ class Content {
 		if (!$content_type) {
 			return false;
 		}
-		$result = DB::fetch("select * from content_types where id=?", array($content_type));
+		$result = DB::fetch("select * from content_types where id=?", [$content_type]);
 		if ($result) {
 			return $result;
 		}
@@ -476,28 +476,28 @@ class Content {
 	public static function get_applicable_tags ($content_type_id) {
 		$query = "select * from tags where (filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)) ";
 		$query.= "or (filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)) ";
-		$tags = DB::fetchall($query, array($content_type_id, $content_type_id));
+		$tags = DB::fetchall($query, [$content_type_id, $content_type_id]);
 		return $tags;
 	}
 
 	public static function get_applicable_categories ($content_type_id) {
 		$query = "select * from categories where content_type=?";
-		$cats = DB::fetchall($query, array($content_type_id));
+		$cats = DB::fetchall($query, [$content_type_id]);
 		return $cats;
 	}
 
 	public static function get_content_location($content_type_id) {
-		$result = DB::fetch("select controller_location from content_types where id=?", array($content_type_id));
+		$result = DB::fetch("select controller_location from content_types where id=?", [$content_type_id]);
 		return $result->controller_location;
 	}
 
 	public static function get_view_location($view_id) {
-		$result = DB::fetch("select location from content_views where id=?", array($view_id));
+		$result = DB::fetch("select location from content_views where id=?", [$view_id]);
 		return $result->location;
 	}
 
 	public static function get_content_type_for_view ($view_id) {
-		$result = DB::fetch("select content_type_id from content_views where id=?", array($view_id));
+		$result = DB::fetch("select content_type_id from content_views where id=?", [$view_id]);
 		return $result->content_type_id;
 	}
 
@@ -505,7 +505,7 @@ class Content {
 		if (!$view_id) {
 			return false;
 		}
-		$result = DB::fetch("select title from content_views where id=?", array($view_id));
+		$result = DB::fetch("select title from content_views where id=?", [$view_id]);
 		if ($result) {
 			return $result->title;
 		}
@@ -553,9 +553,9 @@ class Content {
 				// remove old versions if required (could be more/fewer than 1, depending on config value change since last save)
 				// there's undoubtedly a more efficient way to make this happen in case multiple deletions are required, but
 				// most of the time there'll be just 1 or none
-				$old_versions = DB::fetchAll('select id from content_versions where content_id=? order by created DESC',array($old_content->id));
+				$old_versions = DB::fetchAll('select id from content_versions where content_id=? order by created DESC',[$old_content->id]);
 				for ($n=$content_versions; $n<sizeof($old_versions); $n++) {
-					DB::exec("delete IGNORE from content_versions where id=?",array($old_versions[$n]->id));
+					DB::exec("delete IGNORE from content_versions where id=?",[$old_versions[$n]->id]);
 				}
 			}
 			else {

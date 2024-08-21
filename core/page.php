@@ -35,13 +35,13 @@ class Page {
 
 	public function get_url() {
 		// TODO: save url in new column on page save/update
-		$segments = array($this->alias);
+		$segments = [$this->alias];
 		$parent = $this->parent;
 		if ($this->alias=='home' && $parent<0) {
 			return Config::uripath() . "/"; 
 		}
 		while ($parent>=0) {
-			$result = DB::fetch("select parent,alias from pages where id=?", array($parent));
+			$result = DB::fetch("select parent,alias from pages where id=?", [$parent]);
 			$parent = $result->parent;
 			array_unshift ($segments, $result->alias);
 			//$segments[] = $result->alias;
@@ -77,7 +77,7 @@ class Page {
 		$parent=$id;
 		$depth = 0;
 		while (!$parent_root) {
-			$result = DB::fetch("select parent,alias from pages where id=?", array($parent));
+			$result = DB::fetch("select parent,alias from pages where id=?", [$parent]);
 			$parent = $result->parent;
 			$depth++;
 			if ($parent=="-1") {
@@ -100,8 +100,8 @@ class Page {
 
 	public static function get_all_pages_by_depth($parent=-1, $depth=-1) {
 		$depth = $depth+1;
-		$result=array();
-		$children = DB::fetchall("select * from pages where state>-1 and parent=?", array($parent));
+		$result=[];
+		$children = DB::fetchall("select * from pages where state>-1 and parent=?", [$parent]);
 		foreach ($children as $child) {
 			$child->depth = $depth;
 			$result[] = $child;
@@ -124,7 +124,7 @@ class Page {
 	}
 
 	public static function has_overrides ($page) {
-		$w = DB::fetchall("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", array($page));
+		$w = DB::fetchall("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", [$page]);
 		//CMS::pprint_r ($w);
 		return $w;
 	}
@@ -157,7 +157,7 @@ class Page {
 	}
 
 	public function load_from_id($id) {
-		$result = DB::fetch("select * from pages where id=?", array($id) );
+		$result = DB::fetch("select * from pages where id=?", [$id] );
 		if ($result) {
 			$this->id = $result->id;
 			$this->state = $result->state;
@@ -181,7 +181,7 @@ class Page {
 
 
 	public function load_from_alias($alias) {
-		$result = DB::fetch("select * from pages where alias=?", array($alias));
+		$result = DB::fetch("select * from pages where alias=?", [$alias]);
 		if ($result) {
 			$this->id = $result->id;
 			$this->state = $result->state;
@@ -212,7 +212,7 @@ class Page {
 			]);
 			// update
 			$query = "update pages set state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=? where id=?";
-			$result = CMS::Instance()->pdo->prepare($query)->execute(array(
+			$result = CMS::Instance()->pdo->prepare($query)->execute([
 				$this->state, 
 				$this->title, 
 				$this->alias, 
@@ -223,7 +223,7 @@ class Page {
 				$this->page_options,
 				$this->view_configuration,
 				$this->id
-			));
+			]);
 			if ($result) {
 				// saved ok
 				return true;
@@ -237,7 +237,7 @@ class Page {
 			$query = "insert into pages (state, title, alias, content_type, content_view, parent, template, page_options, content_view_configuration) values(?,?,?,?,?,?,?,?,?)";
 			try {
 				$stmt = CMS::Instance()->pdo->prepare($query);
-				$result = $stmt->execute(array(
+				$result = $stmt->execute([
 					$this->state, 
 					$this->title, 
 					$this->alias, 
@@ -247,7 +247,7 @@ class Page {
 					$this->template_id,
 					$this->page_options,
 					$this->view_configuration
-				));	
+				]);	
 			}
 			catch (PDOException $e) {
 				//CMS::Instance()->queue_message('Error saving page','danger',Config::uripath().'/admin/pages/');

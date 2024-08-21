@@ -68,7 +68,7 @@ if ($action=='delete') {
 	$idlist = implode(',',$id);
 	$query = "select count(parent) as c from pages where parent in ({$idlist})";
 	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute(array());
+	$result = $stmt->execute([]);
 	if ($result) {
 		$c = $stmt->fetch()->c;
 		if ($c>0) {

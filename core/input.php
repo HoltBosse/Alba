@@ -25,7 +25,7 @@ class Input {
 		$str = str_replace('_', ' ', $string);
 		
         // remove any duplicate whitespace, and ensure all characters are alphanumeric
-        $str = preg_replace(array('/\s+/','/[^A-Za-z0-9\-]/'), array('-',''), $str);
+        $str = preg_replace(['/\s+/','/[^A-Za-z0-9\-]/'], ['-',''], $str);
 
         // lowercase and trim
         $str = trim(strtolower($str));

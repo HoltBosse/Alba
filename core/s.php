@@ -84,7 +84,7 @@ class s
 
     public static function params()
     {
-        $r = array();
+        $r = [];
         if ( '' !== session_id() )
         {
             $r = session_get_cookie_params();
@@ -113,7 +113,7 @@ class s
     {
         if ( '' !== session_id() )
         {
-            $_SESSION = array();
+            $_SESSION = [];
             // If it's desired to kill the session, also delete the session cookie.
             // Note: This will destroy the session, and not just the session data!
             if (ini_get("session.use_cookies")) {

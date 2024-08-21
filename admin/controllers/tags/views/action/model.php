@@ -16,7 +16,7 @@ if ($action=='toggle') {
 		"affected_tag"=>$id[0],
 	]);
 	
-	$result = DB::exec("UPDATE tags SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
+	$result = DB::exec("UPDATE tags SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		$tag = DB::fetch('SELECT * FROM tags WHERE id=?', [$id[0]]);
 		$msg = "Tag <a href='" . Config::uripath() . "/admin/tags/edit/{$id[0]}'>{$tag->title}</a> state toggled";

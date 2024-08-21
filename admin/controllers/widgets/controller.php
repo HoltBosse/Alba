@@ -55,7 +55,7 @@ if ($missing) { ?>
 						if (!$w_config->description) {
 							$w_config->description = "No description found in json file";
 						}
-						$ok = DB::exec("insert into widget_types (title, location, description) values (?,?,?)", array($w_config->title, $missed, $w_config->description));
+						$ok = DB::exec("insert into widget_types (title, location, description) values (?,?,?)", [$w_config->title, $missed, $w_config->description]);
 						if ($ok) {
 							echo "<li class='list-item'><strong>{$w_config->title}</strong> - {$w_config->description} - <em>Installed</em></li>";
 						}

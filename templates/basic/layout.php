@@ -5,7 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // will be zero if editing new page
 $edit_page_id = CMS::Instance()->edit_page_id;
 
-//$template->positions = array('Header','Above Content','After Content','Sidebar','Footer');
+//$template->positions = ['Header','Above Content','After Content','Sidebar','Footer'];
 //$template->positions = json_decode(file_get_contents(__DIR__ . '/positions.json'));
 $template->positions = JSON::load_obj_from_file(__DIR__ . '/positions.json');
 

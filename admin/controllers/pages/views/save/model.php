@@ -54,7 +54,7 @@ if ($success) {
 	// save widget overrides
 	// unique key on page, template and position in table	
 	for ($n=0; $n < sizeof ($_POST['override_positions_widgets']); $n++ ) {
-		$data = array( $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n], $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n] );
+		$data = [$page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n], $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n]];
 		$override_success = DB::exec("insert into page_widget_overrides (page_id, position, widgets) values (?,?,?) on duplicate key update page_id=?, position=?, widgets=?", $data);
 	}
 

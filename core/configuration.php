@@ -26,7 +26,7 @@ class Configuration {
 		// fallback - get complete json and get property in PHP
 		$query = "select configuration from configurations where name=?";
 		$stmt = $pdo->prepare($query);
-		$ok = $stmt->execute(array($form_name));
+		$ok = $stmt->execute([$form_name]);
 		$configuration = $stmt->fetch();
 		if ($configuration) {
 			$config = json_decode($configuration->configuration);
@@ -76,7 +76,7 @@ class Configuration {
 		// set config and form fields from configurations table entry
 		$query = "select * from configurations where name=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($this->name));
+		$stmt->execute([$this->name]);
 		$result = $stmt->fetch();
 		if ($result) {
 			// update object configuration
@@ -104,7 +104,7 @@ class Configuration {
 		$query = "INSERT INTO configurations (name,configuration) VALUES (?,?) ON DUPLICATE KEY UPDATE configuration=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$json_config = json_encode($this->configuration);
-		$ok = $stmt->execute(array($this->name, $json_config, $json_config));
+		$ok = $stmt->execute([$this->name, $json_config, $json_config]);
 		if ($ok) {
 			return $this;
 		}

@@ -12,7 +12,7 @@ if (!$id) {
 }
 
 if ($action=='toggle') {
-	$result = DB::exec("UPDATE widgets SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", array($id[0])); // id always array even with single id being passed
+	$result = DB::exec("UPDATE widgets SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		$widget = DB::fetch('SELECT * FROM widgets WHERE id=?', [$id[0]]);
 		$msg = "Widget <a href='" . Config::uripath() . "/admin/widgets/edit/{$id[0]}'>{$widget->title}</a> state toggled";

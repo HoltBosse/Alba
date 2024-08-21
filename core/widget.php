@@ -148,7 +148,7 @@ class Widget {
 		$this->title = $required_details_form->get_field_by_name('title')->default;
 		$this->state = $required_details_form->get_field_by_name('state')->default;
 		$this->note = $required_details_form->get_field_by_name('note')->default;
-		$this->options = array();
+		$this->options = [];
 		foreach ($widget_options_form->fields as $option) {
 			$obj = new stdClass();
 			$obj->name = $option->name;
@@ -172,7 +172,7 @@ class Widget {
 
 		if ($this->id) {
 			// update
-			$params = array($this->state, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list), $this->id) ;
+			$params = [$this->state, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list), $this->id] ;
 			$result = DB::exec("update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=? where id=?", $params);
 			
 			if ($result) {
@@ -184,7 +184,7 @@ class Widget {
 		}
 		else {
 			// new
-			$params = array($this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)) ;
+			$params = [$this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)] ;
 			$result = DB::exec("insert into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)", $params);
 			$new_widget_id = DB::get_last_insert_id();
 			if ($result) {

@@ -92,7 +92,7 @@ class File {
 	
 	public static function php_size_to_bytes($php_size) {
 		$suffix = strtoupper(substr($php_size, -1));
-		if (!in_array($suffix,array('P','T','G','M','K'))){
+		if (!in_array($suffix,['P','T','G','M','K'])){
 			return (int)$php_size;  
 		} 
 		$val = (int) substr($php_size, 0, -1);

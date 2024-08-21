@@ -54,16 +54,16 @@ class Field_Turnstile extends Field {
 			CMS::Instance()->queue_message('Cloudflare secret key is not set correctly','danger');
 			return false;
 		}
-		$data = array(
+		$data = [
 			'secret' => $cf_secretkey,
 			'response' => $this->default
-		);
-		$options = array(
-			'http' => array (
+		];
+		$options = [
+			'http' => [
 				'method' => 'POST',
 				'content' => http_build_query($data)
-			)
-		);
+			]
+		];
 		$context  = stream_context_create($options);
 		$verify = file_get_contents($url, false, $context);
 		$captcha_success=json_decode($verify);
