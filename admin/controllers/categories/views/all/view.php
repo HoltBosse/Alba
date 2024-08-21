@@ -160,6 +160,11 @@ table.dragging .before_after_wrap {
 			Search
 			</button>
 		</div>
+		<div class="control">
+			<button form="searchform" type="button" value="" onclick="window.location = window.location.href.split(&quot;?&quot;)[0]; return false;" class="button is-default">
+				Clear
+			</button>
+		</div>
 	</div>
 
 
@@ -177,6 +182,13 @@ table.dragging .before_after_wrap {
 		</thead>
 		<tbody>
 			<?php foreach ($all_categories as $content_item):?>
+				<?php if ($search) {
+					if (stripos($content_item->title,$search)===false) {
+						// skip, nothing matching 
+						continue;
+					}
+				}
+				?>
 				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
