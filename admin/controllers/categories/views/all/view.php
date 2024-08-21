@@ -167,17 +167,6 @@ table.dragging .before_after_wrap {
 <?php if (!$all_categories):?>
 	<h2>No categories to show!</h2>
 <?php else:?>
-
-	<?php if ($content_type_filter):?>
-		<?php if ($order_by):?>
-			<a class='button is-primary is-outlined is-small' href='<?php echo $_SERVER['HTTP_REFERER'];?>'>FINISH ORDERING</a>
-		<?php else: ?>
-			<a class='button is-primary is-outlined is-small' href='?order_by=ordering'>MANAGE ORDERING</a>
-		<?php endif; ?>
-	<?php else: ?>
-		<p class='help'>To manually manage ordering, please choose a specific content type from the content menu.</p>
-	<?php endif; ?>
-
 	<table class='table'>
 		<thead>
 			<tr>
@@ -193,13 +182,6 @@ table.dragging .before_after_wrap {
 					<td class='drag_td'>
 					<div class="center_state">
 						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $content_item->id; ?>'/>
-						<?php if ($order_by && $content_type_filter):?>
-						<div draggable="true"  data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>"  ondragend="dragend_handler(event)" ondragstart="dragstart_handler(event)" class="grip"><i class="fas fa-grip-lines"></i></div>
-						<div class='before_after_wrap'>
-							<span droppable='true' class='drop_before order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">Before</span><br>
-							<span droppable='true' class='drop_after order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">After</span>
-						</div>
-						<?php endif; ?>
 						<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/categories/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
 							<?php
 							if ($content_item->state==1) {
@@ -234,103 +216,3 @@ table.dragging .before_after_wrap {
 <?php endif; ?>
 
 </form>
-
-<script>
-	admin_rows = document.querySelectorAll('.content_admin_row');
-	admin_rows.forEach(row => {
-		row.addEventListener('click',function(e){
-			tr = e.target.closest('tr');
-			tr.classList.toggle('selected');
-			hidden_checkbox = tr.querySelector('.hidden_multi_edit');
-			hidden_checkbox.checked = !hidden_checkbox.checked;
-		});
-	});
-
-	// ordering js
-
-	function dragstart_handler(e) {
-		//e.preventDefault();
-		data = e.target.dataset.itemid;
-		console.log(data);
-		e.dataTransfer.dropEffect = "move";
-		e.dataTransfer.setData("text/plain", data);
-		e.target.closest('table').classList.add('dragging');
-		e.target.closest('tr').classList.add('dragging');
-		//console.log(e);
-	}
-
-	function dragover_handler(e) {
-		e.preventDefault();
-		e.dataTransfer.dropEffect = "move";
-		e.target.classList.add('ready');
-	}
-
-	function dragleave_handler(e) {
-		e.preventDefault();
-		//e.dataTransfer.dropEffect = "move";
-		e.target.classList.remove('ready');
-	}
-
-	function drop_handler(e) {
-		e.preventDefault();
-		//console.log(e);
-		e.preventDefault();
-		// get required info
-		var source_id = e.dataTransfer.getData('text/plain');
-		var dest_id = e.target.closest('tr').dataset.itemid;
-		if (e.target.classList.contains('drop_before')) {
-			var insert_position = 'before';
-		}
-		else {
-			var insert_position = 'after';
-		}
-		//console.log('Insert',source_id, insert_position, dest_id);
-		// perform ajax action silently
-		api_data = {"action":"insert","sourceid":source_id,"destid":dest_id,"insert_position":insert_position};
-		const formData = new FormData();
-		for (const [key, value] of Object.entries(api_data)) {
-			formData.append(key, value);
-		}
-
-		fetch('<?php echo Config::uripath();?>/admin/categories/api', {
-			method: "POST",
-			body: formData,
-		}).then(response=>response.json()).then((data)=>{
-			if (data.success=='1') {
-				// do nothing - assume it worked
-			}
-			else {
-				console.log(data); 
-				alert('Ordering failed.');
-			}
-		}).catch(()=>{
-			alert('Ordering failed.');
-		});
-
-		// move dom rows - regardless of success of ajax - report failures
-		source_row = document.getElementById('row_id_' + source_id);
-		dest_row = document.getElementById('row_id_' + dest_id);
-		tbody = source_row.closest('tbody');
-		tbody.removeChild(source_row);
-		if (insert_position=='after') {
-			tbody.insertAfter(source_row, dest_row);
-		}
-		else {
-			tbody.insertBefore(source_row, dest_row);
-		}
-		// clean up grips - TODO: cleaner version for single grip in drop_handler
-		var grips = document.querySelectorAll('.grip');
-		grips.forEach(grip => {
-			grip.classList.remove('ready');
-		});
-	}
-
-	function dragend_handler(e) {
-		e.preventDefault();
-		console.log(e);
-		e.target.closest('table').classList.remove('dragging');
-		e.target.closest('tr').classList.remove('dragging');
-	}
-
-	// end ordering js
-</script>
