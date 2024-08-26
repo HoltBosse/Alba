@@ -37,6 +37,9 @@ CMS::Instance()->editing_content = $content;
 // inject custom content states into form
 $custom_fields = json_decode(file_get_contents(CMSPATH . '/controllers/' . $content->content_location . "/custom_fields.json"));
 $required_details_obj = json_decode(file_get_contents(ADMINPATH . '/controllers/content/views/edit/required_fields_form.json'));
+
+$required_details_obj = Hook::execute_hook_filters('content_required_details_form_obj', $required_details_obj);
+
 foreach($required_details_obj->fields as $field) {
 	if($field->name == "state") {
 		foreach($custom_fields->states as $state) {
