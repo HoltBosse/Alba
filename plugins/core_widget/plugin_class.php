@@ -45,3 +45,4 @@ class Plugin_core_widget extends Plugin {
 
 
 
+
