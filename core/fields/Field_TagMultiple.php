@@ -35,6 +35,7 @@ class Field_TagMultiple extends Field_Select {
 
 		$this->multiple = $config->multiple ?? true;
 		$this->slimselect = $config->slimselect ?? true;
+		$this->content_type = $config->content_type;
 
 		$this->select_options = [];
 		if ($this->content_type) {

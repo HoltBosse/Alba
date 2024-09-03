@@ -49,6 +49,9 @@ foreach($required_details_obj->fields as $field) {
 			];
 		}
 	}
+	if($field->name == "tags") {
+		$field->content_type = $content_type;
+	}
 }
 
 // prep forms
