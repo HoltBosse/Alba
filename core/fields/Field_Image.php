@@ -9,6 +9,8 @@ class Field_Image extends Field {
 	public $images_per_page;
 	public $tags;
 	public $coltype;
+	public $upload_endpoint;
+	public $listing_endpoint;
 
 	function __construct($id="") {
 		$this->id = $id;
@@ -58,7 +60,7 @@ class Field_Image extends Field {
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
 		echo "<button type='button' id='trigger_image_crop_{$this->id}' class='button btn is-primary'>Crop Image</button>";
-		echo "&nbsp;<a href='" . Config::uripath() . "/admin/images/show?filter=upload' target='_blank' type='button' id='trigger_image_upload_{$this->id}' class='button btn is-small is-info is-light'>Upload New Image</a>";
+		echo "&nbsp;<a href='{$this->upload_endpoint}' target='_blank' type='button' id='trigger_image_upload_{$this->id}' class='button btn is-small is-info is-light'>Upload New Image</a>";
 		echo "<button type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";	
 		
 		
@@ -209,7 +211,7 @@ class Field_Image extends Field {
 				Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
 			
 				// fetch images
-				fetch('<?php echo Config::uripath();?>/image/list_images',
+				fetch('<?php echo $this->listing_endpoint;?>',
 					{
 						method: "POST",
 						body: fetchFormData,
@@ -318,6 +320,8 @@ class Field_Image extends Field {
 		$this->mimetypes = $config->mimetypes ?? null;
 		$this->images_per_page = $config->images_per_page ?? 50;
 		$this->tags = $config->tags ?? null;
+		$this->upload_endpoint = $config->upload_endpoint ?? Config::uripath() . "/admin/images/show?filter=upload";
+		$this->listing_endpoint = $config->listing_endpoint ?? Config::uripath() . "/image/list_images";
 	}
 
 	public function validate() {
