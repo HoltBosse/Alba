@@ -235,4 +235,70 @@ class Image {
             </script>
         <?php
     }
+
+    public static function get_uploader_zone_css() {
+        return "
+            #upload_space {
+                height:10rem;
+                padding:1rem;
+                margin:1rem;
+                border:2px dashed #aaa;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                transition:all 0.3s ease;
+                
+                h1 {
+                    font-size:2rem;
+                    opacity:0.3;
+                    font-weight:900;
+                }
+                
+                &.ready {
+                    border:2px dashed #aaa;
+                    background:#cec;
+                }
+            }
+        ";
+    }
+
+    public static function add_image_upload_dialog() {
+        ?>
+            <style>
+                <?php echo Image::get_uploader_zone_css(); ?>
+            </style>
+            <script>
+                window.load_img_uploader = function() {
+                    let markup = `
+                        <div class="modal-background"></div>
+                        <div class="modal-card">
+                            <header class="modal-card-head">
+                                <p class="modal-card-title">Upload Image</p>
+                                <button class="delete" aria-label="close"></button>
+                            </header>
+                            <section class="modal-card-body">
+                                <div id="upload_space"><h1>Drag & Drop New Images Here</h1></div>
+                                <br>
+                                <input id="regular_upload" type="file" multiple="">
+                            </section>
+                            <footer class="modal-card-foot"></footer>
+                        </div>
+                    `;
+
+                    let modal = document.createElement("div");
+                    modal.id="image_uploader";
+                    modal.classList.add("modal");
+                    modal.classList.add("is-active");
+                    modal.innerHTML = markup;
+                    modal.querySelector("button.delete").addEventListener("click", (e)=>{
+                        e.target.closest("#image_uploader").remove();
+                    });
+                    document.body.appendChild(modal);
+
+                    <?php echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/upload_space_handling.js"); ?>
+                }
+
+            </script>
+        <?php
+    }
 }

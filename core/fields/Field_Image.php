@@ -23,6 +23,11 @@ class Field_Image extends Field {
 	public function display($repeatable_template=false) {
 		//add the image editor
 		Image::add_image_js_editor();
+		Image::add_image_upload_dialog();
+		echo "<script>";
+			echo "window.max_upload_size_bytes = " . File::get_max_upload_size_bytes() . ";";
+			echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/image_upload_handling.js");
+		echo "</script>";
 
 		// repeatable template boolean initiated in Field_Repeatable.php if inside repeatable form
 
@@ -60,7 +65,8 @@ class Field_Image extends Field {
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
 		echo "<button type='button' id='trigger_image_crop_{$this->id}' class='button btn is-primary'>Crop Image</button>";
-		echo "&nbsp;<a href='{$this->upload_endpoint}' target='_blank' type='button' id='trigger_image_upload_{$this->id}' class='button btn is-small is-info is-light'>Upload New Image</a>";
+		//href='{$this->upload_endpoint}'
+		echo "<button type='button' id='trigger_image_upload_{$this->id}' class='button btn is-info is-light upload_new_image_button'>Upload New Image</a>";
 		echo "<button type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";	
 		
 		
@@ -117,7 +123,12 @@ class Field_Image extends Field {
 			}
 
 			handle_img_editor();
-		})
+		});
+
+		document.getElementById("trigger_image_upload_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
+			window.image_upload_el = "<?php echo $this->id; ?>";
+			window.load_img_uploader();
+		});
 	
 		window.cur_media_page = 1;
 		window.cur_media_searchtext = null;
