@@ -27,12 +27,19 @@ function do_upload(e) {
 
 	// check against max upload size
 	var uploaded_size_total=0;
+	let invalid_counter = 0;
 	for (var i = 0; i < myfiles.length; i++) {
+		console.log(myfiles[i].type);
 		if (!valid_image_types[myfiles[i].type]) {
             // skip anything but png or jpg
+			invalid_counter++;
             continue;
         }
 		uploaded_size_total += myfiles[i].size;
+	}
+	if(invalid_counter == myfiles.length) {
+		alert("Unsupported media type(s)!");
+		return false;
 	}
 	if (uploaded_size_total > max_upload_size_bytes) {
 		alert('Sorry, you must reduce the number of images or their sizes to all fit below the max upload limit shown.');

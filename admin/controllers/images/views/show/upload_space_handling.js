@@ -18,6 +18,7 @@ uploader.addEventListener("dragleave", (e)=>{
 uploader.addEventListener("drop", (e)=>{
     e.preventDefault();
     e.stopPropagation();
+    e.target.classList.remove('ready');
     document.querySelector("#image_uploader")?.remove();
 	do_upload(e);
 });
