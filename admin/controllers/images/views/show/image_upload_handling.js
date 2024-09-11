@@ -64,7 +64,7 @@ function do_upload(e) {
 			<button class="delete" aria-label="close"></button>
 			</header>
 			<section class="modal-card-body">
-			<form id='image_upload_form' action='<?php echo Config::uripath();?>/admin/images/uploadv2' method="POST" enctype="multipart/form-data">
+			<form id='image_upload_form' action='/admin/images/uploadv2' method="POST" enctype="multipart/form-data">
 			</form>
 			</section>
 			<footer class="modal-card-foot">
@@ -162,7 +162,8 @@ function do_upload(e) {
 		upload_dialog.showModal();
 
 		// send xhr data
-		xhr.open('POST', window.uripath + '/admin/images/uploadv2', true);
+		let url = window.hasOwnProperty("upload_endpoint") ? window.upload_endpoint : window.uripath + '/admin/images/uploadv2';
+		xhr.open('POST', url, true);
 		xhr.onload = (e)=>{
 			if (xhr.readyState === 4) {
 				if (xhr.status === 200) {

@@ -127,6 +127,7 @@ class Field_Image extends Field {
 
 		document.getElementById("trigger_image_upload_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
 			window.image_upload_el = "<?php echo $this->id; ?>";
+			window.upload_endpoint = "<?php echo $this->upload_endpoint; ?>";
 			window.load_img_uploader();
 		});
 	
@@ -331,7 +332,7 @@ class Field_Image extends Field {
 		$this->mimetypes = $config->mimetypes ?? null;
 		$this->images_per_page = $config->images_per_page ?? 50;
 		$this->tags = $config->tags ?? null;
-		$this->upload_endpoint = $config->upload_endpoint ?? Config::uripath() . "/admin/images/show?filter=upload";
+		$this->upload_endpoint = $config->upload_endpoint ?? Config::uripath() . "/admin/images/uploadv2";
 		$this->listing_endpoint = $config->listing_endpoint ?? Config::uripath() . "/image/list_images";
 	}
 
