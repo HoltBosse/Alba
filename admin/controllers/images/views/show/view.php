@@ -113,25 +113,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <style>
 
 
-#upload_space {
-	height:10rem;
-	padding:1rem;
-	margin:1rem;
-	border:2px dashed rgba(0,0,0,0.1);
-	display:flex;
-	align-items: center;
-	justify-content: center;
-	transition:all 0.3s ease;
-}
-#upload_space h1 {
-	font-size:2rem;
-	opacity:0.3;
-	font-weight:900;
-}
-#upload_space.ready {
-	border:2px dashed rgba(0,0,0,0.5);
-	background:#cec;
-}
+<?php echo Image::get_uploader_zone_css(); ?>
 
 #all_images {
 	display:flex;
@@ -252,33 +234,15 @@ dialog::backdrop {
 
 <?php endif; // skipped display of all images if filter==upload ?>
 
-<div id='upload_modal' class="modal">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Upload images</p>
-      <button class="delete" aria-label="close"></button>
-    </header>
-    <section class="modal-card-body">
-      <form id='image_upload_form' action='<?php echo Config::uripath();?>/admin/images/uploadv2' method="POST" enctype="multipart/form-data">
-	  </form>
-    </section>
-    <footer class="modal-card-foot">
-      <button onclick='document.getElementById("image_upload_form_submit").click();' class="button is-success">Upload</button>
-      <button class="button cancel">Cancel</button>
-    </footer>
-  </div>
-</div>
-
-<dialog id="uploading_progress_dialog">
-	<section>
-		<p>Uploading... Please wait</p>
-	</section>
-</dialog>
-
 <?php if ($autoclose):?>
 	<script>window.autoclose = true;</script>
 <?php else: ?>
 	<script>window.autoclose = false;</script>
 <?php endif; ?>
-<script src='<?php echo Config::uripath();?>/admin/controllers/images/views/show/script.js'></script>
+<script>
+	<?php
+		echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/image_upload_handling.js");
+		echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/script.js");
+		echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/upload_space_handling.js");
+	?>
+</script>
