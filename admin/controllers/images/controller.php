@@ -22,14 +22,8 @@ else {
 	elseif ($segments[1]=='action') {
 		$view = 'action';
 	}
-	elseif ($segments[1]=='discover') {
-		$view = 'discover';
-	}
 	elseif ($segments[1]=='api') {
 		$view = 'api';
-	}
-	elseif ($segments[1]=='upload') {
-		$view = 'upload';
 	}
 	elseif ($segments[1]=='uploadv2') {
 		$view = 'uploadv2';
