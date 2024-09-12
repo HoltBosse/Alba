@@ -279,7 +279,7 @@ class Image {
                             <section class="modal-card-body">
                                 <div id="upload_space"><h1>Drag & Drop New Images Here</h1></div>
                                 <br>
-                                <input id="regular_upload" type="file" multiple="">
+                                <input accept="image/*" id="regular_upload" type="file" multiple="">
                             </section>
                             <footer class="modal-card-foot"></footer>
                         </div>
