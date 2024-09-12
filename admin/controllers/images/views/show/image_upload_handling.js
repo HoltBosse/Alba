@@ -132,27 +132,28 @@ function do_upload(e) {
 		window.formdata.append('file-upload[]', myfiles[i]);
 	}
 
-	document.querySelectorAll(".upload_field .slimselectme").forEach(el=>{
-		new SlimSelect({
-			select: `#${el.id}`,
-			searchingText: 'Searching...',
-			ajax: function (search, callback) {
-				fetch('/image/gettags?searchterm=' + encodeURI(search)).then((response)=>{
-					return response.json()
-				}).then((json)=>{
-					let data = [];
-					json.data.forEach((item)=>{
-						data.push({text: item.text, value: item.value})
-					});
-
-					//console.log(data);
-					callback(data);
-				}).catch((error)=>{
-					callback(false)
-				})
-			}
+	fetch('/image/gettags').then((response)=>response.json()).then((json)=>{
+		let data = [];
+		json.data.forEach((item)=>{
+			data.push({text: item.text, value: item.value})
 		});
-	});
+
+		document.querySelectorAll(".upload_field .slimselectme").forEach(el=>{
+			json.data.forEach((item)=>{
+				let option = document.createElement("option");
+				option.value = item.value;
+				option.innerText = item.text;
+				el.appendChild(option);
+			});
+			
+			new SlimSelect({
+				select: `#${el.id}`,
+			});
+		});
+	}).catch((error)=>{
+		alert("error");
+		return;
+	})
 
 	document.getElementById('image_upload_form').addEventListener('submit',function(e){
 		// passed browser checks for fields (alt/title etc) - we'll check those again
