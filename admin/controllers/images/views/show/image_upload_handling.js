@@ -137,11 +137,6 @@ function do_upload(e) {
 			select: `#${el.id}`,
 			searchingText: 'Searching...',
 			ajax: function (search, callback) {
-				if (search.length < 3) {
-					callback('Please enter at least 3 characters')
-					return
-				}
-
 				fetch('/image/gettags?searchterm=' + encodeURI(search)).then((response)=>{
 					return response.json()
 				}).then((json)=>{
