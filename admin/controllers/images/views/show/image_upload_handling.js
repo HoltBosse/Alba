@@ -63,7 +63,7 @@ function do_upload(e) {
 			<p class="modal-card-title">Upload images</p>
 			<button class="delete" aria-label="close"></button>
 			</header>
-			<section class="modal-card-body">
+			<section class="modal-card-body" style='overflow: unset;'>
 			<form id='image_upload_form' action='/admin/images/uploadv2' method="POST" enctype="multipart/form-data">
 			</form>
 			</section>
@@ -103,6 +103,12 @@ function do_upload(e) {
                         <label>Alt</label>
                         <input name='alt[]' required/>
                     </div>
+					<div class='field' style='display: flex;'>
+						<label style='flex-shrink: 0;'>Tags</label>
+						<select multiple id="upload_dialog_ss_${id}" class="slimselectme" name='itags[]'>
+
+						</select>
+					</div>
                     <div class='field' style='${(web_friendly_blacklist[myfiles[i].type] ? "display:none;" : "")}'>
                         <label>Web Friendly</label>
                         <select name='web_friendly[]'>
@@ -126,6 +132,33 @@ function do_upload(e) {
 		window.formdata.append('file-upload[]', myfiles[i]);
 	}
 
+	document.querySelectorAll(".upload_field .slimselectme").forEach(el=>{
+		new SlimSelect({
+			select: `#${el.id}`,
+			searchingText: 'Searching...',
+			ajax: function (search, callback) {
+				if (search.length < 3) {
+					callback('Please enter at least 3 characters')
+					return
+				}
+
+				fetch('/image/gettags?searchterm=' + encodeURI(search)).then((response)=>{
+					return response.json()
+				}).then((json)=>{
+					let data = [];
+					json.data.forEach((item)=>{
+						data.push({text: item.text, value: item.value})
+					});
+
+					//console.log(data);
+					callback(data);
+				}).catch((error)=>{
+					callback(false)
+				})
+			}
+		});
+	});
+
 	document.getElementById('image_upload_form').addEventListener('submit',function(e){
 		// passed browser checks for fields (alt/title etc) - we'll check those again
 		// server side
@@ -134,11 +167,14 @@ function do_upload(e) {
 		// images already present in window.formdata - add title + text
 		let alt_texts_arr = document.getElementsByName('alt[]');
 		let title_texts_arr = document.getElementsByName('title[]');
+		let tags_values_array = document.getElementsByName('itags[]');
+		console.log(tags_values_array);
 		/* console.log(alt_texts_arr);
 		console.log(title_texts_arr); */
 		for (var i=0; i<alt_texts_arr.length; i++) {
 			window.formdata.append('alt[]', alt_texts_arr[i].value);
 			window.formdata.append('title[]', title_texts_arr[i].value);
+			window.formdata.append('tags[]', JSON.stringify(Array.from(tags_values_array[i].selectedOptions).map(v=>v.value)));
 		}
 		// got all our data - hide form
 		document.getElementById('image_upload_form').innerHTML = "<p>Uploading...</p>";
@@ -167,6 +203,7 @@ function do_upload(e) {
 		}).then(response=>response.json()).then((data)=>{
 			// OK - Do something
 			//console.logconsole.log(xhr.responseText);
+			console.log(data);
 
 			// close when done injected in view when filter=upload in place
 			if (window.hasOwnProperty('close_when_done')) {
@@ -190,5 +227,7 @@ function do_upload(e) {
 			upload_dialog.remove();
 			alert("Upload error!");
 		});
+
+		modal.remove();
 	});
 }

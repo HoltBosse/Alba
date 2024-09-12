@@ -8,6 +8,8 @@ if (CMS::Instance()->user->username=="guest") {
 	CMS::Instance()->queue_message("Must be logged in to upload media",Config::uripath() . '/admin');
 }
 
+header('Content-Type: application/json; charset=utf-8');
+
 /*
 	state 0: invalid
 	state 1: valid+thumbnails
@@ -18,6 +20,7 @@ $image_types_data = File::$image_types;
 $uploaded_files_array = $_FILES['file-upload'];
 $alts = Input::getvar('alt','ARRAYOFSTRING');
 $titles = Input::getvar('title','ARRAYOFSTRING');
+$tags = Input::getvar('tags','ARRAYOFSTRING');
 $web_friendly_array = Input::getvar('web_friendly','ARRAYOFINT');
 $directory = CMSPATH . '/images/processed';
 $uploaded_files = [];
@@ -119,6 +122,10 @@ foreach ($_FILES["file-upload"]["error"] as $key => $error) {
 				unlink($src);
 			}
 			$processed[] = $all_image_files[$n];
+
+			foreach(json_decode($tags[$n]) as $tag_id) {
+				DB::exec("insert into tagged (content_id, tag_id, content_type_id) values (?,?,-1)", [$img_ids[sizeof($img_ids)-1], $tag_id]);
+			}
 		}
 		else {
 			// TODO: handle db insert error - shouldn't happen, but need to return an appropriate JSON string to be handled
@@ -144,6 +151,7 @@ echo json_encode((object) [
 	"msg"=>"Images uploaded",
 	"files"=>$uploaded_files,
 	"ids"=>implode(",",$img_ids),
+	"tags"=>json_encode($tags),
 	"urls"=>implode(",", array_map(function($c){ return "/image/$c"; }, $img_ids)),
 ]);
 exit(0);

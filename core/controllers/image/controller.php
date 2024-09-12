@@ -11,6 +11,7 @@ $segsize = sizeof($segments);
 
 // handle list api request
 if ($segments[1]=='list_images') {
+	header('Content-Type: application/json; charset=utf-8');
 	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING')));
 	$searchtext = Input::getvar('searchtext','STRING');
 	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
@@ -72,6 +73,36 @@ if ($segments[1]=='list_images') {
 		
 	//$list = $stmt->fetchAll();
 	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).', "tags": "' . ($tags ?? "none") . '", "query": "' . $query . '"}';
+	exit(0);
+} elseif($segments[1]=='gettags') {
+	header('Content-Type: application/json; charset=utf-8');
+	$tags = DB::fetchall(
+		"SELECT title as text, id as value
+		FROM tags
+		WHERE (
+			(
+				filter=2
+				AND id IN (
+					SELECT tag_id
+					FROM tag_content_type
+					WHERE content_type_id=?
+				)
+			) OR (
+				filter=1
+				AND id NOT IN (
+					SELECT tag_id
+					FROM tag_content_type
+					WHERE content_type_id=?
+				)
+			)
+		)
+		AND title LIKE ?
+		AND state >= 1",
+		[-1, -1, "%" . urldecode($_GET['searchterm']) . "%"]
+	);
+	echo json_encode((object) [
+		"data"=>$tags
+	]);
 	exit(0);
 }
 
