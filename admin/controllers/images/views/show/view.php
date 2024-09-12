@@ -63,7 +63,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <div id='upload_space'><h1>Drag & Drop New Images Here</h1></div>
 
 <section class='section'>
-	<input id='regular_upload' type="file" multiple/>
+	<input accept="image/*" id='regular_upload' type="file" multiple/>
 </section>
 
 <?php if (!$filter=='upload'):?>
