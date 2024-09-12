@@ -75,8 +75,6 @@ $navigation = [
             "label"=>"media",
             "links"=>[
                 "manage images"=>"/admin/images/show",
-                "hr"=>"hr",
-                "process FTP / uploaded images"=>"/admin/images/discover",
             ]
         ]
     ],
