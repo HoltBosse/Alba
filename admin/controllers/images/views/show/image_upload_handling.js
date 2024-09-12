@@ -150,7 +150,7 @@ function do_upload(e) {
 				select: `#${el.id}`,
 			});
 		});
-	}).catch((error)=>{
+	}).catch(()=>{
 		alert("error");
 		return;
 	})
