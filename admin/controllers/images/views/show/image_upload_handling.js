@@ -127,7 +127,6 @@ function do_upload(e) {
 	}
 
 	document.getElementById('image_upload_form').addEventListener('submit',function(e){
-		var xhr = new XMLHttpRequest();
 		// passed browser checks for fields (alt/title etc) - we'll check those again
 		// server side
 		// don't actually submit
@@ -145,10 +144,10 @@ function do_upload(e) {
 		document.getElementById('image_upload_form').innerHTML = "<p>Uploading...</p>";
 		document.getElementById('upload_modal').closest('.modal').classList.remove('is-active');
 
-		for (var pair of window.formdata.entries()) {
+		/* for (var pair of window.formdata.entries()) {
 			console.log(pair[0], pair[1]); 
 			console.log('----');
-		}
+		} */
 		//return false; // early exit for testing
 
 		let upload_dialog = document.createElement("dialog");
@@ -161,47 +160,35 @@ function do_upload(e) {
 		document.body.appendChild(upload_dialog);
 		upload_dialog.showModal();
 
-		// send xhr data
 		let url = window.hasOwnProperty("upload_endpoint") ? window.upload_endpoint : window.uripath + '/admin/images/uploadv2';
-		xhr.open('POST', url, true);
-		xhr.onload = (e)=>{
-			if (xhr.readyState === 4) {
-				if (xhr.status === 200) {
-					// OK - Do something
-					//console.logconsole.log(xhr.responseText);
+		fetch(url, {
+			method: "POST",
+			body: window.formdata,
+		}).then(response=>response.json()).then((data)=>{
+			// OK - Do something
+			//console.logconsole.log(xhr.responseText);
 
-					// close when done injected in view when filter=upload in place
-					if (window.hasOwnProperty('close_when_done')) {
-						window.close();
-					} else if(window.hasOwnProperty('image_upload_el')) {
-						upload_dialog.remove();
-						console.log("nope");
-						//window.image_upload_el
-						let res = JSON.parse(xhr.response);
-						console.log(res);
-						console.log(document.getElementById(window.image_upload_el));
-						document.getElementById(window.image_upload_el).value = res.ids.split(",")[0];
-						document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap img").src = `${res.urls.split(",")[0]}/thumb`;
-						document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap").classList.add("active");
-
-						delete window.image_upload_el;
-					} else {
-						window.location.reload();
-					}
-				} else {
-					// ERROR - Do something
-					// console.error(xhr.statusText);
-					alert("Upload error!");
-				}
+			// close when done injected in view when filter=upload in place
+			if (window.hasOwnProperty('close_when_done')) {
+				window.close();
+			} else if(window.hasOwnProperty('image_upload_el')) {
 				upload_dialog.remove();
+
+				//console.log(data);
+				//console.log(document.getElementById(window.image_upload_el));
+
+				document.getElementById(window.image_upload_el).value = data.ids.split(",")[0];
+				document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap img").src = `${data.urls.split(",")[0]}/thumb`;
+				document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap").classList.add("active");
+
+				delete window.image_upload_el;
+			} else {
+				window.location.reload();
 			}
-		};
-		xhr.onerror = function (e) {
-			// ERROR - Do something
-			// console.error(xhr.statusText);
+			upload_dialog.remove();
+		}).catch(()=>{
 			upload_dialog.remove();
 			alert("Upload error!");
-		};
-		xhr.send(window.formdata);
+		});
 	});
 }
