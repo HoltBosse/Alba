@@ -14,7 +14,29 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	
 <?php endif; ?>
 
+<script>
+	function unloadCheckerFunction(e) {
+		let blockStatus = false;
+		document.querySelectorAll("input").forEach((i)=>{
+			if(i.value != i.getAttribute("value, textarea") && !i.closest(".slimselect_select")) {
+				blockStatus = true;
+			}
+			console.log("blockeeddddd");
+		});
 
+		if(blockStatus) {
+			console.log(e.target);
+			e.preventDefault();
+			e.returnValue = true;
+		}
+	}
+	window.addEventListener("beforeunload", unloadCheckerFunction);
+	window.addEventListener("load", ()=>{
+		document.querySelector("form").addEventListener("submit", ()=>{
+			window.removeEventListener("beforeunload", unloadCheckerFunction);
+		});
+	});
+</script>
 
 <hr>
 
