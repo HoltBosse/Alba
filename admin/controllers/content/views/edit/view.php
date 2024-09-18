@@ -17,8 +17,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <script>
 	function unloadCheckerFunction(e) {
 		let blockStatus = false;
-		document.querySelectorAll("input").forEach((i)=>{
-			if(i.value != i.getAttribute("value, textarea") && !i.closest(".slimselect_select")) {
+		document.querySelectorAll("input, textarea").forEach((i)=>{
+			if(i.value != (i.getAttribute("value") ?? "")) {
 				blockStatus = true;
 			}
 		});
