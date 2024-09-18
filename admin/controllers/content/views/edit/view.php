@@ -21,11 +21,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			if(i.value != i.getAttribute("value, textarea") && !i.closest(".slimselect_select")) {
 				blockStatus = true;
 			}
-			console.log("blockeeddddd");
 		});
 
 		if(blockStatus) {
-			console.log(e.target);
 			e.preventDefault();
 			e.returnValue = true;
 		}
