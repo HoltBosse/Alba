@@ -163,7 +163,9 @@ class Form {
 			else {
 				$pair->value = $field->default;
 			}
-			$name_value_pairs[] = $pair;
+			if($field->save!==false) {
+				$name_value_pairs[] = $pair;
+			}
 		}
 		return json_encode ($name_value_pairs);
 	}
@@ -172,6 +174,12 @@ class Form {
 		$json_obj = json_decode($json);
 		if ($json_obj) {
 			foreach ($json_obj as $option) {
+				/*
+					this is a legacy check that exists due to:
+					1. the page form having fields without save
+					2. serialization logic not handling save field
+					3. serialization handling of fields without names
+				*/
 				if ($option->name!=='error!!!') {
 					$field = $this->get_field_by_name($option->name); 
 					if (is_object($field)) {
