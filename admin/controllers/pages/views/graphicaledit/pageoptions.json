@@ -73,6 +73,28 @@
             "name": "ogdescription",
             "id": "ogdescription",
             "label": "Open Graph Description"
+        },
+        {
+            "type": "HTML",
+            "html": "<hr>",
+            "save": false
+        },
+        {
+            "type": "Select",
+            "name": "displaymode",
+            "id": "displaymode",
+            "label": "Display",
+            "slimselect": true,
+            "select_options": [
+                {
+                    "text": "Desktop",
+                    "value": "desktop"
+                },
+                {
+                    "text": "Mobile",
+                    "value": "mobile"
+                }
+            ]
         }
     ]
 }
