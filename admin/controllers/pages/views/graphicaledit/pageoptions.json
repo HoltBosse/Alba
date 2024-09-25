@@ -1,0 +1,74 @@
+{
+	"id":"pageoptions",
+	"fields":[
+        {
+            "type": "Text",
+            "name": "pagetitle",
+            "id": "pagetitle",
+            "label": "Title"
+        },
+        {
+            "type": "Text",
+            "name": "pagealias",
+            "id": "pagealias",
+            "label": "Alias"
+        },
+        {
+            "type": "Select",
+            "name": "parentpage",
+            "id": "parentpage",
+            "label": "Parent Page",
+            "slimselect": true,
+            "select_options": [
+                {
+                    "text": "fake page option",
+                    "value": 1
+                },
+                {
+                    "text": "another fake page option",
+                    "value": 2
+                }
+            ]
+        },
+        {
+            "type": "Select",
+            "name": "template",
+            "id": "template",
+            "label": "Template",
+            "slimselect": true,
+            "select_options": [
+                {
+                    "text": "Pico",
+                    "value": "pico_graphicaledit"
+                },
+                {
+                    "text": "Bulma",
+                    "value": "bulma_graphicaledit"
+                }
+            ]
+        },
+        {
+            "type": "HTML",
+            "html": "<hr>",
+            "save": false
+        },
+        {
+            "type": "Image",
+            "name": "ogimage",
+            "id": "ogimage",
+            "label": "Open Graph Image"
+        },
+        {
+            "type": "Text",
+            "name": "ogtitle",
+            "id": "ogtitle",
+            "label": "Open Graph Title"
+        },
+        {
+            "type": "Text",
+            "name": "ogdescription",
+            "id": "ogdescription",
+            "label": "Open Graph Description"
+        }
+    ]
+}
