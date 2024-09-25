@@ -44,6 +44,10 @@
                 {
                     "text": "Bulma",
                     "value": "bulma_graphicaledit"
+                },
+                {
+                    "text": "Sakura",
+                    "value": "sakura_graphicaledit"
                 }
             ]
         },
