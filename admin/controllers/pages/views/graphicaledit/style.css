@@ -22,6 +22,10 @@ body {
     > main {
         padding-top: 3rem;
 
+        &.mobile {
+            max-width: 414px !important;
+        }
+
         .page_content_layout {
             display: flex;
             flex-direction: column;
