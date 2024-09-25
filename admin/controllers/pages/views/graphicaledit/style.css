@@ -1,0 +1,61 @@
+body > section#main > div.container {
+    max-width: unset !important;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+    max-height: 100dvh;
+}
+
+#main {
+    margin-top: 0;
+    height: 100%;
+}
+
+.ge_section_wrapper {
+    display: flex;
+    gap: 1rem;
+    height: 100%;
+
+    > main {
+        padding-top: 3rem;
+
+        .page_content_layout {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+
+    > aside {
+        padding-top: 3rem;
+        width: 30rem;
+        max-width: 30rem;
+        box-shadow: 0 0 15px rgb(0 0 0 / 50%);
+
+        .pagecontrols {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            padding: 0 1rem;
+
+            input {
+                display: none;
+            }
+        }
+
+        .page_config_tab, .element_config_tab {
+            display: none;
+            padding: 0 1rem;
+
+            hr.image_field_hr.image_field_bottom, hr.image_field_hr.image_field_top {
+                display: none;
+            }
+        }
+
+        &:has([data-for="page_config_tab"]:checked) .page_config_tab, &:has([data-for="element_config_tab"]:checked) .element_config_tab {
+            display: block;
+        }
+    }
+}
