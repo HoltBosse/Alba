@@ -39,6 +39,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <hr>
 
 <form method="POST" action="" enctype="multipart/form-data">
+<input type="hidden" name="http_referer_form" value="<?php echo $_SERVER['HTTP_REFERER'];?>">
 
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap '>
