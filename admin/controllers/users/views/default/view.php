@@ -118,6 +118,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			select:'#user_search_groups'
 		});
 		</script>
+
+		<?php Hook::execute_hook_actions('render_custom_user_search_filters'); ?>
 		
 		<div class='field'>
 			<label class="label">&nbsp;</label>

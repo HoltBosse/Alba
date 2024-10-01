@@ -17,6 +17,7 @@ class Users_Search {
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $filter_pdo_params;
+	private $custom_search_params;
 
 	public function __construct() {
 		$this->order_by = "id";
@@ -31,6 +32,7 @@ class Users_Search {
 		$this->tags=[];
 		$this->groups=[];
 		$this->filter_pdo_params = [];
+		$this->custom_search_params = [];
 		$this->created_by_cur_user = false; // restrict to created by currently logged in user. 
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}	
@@ -55,6 +57,9 @@ class Users_Search {
 			}
 		}
 		$count_select = " count(u.id) as c ";
+
+		$select = Hook::execute_hook_filters('custom_user_search_select', $select);
+
 		$from = " from ( users u ";
 
 		// if custom user field exists as filter - needs to be added in from/where not as left join
@@ -84,6 +89,8 @@ class Users_Search {
 				}
 			}
 		}
+
+		$from = Hook::execute_hook_filters('custom_user_search_from', $from);
 
 		$where = ' where ';
 
@@ -156,6 +163,10 @@ class Users_Search {
 			}
 		}
 
+		$where = Hook::execute_hook_filters('custom_user_search_where', $where); 
+		
+		$this->custom_search_params = Hook::execute_hook_filters('custom_user_search_params', $this->custom_search_params); 
+
 		$count_query = $query . $count_select . $from . $where; 
 		$query = $query . $select . $from . $where;
 		
@@ -175,14 +186,14 @@ class Users_Search {
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
-			$result = DB::fetchall($query,array_merge([$like,$like],$this->filter_pdo_params ?? [])); // title and note
+			$result = DB::fetchall($query,array_merge([$like,$like],$this->filter_pdo_params ?? [], $this->custom_search_params ?? [])); // title and note
 			// set count
-			$this->count = DB::fetch($count_query,array_merge([$like,$like],$this->filter_pdo_params ?? []))->c ?? 0;
+			$this->count = DB::fetch($count_query,array_merge([$like,$like],$this->filter_pdo_params ?? [], $this->custom_search_params ?? []))->c ?? 0;
 		}
 		else {
-			$result = DB::fetchall($query,$this->filter_pdo_params ?? []);
+			$result = DB::fetchall($query,array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []));
 			// set count
-			$this->count = DB::fetch($count_query,$this->filter_pdo_params ?? [])->c ?? 0;
+			$this->count = DB::fetch($count_query,array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []))->c ?? 0;
 		}
 		return $result;
 	}
