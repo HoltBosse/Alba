@@ -39,9 +39,6 @@ defined('CMSPATH') or die;
         xhr.send(params);
         return xhr;
     }
-
-    // no js insertAfter - only insertBefore. silly.
-    Object.prototype.insertAfter = function (newNode) { this.parentNode.insertBefore(newNode, this.nextSibling); }
 </script>
 
 <?php
