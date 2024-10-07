@@ -114,7 +114,7 @@ if ($required_details_form->is_submitted()) {
 		
 	}
 	else {
-		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
+		CMS::Instance()->queue_message('Invalid form','danger');	
 	}
 	//CMS::Instance()->queue_message('content saved','success',Config::uripath() . '/admin/content/show');
 }
