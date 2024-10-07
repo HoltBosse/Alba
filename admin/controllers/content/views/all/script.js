@@ -101,7 +101,7 @@ function drop_handler(e) {
     tbody = source_row.closest('tbody');
     tbody.removeChild(source_row);
     if (insert_position=='after') {
-        tbody.insertAfter(source_row, dest_row);
+        tbody.insertBefore(source_row, dest_row.nextSibling);
     }
     else {
         tbody.insertBefore(source_row, dest_row);
