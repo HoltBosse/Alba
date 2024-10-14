@@ -9,6 +9,13 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Checkbox extends Field {
 
 	public function display() {
+		if ($this->in_repeatable_form===null) {
+			$repeatable_id_suffix='';
+		}
+		else {
+			$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
+			$this->id = $this->id . $repeatable_id_suffix;
+		}
 		echo "<div class='field'>";
 			$required="";
 			if ($this->required) {$required=" required ";}
@@ -17,10 +24,10 @@ class Field_Checkbox extends Field {
 			$on_selected = $this->default ? " selected " : "";
 			echo "<select style='display:none;' id='{$this->id}' {$this->get_rendered_name()}><option $off_selected value='0'>Off</option><option $on_selected value='1'>On</option></select>";
 			// visible checkbox + label
-			echo "<label for='checkbox_{$this->id}{{repeatable_id_suffix}}' class='checkbox'>";
+			echo "<label for='checkbox_{$this->id}' class='checkbox'>";
 				if ($this->default) {$checked=" checked=checked ";} 
 				$onchange_js = 'this.closest(".field").querySelector("select").value=(this.checked ? 1 : 0);'; // set option to match checkbox
-				echo "<input onchange='$onchange_js' $checked value='1' type='checkbox' id='checkbox_{$this->id}{{repeatable_id_suffix}}' >"; // no name given, not submitted
+				echo "<input onchange='$onchange_js' $checked value='1' type='checkbox' id='checkbox_{$this->id}' >"; // no name given, not submitted
 				echo "&nbsp;" . $this->label;
 			echo "</label>";
 			if ($this->description) {
