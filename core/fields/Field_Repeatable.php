@@ -188,7 +188,6 @@ class Field_Repeatable extends Field {
 				$all_valid=false;
 			}
 		}
-		return true;
-		//return $all_valid;
+		return $all_valid;
 	}
 }
