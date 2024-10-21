@@ -180,7 +180,7 @@ class Field_FileUploader extends Field {
 	public function validate() {
 
 		// validation built to always handle array even if only one file in array
-		$num_files = count($_FILES[$this->name]['name']);
+		$num_files = count($_FILES[$this->name]['name'] ?? []);
 
 		// loop over all files
 		//$post_total_size = 0;
