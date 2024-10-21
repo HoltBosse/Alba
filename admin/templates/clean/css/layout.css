@@ -380,8 +380,8 @@ section#version_comparisons {
 }
 
 select[data-ssid] {
-	display: unset !important;
-    width: 0px;
-    opacity: 0;
-    height: 0;
+    display: block !important;
+    width: 0 !important;
+    opacity: 0 !important;
+    height: 0 !important;
 }
