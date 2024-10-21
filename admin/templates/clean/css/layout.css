@@ -378,3 +378,10 @@ section#version_comparisons {
     /* border-left: 2px solid #aaa; */
     padding: 2rem;
 }
+
+select[data-ssid] {
+	display: unset !important;
+    width: 0px;
+    opacity: 0;
+    height: 0;
+}
