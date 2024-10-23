@@ -17,7 +17,7 @@ if(sizeof($segments)==2 && $segments[1]=="parsedown") {
         echo json_encode($response);
     }
 
-    if($_GET["markup"]) {
+    if(isset($_GET["markup"])) {
 
         /* $markup = '
         Welcome to the demo:
