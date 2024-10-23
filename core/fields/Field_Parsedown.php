@@ -3,6 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Parsedown extends Field {
 	public $imageapi;
+	public $placeholder;
 
 	public function display() {
 		$wrapper_id = uniqid();
@@ -155,7 +156,7 @@ class Field_Parsedown extends Field {
 				</div>
 				<div class="pd_content_header_row">
 					<div class="pd_tab_content write_content active">
-						<textarea class="input pd_parsedown_content" <?php echo $this->get_rendered_name(); ?> ><?php echo $this->default; ?></textarea>
+						<textarea class="input pd_parsedown_content" placeholder='<?php echo $this->placeholder; ?>' <?php echo $this->get_rendered_name(); ?> ><?php echo $this->default; ?></textarea>
 					</div>
 					<div class="pd_tab_content preview_content">
 						<p>Content Preview Loading...</p>
@@ -539,6 +540,7 @@ class Field_Parsedown extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? '### New Text';
+		$this->placeholder = $config->placeholder ?? '';
 		// @phpstan-ignore-next-line
 		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (ADMINPATH ? "/admin/images/uploadv2" : null);
 		/*
