@@ -92,6 +92,7 @@ class Field_Parsedown extends Field {
 				/* markdown bulma fixing */
 				.preview_content {
 					margin-left: 1rem; /* fixes bulma removing space for lists and stuff */
+					min-height: 4rem;
 				}
 
 				.preview_content ul {
