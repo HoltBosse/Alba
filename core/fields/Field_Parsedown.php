@@ -3,6 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Parsedown extends Field {
 	public $imageapi;
+	public $parsedownapi;
 	public $placeholder;
 
 	public function display() {
@@ -208,7 +209,7 @@ class Field_Parsedown extends Field {
 
 						if(e.target.dataset.tab_content == "preview_content") {
 							/* todo: add uripath */
-							fetch("/api/parsedown?markup=" + encodeURIComponent(editor.querySelector(".pd_parsedown_content").value)).then((response) => response.json()).then((data) => {
+							fetch("<?php echo $this->parsedownapi . (str_contains($this->parsedownapi, "?") ? "&" : "?") ; ?>markup=" + encodeURIComponent(editor.querySelector(".pd_parsedown_content").value)).then((response) => response.json()).then((data) => {
 								console.log(data);
 								editor.querySelector(".preview_content").innerHTML = decodeURIComponent(data.data.html.replace(/\+/g, ' '));
 							});
@@ -542,6 +543,7 @@ class Field_Parsedown extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? '### New Text';
 		$this->placeholder = $config->placeholder ?? '';
+		$this->parsedownapi = $config->parsedownapi ?? "/api/parsedown";
 		// @phpstan-ignore-next-line
 		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (ADMINPATH ? "/admin/images/uploadv2" : null);
 		/*
