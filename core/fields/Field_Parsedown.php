@@ -3,6 +3,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Parsedown extends Field {
 	public $imageapi;
+	public $parsedownapi;
+	public $placeholder;
 
 	public function display() {
 		$wrapper_id = uniqid();
@@ -91,6 +93,7 @@ class Field_Parsedown extends Field {
 				/* markdown bulma fixing */
 				.preview_content {
 					margin-left: 1rem; /* fixes bulma removing space for lists and stuff */
+					min-height: 4rem;
 				}
 
 				.preview_content ul {
@@ -155,7 +158,7 @@ class Field_Parsedown extends Field {
 				</div>
 				<div class="pd_content_header_row">
 					<div class="pd_tab_content write_content active">
-						<textarea class="input pd_parsedown_content" <?php echo $this->get_rendered_name(); ?> ><?php echo $this->default; ?></textarea>
+						<textarea class="input pd_parsedown_content" placeholder='<?php echo $this->placeholder; ?>' <?php echo $this->get_rendered_name(); ?> ><?php echo $this->default; ?></textarea>
 					</div>
 					<div class="pd_tab_content preview_content">
 						<p>Content Preview Loading...</p>
@@ -206,7 +209,7 @@ class Field_Parsedown extends Field {
 
 						if(e.target.dataset.tab_content == "preview_content") {
 							/* todo: add uripath */
-							fetch("/api/parsedown?markup=" + encodeURIComponent(editor.querySelector(".pd_parsedown_content").value)).then((response) => response.json()).then((data) => {
+							fetch("<?php echo $this->parsedownapi . (str_contains($this->parsedownapi, "?") ? "&" : "?") ; ?>markup=" + encodeURIComponent(editor.querySelector(".pd_parsedown_content").value)).then((response) => response.json()).then((data) => {
 								console.log(data);
 								editor.querySelector(".preview_content").innerHTML = decodeURIComponent(data.data.html.replace(/\+/g, ' '));
 							});
@@ -539,6 +542,8 @@ class Field_Parsedown extends Field {
 		$this->missingconfig = $config->missingconfig ?? false;
 		$this->type = $config->type ?? 'error!!!';
 		$this->default = $config->default ?? '### New Text';
+		$this->placeholder = $config->placeholder ?? '';
+		$this->parsedownapi = $config->parsedownapi ?? "/api/parsedown";
 		// @phpstan-ignore-next-line
 		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (ADMINPATH ? "/admin/images/uploadv2" : null);
 		/*
