@@ -243,5 +243,3 @@ CREATE TABLE `user_actions` (
   `json` longtext NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
