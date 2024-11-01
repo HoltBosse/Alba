@@ -192,7 +192,8 @@ class Content_Search {
 			}
 			if ($tags_ok) {
 				// safe to implode without param injection
-				$where .= " and c.id in (select content_id from tagged where tag_id in (" . implode(',', $this->tags) . ")) ";
+				$where .= " and c.id in (select content_id from tagged where tag_id in (" . implode(',', $this->tags) . ") and content_type_id=?) ";
+				$this->filter_pdo_params[] = $this->type_filter;
 			}
 		}
 
