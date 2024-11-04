@@ -561,6 +561,11 @@ final class CMS {
 			exit(); // shouldn't be needed, controller should exit
 		}
 
+		if(file_exists(CMSPATH . "/core/fakefiles/" . $_SERVER["SCRIPT_URL"] . ".php")) {
+			include_once (CMSPATH . "/core/fakefiles/" . $_SERVER["SCRIPT_URL"] . ".php");
+			exit();
+		}
+
 		// override debug if chosen
 		if (Configuration::get_configuration_value('general_options','debug', $this->pdo)) {
 			Config::$debug = true;
