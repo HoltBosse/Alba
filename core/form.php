@@ -243,8 +243,7 @@ class Form {
 		
 		echo "</div>";
 
-		// @phpstan-ignore-next-line
-		$jsSafeVariableId = preg_replace("^[^a-zA-Z_$]|[^\\w$]", "_safety_", $this->id);
+		$jsSafeVariableId = preg_replace("/[^a-zA-Z_$]|[^\\w$]/", "_safety_", $this->id);
 
 		// add logic js
 		echo "
