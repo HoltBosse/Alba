@@ -49,7 +49,7 @@ class Field_TagMultiple extends Field_Select {
 			$this->select_options[] = (object) [
 				"text"=>$this->make_tag_path($tag),
 				"value"=>$tag->id,
-				"disabled"=>$tag->state ? true : false
+				"disabled"=>$tag->state ? false : true
 			];
 		}
 	}

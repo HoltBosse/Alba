@@ -55,7 +55,7 @@ class Field_Select extends Field {
 							echo "<option value='0' >{$this->empty_string}</option>";
 						}
 						foreach ($this->select_options as $select_option) {
-							$disabled = $select_option->disabled ?? false ? "" : " disabled ";
+							$disabled = $select_option->disabled ?? false ? " disabled " : "";
 							/** @var object{text: mixed, value: mixed, UpdateSelect: mixed} $select_option */
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
