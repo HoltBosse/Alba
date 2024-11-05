@@ -20,6 +20,7 @@ class Field_TagSingle extends Field_Select {
 			$this->select_options[] = (object) [
 				"text"=>$tag->title,
 				"value"=>$tag->id,
+				"disabled"=>$tag->state ? true : false
 			];
 		}
 	}
