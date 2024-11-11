@@ -13,5 +13,5 @@ jobs:
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
         with:
-          version: 'composer'
+          version: '^1.10'
           php_version: 8.0
