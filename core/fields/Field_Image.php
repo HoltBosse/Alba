@@ -60,7 +60,8 @@ class Field_Image extends Field {
 		else {
 			$active = '';
 		}
-		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img  src='".Config::uripath() . '/image/' . $this->default ."/thumb' id='image_selector_chosen_preview_{$this->id}'?></div>";
+		$previewsrc = is_numeric($this->default) ? Config::uripath() . '/image/' . $this->default . "/thumb" : $this->default;
+		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img  src='$previewsrc' id='image_selector_chosen_preview_{$this->id}'?></div>";
 		
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
@@ -236,10 +237,11 @@ class Field_Image extends Field {
 						image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
 					}
 					image_list.images.forEach(image => {
+						let datasetattribute = image.imageurl ? " data-hasimageurl='true'" : "";
 						image_list_markup += `
 						<li>
 							<a class='media_selector_selection' data-id='${image.id}'>
-							<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::uripath();?>/image/${image.id}/thumb'>
+							<img title='${image.title}' alt='${image.alt}' ${datasetattribute} src='${image.imageurl ? image.imageurl : `<?php echo Config::uripath();?>/image/${image.id}/thumb`}'>
 							<span>${image.title}</span>
 							</a>
 						</li>`;
@@ -273,23 +275,21 @@ class Field_Image extends Field {
 						e.stopPropagation();
 						var selected_image = e.target.closest('.media_selector_selection');
 						if (selected_image!==null) {
+							console.log(e.target);
 							var media_id = selected_image.dataset.id;
-							var url = `<?php echo Config::uripath();?>/image/${media_id}/web`;
-							var image_markup = `<img class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
-							console.log(image_markup);
-							// this is only for rich editor
-							//document.execCommand('insertHTML',false, image_markup);
+							var url = e.target.dataset.hasimageurl ? e.target.src  : `<?php echo Config::uripath();?>/image/${media_id}/thumb/`;
+
 							var modal = selected_image.closest('.media_selector_modal');
 							modal.parentNode.removeChild(modal);
 
 							// this is only for image field class
 							var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
-							preview.src = '<?php echo Config::uripath() . '/image/';?>' + media_id + '/thumb/';
+							preview.src = url;
 							preview.closest('.selected_image_wrap').classList.add('active');
 
 							hidden_input = document.getElementById('<?php echo $this->id;?>');
 							hidden_input.setCustomValidity('');
-							hidden_input.value = media_id;
+							hidden_input.value = e.target.dataset.hasimageurl ? url : media_id;
 
 						} // else clicked on container not on an anchor or it's children
 					});
