@@ -5,6 +5,8 @@ class Field_Contentselector extends Field_Select {
 
 	public $list_unpublished;
 	public $tags;
+	public $order_by_field;
+	public $order_by_direction;
 
 	public function get_friendly_value($helpful_info) {
 		// content_type already checked for being numeric in load_from_config function
@@ -40,6 +42,8 @@ class Field_Contentselector extends Field_Select {
 		$this->content_type = $config->content_type ?? false;
 		$this->list_unpublished = $config->list_unpublished ?? false;
 		$this->tags = $config->tags ?? false;
+		$this->order_by_field = $config->order_by_field ?? "title";
+		$this->order_by_direction = $config->order_by_direction ?? "ASC";
 
 		if (!$this->content_type) {
 			CMS::show_error('Content type required for Contentselector field in v3+');
@@ -60,7 +64,7 @@ class Field_Contentselector extends Field_Select {
 
 			if (!$this->tags) {
 				// default order is alphabetical
-				$options_all_articles = DB::fetchall("SELECT id AS value, title AS text FROM `$table_name` WHERE state >={$min_state} ORDER BY title ASC");
+				$options_all_articles = DB::fetchall("SELECT id AS value, title AS text FROM `$table_name` WHERE state >={$min_state} ORDER BY $this->order_by_field $this->order_by_direction");
 				//CMS::pprint_r ($options_all_articles);
 			}
 			else {
@@ -79,7 +83,7 @@ class Field_Contentselector extends Field_Select {
 							WHERE t.state>={$min_state}
 							AND t.alias IN ($tags_csv)
 						)
-					) ORDER BY c.title ASC"
+					) ORDER BY c.$this->order_by_field $this->order_by_direction"
 				);
 			}
 		}
