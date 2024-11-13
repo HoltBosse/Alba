@@ -142,6 +142,7 @@ class Field_Image extends Field {
 			// launch image selector
 			var media_selector = document.createElement('div');
 			media_selector.id = "media_selector";
+			media_selector.classList.add("media_selector_for_<?php echo $this->id; ?>");
 			media_selector.innerHTML =`
 			<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
 				<div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
@@ -249,9 +250,8 @@ class Field_Image extends Field {
 					image_list_markup += "</ul>";
 					media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
 					// handle click close
-					document.getElementById('media_selector_modal_close').addEventListener('click',function(e){
-						var modal = e.target.closest('.media_selector_modal');
-						modal.parentNode.removeChild(modal);
+					document.getElementById('media_selector_modal_close').addEventListener('click',(e)=>{
+						e.target.closest("#media_selector").remove();
 					});
 
 					// update page buttons
