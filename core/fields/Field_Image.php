@@ -60,8 +60,19 @@ class Field_Image extends Field {
 		else {
 			$active = '';
 		}
+		$previewsrc = $this->default;
+		$previewalt = "";
+		$previewtitle = "";
+		if(is_numeric($this->default)) {
+			$previewimagedetails = DB::fetch("SELECT * FROM media WHERE id=?", $this->default);
+			
+			$previewsrc = Config::uripath() . '/image/' . $this->default . "/thumb";
+			$previewalt = $previewimagedetails->alt;
+			$previewtitle = $previewimagedetails->title;
+		}
+
 		$previewsrc = is_numeric($this->default) ? Config::uripath() . '/image/' . $this->default . "/thumb" : $this->default;
-		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img style='max-width: 20rem; max-height: 20rem;' src='$previewsrc' id='image_selector_chosen_preview_{$this->id}'?></div>";
+		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img alt='$previewalt' title='$previewtitle' style='max-width: 20rem; max-height: 20rem;' src='$previewsrc' id='image_selector_chosen_preview_{$this->id}'?></div>";
 		
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
@@ -285,6 +296,8 @@ class Field_Image extends Field {
 							// this is only for image field class
 							var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
 							preview.src = url;
+							preview.alt = e.target.alt;
+							preview.title = e.target.title;
 							preview.closest('.selected_image_wrap').classList.add('active');
 
 							hidden_input = document.getElementById('<?php echo $this->id;?>');
