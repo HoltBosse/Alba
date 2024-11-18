@@ -53,6 +53,7 @@ class Action_contentcreate extends Actions {
                 if($input == 0) {
                     return "none";
                 } else {
+                    // @phpstan-ignore-next-line
                     $category = DB::fetch("SELECT * FROM categories WHERE id=?", $input ?? 0);
                     return $category->title;
                 }
