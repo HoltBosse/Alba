@@ -61,7 +61,7 @@ class Field_Image extends Field {
 			$active = '';
 		}
 		$previewsrc = is_numeric($this->default) ? Config::uripath() . '/image/' . $this->default . "/thumb" : $this->default;
-		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img  src='$previewsrc' id='image_selector_chosen_preview_{$this->id}'?></div>";
+		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img style='max-width: 20rem; max-height: 20rem;' src='$previewsrc' id='image_selector_chosen_preview_{$this->id}'?></div>";
 		
 
 		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
