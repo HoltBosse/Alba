@@ -367,6 +367,7 @@ div.preview {
 			<input class='input' id='widget_title_filter' name='widget_title_filter'></input>
 			<button onClick='document.querySelector("#widget_title_filter").value=""; update_widget_title_filter();' class='is-small button'>Clear</button>
 		</div>
+		<p><em>Right click or long-tap to preview a widget</em></p>
 		<hr>
 	  	<div class='widget_buttons buttons'>
 			<?php $all_published_widgets = DB::fetchall('SELECT w.*, wt.title AS widget_type FROM widgets w, widget_types wt WHERE wt.id = w.type AND w.state >= 0');
