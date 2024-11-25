@@ -329,6 +329,12 @@ div.position_tag_wrap.active {
     </header>
     <section class="modal-card-body">
       <!-- Content ... -->
+		<div class='widget_title_filter_wrap field is-grouped'>
+			<label class='label' for='widget_title_filter'>Search:</label>
+			<input class='input' id='widget_title_filter' name='widget_title_filter'></input>
+			<button onClick='document.querySelector("#widget_title_filter").value=""; update_widget_title_filter();' class='is-small button'>Clear</button>
+		</div>
+		<hr>
 	  	<div class=''>
 			<?php $all_published_widgets = DB::fetchall('select * from widgets where state >= 0');
 			foreach ($all_published_widgets as $widget):?>
@@ -344,6 +350,24 @@ div.position_tag_wrap.active {
 </div>
 
 <script>
+
+	// handle widget title filter
+	function update_widget_title_filter() {
+		let search_value = document.querySelector('#widget_title_filter').value;
+		// set visibility of add widget buttons
+		document.querySelectorAll('.add_widget_to_override').forEach(add_widget_button => {
+			if (add_widget_button.dataset.widgettitle.toLowerCase().includes(search_value.toLowerCase()) || !search_value) {
+				// show
+				add_widget_button.style.display="revert";
+			}
+			else {
+				add_widget_button.style.display="none";
+			}
+		});
+	}
+	document.querySelector('#widget_title_filter')?.addEventListener('input', function(e){
+		update_widget_title_filter();
+	});
 
 	function validate_view_options() {
 		view_options = document.getElementById('content_type_controller_view_options');
