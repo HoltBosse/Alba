@@ -1,6 +1,25 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+// check for widget preview
+if (CMS::Instance()->uri_segments[2]=="widget_preview" && is_numeric(CMS::Instance()->uri_segments[3])) {
+	ob_end_clean();
+	ob_end_clean(); // not a mistake, a safety net
+	ob_start();
+	$widget_id = CMS::Instance()->uri_segments[3];
+	$widget = DB::fetch('SELECT * FROM widgets WHERE id=? AND state=1', $widget_id);
+	if ($widget->state==1) {
+		$type_info = Widget::get_widget_type($widget->type);
+		$widget_class_name = "Widget_" . $type_info->location;
+		$widget_of_type = new $widget_class_name();
+		$widget_of_type->load ($widget->id);
+		$widget_of_type->internal_render();
+	}
+	$output = ob_get_clean();
+	echo $output;
+	die();
+}
+
 // any variables created here will be available to the view
 
 $user = new User();

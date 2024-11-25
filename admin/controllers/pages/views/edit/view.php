@@ -98,6 +98,27 @@ div.position_tag_wrap.active {
 	display:revert;
 	gap:1rem;
 }
+div.preview {
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100vw;
+	height:100dvh;
+	overflow:scroll;
+	z-index:999999;
+	background:white;
+	padding:2rem;
+	* {
+		pointer-events:none;
+	}
+}
+.preview_contents {
+	max-width:1200px;
+	padding:2rem;
+	background:#eee;
+	margin-left:auto;
+	margin-right:auto;
+}
 /* #content_type_controller_views {
 	margin:0rem;
 	padding:0rem;
@@ -348,9 +369,9 @@ div.position_tag_wrap.active {
 		</div>
 		<hr>
 	  	<div class='widget_buttons buttons'>
-			<?php $all_published_widgets = DB::fetchall('select w.*, wt.title as widget_type from widgets w, widget_types wt where w.state >= 0');
+			<?php $all_published_widgets = DB::fetchall('SELECT w.*, wt.title AS widget_type FROM widgets w, widget_types wt WHERE wt.id = w.type AND w.state >= 0');
 			foreach ($all_published_widgets as $widget):?>
-				<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button add_widget_to_override is-primary' type='button'>
+				<button oncontextmenu="preview_widget(this); return false;" data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button add_widget_to_override is-primary' type='button'>
 					<?php echo htmlspecialchars($widget->title); ?>
 					<span class='widget_info help'><?php echo htmlspecialchars($widget->widget_type); ?></span>
 					<?php //CMS::pprint_r ($widget); ?>
@@ -366,6 +387,29 @@ div.position_tag_wrap.active {
 </div>
 
 <script>
+
+	// preview widget
+	function preview_widget(el) {
+		console.log("preview: ",el);
+		fetch(<?php echo Config::uripath();?>'/admin/pages/edit/widget_preview/' + el.dataset.widgetid).then(function (response) {
+			return response.text();
+		}).then(function (html) {
+			// create temp overlay
+			let preview_el = document.createElement("DIV");
+			preview_el.classList.add('preview');
+			preview_el.innerHTML = "<h2 style='text-align:center;' class='title is-2'>PREVIEW</h2><p style='text-align:center;'>Click/tap anywhere to close - note, styling may not be 100% accurate without front end template</p><hr>";
+			let preview_content_el = document.createElement("DIV");
+			preview_content_el.classList.add('preview_contents');
+			preview_content_el.innerHTML = html;
+			preview_el.appendChild(preview_content_el);
+			preview_el.addEventListener('click',function(e){
+				e.target.remove();
+			});
+			document.body.appendChild(preview_el);
+		}).catch(function (err) {
+			console.warn('Error generating widget preview', err);
+		});
+	}
 
 	// handle widget title filter
 	function update_widget_title_filter() {
