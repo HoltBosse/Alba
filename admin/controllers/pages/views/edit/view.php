@@ -85,7 +85,19 @@ div.position_tag_wrap.active {
 .tags .draggable_widget:hover {
 	cursor:move;
 }
-
+.modal-card {
+	width: 80vw;
+	max-width: 1200px;
+}
+.widget_info {
+	opacity:0.5;
+	font-size:0.75rem;
+	display:block;
+}
+.add_widget_to_override {
+	display:revert;
+	gap:1rem;
+}
 /* #content_type_controller_views {
 	margin:0rem;
 	padding:0rem;
@@ -335,10 +347,14 @@ div.position_tag_wrap.active {
 			<button onClick='document.querySelector("#widget_title_filter").value=""; update_widget_title_filter();' class='is-small button'>Clear</button>
 		</div>
 		<hr>
-	  	<div class=''>
-			<?php $all_published_widgets = DB::fetchall('select * from widgets where state >= 0');
+	  	<div class='widget_buttons buttons'>
+			<?php $all_published_widgets = DB::fetchall('select w.*, wt.title as widget_type from widgets w, widget_types wt where w.state >= 0');
 			foreach ($all_published_widgets as $widget):?>
-				<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button add_widget_to_override is-outline' type='button'><?php echo $widget->title; ?></button>
+				<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button add_widget_to_override is-primary' type='button'>
+					<?php echo htmlspecialchars($widget->title); ?>
+					<span class='widget_info help'><?php echo htmlspecialchars($widget->widget_type); ?></span>
+					<?php //CMS::pprint_r ($widget); ?>
+				</button>
 			<?php endforeach; ?>
 		</div>
     </section>
@@ -356,7 +372,7 @@ div.position_tag_wrap.active {
 		let search_value = document.querySelector('#widget_title_filter').value;
 		// set visibility of add widget buttons
 		document.querySelectorAll('.add_widget_to_override').forEach(add_widget_button => {
-			if (add_widget_button.dataset.widgettitle.toLowerCase().includes(search_value.toLowerCase()) || !search_value) {
+			if (add_widget_button.innerText.toLowerCase().includes(search_value.toLowerCase()) || !search_value) {
 				// show
 				add_widget_button.style.display="revert";
 			}
