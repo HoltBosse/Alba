@@ -128,6 +128,7 @@ div.preview {
 	width:100vw;
 	height:100dvh;
 	overflow:scroll;
+	overflow-x:hidden;
 	z-index:999999;
 	background-color:var(--bulma-scheme-main);
 	padding:2rem;
