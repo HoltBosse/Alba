@@ -31,7 +31,7 @@ class Field_Textarea extends Field {
 			echo "<label for='{$this->id}' class='label'>{$this->label}</label>";
 			echo "<div class='control'>";
 				$this->default = str_replace("[NEWLINE]","\n",$this->default);
-				echo "<textarea type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} placeholder='{$this->placeholder}' minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
+				echo "<textarea oninput='this.parentNode.dataset.value = this.value;' type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} placeholder='{$this->placeholder}' minlength={$this->minlength} class='filter_{$this->filter} input autogrowingtextarea' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
 				echo $this->default;
 				echo "</textarea>";
 			echo "</div>";

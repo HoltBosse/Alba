@@ -385,3 +385,33 @@ select[data-ssid] {
     opacity: 0 !important;
     height: 0 !important;
 }
+
+div:has(> .autogrowingtextarea) {
+	display: inline-grid;
+	vertical-align: top;
+	align-items: center;
+	position: relative;
+	width: 100%;
+	align-items: stretch;
+
+	&::after {
+		content: attr(data-value) ' ';
+		visibility: hidden;
+		white-space: pre-wrap;
+		padding: 1em;
+	}
+
+	&::after, textarea {
+		width: auto;
+		min-width: 1em;
+		grid-area: 2 / 1;
+	}
+
+	textarea {
+		height: 100% !important;
+		width: 100% !important;
+		max-width: 100%;
+		min-width: 100%;
+		resize: none;
+	}
+}
