@@ -29,7 +29,7 @@ class Field_Textarea extends Field {
 		if ($this->required) {$required=" required ";}
 		echo "<div class='field {$required} {$hidden}'>";
 			echo "<label for='{$this->id}' class='label'>{$this->label}</label>";
-			echo "<div class='control'>";
+			echo "<div class='control' data-value='{$this->default}'>";
 				$this->default = str_replace("[NEWLINE]","\n",$this->default);
 				echo "<textarea oninput='this.parentNode.dataset.value = this.value;' type='{$this->input_type}' value='{$this->default}' maxlength={$this->maxlength} placeholder='{$this->placeholder}' minlength={$this->minlength} class='filter_{$this->filter} input autogrowingtextarea' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>";
 				echo $this->default;
