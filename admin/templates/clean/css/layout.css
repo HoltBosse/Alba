@@ -400,6 +400,7 @@ div:has(> .autogrowingtextarea) {
 		width: auto;
 		min-width: 1em;
 		grid-area: 2 / 1;
+		max-height: 70vh;
 	}
 
 	textarea {
