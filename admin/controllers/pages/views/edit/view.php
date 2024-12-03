@@ -440,13 +440,14 @@ div.preview {
 		let search_value = document.querySelector('#widget_title_filter').value;
 		// set visibility of add widget buttons
 		document.querySelectorAll('.add_widget_to_override').forEach(add_widget_button => {
-			let info_text = add_widget_button.querySelector('.widget_title_and_type').innerText.toLowerCase();
+			let wrap_el = add_widget_button.closest('.widget_controls_wrap');
+			let info_text = wrap_el.querySelector('.widget_title_and_type').innerText.toLowerCase();
 			if (info_text.includes(search_value.toLowerCase()) || !search_value) {
 				// show
-				add_widget_button.style.display="flex";
+				wrap_el.style.display="flex";
 			}
 			else {
-				add_widget_button.style.display="none";
+				wrap_el.style.display="none";
 			}
 		});
 	}
