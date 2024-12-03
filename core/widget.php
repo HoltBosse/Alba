@@ -18,6 +18,7 @@ class Widget {
 	public $form_data;
 
 	public function render_edit() {
+		// @phpstan-ignore-next-line
 		if (CMS::Instance()->user->is_member_of(1) && !ADMINPATH) { ?>
 			<div class='front_end_edit_wrap' >
 				<a style='' target="_blank" href='/admin/widgets/edit/<?php echo $this->id;?>'>EDIT &ldquo;<?= htmlspecialchars($this->title); ?>&rdquo;</a>
