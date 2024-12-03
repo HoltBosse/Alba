@@ -114,6 +114,10 @@ div.position_tag_wrap.active {
 	font-size:0.75rem;
 	display:block;
 }
+.widget_actions {
+    display: flex;
+    gap: 1rem;
+}
 
 div.preview {
 	position:fixed;
