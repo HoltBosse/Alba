@@ -118,7 +118,9 @@ div.position_tag_wrap.active {
     display: flex;
     gap: 1rem;
 }
-
+.modal-card-body {
+	border-radius:0px 0px var(--bulma-radius-medium) var(--bulma-radius-medium);
+}
 div.preview {
 	position:fixed;
 	top:0px;
@@ -127,7 +129,7 @@ div.preview {
 	height:100dvh;
 	overflow:scroll;
 	z-index:999999;
-	background:white;
+	background-color:var(--bulma-scheme-main);
 	padding:2rem;
 	* {
 		pointer-events:none;
@@ -136,12 +138,17 @@ div.preview {
 .preview_contents {
 	max-width:1200px;
 	padding:2rem;
-	background:#eee;
 	margin-left:auto;
 	margin-right:auto;
 }
 .buttons:last-child {
 	margin-bottom:var(--bulma-block-spacing);
+}
+#preview_close {
+	float:right;
+}
+.preview:hover {
+	cursor:pointer;
 }
 /* #content_type_controller_views {
 	margin:0rem;
@@ -425,7 +432,7 @@ div.preview {
 			// create temp overlay
 			let preview_el = document.createElement("DIV");
 			preview_el.classList.add('preview');
-			preview_el.innerHTML = "<h2 style='text-align:center;' class='title is-2'>PREVIEW</h2><p style='text-align:center;'>Click/tap anywhere to close - note, styling may not be 100% accurate without front end template</p><hr>";
+			preview_el.innerHTML = "<button id='preview_close' class='delete' aria-label='close'></button><h2 style='text-align:center;' class='title is-2'>PREVIEW</h2><p style='text-align:center;'>Click/tap anywhere to close - note, styling may not be 100% accurate without front end template</p><hr>";
 			let preview_content_el = document.createElement("DIV");
 			preview_content_el.classList.add('preview_contents');
 			preview_content_el.innerHTML = html;
