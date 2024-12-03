@@ -86,18 +86,35 @@ div.position_tag_wrap.active {
 	cursor:move;
 }
 .modal-card {
-	width: 80vw;
+	/* width: 80vw; */
 	max-width: 1200px;
 }
+.widget_buttons {
+	display:flex;
+	width:100%;
+	flex-direction:column;
+	gap:1rem;
+}
+.widget_controls_wrap {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	justify-content: space-between;
+	border-radius: 0.5rem;
+}
+.widget_actions {
+	/* display:flex;
+	gap:1rem; */
+}
+
 .widget_info {
 	opacity:0.5;
 	font-size:0.75rem;
 	display:block;
 }
-.add_widget_to_override {
-	display:revert;
-	gap:1rem;
-}
+
 div.preview {
 	position:fixed;
 	top:0px;
@@ -118,6 +135,9 @@ div.preview {
 	background:#eee;
 	margin-left:auto;
 	margin-right:auto;
+}
+.buttons:last-child {
+	margin-bottom:var(--bulma-block-spacing);
 }
 /* #content_type_controller_views {
 	margin:0rem;
@@ -367,16 +387,20 @@ div.preview {
 			<input class='input' id='widget_title_filter' name='widget_title_filter'></input>
 			<button onClick='document.querySelector("#widget_title_filter").value=""; update_widget_title_filter();' class='is-small button'>Clear</button>
 		</div>
-		<p><em>Right click or long-tap to preview a widget</em></p>
 		<hr>
-	  	<div class='widget_buttons buttons'>
+	  	<div class='widget_buttons '>
 			<?php $all_published_widgets = DB::fetchall('SELECT w.*, wt.title AS widget_type FROM widgets w, widget_types wt WHERE wt.id = w.type AND w.state >= 0');
 			foreach ($all_published_widgets as $widget):?>
-				<button oncontextmenu="preview_widget(this); return false;" data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button add_widget_to_override is-primary' type='button'>
+			<div class='widget_controls_wrap '>
+				<div class='widget_title_and_type'>
 					<?php echo htmlspecialchars($widget->title); ?>
-					<span class='widget_info help'><?php echo htmlspecialchars($widget->widget_type); ?></span>
-					<?php //CMS::pprint_r ($widget); ?>
-				</button>
+					<span  class='widget_info help'><?php echo htmlspecialchars($widget->widget_type); ?></span>
+				</div>
+				<div class='widget_actions'>
+					<button onClick="preview_widget(this); return false;" type='button' data-widgetid='<?php echo $widget->id;?>' class='button widget_preview button'>Preview</button>
+					<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button  is-primary add_widget_to_override' type='button'>Add</button>	
+				</div>
+			</div>
 			<?php endforeach; ?>
 		</div>
     </section>
@@ -391,7 +415,6 @@ div.preview {
 
 	// preview widget
 	function preview_widget(el) {
-		console.log("preview: ",el);
 		fetch(<?php echo Config::uripath();?>'/admin/pages/edit/widget_preview/' + el.dataset.widgetid).then(function (response) {
 			return response.text();
 		}).then(function (html) {
@@ -417,9 +440,10 @@ div.preview {
 		let search_value = document.querySelector('#widget_title_filter').value;
 		// set visibility of add widget buttons
 		document.querySelectorAll('.add_widget_to_override').forEach(add_widget_button => {
-			if (add_widget_button.innerText.toLowerCase().includes(search_value.toLowerCase()) || !search_value) {
+			let info_text = add_widget_button.querySelector('.widget_title_and_type').innerText.toLowerCase();
+			if (info_text.includes(search_value.toLowerCase()) || !search_value) {
 				// show
-				add_widget_button.style.display="revert";
+				add_widget_button.style.display="flex";
 			}
 			else {
 				add_widget_button.style.display="none";
@@ -472,7 +496,7 @@ div.preview {
 	function unserialize_form(id) {
 		var form_json = window.localStorage.getItem(id);
 		if (!form_json) {
-			console.log('No saved details from change of content_type / view');
+			console.warn('No saved details from change of content_type / view');
 			return false;
 		}
 		var form = document.getElementById(id);
@@ -488,7 +512,7 @@ div.preview {
 				matching_form_element.value = form_item.field_value;
 			}
 			else {
-				console.log('Error deserializing form. No element with name matching: ',form_item.field_name);
+				console.warn('Error deserializing form. No element with name matching: ',form_item.field_name);
 			}
 		});
 		window.localStorage.removeItem(id);
