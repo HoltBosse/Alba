@@ -104,10 +104,6 @@ div.position_tag_wrap.active {
 	justify-content: space-between;
 	border-radius: 0.5rem;
 }
-.widget_actions {
-	/* display:flex;
-	gap:1rem; */
-}
 
 .widget_info {
 	opacity:0.5;
@@ -429,7 +425,7 @@ div.preview {
 	function preview_widget(el) {
 		fetch(<?php echo Config::uripath();?>'/admin/pages/edit/widget_preview/' + el.dataset.widgetid).then(function (response) {
 			return response.text();
-		}).then(function (html) {
+		}).then((html)=>{
 			// create temp overlay
 			let preview_el = document.createElement("DIV");
 			preview_el.classList.add('preview');
@@ -463,7 +459,7 @@ div.preview {
 			}
 		});
 	}
-	document.querySelector('#widget_title_filter')?.addEventListener('input', function(e){
+	document.querySelector('#widget_title_filter')?.addEventListener('input', (e)=>{
 		update_widget_title_filter();
 	});
 
