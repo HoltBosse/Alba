@@ -423,7 +423,7 @@ div.preview {
 
 	// preview widget
 	function preview_widget(el) {
-		fetch(<?php echo Config::uripath();?>'/admin/pages/edit/widget_preview/' + el.dataset.widgetid).then(function (response) {
+		fetch(<?php echo Config::uripath();?>'/admin/pages/edit/widget_preview/' + el.dataset.widgetid).then((response)=>{
 			return response.text();
 		}).then((html)=>{
 			// create temp overlay
