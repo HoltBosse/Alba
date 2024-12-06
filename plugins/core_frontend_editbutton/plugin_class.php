@@ -36,8 +36,8 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
     public function handle_widget_render($page_contents, $params) {
         $data = $this->get_data();
-
-        if($this->validateGroup($data->groupOptionsArray, $data->userGroups)) {
+        // @phpstan-ignore-next-line
+        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && !ADMINPATH) {
             if(Config::enable_experimental_frontend_edit() ?? false) {
                 $page_contents = "
                     <div class='front_end_edit_wrap' >

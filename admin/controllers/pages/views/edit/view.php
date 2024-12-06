@@ -85,7 +85,68 @@ div.position_tag_wrap.active {
 .tags .draggable_widget:hover {
 	cursor:move;
 }
+.modal-card {
+	/* width: 80vw; */
+	max-width: 1200px;
+}
+.widget_buttons {
+	display:flex;
+	width:100%;
+	flex-direction:column;
+	gap:1rem;
+}
+.widget_controls_wrap {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	justify-content: space-between;
+	border-radius: 0.5rem;
+}
 
+.widget_info {
+	opacity:0.5;
+	font-size:0.75rem;
+	display:block;
+}
+.widget_actions {
+    display: flex;
+    gap: 1rem;
+}
+.modal-card-body {
+	border-radius:0px 0px var(--bulma-radius-medium) var(--bulma-radius-medium);
+}
+div.preview {
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100vw;
+	height:100dvh;
+	overflow:scroll;
+	overflow-x:hidden;
+	z-index:999999;
+	background-color:var(--bulma-scheme-main);
+	padding:2rem;
+	* {
+		pointer-events:none;
+	}
+}
+.preview_contents {
+	max-width:1200px;
+	padding:2rem;
+	margin-left:auto;
+	margin-right:auto;
+}
+.buttons:last-child {
+	margin-bottom:var(--bulma-block-spacing);
+}
+#preview_close {
+	float:right;
+}
+.preview:hover {
+	cursor:pointer;
+}
 /* #content_type_controller_views {
 	margin:0rem;
 	padding:0rem;
@@ -329,10 +390,25 @@ div.position_tag_wrap.active {
     </header>
     <section class="modal-card-body">
       <!-- Content ... -->
-	  	<div class=''>
-			<?php $all_published_widgets = DB::fetchall('select * from widgets where state >= 0');
+		<div class='widget_title_filter_wrap field is-grouped'>
+			<label class='label' for='widget_title_filter'>Search:</label>
+			<input class='input' id='widget_title_filter' name='widget_title_filter'></input>
+			<button onClick='document.querySelector("#widget_title_filter").value=""; update_widget_title_filter();' class='is-small button'>Clear</button>
+		</div>
+		<hr>
+	  	<div class='widget_buttons '>
+			<?php $all_published_widgets = DB::fetchall('SELECT w.*, wt.title AS widget_type FROM widgets w, widget_types wt WHERE wt.id = w.type AND w.state >= 0');
 			foreach ($all_published_widgets as $widget):?>
-				<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button add_widget_to_override is-outline' type='button'><?php echo $widget->title; ?></button>
+			<div class='widget_controls_wrap '>
+				<div class='widget_title_and_type'>
+					<?php echo htmlspecialchars($widget->title); ?>
+					<span  class='widget_info help'><?php echo htmlspecialchars($widget->widget_type); ?></span>
+				</div>
+				<div class='widget_actions'>
+					<button onClick="preview_widget(this); return false;" type='button' data-widgetid='<?php echo $widget->id;?>' class='button widget_preview button'>Preview</button>
+					<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button  is-primary add_widget_to_override' type='button'>Add</button>	
+				</div>
+			</div>
 			<?php endforeach; ?>
 		</div>
     </section>
@@ -344,6 +420,48 @@ div.position_tag_wrap.active {
 </div>
 
 <script>
+
+	// preview widget
+	function preview_widget(el) {
+		fetch(<?php echo Config::uripath();?>'/admin/pages/edit/widget_preview/' + el.dataset.widgetid).then((response)=>{
+			return response.text();
+		}).then((html)=>{
+			// create temp overlay
+			let preview_el = document.createElement("DIV");
+			preview_el.classList.add('preview');
+			preview_el.innerHTML = "<button id='preview_close' class='delete' aria-label='close'></button><h2 style='text-align:center;' class='title is-2'>PREVIEW</h2><p style='text-align:center;'>Click/tap anywhere to close - note, styling may not be 100% accurate without front end template</p><hr>";
+			let preview_content_el = document.createElement("DIV");
+			preview_content_el.classList.add('preview_contents');
+			preview_content_el.innerHTML = html;
+			preview_el.appendChild(preview_content_el);
+			preview_el.addEventListener('click',function(e){
+				e.target.remove();
+			});
+			document.body.appendChild(preview_el);
+		}).catch(function (err) {
+			console.warn('Error generating widget preview', err);
+		});
+	}
+
+	// handle widget title filter
+	function update_widget_title_filter() {
+		let search_value = document.querySelector('#widget_title_filter').value;
+		// set visibility of add widget buttons
+		document.querySelectorAll('.add_widget_to_override').forEach(add_widget_button => {
+			let wrap_el = add_widget_button.closest('.widget_controls_wrap');
+			let info_text = wrap_el.querySelector('.widget_title_and_type').innerText.toLowerCase();
+			if (info_text.includes(search_value.toLowerCase()) || !search_value) {
+				// show
+				wrap_el.style.display="flex";
+			}
+			else {
+				wrap_el.style.display="none";
+			}
+		});
+	}
+	document.querySelector('#widget_title_filter')?.addEventListener('input', (e)=>{
+		update_widget_title_filter();
+	});
 
 	function validate_view_options() {
 		view_options = document.getElementById('content_type_controller_view_options');
@@ -387,7 +505,7 @@ div.position_tag_wrap.active {
 	function unserialize_form(id) {
 		var form_json = window.localStorage.getItem(id);
 		if (!form_json) {
-			console.log('No saved details from change of content_type / view');
+			console.warn('No saved details from change of content_type / view');
 			return false;
 		}
 		var form = document.getElementById(id);
@@ -403,7 +521,7 @@ div.position_tag_wrap.active {
 				matching_form_element.value = form_item.field_value;
 			}
 			else {
-				console.log('Error deserializing form. No element with name matching: ',form_item.field_name);
+				console.warn('Error deserializing form. No element with name matching: ',form_item.field_name);
 			}
 		});
 		window.localStorage.removeItem(id);
