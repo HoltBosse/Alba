@@ -27,7 +27,7 @@ foreach($pages as $page) {
     $path = $_SERVER["SERVER_NAME"] . $path;
     $sitemap_data[] = [
         "loc"=>$path,
-        "lastmod"=>"2024-08-23T12:02:33+00:00",
+        "lastmod"=>Date("Y-m-d\Th:i:s+00:00", strtotime($page->updated)),
         "priority"=>$priority,
     ];
 
