@@ -3,6 +3,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 header("Content-type: text/xml");
 
+//this exists to limit the scope of what is accessible to the file
+function get_page_details($location, $page, $maxpriority, $path) {
+    return require(CMSPATH . "/controllers/$location/sitemap.php");
+}
+
 $sitemap_data = [];
 $pages = Page::get_all_pages_by_depth();
 foreach($pages as $page) {
@@ -19,14 +24,27 @@ foreach($pages as $page) {
         $priority = $priority + (substr_count($path, '/') * -0.1);
     }
 
+    $path = $_SERVER["SERVER_NAME"] . $path;
     $sitemap_data[] = [
-        "loc"=>$_SERVER["SERVER_NAME"] . $path,
+        "loc"=>$path,
         "lastmod"=>"2024-08-23T12:02:33+00:00",
         "priority"=>$priority,
     ];
+
+    if($page->content_type!=-1) {
+        $location = Content::get_content_location($page->content_type);
+        if(file_exists(CMSPATH . "/controllers/$location/sitemap.php")) {
+            //CMS::pprint_r($page);
+
+            $page_contents = get_page_details($location, $page, ($priority-0.1), $path);
+            $sitemap_data = array_merge($sitemap_data, $page_contents);
+        }
+    }
 }
 
-//TODO: add hook here so more can be injected
+//CMS::pprint_r($sitemap_data); die;
+
+$sitemap_data = Hook::execute_hook_filters('render_sitemap', $sitemap_data);
 
 echo '<?xml version="1.0" encoding="UTF-8"?>
 <urlset
