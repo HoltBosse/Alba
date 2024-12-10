@@ -12,7 +12,7 @@ foreach ($all_content_types as $content_type) {
     // create table/columns as necessary
     $location = Content::get_content_location($content_type->id);
     $custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
-    $required_details_form = new Form(ADMINPATH . '/controllers/content/views/edit/required_fields_form.json');
+    $required_details_form = new Form(CMSPATH . '/admin/controllers/content/views/edit/required_fields_form.json');
 
 
     $response.="<hr><p>Checking table &ldquo;{$content_type->title}&rdquo;</p>";
