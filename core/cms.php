@@ -561,8 +561,9 @@ final class CMS {
 			exit(); // shouldn't be needed, controller should exit
 		}
 
-		if(file_exists(CMSPATH . "/core/fakefiles/" . $_SERVER["SCRIPT_URL"] . ".php")) {
-			include_once (CMSPATH . "/core/fakefiles/" . $_SERVER["SCRIPT_URL"] . ".php");
+		$script_url = explode("?", $_SERVER["REQUEST_URI"])[0];
+		if(file_exists(CMSPATH . "/core/fakefiles/{$script_url}.php")) {
+			include_once (CMSPATH . "/core/fakefiles/{$script_url}.php");
 			exit();
 		}
 
