@@ -24,7 +24,7 @@ foreach($pages as $page) {
         $priority = $priority + (substr_count($path, '/') * -0.1);
     }
 
-    $path = $_SERVER["SERVER_NAME"] . $path;
+    $path = "https://" . $_SERVER["SERVER_NAME"] . $path;
     $sitemap_data[] = [
         "loc"=>$path,
         "lastmod"=>Date("Y-m-d\Th:i:s+00:00", strtotime($page->updated)),
