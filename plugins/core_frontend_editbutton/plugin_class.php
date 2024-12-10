@@ -36,8 +36,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
     public function handle_widget_render($page_contents, $params) {
         $data = $this->get_data();
-        // @phpstan-ignore-next-line
-        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && !ADMINPATH) {
+        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && !defined("ADMINPATH")) {
             if(Config::enable_experimental_frontend_edit() ?? false) {
                 $page_contents = "
                     <div class='front_end_edit_wrap' >
@@ -60,7 +59,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
     public function handle_controller_render($page_contents, $params) {
         $data = $this->get_data();
 
-        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false) && ADMINPATH===false){
+        if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && (Config::enable_experimental_frontend_edit() ?? false) && !defined("ADMINPATH")){
             $controllerConfig = DB::fetch("SELECT * FROM content_types WHERE controller_location = ?", $params[0]);
             $page_contents = "
                 <div class='front_end_edit_wrap' >

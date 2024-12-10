@@ -88,7 +88,7 @@ class Component {
     public static function render_admin_nav($navigation, $enable_overrides=true) {
         //apply overrides from admin config if applicable
         if($enable_overrides) {
-            //@phpstan-ignore-next-line
+            // @phpstan-ignore-next-line
             $overrides = property_exists('Admin_Config',"navigation") ? Admin_Config::$navigation : [];
             $addons = [];
 
