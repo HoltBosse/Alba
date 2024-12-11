@@ -35,7 +35,7 @@ else {
 
 
 // prep forms
-$required_details_form = new Form(ADMINPATH . '/controllers/categories/views/edit/required_fields_form.json');
+$required_details_form = new Form(CMSPATH . '/admin/controllers/categories/views/edit/required_fields_form.json');
 // set content_type for tag field based on content type of new/editing content
 
 $content_location = Content::get_content_location($cat->content_type);

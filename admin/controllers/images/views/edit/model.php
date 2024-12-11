@@ -19,7 +19,7 @@ else {
 }
 
 // prep forms
-$required_details_form = new Form(ADMINPATH . '/controllers/tags/views/edit/required_fields_form.json');
+$required_details_form = new Form(CMSPATH . '/admin/controllers/tags/views/edit/required_fields_form.json');
 
 
 // check if submitted or show defaults/data from db

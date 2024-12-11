@@ -18,7 +18,7 @@ else {
 	exit(0);
 }
 
-$required_details_obj = json_decode(file_get_contents(ADMINPATH . '/controllers/redirects/views/edit/required_fields_form.json'));
+$required_details_obj = json_decode(file_get_contents(CMSPATH . '/admin/controllers/redirects/views/edit/required_fields_form.json'));
 foreach($required_details_obj->fields as $field) {
 	if($field->name == "state") {
 		foreach($custom_fields->states as $state) {

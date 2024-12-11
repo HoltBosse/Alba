@@ -7,8 +7,7 @@ class Access {
         if (!$user_groups) {
             $user_groups = CMS::Instance()->user->groups;
         }
-        // @phpstan-ignore-next-line
-        if (!$page_groups && ADMINPATH) {
+        if (!$page_groups && defined("ADMINPATH")) {
             // default to admin in absence of explicit admin config
             // remove sizeof check for php 8.0+
             $page_groups=[1];

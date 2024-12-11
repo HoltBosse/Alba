@@ -544,8 +544,7 @@ class Field_Parsedown extends Field {
 		$this->default = $config->default ?? '### New Text';
 		$this->placeholder = $config->placeholder ?? '';
 		$this->parsedownapi = $config->parsedownapi ?? "/api/parsedown";
-		// @phpstan-ignore-next-line
-		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (ADMINPATH ? "/admin/images/uploadv2" : null);
+		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (defined("ADMINPATH") ? "/admin/images/uploadv2" : null);
 		/*
 			if the property exists, use it even if null(disabled)
 			else fallback to:

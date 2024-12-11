@@ -4,7 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // any variables created here will be available to the view
 
 $page = new Page();
-$page_options_form = new Form(ADMINPATH . '/controllers/pages/page_options.json');
+$page_options_form = new Form(CMSPATH . '/admin/controllers/pages/page_options.json');
 $success=$page->load_from_post();
 
 if (!$success) {
