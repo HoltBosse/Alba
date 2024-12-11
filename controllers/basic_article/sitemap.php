@@ -5,7 +5,7 @@ $view = Content::get_view_location($page->content_view);
 
 $template_folder = Template::get_default_template()->folder;
 if($page->template!=0) {
-    $template_folder = DB::fetch("SELECT * templates WHERE id=?", $page->template)->folder;
+    $template_folder = DB::fetch("SELECT * FROM templates WHERE id=?", $page->template)->folder;
 }
 
 $potential_override_sitemap = CMSPATH . "/templates/" . $template_folder . "/overrides/" . $location . "/" . $view . "/sitemap.php";
