@@ -41,7 +41,7 @@ $template = $default_template;
 // if page_id exists, try and override form content 
 
 $page = new Page();
-$page_options_form = new Form(ADMINPATH . '/controllers/pages/page_options.json');
+$page_options_form = new Form(CMSPATH . '/admin/controllers/pages/page_options.json');
 
 //CMS::pprint_r (CMS::Instance()->uri_segments);
 if (array_key_exists(2, CMS::Instance()->uri_segments)) {

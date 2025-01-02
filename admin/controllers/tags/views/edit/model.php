@@ -19,7 +19,7 @@ else {
 }
 
 // prep forms
-$required_details_form = new Form(ADMINPATH . '/controllers/tags/views/edit/required_fields_form.json');
+$required_details_form = new Form(CMSPATH . '/admin/controllers/tags/views/edit/required_fields_form.json');
 $custom_fields_form = file_exists(CMSPATH . "/tag_fields.json");
 if ($custom_fields_form) {
 	$custom_fields_form = new Form (CMSPATH . "/tag_fields.json");
