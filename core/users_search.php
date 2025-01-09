@@ -6,6 +6,7 @@ class Users_Search {
 	public $order_by;
 	public $order_direction;
 	public $published_only;
+	public $disable_builtin_state_check;
 	public $list_fields;
 	public $ignore_fields;
 	public $page;
@@ -23,6 +24,7 @@ class Users_Search {
 		$this->order_by = "id";
 		$this->order_direction = "DESC";
 		$this->published_only = false;
+		$this->disable_builtin_state_check = false;
 		$this->page=1;
 		$this->searchtext="";
 		$this->ignore_fields=[];
@@ -92,13 +94,13 @@ class Users_Search {
 
 		$from = Hook::execute_hook_filters('custom_user_search_from', $from);
 
-		$where = ' where ';
+		$where = ' where 1=1 ';
 
 		if ($this->published_only) {
-			$where .= " u.state > 0 ";
+			$where .= " AND u.state > 0 ";
 		}
-		else {
-			$where .= " u.state >= 0 ";
+		elseif($this->disable_builtin_state_check==false) {
+			$where .= " AND u.state >= 0 ";
 		}
 
 		if ($this->searchtext) {

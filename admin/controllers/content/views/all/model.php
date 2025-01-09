@@ -51,6 +51,9 @@ foreach($_GET as $key=>$value) {
 
 if ($filters) {
 	$content_search->filters = $filters;
+	if($filters["state"]) {
+		$content_search->disable_builtin_state_check = true;
+	}
 }
 if ($coretags) {
 	$content_search->tags = $coretags;
