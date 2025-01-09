@@ -157,7 +157,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</thead>
 		<tbody>
 			<?php foreach($all_users as $user):?> 
-			<?php if ($user->state<0) {continue;}?>
 			<tr class='user_admin_row'>
 				<td>
 					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $user->id; ?>'/>

@@ -53,6 +53,9 @@ if ($groups) {
 }
 if ($filters) {
 	$user_search->filters = $filters;
+	if($filters["state"]) {
+		$user_search->disable_builtin_state_check = true;
+	}
 }
 if ($coretags) {
 	$user_search->tags = $coretags;

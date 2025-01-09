@@ -12,6 +12,7 @@ class Content_Search {
 	public $order_direction;
 	public $type_filter;
 	public $published_only;
+	public $disable_builtin_state_check;
 	public $list_fields;
 	public $ignore_fields;
 	public $created_by_cur_user;
@@ -32,6 +33,7 @@ class Content_Search {
 		$this->order_direction = "DESC";
 		$this->type_filter = 1;
 		$this->published_only = false;
+		$this->disable_builtin_state_check = false;
 		$this->page=1;
 		$this->searchtext="";
 		$this->ignore_fields=[];
@@ -168,14 +170,15 @@ class Content_Search {
 			}
 		} */
 
-		$where = ' where ';
+		$where = ' where 1=1 ';
 
 		if ($this->published_only) {
-			$where .= " c.state > 0 ";
+			$where .= " AND c.state > 0 ";
 		}
-		else {
-			$where .= " c.state >= 0 ";
+		elseif($this->disable_builtin_state_check==false) {
+			$where .= " AND c.state >= 0 ";
 		}
+
 		if ($this->searchtext) {
 			$where .= " AND (c.title like ? or c.note like ?) "; 
 		}
