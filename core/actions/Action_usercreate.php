@@ -11,6 +11,6 @@ class Action_usercreate extends Actions {
             $url = "/admin/users/edit/" . $affectedUserDetails->id;
         }
 
-        $this->render_row($url, "Created User $affectedUserDetails->username ($affectedUserDetails->email)");
+        $this->render_row($url, "Created User " . Input::stringHtmlSafe($affectedUserDetails->username) . " ($affectedUserDetails->email)");
     }
 }

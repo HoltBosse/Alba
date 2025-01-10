@@ -11,6 +11,6 @@ class Action_userlogin extends Actions {
             $url = "/admin/users/edit/" . $userDetails->id;
         }
 
-        $this->render_row($url, "User $userDetails->username ($userDetails->email) logged in");
+        $this->render_row($url, "User " . Input::stringHtmlSafe($userDetails->username) . " ($userDetails->email) logged in");
     }
 }

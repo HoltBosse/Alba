@@ -203,7 +203,7 @@ class User {
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
 		$ok = DB::exec($query, [$key, $this->id]);
 		if (!$ok) {
-			CMS::Instance()->queue_message('Error creating password reset key for ' . $this->username, 'error', Config::uripath()."/admin");
+			CMS::Instance()->queue_message('Error creating password reset key for ' . Input::stringHtmlSafe($this->username), 'error', Config::uripath()."/admin");
 			// should not get here
 		}
 		return $key;

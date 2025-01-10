@@ -31,7 +31,8 @@ class Actions {
     public function render_user() {
         $user = DB::fetch("SELECT * FROM users WHERE id=?", $this->userid);
         if($user->id) {
-            return "$user->username ($user->email)";
+            $safeUsername = Input::stringHtmlSafe($user->username);
+            return "$safeUsername ($user->email)";
         } else {
             return "unknown";
         }
