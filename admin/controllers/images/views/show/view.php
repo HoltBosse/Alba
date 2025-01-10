@@ -74,8 +74,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<div id="top_tags" class="field is-grouped is-grouped-multiline">
 		<?php foreach ($image_tags as $tag):?>
 		<div class="control">
-			<div data-title="<?php echo $tag->title;?>" data-id="<?php echo $tag->id;?>" class="tags has-addons">
-				<a href='#' class='tag_filter tag is-link is-light is-info'><?php echo $tag->title;?></a>
+			<div data-title="<?php echo Input::stringHtmlSafe($tag->title);?>" data-id="<?php echo $tag->id;?>" class="tags has-addons">
+				<a href='#' class='tag_filter tag is-link is-light is-info'><?php echo Input::stringHtmlSafe($tag->title);?></a>
 				<a class="tag_add tag is-add is-primary">+</a>
 			</div>
 		</div>
@@ -217,8 +217,8 @@ dialog::backdrop {
 				<div class="image_tags field is-grouped is-grouped-multiline">
 					<?php foreach ($image_tags as $tag):?>
 						<div class="control">
-							<div data-title="<?php echo $tag->title;?>" data-id="<?php echo $tag->id;?>" class="tags tag_id_<?php echo $tag->id;?> are-small has-addons">
-								<span class='tag is-light is-info'><?php echo $tag->title;?></span>
+							<div data-title="<?php echo Input::stringHtmlSafe($tag->title);?>" data-id="<?php echo $tag->id;?>" class="tags tag_id_<?php echo $tag->id;?> are-small has-addons">
+								<span class='tag is-light is-info'><?php echo Input::stringHtmlSafe($tag->title);?></span>
 								<a class="remove_tag tag_add tag is-delete is-warning"></a>
 							</div>
 						</div>

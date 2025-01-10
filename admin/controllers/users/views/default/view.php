@@ -104,7 +104,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				<div class="select">
 					<select id="content_search_tags" name="coretags[]" form="searchform" multiple>
 						<?php foreach ($applicable_tags as $t):?>
-							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=$t->title?></option>
+							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=Input::stringHtmlSafe($t->title)?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>

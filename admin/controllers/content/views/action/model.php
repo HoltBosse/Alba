@@ -36,7 +36,7 @@ if ($action=='toggle') {
 	$result = DB::exec("update `$table_name` SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		$content = DB::fetch("SELECT * FROM `$table_name` WHERE id=?", [$id[0]]);
-		$msg = "Content <a href='" . Config::uripath() . "/admin/content/edit/{$id[0]}/{$content->content_type}'>{$content->title}</a> state toggled";
+		$msg = "Content <a href='" . Config::uripath() . "/admin/content/edit/{$id[0]}/{$content->content_type}'>" . Input::stringHtmlSafe($content->title) . "</a> state toggled";
 		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
 	}
 	else {

@@ -117,7 +117,7 @@ div.pull-right {
 						echo "&nbsp&#x21B3;&nbsp";
 					}
 					?>
-					<a href="<?php echo Config::uripath(); ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo $tag->title; ?></a>
+					<a href="<?php echo Config::uripath(); ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo Input::stringHtmlSafe($tag->title); ?></a>
 				</td>
 			
 				<td class='usage'>
@@ -163,7 +163,7 @@ div.pull-right {
 					<?php endif; ?>
 				</td>
 				
-				<td class='note_td'><?php echo $tag->note; ?></td>
+				<td class='note_td'><?php echo Input::stringHtmlSafe($tag->note); ?></td>
 			</tr>
 		<?php endforeach; ?>
 		</tbody>

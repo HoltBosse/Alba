@@ -19,7 +19,7 @@ if ($action=='toggle') {
 	$result = DB::exec("UPDATE tags SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		$tag = DB::fetch('SELECT * FROM tags WHERE id=?', [$id[0]]);
-		$msg = "Tag <a href='" . Config::uripath() . "/admin/tags/edit/{$id[0]}'>{$tag->title}</a> state toggled";
+		$msg = "Tag <a href='" . Config::uripath() . "/admin/tags/edit/{$id[0]}'>" . Input::stringHtmlSafe($tag->title) . "</a> state toggled";
 		CMS::Instance()->queue_message($msg,'success', $_SERVER['HTTP_REFERER']);
 	}
 	else {

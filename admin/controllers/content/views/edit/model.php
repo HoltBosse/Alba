@@ -104,7 +104,7 @@ if ($required_details_form->is_submitted()) {
 				if (Input::getvar("http_referer_form") && Input::getvar("http_referer_form") != $_SERVER["HTTP_REFERER"]){
 					$redirect_to = Input::getvar("http_referer_form");
 				}
-				$msg = "Content <a href='" . Config::uripath() . "/admin/content/edit/{$content->id}/{$content_type}'>{$content->title}</a> " . ($new_content ? 'created' : 'updated');
+				$msg = "Content <a href='" . Config::uripath() . "/admin/content/edit/{$content->id}/{$content_type}'>" . Input::stringHtmlSafe($content->title) . "</a> " . ($new_content ? 'created' : 'updated');
 			}
 			CMS::Instance()->queue_message($msg, 'success', $redirect_to);
 		}

@@ -73,7 +73,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					<select name="filters[1][value]" form="searchform">
 						<option value=''>Select Category</option>
 						<?php foreach ($applicable_categories as $cat):?>
-							<option <?php if ($filters['category']==$cat->id) { echo " selected "; }?> value='<?=$cat->id?>'><?=$cat->title?></option>
+							<option <?php if ($filters['category']==$cat->id) { echo " selected "; }?> value='<?=$cat->id?>'><?=Input::stringHtmlSafe($cat->title)?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -101,7 +101,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				<div class="select">
 					<select id="content_search_tags" name="coretags[]" form="searchform" multiple>
 						<?php foreach ($applicable_tags as $t):?>
-							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=$t->title?></option>
+							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=Input::stringHtmlSafe($t->title)?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
@@ -267,7 +267,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						}
 					?>
 					<td>
-						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo $content_item->title; ?></a>
+						<a href="<?php echo Config::uripath(); ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo Input::stringHtmlSafe($content_item->title); ?></a>
 						<br>
 						<span class='unimportant'>
 							<?php
@@ -296,18 +296,18 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					$tags = Tag::get_tags_for_content($content_item->id, $content_item->content_type);
 					echo '<div class="tags are-small are-light">';
 					foreach ($tags as $tag) {
-						echo '<span class="tag is-info is-light">' . $tag->title . '</span>';
+						echo '<span class="tag is-info is-light">' . Input::stringHtmlSafe($tag->title) . '</span>';
 					}
 					echo '</div>';
 					?>
 					</td>
 
-					<td><?php echo $content_item->catname;?></td>
+					<td><?php echo Input::stringHtmlSafe($content_item->catname);?></td>
 					<td class='unimportant'><?php echo $content_item->start; ?></td>
 					<td class='unimportant'><?php echo $content_item->end; ?></td>
 					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
 					<td class='unimportant'><?php echo User::get_username_by_id($content_item->updated_by); ?></td>
-					<td class='unimportant'><?php echo $content_item->note; ?></td>
+					<td class='unimportant'><?php echo Input::stringHtmlSafe($content_item->note); ?></td>
 				</tr>
 				
 			<?php endforeach; ?>
