@@ -66,7 +66,7 @@ class Field_Select extends Field {
 							if (isset($select_option->UpdateSelect)) {
 								$UpdateSelect[$select_option->value] = $select_option->UpdateSelect;
 							}
-							echo "<option {$disabled} {$selected} value='{$select_option->value}'>{$select_option->text}</option>";
+							echo "<option {$disabled} {$selected} value='{$select_option->value}'>" . Input::stringHtmlSafe($select_option->text) . "</option>";
 						}
 						if ($this->slimselect_ajax) {
 							if($this->multiple && $this->default && $this->default != "" && $this->default != '[""]') {

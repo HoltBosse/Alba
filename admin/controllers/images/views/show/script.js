@@ -26,7 +26,7 @@ document.getElementById('top_tags')?.addEventListener('click',function(e){
 	if (e.target.classList.contains('tag_add')) {
 		ids = get_selected_ids();
 		tag_id = e.target.closest('.tags').dataset.id;
-		tag_title = e.target.closest('.tags').dataset.title;
+		tag_title = e.target.closest('.tags').querySelector("a.tag_filter").innerHTML;
 		if (ids.length>0) {
 			// do ajax call to /admin/images/api
 			// action: tag, media ids: ids, tag id: tag_id
@@ -86,6 +86,7 @@ if (all_images) {
 
 // called by 'tag_add' click handler
 function add_tag_to_media_item (tag_id, tag_title, item_id) {
+	console.log(tag_title);
 	item = document.getElementById('media_item_id_' + item_id.toString());
 	tags_container = item.querySelector('.image_tags');
 	new_markup = `

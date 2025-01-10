@@ -210,7 +210,7 @@ table.dragging .before_after_wrap {
 						for ($n=0; $n<$content_item->depth; $n++) {
 							$title_prefix .= "&nbsp;-&nbsp;";
 						}?>
-						<a href="<?php echo Config::uripath(); ?>/admin/categories/edit/<?php echo $content_item->id;?>"><?php echo $title_prefix . $content_item->title; ?></a>
+						<a href="<?php echo Config::uripath(); ?>/admin/categories/edit/<?php echo $content_item->id;?>"><?php echo $title_prefix . Input::stringHtmlSafe($content_item->title); ?></a>
 						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
 					</td>
 

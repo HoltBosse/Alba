@@ -62,7 +62,7 @@ if ($required_details_form->is_submitted()) {
 			// forms are valid, save info
 			$saved = $cat->save($required_details_form, $custom_fields_form);
 			if ($saved) {
-				$msg = "Category <a href='" . Config::uripath() . "/admin/categories/edit/{$cat->id}'>{$cat->title}</a> " . ($new_cat ? 'created' : 'updated');	
+				$msg = "Category <a href='" . Config::uripath() . "/admin/categories/edit/{$cat->id}'>" . Input::stringHtmlSafe($cat->title) . "</a> " . ($new_cat ? 'created' : 'updated');	
 				CMS::Instance()->queue_message($msg, 'success', Config::uripath() . '/admin/categories');
 			}
 			else {
