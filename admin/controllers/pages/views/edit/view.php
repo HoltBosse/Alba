@@ -184,34 +184,48 @@ div.preview {
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap <?php if ($page->id) { echo " hidden ";}?>'>		
 <div class='fields-horizontal'>
-	<div class="field ">
-		<label class="label">Title</label>
-		<div class="control has-icons-left has-icons-right">
-			<input required name="title" class="input iss-success" type="text" placeholder="Page Title" maxlength="255" value="<?php echo $page->title;?>">
-			<span class="icon is-small is-left">
-			<i class="fas fa-heading"></i>
-			</span>
-			<!-- <span class="icon is-small is-right">
-				<i class="fas fa-check"></i>
-			</span> -->
-		</div>
-	<!-- <p class="help is-success">This username is available</p> -->
-	</div>
+	<?php
+		//for better or for worse, currently these two fields are saved in the db htmlspecialchars encoded :/ - so we decode it here before passing to text field which re encodes
 
-	<div class="field ">
-		<label class="label">URL Segment</label>
-		<div class="control has-icons-left has-icons-right">
-			<input name="alias" class="input iss-success" type="text" placeholder="URL Segment" maxlength="255" value="<?php echo $page->alias;?>">
-			<span class="icon is-small is-left">
-			<i class="fas fa-signature"></i>
-			</span>
-			<!-- <span class="icon is-small is-right">
-				<i class="fas fa-check"></i>
-			</span> -->
-		</div>
-	<p class="help">Alphanumeric characters only, no spaces.</p> 
-	</div>
+		$titleField = new Field_Text();
+		$titleField->load_from_config((object) [
+			"name"=>"title",
+			"id"=>"title",
+			"type"=>"Text",
+			"label"=>"Title",
+			"input_type"=>"text",
+			"required"=>true,
+			"maxlength"=>250,
+			"minlength"=>0,
+			"filter"=>"RAW",
+			"placeholder"=>"Page Title",
+            "icon_status"=>true,
+            "icon_parent_class"=>"has-icons-left",
+            "icon_markup"=> "<span class='icon is-small is-left'><i class='fas fa-heading'></i></span>",
+			"default"=>htmlspecialchars_decode($page->title),
+		]);
+		$titleField->display();
 
+		$aliasField = new Field_Text();
+		$aliasField->load_from_config((object) [
+			"name"=>"alias",
+			"id"=>"alias",
+			"type"=>"Text",
+			"label"=>"URL Segment",
+			"input_type"=>"text",
+			"required"=>false,
+			"maxlength"=>250,
+			"minlength"=>0,
+			"filter"=>"RAW",
+			"placeholder"=>"URL Segment",
+            "icon_status"=>true,
+            "icon_parent_class"=>"has-icons-left",
+            "icon_markup"=> "<span class='icon is-small is-left'><i class='fas fa-heading'></i></span>",
+			"default"=>htmlspecialchars_decode($page->alias),
+			"description"=>"Alphanumeric characters only, no spaces.",
+		]);
+		$aliasField->display();
+	?>
 
 	<div class="field">
 		<label class="label">Parent Page</label>
