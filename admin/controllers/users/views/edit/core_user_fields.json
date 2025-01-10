@@ -1,5 +1,5 @@
 {
-	"id":"core_user_fields.json",
+	"id":"core_user_fields",
 	"fields":[
 		{
 			"name":"username",
