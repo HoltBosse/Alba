@@ -401,8 +401,8 @@ div.preview {
 			foreach ($all_published_widgets as $widget):?>
 			<div class='widget_controls_wrap '>
 				<div class='widget_title_and_type'>
-					<?php echo htmlspecialchars($widget->title); ?>
-					<span  class='widget_info help'><?php echo htmlspecialchars($widget->widget_type); ?></span>
+					<?php echo Input::stringHtmlSafe($widget->title); ?>
+					<span  class='widget_info help'><?php echo Input::stringHtmlSafe($widget->widget_type); ?></span>
 				</div>
 				<div class='widget_actions'>
 					<button onClick="preview_widget(this); return false;" type='button' data-widgetid='<?php echo $widget->id;?>' class='button widget_preview button'>Preview</button>

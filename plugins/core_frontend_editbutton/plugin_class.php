@@ -40,13 +40,13 @@ class Plugin_core_frontend_editbutton extends Plugin {
             if(Config::enable_experimental_frontend_edit() ?? false) {
                 $page_contents = "
                     <div class='front_end_edit_wrap' >
-                        <a class='cfe_widget_edit' id='editpointid_{$params[0]->id}' data-widgetid='{$params[0]->id}' href='#'>EDIT &ldquo;" . htmlspecialchars($params[0]->title) . "&rdquo;</a>
+                        <a class='cfe_widget_edit' id='editpointid_{$params[0]->id}' data-widgetid='{$params[0]->id}' href='#'>EDIT &ldquo;" . Input::stringHtmlSafe($params[0]->title) . "&rdquo;</a>
                     </div>
                 " . $page_contents;
             } else {
                 $page_contents = "
                     <div class='front_end_edit_wrap' >
-                        <a style='' href='/admin/widgets/edit/{$params[0]->id}'>EDIT &ldquo;" . htmlspecialchars($params[0]->title) . "&rdquo;</a>
+                        <a style='' href='/admin/widgets/edit/{$params[0]->id}'>EDIT &ldquo;" . Input::stringHtmlSafe($params[0]->title) . "&rdquo;</a>
                     </div>
                 " . $page_contents;
             }
@@ -63,7 +63,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $controllerConfig = DB::fetch("SELECT * FROM content_types WHERE controller_location = ?", $params[0]);
             $page_contents = "
                 <div class='front_end_edit_wrap' >
-                    <a class='cfe_controller_edit' id='editpointid_" . CMS::Instance()->page->id . "' data-pageid='" . CMS::Instance()->page->id . "' href='#'>EDIT &ldquo;" . htmlspecialchars($controllerConfig->title) . "&rdquo;</a>
+                    <a class='cfe_controller_edit' id='editpointid_" . CMS::Instance()->page->id . "' data-pageid='" . CMS::Instance()->page->id . "' href='#'>EDIT &ldquo;" . Input::stringHtmlSafe($controllerConfig->title) . "&rdquo;</a>
                 </div>
             " . $page_contents;
         }

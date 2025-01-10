@@ -13,7 +13,7 @@ function in_group ($group_id, $edit_user) {
 ?>
 <h1 class='title is-1'>
 	<?php if (!$edit_user->email):?>New User
-	<?php else:?>Edit &ldquo;<?php echo htmlspecialchars($edit_user->username);?>&rdquo;<?php endif; ?>
+	<?php else:?>Edit &ldquo;<?php echo Input::stringHtmlSafe($edit_user->username);?>&rdquo;<?php endif; ?>
 </h1>
 <form method="POST" action="<?php echo Config::uripath() . "/admin/users/save";?>" id="new_user_form">
 	<input type="hidden" name="http_referer_form" value="<?php echo $_SERVER['HTTP_REFERER'];?>">
