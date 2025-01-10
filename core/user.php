@@ -113,7 +113,7 @@ class User {
 	}
 
 	public function load_from_post() {
-		$this->username = Input::getvar('username','USERNAME');
+		$this->username = Input::getvar('username','RAW');
 		if (isset($_POST['password'])) {
 			if ($_POST['password']) {
 				$this->password = password_hash ($_POST['password'], PASSWORD_DEFAULT); 
