@@ -176,10 +176,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					}
 				?>
 				<td>
-					<a class='edit_user' href='<?php echo Config::uripath();?>/admin/users/edit/<?php echo $user->id;?>'><?php echo $user->username; ?></a>
+					<a class='edit_user' href='<?php echo Config::uripath();?>/admin/users/edit/<?php echo $user->id;?>'><?php echo Input::stringHtmlSafe($user->username); ?></a>
 				</td>
 				<td>
-					<?php echo $user->email; ?>
+					<?php echo Input::stringHtmlSafe($user->email); ?>
 				</td>
 				<?php if (!$group_id):?>
 					<td>

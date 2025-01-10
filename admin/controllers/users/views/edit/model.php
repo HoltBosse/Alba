@@ -8,11 +8,17 @@ $all_groups = $edit_user->get_all_groups();
 $segments = CMS::Instance()->uri_segments;
 // check if editing, if we are, get userid and load into edit_user object
 
+$core_user_fields_form = new Form(CMSPATH . "/admin/controllers/users/views/edit/core_user_fields.json");
 $custom_user_fields_form = file_exists(CMSPATH . "/custom_user_fields.json") ? new Form(CMSPATH . "/custom_user_fields.json") : null;
 
 if (sizeof($segments)==3) {
 	if (is_numeric($segments[2])) {
 		$edit_user->load_from_id($segments[2]);
+
+		//load core user fields form
+		$core_user_fields_form->fields["username"]->default = $edit_user->username;
+		$core_user_fields_form->fields["email"]->default = $edit_user->email;
+
 		// load user fields
 		if ($custom_user_fields_form) {
 			$saved_data = DB::fetch('SELECT * FROM `custom_user_fields` WHERE `user_id`=?',[$segments[2]]);
@@ -29,4 +35,11 @@ if (sizeof($segments)==3) {
 			}
 		}
 	}
+}
+
+//remove the description from the password field for new users
+if(!$edit_user->email) {
+	$core_user_fields_form->fields["password"]->description = "";
+} else {
+	$core_user_fields_form->fields["password"]->required = false;
 }

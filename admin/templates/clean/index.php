@@ -53,7 +53,7 @@ require_once (CMSPATH . "/core/cms.php");
 							Front-End
 						</a>
 						<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo Config::uripath();?>/admin/logout.php" class="button is-light">
-							Log Out <?php echo CMS::Instance()->user->username; ?>
+							Log Out <?php echo Input::stringHtmlSafe(CMS::Instance()->user->username); ?>
 						</a>
 						</div>
 					</div>

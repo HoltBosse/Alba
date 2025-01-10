@@ -88,7 +88,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					<select name="filters[3][value]" form="searchform">
 						<option value=''>Select Creator</option>
 						<?php foreach ($applicable_users as $u):?>
-							<option <?php if ($filters['created_by']==$u->id) { echo " selected "; }?> value='<?=$u->id?>'><?=$u->username?></option>
+							<option <?php if ($filters['created_by']==$u->id) { echo " selected "; }?> value='<?=$u->id?>'><?=Input::stringHtmlSafe($u->username)?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>

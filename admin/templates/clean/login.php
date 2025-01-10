@@ -50,7 +50,7 @@ if ($resetkey) {
 					CMS::Instance()->queue_message('Error removing reset key.', 'error', Config::uripath()."/admin");
 				}
 				if ($reset_user->update_password ($password1)) {
-					CMS::Instance()->queue_message('Password changed for ' . $reset_user->username,'success', Config::uripath() . '/admin');	
+					CMS::Instance()->queue_message('Password changed for ' . Input::stringHtmlSafe($reset_user->username),'success', Config::uripath() . '/admin');	
 				}
 				else {
 					CMS::Instance()->queue_message('Unable to reset password. Please contact the system administrator.','danger', Config::uripath() . '/admin?resetkey=' . $resetkey);		

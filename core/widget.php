@@ -20,7 +20,7 @@ class Widget {
 	public function render_edit() {
 		if (CMS::Instance()->user->is_member_of(1) && !defined("ADMINPATH")) { ?>
 			<div class='front_end_edit_wrap' >
-				<a style='' target="_blank" href='/admin/widgets/edit/<?php echo $this->id;?>'>EDIT &ldquo;<?= htmlspecialchars($this->title); ?>&rdquo;</a>
+				<a style='' target="_blank" href='/admin/widgets/edit/<?php echo $this->id;?>'>EDIT &ldquo;<?= Input::stringHtmlSafe($this->title); ?>&rdquo;</a>
 			</div>
 		<?php
 		}

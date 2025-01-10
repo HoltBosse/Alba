@@ -11,6 +11,9 @@ class Field_Text extends Field {
 	public $max;
 	public $attribute_list;
 	public $step;
+	public $icon_status;
+	public $icon_parent_class;
+	public $icon_markup;
 
 	function __construct($default_content="") {
 		$this->id = "";
@@ -36,7 +39,7 @@ class Field_Text extends Field {
 		}
 		echo "<div class='field {$required} {$hidden}'>";
 			echo "<label for='{$this->id}' class='label'>{$this->label}</label>";
-			echo "<div class='control'>";
+			echo "<div class='control " . ($this->icon_status ? $this->icon_parent_class : false) . "'>";
 				
 				if ($this->input_type=='date') {
 					if ($this->default>0) {
@@ -55,37 +58,15 @@ class Field_Text extends Field {
 					$step=" step='{$this->step}' ";
 				}
 				$placeholder = $this->placeholder ?? "";
+				//explictly using htmlspecialchars here instead of Input::stringHtmlSafe because this is for attribute handling while the latter method is for in elements
 				$value = htmlspecialchars($this->default);
 				echo "<input type='{$this->input_type}' value='{$value}' placeholder='{$placeholder}' {$minmax} {$pattern} {$step} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
+				echo $this->icon_status ? $this->icon_markup : false;
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
 			}
 		echo "</div>";
-	}
-
-
-	public function inject_designer_javascript() {
-		?>
-		<script>
-			window.Field_Text = {};
-			// template is what gets injected when the field 'insert new' button gets clicked
-			window.Field_Text.designer_template = `
-			<div class="field">
-				<h2 class='heading title'>Text Field</h2>	
-
-				<label class="label">Label</label>
-				<div class="control has-icons-left has-icons-right">
-					<input required name="label" class="input iss-success" type="label" placeholder="Label" value="">
-				</div>
-
-				<label class="label">Required</label>
-				<div class="control has-icons-left has-icons-right">
-					<input name="required" class="checkbox iss-success" type="checkbox"  value="">
-				</div>
-			</div>`;
-		</script>
-		<?php 
 	}
 
 	public function designer_display() {
@@ -118,6 +99,9 @@ class Field_Text extends Field {
 		$this->placeholder = $config->placeholder ?? "";
 		$this->logic = $config->logic ?? '';
 		$this->step = $config->step;
+		$this->icon_status = $config->icon_status ?? false;
+		$this->icon_parent_class = $config->icon_parent_class ?? "";
+		$this->icon_markup = $config->icon_markup ?? "";
 	}
 
 	public function validate() {

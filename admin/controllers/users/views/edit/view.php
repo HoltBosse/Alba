@@ -13,59 +13,21 @@ function in_group ($group_id, $edit_user) {
 ?>
 <h1 class='title is-1'>
 	<?php if (!$edit_user->email):?>New User
-	<?php else:?>Edit &ldquo;<?php echo $edit_user->username;?>&rdquo;<?php endif; ?>
+	<?php else:?>Edit &ldquo;<?php echo Input::stringHtmlSafe($edit_user->username);?>&rdquo;<?php endif; ?>
 </h1>
 <form method="POST" action="<?php echo Config::uripath() . "/admin/users/save";?>" id="new_user_form">
 	<input type="hidden" name="http_referer_form" value="<?php echo $_SERVER['HTTP_REFERER'];?>">
 	<?php if ($edit_user->email):?>
 		<input type='hidden' name='id' value='<?php echo $edit_user->id;?>'/>
 	<?php endif; ?>
-	<div class="field">
-		<label class="label">Username</label>
-		<div class="control has-icons-left has-icons-right">
-			<input required name="username" class="input iss-success" type="text" placeholder="Username" value="<?php if ($edit_user->email) { echo $edit_user->username; } ?>">
-			<span class="icon is-small is-left">
-			<i class="fas fa-user"></i>
-			</span>
-			<!-- <span class="icon is-small is-right">
-				<i class="fas fa-check"></i>
-			</span> -->
-		</div>
-	<!-- <p class="help is-success">This username is available</p> -->
-	</div>
 
-	<div class="field">
-		<label class="label">Email</label>
-		<div class="control has-icons-left has-icons-right">
-			<input required name="email" class="input iss-success" type="email" placeholder="email@wherever.com" value="<?php echo $edit_user->email;?>">
-			<span class="icon is-small is-left">
-			<i class="fas fa-envelope"></i>
-			</span>
-			<!-- <span class="icon is-small is-right">
-				<i class="fas fa-check"></i>
-			</span> -->
-		</div>
-	<!-- <p class="help is-success">This username is available</p> -->
-	</div>
+	<?php
+		$core_user_fields_form->display_front_end();
 
-	<div class="field">
-		<label class="label">Password</label>
-		<div class="control has-icons-left has-icons-right">
-			<!-- password field only required for new user -->
-			<input <?php if (!$edit_user->email):?>required<?php endif;?> name="password" class="input iss-success" type="password" placeholder="Password" value="">
-			<span class="icon is-small is-left">
-			<i class="fas fa-lock"></i>
-			</span>
-			<!-- <span class="icon is-small is-right">
-				<i class="fas fa-check"></i>
-			</span> -->
-		</div>
-		<?php if ($edit_user->email):?><p class="help">Leave blank if no password change required</p><?php endif; ?>
-	</div>
-
-	<?php if ($custom_user_fields_form) {
-		$custom_user_fields_form->display_front_end();
-	} ?>
+		if ($custom_user_fields_form) {
+			$custom_user_fields_form->display_front_end();
+		}
+	?>
 
 	<h2 class="title">User Groups</h2>
 	<p class='help'>At least one group should be selected, but this is not enforced.</p><br>

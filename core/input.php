@@ -18,8 +18,7 @@ class Input {
 		}
 	}
 
-	static public function stringURLSafe($string)
-    {
+	static public function stringURLSafe($string) {
         //remove any '-' from the string they will be used as concatonater
         $str = str_replace('-', ' ', $string);
 		$str = str_replace('_', ' ', $string);
@@ -30,6 +29,11 @@ class Input {
         // lowercase and trim
         $str = trim(strtolower($str));
         return $str;
+	}
+
+	//this method exists so that if any future improvements are to be made, it is easy to do in one place
+	static public function stringHtmlSafe($string) {
+		return htmlspecialchars($string);
 	}
 
 	static public function make_alias($string) {
