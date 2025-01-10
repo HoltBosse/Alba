@@ -601,7 +601,7 @@ final class CMS {
 					"user"=>$this->user->id,
 				], $this->user->id);
 				Hook::execute_hook_actions('user_logged_in'); 
-				$this->queue_message('Welcome ' . htmlspecialchars($this->user->username), 'success', $redirect_path);
+				$this->queue_message('Welcome ' . $this->user->username, 'success', $redirect_path);
 			}
 
 			// continue with core login attempt
@@ -627,7 +627,7 @@ final class CMS {
 							"user"=>$login_user->id,
 						], $login_user->id);
 						Hook::execute_hook_actions('user_logged_in'); 
-						$this->queue_message('Welcome ' . htmlspecialchars($login_user->username), 'success', $redirect_path);
+						$this->queue_message('Welcome ' . $login_user->username, 'success', $redirect_path);
 					}
 					else {
 						$this->queue_message('Incorrect email or password','danger', $redirect_path);
