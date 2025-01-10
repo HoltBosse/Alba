@@ -5,7 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php if ($new_tag):?>
 	<h1 class='title'>New tag</h1>
 <?php else:?>
-	<h1 class='title'>Editing &ldquo;<?php echo $tag->title; ?>&rdquo; tag</h1>
+	<h1 class='title'>Editing &ldquo;<?php echo Input::stringHtmlSafe($tag->title); ?>&rdquo; tag</h1>
 <?php endif; ?>
 
 <hr>
