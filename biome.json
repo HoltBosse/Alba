@@ -3,6 +3,9 @@
 	"formatter": {
 		"enabled": false
 	},
+	"organizeImports": {
+    	"enabled": false
+	},
 	"linter": {
 		"rules": {
 			"suspicious": {
@@ -14,6 +17,6 @@
 		}
 	},
 	"files": {
-		"ignore": ["core/controllers/*.js", "core/controllers/*.css"]
+		"ignore": ["core/controllers/**", "phpmyadmin/**"]
 	}
 }
