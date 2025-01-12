@@ -1,7 +1,13 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
-//CMS::pprint_r ($content);
 ?>
+
+<script>
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/edit/script.js"); ?>
+</script>
+<style>
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/edit/style.css"); ?>
+</style>
 
 <?php if ($new_content):?>
 	<h1 class='title'>New Content</h1>
@@ -13,28 +19,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<h1 class='title'>Editing &ldquo;<?php echo Input::stringHtmlSafe($content->title); ?>&rdquo; - <?php echo Content::get_content_type_title($content->content_type);?></h1>
 	
 <?php endif; ?>
-
-<script>
-	function unloadCheckerFunction(e) {
-		let blockStatus = false;
-		document.querySelectorAll("input, textarea").forEach((i)=>{
-			if(i.value != (i.getAttribute("value") ?? "")) {
-				blockStatus = true;
-			}
-		});
-
-		if(blockStatus) {
-			e.preventDefault();
-			e.returnValue = true;
-		}
-	}
-	window.addEventListener("beforeunload", unloadCheckerFunction);
-	window.addEventListener("load", ()=>{
-		document.querySelector("form").addEventListener("submit", ()=>{
-			window.removeEventListener("beforeunload", unloadCheckerFunction);
-		});
-	});
-</script>
 
 <hr>
 
@@ -53,13 +37,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php $content_form->display_front_end(); ?>
 
 <hr>
-
-<style>
-div.flex {display:flex; flex-wrap:wrap;}
-div.flex > * {padding-left:2rem; padding-bottom:2rem;}
-/* div.flex > div:first-child {padding-left:0;} */
-div.flex > * {min-width:2rem;}
-</style>
 
 
 <div class="fixed-control-bar">
