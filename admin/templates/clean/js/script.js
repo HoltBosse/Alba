@@ -3,43 +3,43 @@
 auto_filters = document.querySelectorAll('select.auto_filter');
 auto_filters.forEach(auto_filter => {
 	// get index of th then build lexicon of unique items at index for each td of index in each row
-	var options = ['All'];
-	var table = auto_filter.closest('table');
-	var th = auto_filter.closest('th');
-	var all_ths = table.querySelectorAll('th');
-	var index=null;
-	for (var n=0; n < all_ths.length; n++) {
+	const options = ['All'];
+	const table = auto_filter.closest('table');
+	const th = auto_filter.closest('th');
+	const all_ths = table.querySelectorAll('th');
+	let index=null;
+	for (let n=0; n < all_ths.length; n++) {
 		if (all_ths[n]===th) {
 			index=n;
 		}
 	}
 	//console.log ('Auto filter found for column ', index);
-	var col = table.querySelectorAll('tr td:nth-child(' + (index+1).toString() + ')');
+	const col = table.querySelectorAll(`tr td:nth-child(${(index+1).toString()})`);
 	col.forEach(cell => {
 		if (!options.includes(cell.innerText)) {
 			options.push(cell.innerText);
 		}
 	});
 	//console.log(options);
-	var options_markup='';
+	let options_markup='';
 	options.forEach(option => {
-		options_markup += '<option value="' + option + '">' + option + '</option>';
+		options_markup += `<option value="${option}">${option}</option>`;
 	});
 	auto_filter.innerHTML = options_markup;
 
 	auto_filter.addEventListener('change',(e)=> {
 		e.preventDefault();
-		var filter = e.target.value;
-		var table = auto_filter.closest('table');
-		var th = auto_filter.closest('th');
-		var all_ths = table.querySelectorAll('th');
-		var index=null;
-		for (var n=0; n < all_ths.length; n++) {
+		const filter = e.target.value;
+		const table = auto_filter.closest('table');
+		const th = auto_filter.closest('th');
+		const all_ths = table.querySelectorAll('th');
+		let index=null;
+		for (let n=0; n < all_ths.length; n++) {
 			if (all_ths[n]===th) {
 				index=n;
 			}
 		}
-		var col = table.querySelectorAll('tr td:nth-child(' + (index+1).toString() + ')');
+		const col = table.querySelectorAll(`tr td:nth-child(${(index+1).toString()})`);
 		col.forEach(cell => {
 			if (filter==='All' || filter===cell.innerText) {
 				cell.closest('tr').style.display = "table-row";
@@ -62,7 +62,7 @@ function show(el, value) {
 }
 
 function toggle(el, value) {
-	var display = (window.getComputedStyle
+	const display = (window.getComputedStyle
 		? getComputedStyle(el, null)
 		: el.currentStyle
 	).display;
@@ -70,13 +70,13 @@ function toggle(el, value) {
 	else el.style.display = "none";
 }
 
-var showhide_anchors = document.querySelectorAll(".toggle_siblings");
+const showhide_anchors = document.querySelectorAll(".toggle_siblings");
 
 showhide_anchors.forEach(showhide_anchor => {
 	showhide_anchor.addEventListener("click", (e) => {
 		console.log("clicked toggle");
 		e.preventDefault();
-		var next = e.target.nextElementSibling;
+		const next = e.target.nextElementSibling;
 		console.log(next);
 		if (next) {
 			toggle(next, "block");
@@ -153,7 +153,7 @@ alltabs.forEach(tabs => {
 /* LAZYLOAD IMAGES */
 
 function lazyload(target) {
-	var image_selector_container = target.closest(".image_selector");
+	const image_selector_container = target.closest(".image_selector");
 	console.log(image_selector_container);
 	const obs = new IntersectionObserver((entries, observer) => {
 		entries.forEach(entry => {
@@ -169,7 +169,7 @@ function lazyload(target) {
 	obs.observe(target);
 }
 
-var lazyTargets = document.querySelectorAll(".lazy");
+const lazyTargets = document.querySelectorAll(".lazy");
 lazyTargets.forEach(lazyload);
 
 const hamburger = document.querySelector("a.navbar-burger.burger");

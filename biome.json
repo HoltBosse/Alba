@@ -12,5 +12,8 @@
 				"noForEach": "off"
 			}
 		}
+	},
+	"files": {
+		"ignore": ["core/controllers/*.js", "core/controllers/*.css"]
 	}
 }

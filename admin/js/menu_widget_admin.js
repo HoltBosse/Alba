@@ -1,3 +1,4 @@
+// biome-ignore lint: not solving now
 const nanoid=(t=21)=>{let e="",r=crypto.getRandomValues(new Uint8Array(t));while(t--){const n=63&r[t];e+=n<36?n.toString(36):n<62?(n-26).toString(36).toUpperCase():n<63?"_":"-"}return e};
 
 function find_node_in_tree(node, id) {
@@ -8,9 +9,9 @@ function find_node_in_tree(node, id) {
     if (node.id==id) {
         //console.log ('FOUND!');
         return node;
-    }
-    else {
-        for (var n=0; n<node.children.length; n++) {
+    // biome-ignore lint: not solving now
+    } else {
+        for (let n=0; n<node.children.length; n++) {
             found = find_node_in_tree(node.children[n], id);
             if (found) {
                 //console.log('FOUND IN CHILD!');
@@ -38,7 +39,7 @@ function get_index (node) {
     if (!parent_node) {
         throw 'Index cannot be determined: Parent node not found';
     }
-    for (var n=0; n<parent_node.children.length; n++) {
+    for (let n=0; n<parent_node.children.length; n++) {
         if (node.id==parent_node.children[n].id) {
             return n;
         }
@@ -49,8 +50,8 @@ function get_index (node) {
 function is_descendant(node_a, node_b) {
     // check if node_a is descendant of node_b
     // loop through all parents of node_a
-    var descendant = false;
-    var parent = find_node_in_tree(menu_designer_config, node_a.parent);
+    let descendant = false;
+    let parent = find_node_in_tree(menu_designer_config, node_a.parent);
     while (parent.type!=='root') {
         if (parent.id==node_b.id) {
             descendant = true;
@@ -290,10 +291,10 @@ function md_dragover_handler(ev) {
         // dragging over droppable
         ev.dataTransfer.dropEffect = "move";
         // get position within droppable
-        var rect = droppable_el.getBoundingClientRect();
+        const rect = droppable_el.getBoundingClientRect();
         //var height_from_top_of_droppable = ev.screenY - rect.top;
-        var height_from_top_of_droppable = ev.clientY - rect.top;
-        var width_from_left_of_droppable = ev.clientX - rect.left;
+        const height_from_top_of_droppable = ev.clientY - rect.top;
+        const width_from_left_of_droppable = ev.clientX - rect.left;
         //var droppable_height = rect.height/2;
         //console.log(height_from_top_of_droppable);
         if (width_from_left_of_droppable > rect.width/1.4) {
@@ -335,9 +336,9 @@ function md_drop_handler(ev) {
     const dest_node = find_node_in_tree(menu_designer_config, ev.target.closest('.menu_node').id);  
     const parent_node = find_node_in_tree(menu_designer_config, dest_node.parent); 
 
-    var rect = sibling_el.getBoundingClientRect();
-    var height_from_top_of_droppable = ev.clientY - rect.top;
-    var width_from_left_of_droppable = ev.clientX - rect.left;
+    const rect = sibling_el.getBoundingClientRect();
+    const height_from_top_of_droppable = ev.clientY - rect.top;
+    const width_from_left_of_droppable = ev.clientX - rect.left;
 
     if (width_from_left_of_droppable > rect.width/1.4) { 
         insert_inside (source_node, dest_node);
@@ -367,7 +368,7 @@ function render_node(node, level) {
     let markup="";
     if (level>=0) {
         // don't render root, only it's children (has level of -1)
-        var menu_type_icon = '<i class="far fa-newspaper"></i>';
+        let menu_type_icon = '<i class="far fa-newspaper"></i>';
         if (node.type=='link') {
             menu_type_icon = '<i class="fas fa-external-link-alt"></i>';
         }
