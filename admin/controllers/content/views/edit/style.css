@@ -1,4 +1,24 @@
-div.flex {display:flex; flex-wrap:wrap;}
-div.flex > * {padding-left:2rem; padding-bottom:2rem;}
-/* div.flex > div:first-child {padding-left:0;} */
-div.flex > * {min-width:2rem;}
+div.flex > .form_contain#required_content_fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.5rem 2rem;
+    width: 100%;
+    
+    padding: 0 1.5rem;
+    padding-bottom: 2rem;
+
+    select {
+        width: 100%;
+    }
+
+    div.form_field {
+        margin-bottom: 0;
+    }
+
+    div.field_id_tags, div.field_id_category {
+        grid-column: span 2;
+    }
+}
+div.flex > * {
+    min-width: 2rem;
+}
