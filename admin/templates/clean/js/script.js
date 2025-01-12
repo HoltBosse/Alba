@@ -27,7 +27,7 @@ auto_filters.forEach(auto_filter => {
 	});
 	auto_filter.innerHTML = options_markup;
 
-	auto_filter.addEventListener('change',function(e){
+	auto_filter.addEventListener('change',(e)=> {
 		e.preventDefault();
 		var filter = e.target.value;
 		var table = auto_filter.closest('table');
@@ -73,7 +73,7 @@ function toggle(el, value) {
 var showhide_anchors = document.querySelectorAll(".toggle_siblings");
 
 showhide_anchors.forEach(showhide_anchor => {
-	showhide_anchor.addEventListener("click", function(e) {
+	showhide_anchor.addEventListener("click", (e) => {
 		console.log("clicked toggle");
 		e.preventDefault();
 		var next = e.target.nextElementSibling;
@@ -105,15 +105,15 @@ function getTabIndex(el) {
 
 function deactivateAllTabs() {
 	alltabs = document.querySelectorAll('.tabs li, .tab-content')
-	alltabs.forEach(function (tab) {
+	alltabs.forEach((tab) => {
 		tab.classList.remove('is-active');
 	});
 }
 
 let alltabs = document.querySelectorAll('.tabs');
 alltabs.forEach(tabs => {
-	let closest_wrap = tabs.closest('.tabs-wrap');
-	let content_wrap = closest_wrap.querySelector('.tab-content-start');
+	const closest_wrap = tabs.closest('.tabs-wrap');
+	const content_wrap = closest_wrap.querySelector('.tab-content-start');
 	// set first tab active - check to make sure no existing active items from invalid checks
 	if(!tabs.querySelector(".is-active")) {
 		tabs.querySelector('li').classList.add('is-active');
@@ -125,16 +125,16 @@ alltabs.forEach(tabs => {
 	
 	// click event handler for tab headings
 	tabs.querySelectorAll('li').forEach(tab => {
-		tab.addEventListener('click',function(e){
+		tab.addEventListener('click',(e)=> {
 			e.preventDefault();
 			// remove active class from all current tabset active elements
-			let all_active = closest_wrap.querySelectorAll('.is-active');
+			const all_active = closest_wrap.querySelectorAll('.is-active');
 			all_active.forEach(active => {
 				active.classList.remove('is-active');
 			});
-			let index = getTabIndex(e.target.closest('li'));
+			const index = getTabIndex(e.target.closest('li'));
 			tabs.querySelectorAll('li')[index].classList.add('is-active');
-			let all_tab_contents = content_wrap.querySelectorAll('.tab-content');
+			const all_tab_contents = content_wrap.querySelectorAll('.tab-content');
 			if (all_tab_contents.length<=index) {
 				// form might be incomplete with more tab headings than content areas
 				// fail silently
@@ -172,13 +172,13 @@ function lazyload(target) {
 var lazyTargets = document.querySelectorAll(".lazy");
 lazyTargets.forEach(lazyload);
 
-let hamburger = document.querySelector("a.navbar-burger.burger");
+const hamburger = document.querySelector("a.navbar-burger.burger");
 if(hamburger) {
 	hamburger.addEventListener("click", (e)=>{
 		document.getElementById("navbarBasicExample").classList.toggle("active");
 	});
 }
-let nav_menu = document.getElementById("navbarBasicExample");
+const nav_menu = document.getElementById("navbarBasicExample");
 if(nav_menu) {
 	nav_menu.addEventListener("click", (e)=>{
 		if(e.target.classList.contains("navbar-link")) {

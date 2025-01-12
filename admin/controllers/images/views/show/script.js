@@ -2,13 +2,13 @@
 all_image_containers = document.querySelectorAll('.all_images_image_container');
 //console.log(all_image_containers);
 all_image_containers.forEach(container => {
-	container.addEventListener('click',function(e){
+	container.addEventListener('click',(e)=> {
 		e.target.classList.toggle('active');
 	});
 });
 
 // close modal handler
-document.querySelector('body').addEventListener('click',function(e){
+document.querySelector('body').addEventListener('click',(e)=> {
 	if (e.target.classList.contains('delete')) {
 		e.target.closest('.modal').classList.remove('is-active');
 	}
@@ -16,7 +16,7 @@ document.querySelector('body').addEventListener('click',function(e){
 
 
 // top tag click handlers - filter and add
-document.getElementById('top_tags')?.addEventListener('click',function(e){
+document.getElementById('top_tags')?.addEventListener('click',(e)=> {
 	e.preventDefault();
 	if (e.target.classList.contains('tag_filter')) {
 		tag_id = e.target.closest('.tags').dataset.id;
@@ -57,7 +57,7 @@ document.getElementById('top_tags')?.addEventListener('click',function(e){
 var all_images = document.getElementById('all_images');
 // only applicable if filter not in place to hide all images
 if (all_images) {
-	all_images.addEventListener('click',function(e){
+	all_images.addEventListener('click',(e)=> {
 		e.preventDefault();
 		if (e.target.classList.contains('is-delete')) {
 			tag_id = e.target.closest('.tags').dataset.id;
@@ -156,9 +156,9 @@ function crop_image() {
 	else {
 		// get vars
 		async function handle_img_editor() {
-			let title = selected[0].querySelector('img').title;
-			let alt = selected[0].querySelector('img').alt;
-			let image_id = selected[0].dataset.id;
+			const title = selected[0].querySelector('img').title;
+			const alt = selected[0].querySelector('img').alt;
+			const image_id = selected[0].dataset.id;
 			const result = await window.load_img_editor(image_id);
 			//console.log(result);
 

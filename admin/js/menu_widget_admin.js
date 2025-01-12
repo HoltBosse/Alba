@@ -1,4 +1,4 @@
-let nanoid=(t=21)=>{let e="",r=crypto.getRandomValues(new Uint8Array(t));for(;t--;){let n=63&r[t];e+=n<36?n.toString(36):n<62?(n-26).toString(36).toUpperCase():n<63?"_":"-"}return e};
+const nanoid=(t=21)=>{let e="",r=crypto.getRandomValues(new Uint8Array(t));while(t--){const n=63&r[t];e+=n<36?n.toString(36):n<62?(n-26).toString(36).toUpperCase():n<63?"_":"-"}return e};
 
 function find_node_in_tree(node, id) {
     // in:  node (js object with id, title, children[array], parent[id ref], info[object with misc props])
@@ -23,7 +23,7 @@ function find_node_in_tree(node, id) {
 
 
 function make_md_node (title, type, info) {
-    let newnode = {};
+    const newnode = {};
     newnode.title = title;
     newnode.parent = "root";
     newnode.id = nanoid();
@@ -34,7 +34,7 @@ function make_md_node (title, type, info) {
 }
 
 function get_index (node) {
-    let parent_node = find_node_in_tree(menu_designer_config, node.parent);
+    const parent_node = find_node_in_tree(menu_designer_config, node.parent);
     if (!parent_node) {
         throw 'Index cannot be determined: Parent node not found';
     }
@@ -63,13 +63,13 @@ function is_descendant(node_a, node_b) {
 
 function insert_before (source, dest, parent) {
     // remove source from original location
-    let source_parent_node = find_node_in_tree(menu_designer_config, source.parent);
-    let source_index = get_index (source);
+    const source_parent_node = find_node_in_tree(menu_designer_config, source.parent);
+    const source_index = get_index (source);
     //console.log('removing original node from index ',source_index, ' in node ', source_parent_node);
     source_parent_node.children.splice(source_index, 1);
 
     // dest = thing inserting before
-    let dest_index = get_index (dest);
+    const dest_index = get_index (dest);
     if (dest_index==0) {
         // push to start
         parent.children.unshift(source);
@@ -83,20 +83,20 @@ function insert_before (source, dest, parent) {
 
 function insert_after (source, dest, parent) {
     // remove source from original location
-    let source_parent_node = find_node_in_tree(menu_designer_config, source.parent);
-    let source_index = get_index (source);
+    const source_parent_node = find_node_in_tree(menu_designer_config, source.parent);
+    const source_index = get_index (source);
     source_parent_node.children.splice(source_index, 1);
 
     // dest = thing inserting before
-    let dest_index = get_index (dest);
+    const dest_index = get_index (dest);
     parent.children.splice(dest_index+1, 0, source);
     source.parent = parent.id;
 }
 
 function insert_inside (source, dest) {
     // remove source from original location
-    let source_parent_node = find_node_in_tree(menu_designer_config, source.parent);
-    let source_index = get_index (source);
+    const source_parent_node = find_node_in_tree(menu_designer_config, source.parent);
+    const source_index = get_index (source);
     
     source_parent_node.children.splice(source_index, 1);
 
@@ -105,28 +105,28 @@ function insert_inside (source, dest) {
 }
 
 function delete_node (node) {
-    let index = get_index(node);
-    let parent = find_node_in_tree(menu_designer_config, node.parent);
+    const index = get_index(node);
+    const parent = find_node_in_tree(menu_designer_config, node.parent);
     parent.children.splice(index, 1);
     render_menu_designer();
 }
 
 // handle add page button click
 
-document.getElementById('menu_desiger_add_pages').addEventListener('click',function(e){
+document.getElementById('menu_desiger_add_pages').addEventListener('click',(e)=> {
     // clicked add pages
     // get all pages to add
-    let checked = document.querySelectorAll('#menu_designer_page_listing input:checked');
+    const checked = document.querySelectorAll('#menu_designer_page_listing input:checked');
     if (checked.length==0) {
         alert('Must select at least one page to add');
     }
     else {
         checked.forEach(page => {
-            let name = page.closest('label').querySelector('span').innerText;
-            let page_id = page.value ;
+            const name = page.closest('label').querySelector('span').innerText;
+            const page_id = page.value ;
            /*  console.log('Adding page:');
             console.log(name, page_id); */
-            let newnode = make_md_node (name, 'page', {"page_id":page_id});
+            const newnode = make_md_node (name, 'page', {"page_id":page_id});
             menu_designer_config.children.push(newnode);
             page.checked = false;
         });
@@ -134,18 +134,18 @@ document.getElementById('menu_desiger_add_pages').addEventListener('click',funct
     }
 });
 
-document.getElementById('menu_desiger_add_link').addEventListener('click',function(e){
-    let link_text = document.getElementById('link_text').value;
-    let link_url = document.getElementById('link_url').value;
-    let newtab = document.getElementById('link_newtab').checked;
+document.getElementById('menu_desiger_add_link').addEventListener('click',(e)=> {
+    const link_text = document.getElementById('link_text').value;
+    const link_url = document.getElementById('link_url').value;
+    const newtab = document.getElementById('link_newtab').checked;
     if (!link_text || !link_url) {
         alert('Link text and link URL must contain data');
     }
     else {
-        let newnode = make_md_node (link_text, 'link', {'newtab':newtab,'url':link_url});
+        const newnode = make_md_node (link_text, 'link', {'newtab':newtab,'url':link_url});
         if (document.querySelector('.menu_node.selected')) {
             // push into selected node, not root
-            let parent = find_node_in_tree(menu_designer_config, document.querySelector('.menu_node.selected').id );
+            const parent = find_node_in_tree(menu_designer_config, document.querySelector('.menu_node.selected').id );
             parent.children.push(newnode);
         }
         else {
@@ -159,16 +159,16 @@ document.getElementById('menu_desiger_add_link').addEventListener('click',functi
     }
 });
 
-document.getElementById('menu_desiger_add_heading').addEventListener('click',function(e){
-    let heading_text = document.getElementById('heading_text').value;
+document.getElementById('menu_desiger_add_heading').addEventListener('click',(e)=> {
+    const heading_text = document.getElementById('heading_text').value;
     if (!heading_text) {
         alert('Heading text cannot be empty');
     }
     else {
-        let newnode = make_md_node (heading_text, 'heading', {});
+        const newnode = make_md_node (heading_text, 'heading', {});
         if (document.querySelector('.menu_node.selected')) {
             // push into selected node, not root
-            let parent = find_node_in_tree(menu_designer_config, document.querySelector('.menu_node.selected').id );
+            const parent = find_node_in_tree(menu_designer_config, document.querySelector('.menu_node.selected').id );
             parent.children.push(newnode);
         }
         else {
@@ -179,16 +179,16 @@ document.getElementById('menu_desiger_add_heading').addEventListener('click',fun
         render_menu_designer();
     }
 });
-document.getElementById('menu_desiger_edit_heading').addEventListener('click',function(e){
-    let heading_text = document.getElementById('heading_text').value;
+document.getElementById('menu_desiger_edit_heading').addEventListener('click',(e)=> {
+    const heading_text = document.getElementById('heading_text').value;
     if (!heading_text) {
         alert('Heading text cannot be empty');
     }
     else {
         // update node with details from edit field
-        let edited_node_el = document.querySelector('.menu_node.selected');
-        let edited_node = find_node_in_tree(menu_designer_config, edited_node_el.id);
-        let edited_field = document.getElementById('heading_text');
+        const edited_node_el = document.querySelector('.menu_node.selected');
+        const edited_node = find_node_in_tree(menu_designer_config, edited_node_el.id);
+        const edited_field = document.getElementById('heading_text');
         edited_node.title = edited_field.value; // update node value with field value
         document.querySelector('fieldset.edit').classList.remove('edit'); // remove edit mode from fieldset
         edited_field.value=''; // reset field value
@@ -196,17 +196,17 @@ document.getElementById('menu_desiger_edit_heading').addEventListener('click',fu
     }
 });
 
-document.getElementById('menu_desiger_edit_link').addEventListener('click',function(e){
-    let link_text = document.getElementById('link_text').value;
-    let link_url = document.getElementById('link_url').value;
-    let link_newtab = document.getElementById('link_newtab').checked;
+document.getElementById('menu_desiger_edit_link').addEventListener('click',(e)=> {
+    const link_text = document.getElementById('link_text').value;
+    const link_url = document.getElementById('link_url').value;
+    const link_newtab = document.getElementById('link_newtab').checked;
     if (!link_text || !link_url) {
         alert('Link text or URL cannot be empty');
     }
     else {
         // update node with details from edit field
-        let edited_node_el = document.querySelector('.menu_node.selected');
-        let edited_node = find_node_in_tree(menu_designer_config, edited_node_el.id);
+        const edited_node_el = document.querySelector('.menu_node.selected');
+        const edited_node = find_node_in_tree(menu_designer_config, edited_node_el.id);
         edited_node.title = link_text; // update node value with field values
         edited_node.info.url = link_url;
         edited_node.info.newtab = link_newtab;
@@ -218,12 +218,12 @@ document.getElementById('menu_desiger_edit_link').addEventListener('click',funct
     }
 });
 
-document.getElementById('menu_designer_tree').addEventListener('click',function(e){
+document.getElementById('menu_designer_tree').addEventListener('click',(e)=> {
     if (e.target.classList.contains('delete')) {
         e.stopPropagation();
         // clicked delete on tree node
         if (confirm('Are you sure? Changes, once saved, cannot be undone!')) {
-            let node = find_node_in_tree(menu_designer_config, e.target.closest('.menu_node').id);
+            const node = find_node_in_tree(menu_designer_config, e.target.closest('.menu_node').id);
             delete_node (node);
         }
     }
@@ -249,7 +249,7 @@ document.getElementById('menu_designer_tree').addEventListener('click',function(
         // select clicked menu node
         e.target.classList.add('selected');
         // populate setup field for changes
-        let node = find_node_in_tree(menu_designer_config, e.target.id);
+        const node = find_node_in_tree(menu_designer_config, e.target.id);
         if (node.type=='heading') {
             // populate heading field
             heading_input_el.closest('fieldset').classList.add('edit'); // set edit mode of container
@@ -274,12 +274,12 @@ function md_dragstart_handler(ev) {
 }
 function md_dragover_handler(ev) {
     ev.preventDefault();
-    let newnode_el = document.getElementById(window.menu_designer_dragging_id);
-    let droppable_el = ev.target.closest('.menu_node');
+    const newnode_el = document.getElementById(window.menu_designer_dragging_id);
+    const droppable_el = ev.target.closest('.menu_node');
     //console.log(droppable.id, newnode.id);
     // check if dragging over self
-    let source_node = find_node_in_tree (menu_designer_config, newnode_el.id);
-    let dest_node = find_node_in_tree (menu_designer_config, droppable_el.id);
+    const source_node = find_node_in_tree (menu_designer_config, newnode_el.id);
+    const dest_node = find_node_in_tree (menu_designer_config, droppable_el.id);
     if (newnode_el.id==droppable_el.id) {
         ev.dataTransfer.dropEffect = "none";
     }
@@ -316,7 +316,7 @@ function md_dragover_handler(ev) {
 function md_dragleave_handler(ev) {
     ev.preventDefault();
     //ev.dataTransfer.dropEffect = "move";
-    let el = ev.target.closest('.menu_node');
+    const el = ev.target.closest('.menu_node');
     el.classList.remove('insertbefore');
     el.classList.remove('insertafter');
     el.classList.remove('insertinside');
@@ -327,13 +327,13 @@ function md_drop_handler(ev) {
     // Get the id of the target and add the moved element to the target's DOM
     const node_id = ev.dataTransfer.getData("application/my-app");
 
-    let newnode_el = document.getElementById(node_id);
-    let sibling_el = ev.target.closest('.menu_node');
-    let parent_el = sibling_el.parentNode.closest('.menu_node');
+    const newnode_el = document.getElementById(node_id);
+    const sibling_el = ev.target.closest('.menu_node');
+    const parent_el = sibling_el.parentNode.closest('.menu_node');
 
-    let source_node = find_node_in_tree(menu_designer_config, node_id);
-    let dest_node = find_node_in_tree(menu_designer_config, ev.target.closest('.menu_node').id);  
-    let parent_node = find_node_in_tree(menu_designer_config, dest_node.parent); 
+    const source_node = find_node_in_tree(menu_designer_config, node_id);
+    const dest_node = find_node_in_tree(menu_designer_config, ev.target.closest('.menu_node').id);  
+    const parent_node = find_node_in_tree(menu_designer_config, dest_node.parent); 
 
     var rect = sibling_el.getBoundingClientRect();
     var height_from_top_of_droppable = ev.clientY - rect.top;
@@ -394,15 +394,15 @@ function render_node(node, level) {
 
 function render_menu_designer() {
     // get markup
-    let markup = render_node(menu_designer_config, -1);
+    const markup = render_node(menu_designer_config, -1);
     // get target containing element
-    let el = document.getElementById('menu_designer_tree');
+    const el = document.getElementById('menu_designer_tree');
     // clear container
     el.innerHTML = null;
     // create dom from markup text and add to container
     el.appendChild(document.createRange().createContextualFragment(markup));
     // save to input element for submission on save
-    let config_el = document.getElementById('menu_designer_config');
+    const config_el = document.getElementById('menu_designer_config');
     config_el.value = JSON.stringify(menu_designer_config);
 }
 
