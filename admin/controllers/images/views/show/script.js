@@ -36,7 +36,7 @@ document.getElementById('top_tags')?.addEventListener('click',(e)=> {
 				formData.append(key, value);
 			}
 
-			fetch(window.uripath + '/admin/images/api', {
+			fetch(`${window.uripath}/admin/images/api`, {
 				method: "POST",
 				body: formData,
 			}).then(response=>response.json()).then((response)=>{
@@ -54,7 +54,7 @@ document.getElementById('top_tags')?.addEventListener('click',(e)=> {
 	}
 });
 
-var all_images = document.getElementById('all_images');
+const all_images = document.getElementById('all_images');
 // only applicable if filter not in place to hide all images
 if (all_images) {
 	all_images.addEventListener('click',(e)=> {
@@ -69,7 +69,7 @@ if (all_images) {
 				formData.append(key, value);
 			}
 
-			fetch(window.uripath + '/admin/images/api', {
+			fetch(`${window.uripath}/admin/images/api`, {
 				method: "POST",
 				body: formData,
 			}).then(response=>response.json()).then((response)=>{
@@ -87,7 +87,7 @@ if (all_images) {
 // called by 'tag_add' click handler
 function add_tag_to_media_item (tag_id, tag_title, item_id) {
 	console.log(tag_title);
-	item = document.getElementById('media_item_id_' + item_id.toString());
+	item = document.getElementById(`media_item_id_${item_id.toString()}`);
 	tags_container = item.querySelector('.image_tags');
 	new_markup = `
 	<div class="control">
@@ -103,8 +103,8 @@ function add_tag_to_media_item (tag_id, tag_title, item_id) {
 
 // called by untag click handler
 function untag_media_item (tag_id, item_id) {
-	item = document.getElementById('media_item_id_' + item_id.toString());
-	tag = item.querySelector('.tag_id_' + tag_id.toString());
+	item = document.getElementById(`media_item_id_${item_id.toString()}`);
+	tag = item.querySelector(`.tag_id_${tag_id.toString()}`);
 	tag.remove();
 }
 
@@ -133,11 +133,11 @@ function rename_image() {
 	}
 	else {
 		// get vars
-		var title = selected[0].querySelector('img').title;
-		var alt = selected[0].querySelector('img').alt;
-		var image_id = selected[0].dataset.id;
+		const title = selected[0].querySelector('img').title;
+		const alt = selected[0].querySelector('img').alt;
+		const image_id = selected[0].dataset.id;
 		// show modal
-		var modal = document.getElementById('rename_image_modal');
+		const modal = document.getElementById('rename_image_modal');
 		modal.querySelector('#rename_title').value = title;
 		modal.querySelector('#rename_alt').value = alt;
 		modal.querySelector('#rename_image_id').value = image_id;
@@ -163,7 +163,7 @@ function crop_image() {
 			//console.log(result);
 
 			if(result != 0) {
-				document.getElementById("image_editor").querySelector(".modal-card-body").innerHTML = `<p>Uploading Edit to the Server. Please Wait ....</p>`;
+				document.getElementById("image_editor").querySelector(".modal-card-body").innerHTML = "<p>Uploading Edit to the Server. Please Wait ....</p>";
 				document.getElementById("image_editor").querySelector(".modal-card-foot").innerHTML = "";
 				//console.log(result);
 				const formData = new FormData();
@@ -172,7 +172,7 @@ function crop_image() {
 				formData.append("title[]", [alt]);
 				formData.append("web_friendly[]", [0]);
 
-				fetch(window.uripath + '/admin/images/uploadv2', {
+				fetch(`${window.uripath}/admin/images/uploadv2`, {
 					method: "POST",
 					/* headers: {
 						"Content-Type": "multipart/form-data"
@@ -191,12 +191,12 @@ function crop_image() {
 
 function rename_image_action() {
 	// called by onclick of update button in modal
-	selected = get_selected();
+	const selected = get_selected();
 	// get vars
-	var modal = document.getElementById('rename_image_modal');
-	var title = modal.querySelector('#rename_title').value;
-	var alt = modal.querySelector('#rename_alt').value ;
-	var image_id = modal.querySelector('#rename_image_id').value;
+	const modal = document.getElementById('rename_image_modal');
+	const title = modal.querySelector('#rename_title').value;
+	const alt = modal.querySelector('#rename_alt').value ;
+	const image_id = modal.querySelector('#rename_image_id').value;
 	// update image in view
 	selected[0].querySelector('img').title = title;
 	selected[0].querySelector('img').alt = alt;
@@ -211,7 +211,7 @@ function rename_image_action() {
 		formData.append(key, value);
 	}
 
-	fetch(window.uripath + '/admin/images/api', {
+	fetch(`${window.uripath}/admin/images/api`, {
 		method: "POST",
 		body: formData,
 	}).then(response=>response.json()).then((response)=>{
@@ -222,14 +222,14 @@ function rename_image_action() {
 }
 
 function clear_selection() {
-	selected = get_selected();
+	const selected = get_selected();
 	selected.forEach(i => {
 		i.classList.remove('active');
 	});
 }
 
 function clear_tags() {
-	ids = get_selected_ids();
+	const ids = get_selected_ids();
 	if (ids.length>0) {
 		sure = window.confirm("Are you sure?");
 		if (sure) {
@@ -241,13 +241,13 @@ function clear_tags() {
 				formData.append(key, value);
 			}
 
-			fetch(window.uripath + '/admin/images/api', {
+			fetch(`${window.uripath}/admin/images/api`, {
 				method: "POST",
 				body: formData,
 			}).then(response=>response.json()).then((response)=>{
 				response.untagged.forEach(item => {
 					//clear_tags_media_item (tag_id, tag_title, item);
-					media_item_container = document.getElementById('media_item_id_' + item.toString());
+					media_item_container = document.getElementById(`media_item_id_${item.toString()}`);
 					media_item_container.querySelector('.image_tags').innerHTML="";
 				});
 			}).catch(()=>{
@@ -261,7 +261,7 @@ function clear_tags() {
 }
 
 function delete_items() {
-	ids = get_selected_ids();
+	const ids = get_selected_ids();
 	if (ids.length>0) {
 		sure = window.confirm("Are you sure?");
 		if (sure) {
@@ -273,13 +273,13 @@ function delete_items() {
 				formData.append(key, value);
 			}
 
-			fetch(window.uripath + '/admin/images/api', {
+			fetch(`${window.uripath}/admin/images/api`, {
 				method: "POST",
 				body: formData,
 			}).then(response=>response.json()).then((response)=>{
 				response.untagged.forEach(item => {
 					//clear media_item 
-					media_item_container = document.getElementById('media_item_id_' + item.toString());
+					media_item_container = document.getElementById(`media_item_id_${item.toString()}`);
 					media_item_container.closest('.all_images_image_container').innerHTML="";
 				});
 				window.location.reload();
