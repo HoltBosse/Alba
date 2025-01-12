@@ -5,6 +5,9 @@
 	},
 	"linter": {
 		"rules": {
+			"suspicious": {
+				"noDoubleEquals": "off"
+			},
 			"complexity": {
 				"noForEach": "off"
 			}
