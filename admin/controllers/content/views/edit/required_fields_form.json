@@ -37,7 +37,8 @@
 			"label": "Category",
 			"filter": "NUMBER",
 			"default":0,
-			"coltype":"int default(0)"
+			"coltype":"int default(0)",
+			"slimselect": true
 		},
 		{
 			"label":"Note",
