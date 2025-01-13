@@ -1,5 +1,5 @@
 // GET THE DROP ZONE
-var uploader = document.getElementById('upload_space');
+const uploader = document.getElementById('upload_space');
 
 // STOP THE DEFAULT BROWSER ACTION FROM OPENING THE FILE
 uploader.addEventListener("dragover", (e)=>{
@@ -24,7 +24,7 @@ uploader.addEventListener("drop", (e)=>{
 });
 
 // handle regular file upload
-let regular_upload = document.getElementById('regular_upload');
+const regular_upload = document.getElementById('regular_upload');
 regular_upload.addEventListener('change', (e)=>{
     document.querySelector("#image_uploader")?.remove();
 	do_upload(e);

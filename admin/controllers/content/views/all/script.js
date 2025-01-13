@@ -5,8 +5,8 @@ new SlimSelect({
 window.addEventListener("load", ()=>{
     document.addEventListener("click", (e)=>{
         if(e.target.classList.contains("orderablerow")) {
-            let wrapper = e.target.closest("th");
-            let selectedRadio = wrapper.querySelector("input:checked");
+            const wrapper = e.target.closest("th");
+            const selectedRadio = wrapper.querySelector("input:checked");
             //selectedRadio.checked = false;
 
             document.querySelectorAll('th:has(.orderablerow) input[value="regular"]').forEach(item=>{
@@ -26,7 +26,7 @@ window.addEventListener("load", ()=>{
 
 admin_rows = document.querySelectorAll('.content_admin_row');
 admin_rows.forEach(row => {
-    row.addEventListener('click',function(e){
+    row.addEventListener('click',(e)=>{
         tr = e.target.closest('tr');
         tr.classList.toggle('selected');
         hidden_checkbox = tr.querySelector('.hidden_multi_edit');
@@ -64,13 +64,11 @@ function drop_handler(e) {
     //console.log(e);
     e.preventDefault();
     // get required info
-    var source_id = e.dataTransfer.getData('text/plain');
-    var dest_id = e.target.closest('tr').dataset.itemid;
+    const source_id = e.dataTransfer.getData('text/plain');
+    const dest_id = e.target.closest('tr').dataset.itemid;
+    let insert_position = 'after';
     if (e.target.classList.contains('drop_before')) {
-        var insert_position = 'before';
-    }
-    else {
-        var insert_position = 'after';
+        insert_position = 'before';
     }
     //console.log('Insert',source_id, insert_position, dest_id);
     // perform ajax action silently
@@ -96,8 +94,8 @@ function drop_handler(e) {
     });
 
     // move dom rows - regardless of success of ajax - report failures
-    source_row = document.getElementById('row_id_' + source_id);
-    dest_row = document.getElementById('row_id_' + dest_id);
+    source_row = document.getElementById(`row_id_${source_id}`);
+    dest_row = document.getElementById(`row_id_${dest_id}`);
     tbody = source_row.closest('tbody');
     tbody.removeChild(source_row);
     if (insert_position=='after') {
@@ -107,7 +105,7 @@ function drop_handler(e) {
         tbody.insertBefore(source_row, dest_row);
     }
     // clean up grips - TODO: cleaner version for single grip in drop_handler
-    var grips = document.querySelectorAll('.grip');
+    const grips = document.querySelectorAll('.grip');
     grips.forEach(grip => {
         grip.classList.remove('ready');
     });

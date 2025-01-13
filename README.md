@@ -22,3 +22,7 @@ That's it, now browse to /admin to start. See [wiki](https://github.com/HoltBoss
 ### PHPSTAN test command
 
 `composer albatest`
+
+### Biomejs testing
+
+see https://biomejs.dev/guides/manual-installation. install in your path and run `biome lint`

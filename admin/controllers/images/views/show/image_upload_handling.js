@@ -1,4 +1,4 @@
-var valid_image_types = {
+const valid_image_types = {
 	"image/png": true,
 	"image/webp": true,
 	"image/jpeg": true,
@@ -7,7 +7,7 @@ var valid_image_types = {
 	"image/gif": true,
 }
 
-var web_friendly_blacklist = {
+const web_friendly_blacklist = {
 	"image/svg+xml": true,
 	"image/svg": true,
 	"image/gif": true,
@@ -15,20 +15,20 @@ var web_friendly_blacklist = {
 
 function do_upload(e) {
 	// check method
+	let myfiles;
 	if (e.type=="drop") {
-		var myfiles = e.dataTransfer.files;
-	}
-	else {
+		myfiles = e.dataTransfer.files;
+	} else {
 		// assume file input 
-		var myfiles = e.target.files;
+		myfiles = e.target.files;
 	}
 	// RUN THROUGH THE DROPPED FILES + AJAX UPLOAD
 	window.formdata = new FormData();
 
 	// check against max upload size
-	var uploaded_size_total=0;
+	let uploaded_size_total=0;
 	let invalid_counter = 0;
-	for (var i = 0; i < myfiles.length; i++) {
+	for (let i = 0; i < myfiles.length; i++) {
 		console.log(myfiles[i].type);
 		if (!valid_image_types[myfiles[i].type]) {
             // skip anything but png or jpg
@@ -46,13 +46,9 @@ function do_upload(e) {
 		return false;
 	}
 
-	// show upload modal  
-	var html = document.querySelector('html');
-	//html.classList.add('is-clipped');
-
 	// add files to form
 
-	let modal = document.createElement("div");
+	const modal = document.createElement("div");
 	modal.id="upload_modal";
 	modal.classList.add("modal");
 	modal.classList.add('is-active');
@@ -79,7 +75,7 @@ function do_upload(e) {
 	});
 	document.body.appendChild(modal);
 
-    let upload_form = modal.querySelector('form');
+    const upload_form = modal.querySelector('form');
 	// empty form except for hidden submit button - this is clicked via js from the 'upload' modal button
 	// this allows browser html form checking to trigger
     upload_form.innerHTML = '<button style="display:none !important" class="button" id="image_upload_form_submit" type="submit">Upload</button>';
@@ -88,7 +84,7 @@ function do_upload(e) {
             // skip anything but png or jpg
             continue;
         }
-		let id = "img_id_" + i;
+		const id = `img_id_${i}`;
 		markup = `
             <div class='upload_field'>
                 <div class='upload_preview'>
@@ -123,24 +119,24 @@ function do_upload(e) {
         upload_form.innerHTML = upload_form.innerHTML + markup;
 	}
 	for (let i = 0; i < myfiles.length; i++) {
-		var reader = new FileReader();
-		reader.onload = function(e) {
-            let src = e.target.result;
-			document.getElementById("img_id_"+i).src = src;
+		const reader = new FileReader();
+		reader.onload = (e)=>{
+            const src = e.target.result;
+			document.getElementById(`img_id_${i}`).src = src;
         }
 		reader.readAsDataURL(myfiles[i]);
 		window.formdata.append('file-upload[]', myfiles[i]);
 	}
 
 	fetch('/image/gettags').then((response)=>response.json()).then((json)=>{
-		let data = [];
+		const data = [];
 		json.data.forEach((item)=>{
 			data.push({text: item.text, value: item.value})
 		});
 
 		document.querySelectorAll(".upload_field .slimselectme").forEach(el=>{
 			json.data.forEach((item)=>{
-				let option = document.createElement("option");
+				const option = document.createElement("option");
 				option.value = item.value;
 				option.innerText = item.text;
 				el.appendChild(option);
@@ -161,13 +157,13 @@ function do_upload(e) {
 		// don't actually submit
 		e.preventDefault();
 		// images already present in window.formdata - add title + text
-		let alt_texts_arr = document.getElementsByName('alt[]');
-		let title_texts_arr = document.getElementsByName('title[]');
-		let tags_values_array = document.getElementsByName('itags[]');
+		const alt_texts_arr = document.getElementsByName('alt[]');
+		const title_texts_arr = document.getElementsByName('title[]');
+		const tags_values_array = document.getElementsByName('itags[]');
 		console.log(tags_values_array);
 		/* console.log(alt_texts_arr);
 		console.log(title_texts_arr); */
-		for (var i=0; i<alt_texts_arr.length; i++) {
+		for (let i=0; i<alt_texts_arr.length; i++) {
 			window.formdata.append('alt[]', alt_texts_arr[i].value);
 			window.formdata.append('title[]', title_texts_arr[i].value);
 			window.formdata.append('tags[]', JSON.stringify(Array.from(tags_values_array[i].selectedOptions).map(v=>v.value)));
@@ -182,7 +178,7 @@ function do_upload(e) {
 		} */
 		//return false; // early exit for testing
 
-		let upload_dialog = document.createElement("dialog");
+		const upload_dialog = document.createElement("dialog");
 		upload_dialog.id = "uploading_progress_dialog";
 		upload_dialog.innerHTML = `
 			<section>
@@ -192,6 +188,7 @@ function do_upload(e) {
 		document.body.appendChild(upload_dialog);
 		upload_dialog.showModal();
 
+		// biome-ignore lint: not solving now
 		let url = window.hasOwnProperty("upload_endpoint") ? window.upload_endpoint : window.uripath + '/admin/images/uploadv2';
 		fetch(url, {
 			method: "POST",
@@ -202,8 +199,10 @@ function do_upload(e) {
 			console.log(data);
 
 			// close when done injected in view when filter=upload in place
+			// biome-ignore lint: not solving now
 			if (window.hasOwnProperty('close_when_done')) {
 				window.close();
+			// biome-ignore lint: not solving now
 			} else if(window.hasOwnProperty('image_upload_el')) {
 				upload_dialog.remove();
 
@@ -214,6 +213,7 @@ function do_upload(e) {
 				document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap img").src = `${data.urls.split(",")[0]}/thumb`;
 				document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap").classList.add("active");
 
+				// biome-ignore lint: not solving now
 				delete window.image_upload_el;
 			} else {
 				window.location.reload();
