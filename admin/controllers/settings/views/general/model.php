@@ -5,7 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
 
-$general_options_form = new Form(CMSPATH . "/admin/forms/general_options.json");
+$general_options_form = new Form(CMSPATH . "/admin/controllers/settings/views/general/general_options.json");
 // create configuration based on form
 $general_options_config = new Configuration($general_options_form); 
 // load from db
