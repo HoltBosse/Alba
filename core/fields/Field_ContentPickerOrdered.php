@@ -19,7 +19,7 @@ class Field_ContentPickerOrdered extends Field_PickerOrdered {
 
 	public function load_from_config($config) {
 		parent::load_from_config($config);
-		
+
 		$this->content_type = $config->content_type ?? 1; // default to articles if not provided
 		$this->tags = $config->tags ?? [];
 		$this->list_unpublished = $config->list_unpublished ?? false;
@@ -43,18 +43,32 @@ class Field_ContentPickerOrdered extends Field_PickerOrdered {
 				}
 				if (!$this->tags) {
 					// default order is alphabetical
-					$query = "select * from {$table_name} where state>={$min_state} order by title ASC";
-					$options_all_articles = DB::fetchall("select id as value, title as text from {$table_name} where state>={$min_state} order by title ASC");
+					$options_all_articles = DB::fetchall(
+						"SELECT id AS value, title AS text
+						FROM {$table_name}
+						WHERE state>={$min_state}
+						ORDER BY title ASC"
+					);
 				}
 				else {
 					$tags_csv = "'".implode("','", $this->tags)."'";
-					$query = "select c.id as value, c.title as text from {$table_name} c where c.state=1 ";
-					$query .= " and c.id in (";
-						$query .= " select tc.content_id from tagged tc where tc.content_type_id={$this->content_type} and tc.tag_id in (";
-							$query .= "select t.id from tags t where t.state>={$min_state} and t.alias in ($tags_csv)";
-						$query .= ")";
-					$query .= ") order by c.title ASC";
-					$options_all_articles = DB::fetchAll($query);
+					$options_all_articles = DB::fetchAll(
+						"SELECT c.id AS value, c.title AS text
+						FROM {$table_name} c
+						WHERE c.state=1
+						AND c.id IN (
+							SELECT tc.content_id
+							FROM tagged tc
+							WHERE tc.content_type_id={$this->content_type}
+							AND tc.tag_id IN (
+								SELECT t.id
+								FROM tags t
+								WHERE t.state>={$min_state}
+								AND t.alias IN ($tags_csv)
+							)
+						)
+						ORDER BY c.title ASC"
+					);
 				}
 			}
 		}
