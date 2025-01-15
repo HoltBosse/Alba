@@ -390,10 +390,12 @@ final class CMS {
 
 		// check for core controller - save folder name if found for include during rendering
 		if(!defined("ADMINPATH")) {
-			foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
-				if($this->uri_segments[0] == $folder) {
-					$this->core_controller = $folder;
-					break;
+			if(sizeof($this->uri_segments)>0) {
+				foreach(scandir(CMSPATH . "/core/controllers") as $folder) {
+					if($this->uri_segments[0] == $folder) {
+						$this->core_controller = $folder;
+						break;
+					}
 				}
 			}
 		}
