@@ -115,7 +115,7 @@ class Field_ContentPickerOrdered extends Field {
                                     data-content_id='<?php echo $item->id;?>'
                                     data-content_title='<?php echo $item->title;?>'
                                     >
-                                        <?php echo $item->title;?><span class='right-arrow pull-right'>></span>
+                                        <?php echo Input::stringHtmlSafe($item->title);?><span class='right-arrow pull-right'>></span>
                                     </li>
 									
                                 <?php endforeach; ?>
