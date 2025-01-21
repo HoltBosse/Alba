@@ -206,12 +206,12 @@ function do_upload(e) {
 			} else if(window.hasOwnProperty('image_upload_el')) {
 				upload_dialog.remove();
 
-				//console.log(data);
-				//console.log(document.getElementById(window.image_upload_el));
+				const upload_el = document.getElementById(window.image_upload_el);
 
-				document.getElementById(window.image_upload_el).value = data.ids.split(",")[0];
-				document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap img").src = `${data.urls.split(",")[0]}/thumb`;
-				document.getElementById(window.image_upload_el).parentElement.querySelector(".selected_image_wrap").classList.add("active");
+				upload_el.value = data.ids.split(",")[0];
+				upload_el.parentElement.querySelector(".selected_image_wrap img").src = `${data.urls.split(",")[0]}/thumb`;
+				upload_el.parentElement.querySelector(".selected_image_wrap").classList.add("active");
+				upload_el.setCustomValidity('');
 
 				// biome-ignore lint: not solving now
 				delete window.image_upload_el;
