@@ -31,10 +31,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 
 <style>
-div.flex {display:flex; flex-wrap:wrap;}
-div.flex > * {padding-left:2rem; padding-bottom:2rem;}
-/* div.flex > div:first-child {padding-left:0;} */
-div.flex > * {min-width:2rem;}
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/categories/views/edit/style.css"); ?>
 </style>
 
 

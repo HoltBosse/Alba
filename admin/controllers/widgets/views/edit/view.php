@@ -29,9 +29,7 @@ $widget_options_form->display_front_end();
 $widget->render_custom_backend();
 ?>
 <style>
-div.flex {display:flex;}
-div.flex > * {padding-left:2rem;}
-div.flex > div:first-child {padding-left:0;}
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/widgets/views/edit/style.css"); ?>
 </style>
 
 <hr>

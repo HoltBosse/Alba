@@ -24,88 +24,13 @@ class Widget_crowdriff extends Widget {
 
 
 		<script>
-			window.addEventListener('load', (event) => {
-				//console.log('page is fully loaded');
-				var cri = document.querySelectorAll('.crowdriff_image_container');
-				cri.forEach(im => {
-					// setup lazy load to trigger after
-					// hiq image has loaded fully
-					var hiq = im.dataset.hiq;
-					var imgel = new Image();
-					imgel.src = hiq;
-					imgel.thumb = im;
-					imgel.onload = function(e){
-						console.log(e);
-						this.thumb.style.backgroundImage = "url('" + hiq + "')";
-					}
-				});
-			});
+			<?php echo file_get_contents(CMSPATH . "/widgets/crowdriff/script.js"); ?>
 		</script>
 		<style>
-			#crowdriff .contain {
-				max-width: 2500px;
-				margin: 0 auto;
-			}
-			#crowdriff {
-				clear:both;
-			}
-			
-			#crowdriff .contain div {
-
-			}
-			.crowdriff_image_wrap {
-				overflow:hidden;
-				position:relative;
-			}
-			.crowdriff_masonry_item {
-				display:inline-block;
-				padding:0.3em;
-				position:relative;
-			}
-			
-			.crowdriff_image_container {
-				width: 100%;
-				height: 15vh;
-				transition:all 0.2s ease;
-				background-size:cover;
-				background-position:center;
-			}
-
-			.fullwidth .crowdriff_image_container {
-				height:25vh;
-			}
-
-			.crowdriff_masonry_item:hover .crowdriff_image_container {
-				transform:scale(1.1);
-			}
-			.crowdriff_row {
-			}
-			.crowdriff_info_popup {
-				position:absolute;
-				width:100%;
-				background:rgba(0,0,0,0.7);
-				height:25vh;
-				opacity:0;
-				z-index:0;
-				transition:all 0.5s ease;
-				padding:1em;
-				overflow:hidden;
-				color:white;
-			}
-			.crowdriff_masonry_item:hover .crowdriff_info_popup {
-				height:25vh;
-				display:block;
-				opacity:1;
-				z-index:2;
-			}
-			.crowdriff_info_popup p {
-				color:white;
-				font-size:90%;
-			}
-			
+			<?php echo file_get_contents(CMSPATH . "/widgets/crowdriff/style.css"); ?>
 		</style>
 		<?php 
-		$fullwidthclass=" fullwidth ";
+			$fullwidthclass=" fullwidth ";
 		?>
 		<section id="crowdriff" class="<?php echo $fullwidthclass; ?>">
 			<div class='contains'>

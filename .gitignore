@@ -52,6 +52,8 @@ widgets/**
 !widgets/html/**
 !widgets/menu/
 !widgets/menu/**
+!widgets/crowdriff/
+!widgets/crowdriff/**
 temp
 temp/**
 /backups
