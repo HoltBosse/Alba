@@ -18,9 +18,7 @@ $plugin_options_form->display_front_end();
 
 ?>
 <style>
-div.flex {display:flex;}
-div.flex > * {padding-left:2rem;}
-div.flex > div:first-child {padding-left:0;}
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/plugins/views/edit/style.css"); ?>
 </style>
 
 <div class='fixed-control-bar'>

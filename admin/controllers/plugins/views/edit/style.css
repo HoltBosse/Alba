@@ -1,0 +1,3 @@
+div.flex {display:flex;}
+div.flex > * {padding-left:2rem;}
+div.flex > div:first-child {padding-left:0;}

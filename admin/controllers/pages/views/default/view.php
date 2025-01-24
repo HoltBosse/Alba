@@ -3,60 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
 <style>
-.unimportant {
-	font-size:70%;
-	opacity:0.5;
-}
-.child_indicator {
-	opacity:0.2;
-	font-size:120%;
-}
-#all_pages_table {
-	width:100%;
-}
-
-.state1 {
-	color:rgba(50,200,50,0.5);
-}
-
-
-</style>
-
-<style>
-table.table {
-	width:100%;
-}
-.position_single_wrap {
-	font-size:70%;
-	padding-top:0.3rem;
-	border-top:1px solid rgba(0,0,0,0.1);
-	margin-top:0.3rem;
-	opacity:0.6;
-}
-span.position_single {
-	font-weight:bold;
-}
-
-
-div.pull-right {
-	/* display:inline-block; */
-}
-#page_operations {
-	margin-right:2rem;
-}
-.state1 {
-	color:#00d1b2;
-}
-.state0 {
-	color:#f66;
-}
-.hidden_multi_edit {
-	display:none;
-	/* display:inline-block; */
-}
-.page_admin_row.selected {
-	background:rgba(200,255,200,0.3);
-}
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/pages/views/default/style.css"); ?>
 </style>
 
 <form action='' method='post' name='page_action' id='page_action_form'>
@@ -153,13 +100,5 @@ div.pull-right {
 </form>
 
 <script>
-	admin_rows = document.querySelectorAll('.page_admin_row');
-	admin_rows.forEach(row => {
-		row.addEventListener('click',function(e){
-			tr = e.target.closest('tr');
-			tr.classList.toggle('selected');
-			hidden_checkbox = tr.querySelector('.hidden_multi_edit');
-			hidden_checkbox.checked = !hidden_checkbox.checked;
-		});
-	});
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/pages/views/default/script.js"); ?>
 </script>

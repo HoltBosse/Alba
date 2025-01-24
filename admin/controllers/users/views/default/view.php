@@ -3,40 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
 <style>
-	table.table {
-		width:100%;
-	}
-	.position_single_wrap {
-		font-size:70%;
-		padding-top:0.3rem;
-		border-top:1px solid rgba(0,0,0,0.1);
-		margin-top:0.3rem;
-		opacity:0.6;
-	}
-	span.position_single {
-		font-weight:bold;
-	}
-
-
-	div.pull-right {
-		/* display:inline-block; */
-	}
-	#user_operations {
-		margin-right:2rem;
-	}
-	.state1 {
-		color:#00d1b2;
-	}
-	.state0 {
-		color:#f66;
-	}
-	.hidden_multi_edit {
-		display:none;
-		/* display:inline-block; */
-	}
-	.user_admin_row.selected {
-		background:rgba(200,255,200,0.3);
-	}
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/users/views/default/style.css"); ?>
 </style>
 
 <form id='searchform' action="" method="GET"></form>
@@ -222,13 +189,5 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
 <script>
-	admin_rows = document.querySelectorAll('.user_admin_row');
-	admin_rows.forEach(row => {
-		row.addEventListener('click',function(e){
-			tr = e.target.closest('tr');
-			tr.classList.toggle('selected');
-			hidden_checkbox = tr.querySelector('.hidden_multi_edit');
-			hidden_checkbox.checked = !hidden_checkbox.checked;
-		});
-	});
+	<?php echo file_get_contents(CMSPATH . "/admin/controllers/users/views/default/script.js"); ?>
 </script>
