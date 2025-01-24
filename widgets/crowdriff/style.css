@@ -6,9 +6,6 @@
     clear:both;
 }
 
-#crowdriff .contain div {
-
-}
 .crowdriff_image_wrap {
     overflow:hidden;
     position:relative;
@@ -33,8 +30,6 @@
 
 .crowdriff_masonry_item:hover .crowdriff_image_container {
     transform:scale(1.1);
-}
-.crowdriff_row {
 }
 .crowdriff_info_popup {
     position:absolute;

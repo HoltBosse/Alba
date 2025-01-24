@@ -274,5 +274,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </div>
 
 <script>
+	window.pageid = <?php echo $page->id ?>;
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/pages/views/edit/script.js"); ?>	
 </script>

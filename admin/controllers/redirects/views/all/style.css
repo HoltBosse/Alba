@@ -15,9 +15,7 @@ span.page_list, td.note_td, .lighter_note, .usage {
 	font-size:70%; opacity:0.6;
 }
 
-div.pull-right {
-	/* display:inline-block; */
-}
+
 #content_operations {
 	margin-right:2rem;
 }
@@ -49,9 +47,7 @@ table tr.droppable td {
     margin: 0;
     transition: all 0.3s ease;
 }
-table.dragging tr.content_admin_row  {
-	/* height:1rem !important; */
-}
+
 table.dragging tr.droppable td {
 	height:1rem;
 	background:rgba(255,255,100,0.2);
@@ -102,11 +98,6 @@ tr.dragging {
 
 .grip {
 	margin-right:1rem;
-}
-table.dragging .grip {
-	/* display:none; */
-	/* width:0;
-	opacity:0 ; */
 }
 table.dragging .before_after_wrap {
 	display:block;
