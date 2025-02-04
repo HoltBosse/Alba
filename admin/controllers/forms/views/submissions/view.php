@@ -64,7 +64,7 @@ if($countResults > 0) {
             echo "<div class='form_submissions_row'>";
                 foreach($headerFields as $header) {
                     echo "<div>";
-                        echo $normalizedFields[$header];
+                        echo Input::stringHtmlSafe($normalizedFields[$header]);
                     echo "</div>";
                 }
             echo "</div>";
