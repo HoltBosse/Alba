@@ -89,4 +89,13 @@ $navigation = [
             )
         ]
     ],
+    "forms"=>[
+        "type"=>"addition_menu",
+        "menu"=>[
+            "label"=>"forms",
+            "links"=>[
+                "submissions"=>"/admin/forms/submissions",
+            ]
+        ]
+    ],
 ];
