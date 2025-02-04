@@ -11,6 +11,7 @@ class Form {
 	function __construct($path = CMSPATH . "/testform.json", $repeatable=false) {
 		$this->fields = [];
 		$this->repeatable = $repeatable;
+		$this->form_path = $path;
 		$this->load_json($path);
 	}
 
@@ -192,6 +193,13 @@ class Form {
 				}
 			}
 		}
+	}
+
+	public function save_to_db() {
+		DB::exec(
+			"INSERT INTO form_submissions (form_id, form_path, data) values (?,?,?)",
+			[$this->id, str_replace(CMSPATH, "", $this->form_path), $this->serialize_json()]
+		);
 	}
 
 	public function display_front_end($repeatable_template=false) {
