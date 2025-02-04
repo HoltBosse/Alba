@@ -198,7 +198,7 @@ class Form {
 	public function save_to_db() {
 		DB::exec(
 			"INSERT INTO form_submissions (form_id, form_path, data) values (?,?,?)",
-			[$this->id, $this->form_path, $this->serialize_json()]
+			[$this->id, str_replace(CMSPATH, "", $this->form_path), $this->serialize_json()]
 		);
 	}
 

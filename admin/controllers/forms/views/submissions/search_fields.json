@@ -1,0 +1,28 @@
+{
+	"id": "search_fields",
+	"fields": [
+		{
+			"name": "form",
+			"id": "form",
+			"type": "Select",
+			"label": "form",
+			"required": "true"
+		},
+		{
+			"label":"Start",
+			"name":"start",
+			"id":"start",
+			"type":"Text",
+			"required":false,
+			"input_type":"date"
+		},
+		{
+			"label":"End",
+			"name":"end",
+			"id":"end",
+			"type":"Text",
+			"required":false,
+			"input_type":"date"
+		}
+	]
+}
