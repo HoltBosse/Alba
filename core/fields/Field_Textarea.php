@@ -5,18 +5,8 @@ class Field_Textarea extends Field {
 
 	public $maxlength;
 	public $minlength;
-	public $placeholder;
 	public $select_options;
 	public $input_type;
-
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->select_options=[];
-		$this->default = $default_content;
-		$this->content_type="";
-		$this->placeholder="";
-	}
 
 	public function display() {
 		if (property_exists($this,'attribute_list')) {
@@ -43,20 +33,10 @@ class Field_Textarea extends Field {
 
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->placeholder = $config->placeholder ?? $this->placeholder;
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 99999;
+		parent::load_from_config($config);
+		
 		$this->filter = $config->filter ?? 'TEXTAREA';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
 		$this->input_type = $config->input_type ?? 'text';
-		$this->default = $config->default ?? $this->default;
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

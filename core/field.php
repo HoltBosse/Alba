@@ -19,6 +19,8 @@ class Field {
 	public $in_repeatable_form;
 	public $maxlength;
 	public $minlength;
+	public $save;
+	public $placeholder;
 
 	public function display() {
 		echo "<label class='label'>Field Label</label>";
@@ -39,12 +41,6 @@ class Field {
 		}
 		$rendered_name .=  '" ';
 		return $rendered_name;
-	}
-
-
-	public function designer_display() {
-		echo "<label class='label'>Field Label</label>";
-		echo "<p>Hello, I am a field!</p>";
 	}
 
 	public function validate() {
@@ -112,6 +108,17 @@ class Field {
 
 	public function load_from_config($config) {
 		// config is json field already converted to object by form class
-		return true;
+		$this->name = $config->name ?? 'error!!!';
+		$this->id = $config->id ?? $this->name;
+		$this->save = $config->save ?? true;
+		$this->label = $config->label ?? '';
+		$this->required = $config->required ?? false;
+		$this->description = $config->description ?? '';
+		$this->filter = $config->filter ?? 'RAW';
+		$this->default = $config->default ?? $this->default;
+		$this->maxlength = $config->maxlength ?? 99999;
+		$this->minlength = $config->minlength ?? 0;
+		$this->placeholder = $config->placeholder ?? "";
+		$this->logic = $config->logic ?? '';
 	}
 }

@@ -5,13 +5,6 @@ class Field_RecaptchaV2 extends Field {
 
 	public $maxlength;
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->default = $default_content;
-		$this->content_type="";
-	}
-
 	public function display() {
 		$rc_sitekey = Configuration::get_configuration_value ('general_options', 'rc_sitekey');
 		if ($rc_sitekey) {
@@ -30,16 +23,9 @@ class Field_RecaptchaV2 extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
+		parent::load_from_config($config);
+		
 		$this->filter = $config->filter ?? 'STRING';
-		$this->type = $config->type ?? 'error!!!';
-		$this->default = $config->default ?? $this->default;
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

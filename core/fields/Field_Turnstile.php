@@ -3,15 +3,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Turnstile extends Field {
 
-	public $maxlength;
-
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->default = $default_content;
-		$this->content_type="";
-	}
-
 	public function display() {
 		$cf_sitekey = Configuration::get_configuration_value ('general_options', 'cf_sitekey');
 		if ($cf_sitekey) {
@@ -21,24 +12,6 @@ class Field_Turnstile extends Field {
 		else {
 			echo "<h5><strong>NO TURNSTILE SITEKEY</strong></h5>";
 		}
-	}
-
-
-
-	public function designer_display() {
-
-	}
-
-	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
-		$this->filter = $config->filter ?? 'STRING';
-		$this->type = $config->type ?? 'error!!!';
-		$this->default = $config->default ?? $this->default;
 	}
 
 	public function validate() {
@@ -76,5 +49,11 @@ class Field_Turnstile extends Field {
 			// passed reCAPTCHA
 			return true;
 		}
+	}
+
+	public function load_from_config($config) {
+		parent::load_from_config($config);
+
+		$this->filter = $config->filter ?? 'STRING';
 	}
 }

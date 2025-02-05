@@ -9,14 +9,6 @@ class Field_ContentPickerOrdered extends Field_PickerOrdered {
 	public $searchable;
 	public $empty_string;
 
-	function __construct($content_type=1) {
-		$this->id = "";
-		$this->name = "";
-		$this->default=$content_type;
-		$this->list_unpublished=false;
-		$this->tags=[];
-	}
-
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 

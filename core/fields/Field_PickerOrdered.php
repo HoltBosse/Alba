@@ -4,18 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_PickerOrdered extends Field {
 
 	public $select_options;
-	public $list_unpublished;
-	public $tags;
 	public $searchable;
-	public $empty_string;
-
-	function __construct($content_type=1) {
-		$this->id = "";
-		$this->name = "";
-		$this->default=$content_type;
-		$this->list_unpublished=false;
-		$this->tags=[];
-	}
 
 	public function display() {
 		$required="";
@@ -275,20 +264,10 @@ class Field_PickerOrdered extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
+		parent::load_from_config($config);
+		
 		$this->filter = $config->filter ?? 'CSVINT';
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->default = $config->default ?? '';
 		$this->type = $config->type ?? 'error!!!';
-		$this->content_type = $config->content_type ?? 1; // default to articles if not provided
-		$this->empty_string = $config->empty_string ?? '';
-		$this->tags = $config->tags ?? [];
-		$this->list_unpublished = $config->list_unpublished ?? false;
-		$this->logic = $config->logic ?? '';
 		$this->searchable = $config->searchable ?? true;
 		$this->select_options = $config->select_options ?? [];
 	}

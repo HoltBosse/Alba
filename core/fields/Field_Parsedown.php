@@ -531,18 +531,8 @@ class Field_Parsedown extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 99999;
-		$this->filter = $config->filter ?? 'RAW';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
-		$this->default = $config->default ?? '### New Text';
-		$this->placeholder = $config->placeholder ?? '';
+		parent::load_from_config($config);
+		
 		$this->parsedownapi = $config->parsedownapi ?? "/api/parsedown";
 		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (defined("ADMINPATH") ? "/admin/images/uploadv2" : null);
 		/*

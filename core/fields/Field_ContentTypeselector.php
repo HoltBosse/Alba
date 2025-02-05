@@ -82,20 +82,10 @@ class Field_ContentTypeselector extends Field {
 	}
 
 	public function load_from_config($config) {
-		//CMS::pprint_r ($config);
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
-		$this->filter = $config->filter ?? 'RAW';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
+		parent::load_from_config($config);
+
 		$this->showmedia = $config->showmedia ?? true;
 		$this->showusers = $config->showusers ?? false;
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

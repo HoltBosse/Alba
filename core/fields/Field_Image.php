@@ -12,14 +12,6 @@ class Field_Image extends Field {
 	public $upload_endpoint;
 	public $listing_endpoint;
 
-	function __construct($id="") {
-		$this->id = $id;
-		$this->name = $id;
-		$this->image_id = null;
-		$this->default = null;
-		$this->mimetypes = null;
-	}
-
 	public function display($repeatable_template=false) {
 		//add the image editor
 		Image::add_image_js_editor();
@@ -333,17 +325,8 @@ class Field_Image extends Field {
 
 
 	public function load_from_config($config) {
-		//CMS::pprint_r ($config);
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->default = $config->default ?? null;
-		$this->type = $config->type ?? 'error!!!';
-		$this->logic = $config->logic ?? '';
+		parent::load_from_config($config);
+		
 		$this->coltype = $config->coltype ?? '';
 		$this->mimetypes = $config->mimetypes ?? null;
 		$this->images_per_page = $config->images_per_page ?? 50;

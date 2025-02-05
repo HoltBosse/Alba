@@ -18,19 +18,6 @@ class Field_FileUploader extends Field {
 	public $maxlength;
 	public $attribute_list;
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->select_options=[];
-		$this->mime_type=[];
-		$this->default = $default_content;
-		$this->content_type="";
-		$this->placeholder="";
-
-		$this->max_size = $this->get_bytes(ini_get("upload_max_filesize"));
-		$this->post_max_size = $this->get_bytes(ini_get("post_max_size"));
-	}
-
 	// for converting .ini config value to bytes. see https://www.php.net/manual/en/function.ini-get.php
 	public function get_bytes($val) {
 		$val = strtolower($val);
@@ -157,24 +144,17 @@ class Field_FileUploader extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
+		parent::load_from_config($config);
+
 		$this->multiple = $config->multiple ?? "";
 		$this->mime_type = $config->mime_type ?? [];
-		if ($config->max_size < $this->max_size) { $this->max_size = $config->max_size; }	// config overwrites only values smaller than php.ini upload_max_filesize max_size set in constructor
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
-		$this->filter = $config->filter ?? 'RAW';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
+		if ($config->max_size < $this->get_bytes(ini_get("upload_max_filesize"))) {
+			$this->max_size = $config->max_size;
+		}
+		$this->post_max_size = $this->get_bytes(ini_get("post_max_size"));
 		$this->input_type = $config->input_type ?? 'file';
-		$this->default = $config->default ?? $this->default;
 		$this->attribute_list = $config->attribute_list ?? "";
 		$this->placeholder = $config->placeholder ?? "";
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

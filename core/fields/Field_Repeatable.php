@@ -169,17 +169,11 @@ class Field_Repeatable extends Field {
 
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->default = $config->default ?? false;
+		parent::load_from_config($config);
+		
 		$this->type = 'Repeatable';
 		$this->form_path = $config->form_path ?? false;
 		$this->repeatable = true; // always!!!
-		$this->logic = $config->logic ?? '';
-		//$this->form = new Form($this->form_path);
 	}
 
 	public function validate() {

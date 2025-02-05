@@ -281,7 +281,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 							<td><?php 
 								$propname = "{$content_list_field->name}"; 
 								$classname = "Field_" . $content_list_field->type;
-								$curfield = new $classname($content_item->$propname);
+								$curfield = new $classname();
 								$curfield->load_from_config($named_custom_fields[$propname]); // load config - useful for some fields
 								$curfield->default = $content_item->$propname; // set temp field value to current stored value
 								// TODO: pass precalc array of table names for content types to aid in performance of lookups 

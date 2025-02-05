@@ -4,7 +4,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Text extends Field {
 
 	public $select_options;
-	public $placeholder;
 	public $pattern;
 	public $input_type;
 	public $min;
@@ -14,16 +13,6 @@ class Field_Text extends Field {
 	public $icon_status;
 	public $icon_parent_class;
 	public $icon_markup;
-
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->select_options=[];
-		$this->default = $default_content;
-		$this->content_type="";
-		$this->placeholder="";
-		$this->pattern = "";
-	}
 
 	public function display() {
 		$hidden = "";
@@ -74,30 +63,18 @@ class Field_Text extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
-		$this->filter = $config->filter ?? 'RAW';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
+		parent::load_from_config($config);
+		
 		$this->input_type = $config->input_type ?? 'text';
 		$this->pattern = $config->pattern ?? '';
 		if ($this->input_type=='range') {
 			$this->min = $config->min ?? "0";
 			$this->max = $config->max ?? "100";
-		}
-		elseif ($this->input_type=='number') {
+		} elseif ($this->input_type=='number') {
 			$this->min = $config->min ?? "";
 			$this->max = $config->max ?? "";
 		}
-		$this->default = $config->default ?? $this->default;
 		$this->attribute_list = $config->attribute_list ?? "";
-		$this->placeholder = $config->placeholder ?? "";
-		$this->logic = $config->logic ?? '';
 		$this->step = $config->step;
 		$this->icon_status = $config->icon_status ?? false;
 		$this->icon_parent_class = $config->icon_parent_class ?? "";

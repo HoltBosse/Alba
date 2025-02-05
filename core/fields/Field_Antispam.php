@@ -41,16 +41,9 @@ class Field_Antispam extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? true;
-		$this->description = $config->description ?? '';
+		parent::load_from_config($config);
+
 		$this->filter = $config->filter ?? 'STRING';
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
-		$this->default = $config->default ?? $this->default;
-		$this->save = $config->save ?? false;
 		$this->fieldname = $config->fieldname ?? null;
 		$this->use_blacklist = $config->use_blacklist ?? false;
 		$this->block_urls =  $config->block_urls ?? false;

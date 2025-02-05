@@ -92,18 +92,10 @@ class Field_Pageselector extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
+		parent::load_from_config($config);
+		
 		$this->filter = $config->filter ?? 'ARRAYOFINT';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
 		$this->multiple = $config->multiple ?? true;
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {
