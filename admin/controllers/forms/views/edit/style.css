@@ -1,0 +1,51 @@
+.form_editor_wrapper {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+
+    .controls_panel {
+        border-right: 1px solid;
+        padding: 1rem;
+
+        .controls_button_fields_grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        [for="field_settings"][disabled] {
+            pointer-events: none;
+        }
+
+        .add_field_list, .field_configuration_list {
+            display: none;
+        }
+
+        &:has(#add_field:checked) .add_field_list {
+            display: grid;
+        }
+
+        &:has(#field_settings:checked) .field_configuration_list {
+            display: grid;
+        }
+    }
+    
+    .fields_panel {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .displayfield {
+            padding: 1rem;
+
+            &:hover {
+                outline: 1px dashed green;
+                cursor: pointer;
+            }
+
+            * {
+                pointer-events: none;
+            }
+        }
+    }
+}
