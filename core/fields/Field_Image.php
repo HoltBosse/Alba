@@ -333,17 +333,8 @@ class Field_Image extends Field {
 
 
 	public function load_from_config($config) {
-		//CMS::pprint_r ($config);
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->filter = $config->filter ?? 'NUMBER';
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->default = $config->default ?? null;
-		$this->type = $config->type ?? 'error!!!';
-		$this->logic = $config->logic ?? '';
+		parent::load_from_config($config);
+		
 		$this->coltype = $config->coltype ?? '';
 		$this->mimetypes = $config->mimetypes ?? null;
 		$this->images_per_page = $config->images_per_page ?? 50;

@@ -28,16 +28,9 @@ class Field_Checkbox extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
+		parent::load_from_config($config);
+		
 		$this->filter = $config->filter ?? 'NUMBER';
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->default = $config->default ?? 0;
-		$this->type = 'Checkbox';
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

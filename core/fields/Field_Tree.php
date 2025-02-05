@@ -4,9 +4,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Tree extends Field {
 
 	public $dataset;
-	public $maxlength;
-	public $minlength;
-	public $input_type;
 	public $sql;
 
 	public function display() {
@@ -399,26 +396,12 @@ class Field_Tree extends Field {
 		<?php
 	}
 
-	public function designer_display() {
-
-	}
-
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
-		$this->filter = $config->filter ?? 'RAW';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
-		$this->input_type = $config->input_type ?? 'text';
-		$this->sql = $config->sql ?? 'select id as value, title as text from pages where state=1';
+		parent::load_from_config($config);
+		
+		$this->sql = $config->sql ?? 'SELECT id AS value, title AS text FROM pages WHERE state=1';
 		$this->dataset = DB::fetchAll($this->sql);
 		$this->default = $config->default ?? '{"parent":null,"value":"-1","text":"Root","children":[]}';
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

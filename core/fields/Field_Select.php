@@ -18,7 +18,6 @@ class Field_Select extends Field {
 		$this->id = $id;
 		$this->name = $id;
 		$this->select_options=[];
-		$this->config = false;
 	}
 
 	public function display() {
@@ -163,19 +162,10 @@ class Field_Select extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
+		parent::load_from_config($config);
 		
-		$this->missingconfig = $config->missingconfig ?? false;
 		$this->select_options = $config->select_options ?? [];
-		$this->default = $config->default ?? '';
-		$this->type = $config->type ?? 'error!!!';
-		$this->config = $config;
 		$this->empty_string = $config->empty_string ?? '';
-		$this->placeholder = $config->placeholder ?? '';
 		$this->slimselect = $config->slimselect ?: false;
 		$this->multiple = $config->multiple ?: false;
 		$this->slimselect_ajax = $config->slimselect_ajax ?? false;
@@ -187,7 +177,6 @@ class Field_Select extends Field {
 		else {
 			$this->filter = $config->filter ?? 'STRING';
 		}
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {

@@ -157,24 +157,14 @@ class Field_FileUploader extends Field {
 	}
 
 	public function load_from_config($config) {
-		$this->name = $config->name ?? 'error!!!';
+		parent::load_from_config($config);
+
 		$this->multiple = $config->multiple ?? "";
 		$this->mime_type = $config->mime_type ?? [];
 		if ($config->max_size < $this->max_size) { $this->max_size = $config->max_size; }	// config overwrites only values smaller than php.ini upload_max_filesize max_size set in constructor
-		$this->id = $config->id ?? $this->name;
-		$this->label = $config->label ?? '';
-		$this->required = $config->required ?? false;
-		$this->description = $config->description ?? '';
-		$this->maxlength = $config->maxlength ?? 999;
-		$this->filter = $config->filter ?? 'RAW';
-		$this->minlength = $config->minlength ?? 0;
-		$this->missingconfig = $config->missingconfig ?? false;
-		$this->type = $config->type ?? 'error!!!';
 		$this->input_type = $config->input_type ?? 'file';
-		$this->default = $config->default ?? $this->default;
 		$this->attribute_list = $config->attribute_list ?? "";
 		$this->placeholder = $config->placeholder ?? "";
-		$this->logic = $config->logic ?? '';
 	}
 
 	public function validate() {
