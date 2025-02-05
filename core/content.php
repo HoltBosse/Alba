@@ -244,7 +244,7 @@ class Content {
 		}
 		
 		// update this object with submitted and validated form info
-		$this->title = $required_details_form->get_field_by_name('title')->default;
+		$this->title = trim($required_details_form->get_field_by_name('title')->default);
 		$this->state = $required_details_form->get_field_by_name('state')->default;
 		$this->note = $required_details_form->get_field_by_name('note')->default;
 		$this->alias = $required_details_form->get_field_by_name('alias')->default;
