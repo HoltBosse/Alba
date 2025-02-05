@@ -3,13 +3,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Turnstile extends Field {
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->default = $default_content;
-		$this->content_type="";
-	}
-
 	public function display() {
 		$cf_sitekey = Configuration::get_configuration_value ('general_options', 'cf_sitekey');
 		if ($cf_sitekey) {

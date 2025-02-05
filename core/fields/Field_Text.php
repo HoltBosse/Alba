@@ -14,15 +14,6 @@ class Field_Text extends Field {
 	public $icon_parent_class;
 	public $icon_markup;
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->select_options=[];
-		$this->default = $default_content;
-		$this->content_type="";
-		$this->pattern = "";
-	}
-
 	public function display() {
 		$hidden = "";
 		$required="";

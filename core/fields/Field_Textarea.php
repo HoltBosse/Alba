@@ -8,14 +8,6 @@ class Field_Textarea extends Field {
 	public $select_options;
 	public $input_type;
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->select_options=[];
-		$this->default = $default_content;
-		$this->content_type="";
-	}
-
 	public function display() {
 		if (property_exists($this,'attribute_list')) {
 			$attributes = implode(' ',$this->attribute_list);

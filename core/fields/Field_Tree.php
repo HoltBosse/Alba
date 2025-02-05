@@ -7,11 +7,6 @@ class Field_Tree extends Field {
 	public $sql;
 
 	public function display() {
-		?>
-	
-		<?php
-
-		//CMS::pprint_r ($this);
 		echo "<h1>{$this->label}</h1>";
 		if ($this->description) {
 			echo "<p class='help'>" . $this->description . "</p>";

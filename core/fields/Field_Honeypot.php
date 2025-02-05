@@ -8,15 +8,6 @@ class Field_Honeypot extends Field {
 	public $maxlength;
 	public $autocomplete;
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->default = $default_content;
-		$this->content_type="";
-		$this->save=false;
-		$this->autocomplete = "nothingtoseehere";
-	}
-
 	public function display() {
 		// autocomplete attribute set to nonsense which is calculated to be same as 'off' without being explicit
 		// tabindex is required as -1 for accessibility reasons, so might tip off some bots, but can't hurt screen readers etc

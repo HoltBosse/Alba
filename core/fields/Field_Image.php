@@ -12,14 +12,6 @@ class Field_Image extends Field {
 	public $upload_endpoint;
 	public $listing_endpoint;
 
-	function __construct($id="") {
-		$this->id = $id;
-		$this->name = $id;
-		$this->image_id = null;
-		$this->default = null;
-		$this->mimetypes = null;
-	}
-
 	public function display($repeatable_template=false) {
 		//add the image editor
 		Image::add_image_js_editor();

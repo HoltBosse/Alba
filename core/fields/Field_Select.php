@@ -14,12 +14,6 @@ class Field_Select extends Field {
 	public $slimselect_ajax_url;
 	public $empty_string;
 
-	function __construct($id="") {
-		$this->id = $id;
-		$this->name = $id;
-		$this->select_options=[];
-	}
-
 	public function display() {
 		// if id needs to be unique for scripting purposes, make sure replacement text inserted
 		// this will be replaced during repeatable template literal js injection when adding new

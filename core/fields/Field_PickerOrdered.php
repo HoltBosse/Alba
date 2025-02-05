@@ -6,12 +6,6 @@ class Field_PickerOrdered extends Field {
 	public $select_options;
 	public $searchable;
 
-	function __construct($content_type=1) {
-		$this->id = "";
-		$this->name = "";
-		$this->default=$content_type;
-	}
-
 	public function display() {
 		$required="";
 		$existing_arr = explode(",",$this->default);

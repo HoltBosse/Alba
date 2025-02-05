@@ -8,15 +8,6 @@ class Field_HTML extends Field {
 	public $maxlength;
 	public $select_options;
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->select_options=[];
-		$this->default = $default_content;
-		$this->content_type="";
-		$this->save=false;
-	}
-
 	public function display() {
 		echo $this->html;
 	}

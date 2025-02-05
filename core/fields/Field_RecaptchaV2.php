@@ -5,13 +5,6 @@ class Field_RecaptchaV2 extends Field {
 
 	public $maxlength;
 
-	function __construct($default_content="") {
-		$this->id = "";
-		$this->name = "";
-		$this->default = $default_content;
-		$this->content_type="";
-	}
-
 	public function display() {
 		$rc_sitekey = Configuration::get_configuration_value ('general_options', 'rc_sitekey');
 		if ($rc_sitekey) {

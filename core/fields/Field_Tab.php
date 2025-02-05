@@ -8,14 +8,6 @@ class Field_Tab extends Field {
 	public $tabsid;
 	public $input_type;
 
-	function __construct($id="") {
-		$this->id = $id;
-		$this->name = "";
-		$this->tabs = [];
-		$this->default = [];
-		$this->mode = "tabs"; // can be tabs, start, end, tabstart, tabend
-	}
-
 	public function display() {
 		//CMS::pprint_r ($this);
 		if (property_exists($this,'mode')) {
