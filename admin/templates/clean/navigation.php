@@ -12,6 +12,7 @@ $navigation = [
                 "backups"=>"/admin/settings/backups",
                 "redirects"=>"/admin/redirects",
                 "audit log"=>"/admin/audit",
+                "manage images"=>"/admin/images/show",
             ]
         ]
     ],
@@ -67,15 +68,6 @@ $navigation = [
         "link"=>[
             "label"=>"tags",
             "url"=>"/admin/tags",
-        ]
-    ],
-    "media"=>[
-        "type"=>"addition_menu",
-        "menu"=>[
-            "label"=>"media",
-            "links"=>[
-                "manage images"=>"/admin/images/show",
-            ]
         ]
     ],
     "categories"=>[
