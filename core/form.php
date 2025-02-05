@@ -196,6 +196,11 @@ class Form {
 	}
 
 	public function save_to_db() {
+		//if the form was loaded from an object and the path not set afterwords.....
+		if(gettype($this->form_path)!="string") {
+			CMS::show_error("Failed to save form submission, bad form path!", 500);
+		}
+
 		DB::exec(
 			"INSERT INTO form_submissions (form_id, form_path, data) values (?,?,?)",
 			[$this->id, str_replace(CMSPATH, "", $this->form_path), $this->serialize_json()]
