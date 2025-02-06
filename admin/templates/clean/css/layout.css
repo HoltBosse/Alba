@@ -379,6 +379,7 @@ select[data-ssid] {
     width: 0 !important;
     opacity: 0 !important;
     height: 0 !important;
+	padding: 0 !important;
 }
 
 div:has(> .autogrowingtextarea) {
