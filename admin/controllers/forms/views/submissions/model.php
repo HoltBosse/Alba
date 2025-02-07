@@ -13,7 +13,7 @@ if(!$_GET["form"] && $searchFieldsObject->fields[0]->select_options[0]) {
 $searchFieldsObject->fields[] = (object) [
     "type"=>"HTML",
     "html"=>"<div style='display: flex; gap: 1rem;'>
-                <button class='button is-info' type='submit'>Submit</button>
+                <button class='button is-info' type='submit'>Search</button>
                 <button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
             </div>"
 ];
@@ -66,6 +66,8 @@ if($results[0]) {
             }
         }
     }
+
+    $currentSelectedForm = new Form($currentSelectedObject);
 }
 
 if($_GET["exportcsv"]) {
@@ -82,9 +84,13 @@ if($_GET["exportcsv"]) {
     foreach($results as $row) {
         $buffer = [];
         foreach($headerFields as $header) {
+            $currentSelectedForm->deserialize_json($row->data);
+            $field = $currentSelectedForm->get_field_by_name($header);
+
             $data = json_decode($row->data);
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
-            $value = $normalizedFields[$header];
+            //$value = $normalizedFields[$header];
+            $value = $field->get_friendly_value((object)["return_in_text_form"=>true]);
             $value = str_replace(",", ".", ($value));
             $value = str_replace("\n", " ", ($value));
             $value = str_replace("\r", " ", ($value));

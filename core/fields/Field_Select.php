@@ -145,10 +145,6 @@ class Field_Select extends Field {
 		endif;
 	}
 
-	public function designer_display() {
-
-	}
-
 	public function get_friendly_value($helpful_info) {
 		// TODO: select fields need to store config somewhere to retrieve friendly values
 		// for now return id
