@@ -31,6 +31,13 @@ class Field_Textarea extends Field {
 		echo "</div>";
 	}
 
+	public function get_friendly_value($helpful_info) {
+		if($this->filter=="RAW" && $helpful_info && $helpful_info->return_in_text_form!=true) {
+			return Input::stringHtmlSafe($this->default);
+		} else {
+			return $this->default;
+		}
+	}
 
 	public function load_from_config($config) {
 		parent::load_from_config($config);

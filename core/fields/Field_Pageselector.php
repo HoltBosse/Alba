@@ -87,10 +87,6 @@ class Field_Pageselector extends Field {
 		}
 	}
 
-	public function designer_display() {
-
-	}
-
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 		

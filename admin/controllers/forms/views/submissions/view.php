@@ -54,17 +54,22 @@ if($countResults > 0) {
     echo "<div class='form_submissions_wrapper'>";
         echo "<div class='form_submissions_row header'>";
             foreach($headerFields as $header) {
-                echo "<div>$header</div>";
+                $field = $currentSelectedForm->get_field_by_name($header);
+                $displayLabel = $field->label ?? $header;
+                echo "<div>$displayLabel</div>";
             }
         echo "</div>";
         foreach($results as $row) {
+            $currentSelectedForm->deserialize_json($row->data);
             $data = json_decode($row->data);
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
             
             echo "<div class='form_submissions_row'>";
                 foreach($headerFields as $header) {
                     echo "<div>";
-                        echo Input::stringHtmlSafe($normalizedFields[$header]);
+                        $field = $currentSelectedForm->get_field_by_name($header);
+                        echo $field->get_friendly_value([]);
+                        //echo Input::stringHtmlSafe($normalizedFields[$header]);
                     echo "</div>";
                 }
             echo "</div>";

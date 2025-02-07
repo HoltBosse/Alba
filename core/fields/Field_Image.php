@@ -314,12 +314,16 @@ class Field_Image extends Field {
 	}
 
 	public function get_friendly_value($helpful_info) {
-		if (is_numeric($this->default)) {
-			$img = new Image($this->default);
-			return $img->render('thumb','backend', false);
-		}
-		else {
-			return "<span>No Image</span>";
+		if($helpful_info && $helpful_info->return_in_text_form==true) {
+			return "https://" . $_SERVER["HTTP_HOST"] . "/image/" . $this->default;
+		} else {
+			if (is_numeric($this->default)) {
+				$img = new Image($this->default);
+				return $img->render('thumb','backend', false);
+			}
+			else {
+				return "<span>No Image</span>";
+			}
 		}
 	}
 

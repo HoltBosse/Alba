@@ -66,6 +66,8 @@ if($results[0]) {
             }
         }
     }
+
+    $currentSelectedForm = new Form($currentSelectedObject);
 }
 
 if($_GET["exportcsv"]) {
@@ -82,9 +84,13 @@ if($_GET["exportcsv"]) {
     foreach($results as $row) {
         $buffer = [];
         foreach($headerFields as $header) {
+            $currentSelectedForm->deserialize_json($row->data);
+            $field = $currentSelectedForm->get_field_by_name($header);
+
             $data = json_decode($row->data);
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
-            $value = $normalizedFields[$header];
+            //$value = $normalizedFields[$header];
+            $value = $field->get_friendly_value((object)["return_in_text_form"=>true]);
             $value = str_replace(",", ".", ($value));
             $value = str_replace("\n", " ", ($value));
             $value = str_replace("\r", " ", ($value));
