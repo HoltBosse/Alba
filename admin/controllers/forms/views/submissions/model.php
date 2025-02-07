@@ -13,7 +13,7 @@ if(!$_GET["form"] && $searchFieldsObject->fields[0]->select_options[0]) {
 $searchFieldsObject->fields[] = (object) [
     "type"=>"HTML",
     "html"=>"<div style='display: flex; gap: 1rem;'>
-                <button class='button is-info' type='submit'>Submit</button>
+                <button class='button is-info' type='submit'>Search</button>
                 <button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
             </div>"
 ];
