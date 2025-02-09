@@ -108,6 +108,7 @@ class Field {
 
 	public function load_from_config($config) {
 		// config is json field already converted to object by form class
+		$this->type = $config->type ?? 'error!!!';
 		$this->name = $config->name ?? 'error!!!';
 		$this->id = $config->id ?? $this->name;
 		$this->save = $config->save ?? true;
