@@ -261,112 +261,73 @@ class Form {
 		// add logic js
 		?>
 			<script>
-				const form_el_<?php echo $jsSafeVariableId; ?> = document.getElementById('<?php echo $this->id ?>');
-				if (form_el_<?php echo $jsSafeVariableId; ?>) {
-					// create logic function
-					function logic_for_<?php echo $jsSafeVariableId; ?> () {
-						//console.log('Doing logic checks');
-						const logic_els = form_el_<?php echo $jsSafeVariableId; ?>.querySelectorAll('.haslogic');
-						if (logic_els) {
-							//console.log('LOGIC ELS',logic_els);
-							logic_els.forEach((e)=>{
-								//console.log(e);
-								const or_blocks = JSON.parse(e.dataset.logic);
-								if (or_blocks) {
-									const or_shows = [];
-									let show = false; // default to NO SHOW
-									//console.log(or_blocks);
-									// loop over OR blocks
-									// single block is normal for single AND
-									or_blocks.forEach((and_arr)=>{
-										let and_show = true; // default to show
-										// b = AND array block
-										and_arr.forEach((b)=>{
-											// b = single AND obj
-											// and_show starts as true
-											// any single negative test will set and_show to false
-											let logic_target_el = document.getElementById(b.field);
-											// todo: make this work for any other 
-											// non-value driven field - e.g. checkbox (done!)
-											if (logic_target_el) {
-												// set to value of el by default
-												let logic_target_value = logic_target_el.value;
-												if (logic_target_el.nodeName=='INPUT' && logic_target_el.type=='checkbox') {
-													logic_target_value = logic_target_el.checked;
-												}
-												switch(b.test) {
-													case '==' :
-														local_show = logic_target_value==b.value;
-														if (!local_show) {
-															and_show = false;
-														}
-														break;
-													case '!=' :
-															local_show = logic_target_value!=b.value;
-															if (!local_show) {
-																and_show = false;
-															}
-															break;
-													default:
-														console.warn('Unknown logic test for ',b)
-														break;
-												}
-											}
-											else {
-												console.warn('Unable to find logic target for ',b);
-											}
-										});
-										// push AND final show to or_shows arr
-										or_shows.push(and_show);
-									});
-									// have all ORS (usually only 1 :) )
-									// loop over all ORS or until single TRUE is found
-									for (let n=0; n<or_shows.length; n++) {
-										if (or_shows[n]!==false) {
-											show = true;
-											break;
-										}
-									}	
-									// set visibility
-									// todo: handle 'required'
-									// find el inside e that has 'name' attr, target that
-									let actual_named_el = document.getElementById(e.dataset.field_id);
-									let is_required = e.dataset.required=='true' ? true : false; 
-									if (show) {
-										// restore required from json default
-										if (actual_named_el) {
-											actual_named_el.required = is_required;
-										}
-										e.classList.remove('logic_hide');
-									} else {
-										// remove required and hide
-										// cannot be required, hidden
-										if (actual_named_el) {
-											actual_named_el.required = false; 
-										}
-										e.classList.add('logic_hide');
-									}
-								}
-								else {
-									console.warn('Failed to decode logic for ',e);
-								}
-							});
-							
+				if(!window.evaluateFieldLogic) {
+					function evaluateFieldLogic(form, logic, element) {
+						return logic.some(andConditions => 
+							andConditions.every(condition => 
+								evaluateFieldCondition(form, condition, element)
+							)
+						);
+					}
+
+					function evaluateFieldCondition(form, condition, element) {
+						const { field, test, value } = condition;
+						const target = form.querySelector(`[name="${field}"]`);
+						let targetValue = target.value;
+
+						if (target.nodeName=='INPUT' && target.type=='checkbox') {
+							let targetValue = target.checked;
+						}
+
+						switch (test) {
+							case '==':
+								return targetValue == value;
+							case '===':
+								return targetValue === value;
+							case '!=':
+								return targetValue != value;
+							case '!==':
+								return targetValue !== value;
+							case '>':
+								return targetValue > value;
+							case '>=':
+								return targetValue >= value;
+							case '<':
+								return targetValue < value;
+							case '<=':
+								return targetValue <= value;
+							default:
+								throw new Error(`Unsupported test: ${test}`);
 						}
 					}
 
-					// listen for changes on this form container
-					form_el_<?php echo $jsSafeVariableId; ?>.addEventListener('input', (e)=>{
-						//let form_wrap_el = e.target.closest('.form_contain');
-						// do logic checks
-						logic_for_<?php echo $jsSafeVariableId; ?>();
-					});
+					function updateAllFieldLogic(form) {
+						form.querySelectorAll(`[data-logic]:not([data-logic=""]`).forEach(el=>{
+							/* console.log(el);
+							console.log(el.querySelector("label").innerText);
+							console.log(evaluateFieldLogic(form, JSON.parse(el.dataset.logic), el)===true ? "true" : "false"); */
 
-					// call logic checks on pageload to ensure correct visibility
-					logic_for_<?php echo $jsSafeVariableId; ?>();
-				} else {
-					console.warn('Form element not found - validation / visibility logic may not work!');
+							const isRequired = el.dataset.required=='true' ? true : false;
+							const actualNamedEl = document.getElementById(el.dataset.field_id);
+
+							if(evaluateFieldLogic(form, JSON.parse(el.dataset.logic), el)) {
+								actualNamedEl.required = isRequired;
+								el.classList.remove("logic_hide");
+							} else {
+								actualNamedEl.required = false;
+								el.classList.add("logic_hide");
+							}
+						});
+					}
 				}
+
+				const formEl_<?php echo $jsSafeVariableId; ?> = document.getElementById('<?php echo $this->id ?>'); //wrapping form
+
+				formEl_<?php echo $jsSafeVariableId; ?>.addEventListener('input', (e)=>{
+					updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run when a form element changes value
+				});
+
+				updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run on init
 			</script>
 		<?php
 	}
