@@ -259,14 +259,14 @@ class Form {
 		$jsSafeVariableId = preg_replace("/[^a-zA-Z_$]|[^\\w$]/", "_safety_", $this->id);
 
 		// add logic js
-		echo "
+		?>
 			<script>
-			var form_el_{$jsSafeVariableId} = document.getElementById('{$this->id}');
-			if (form_el_{$jsSafeVariableId}) {
+			var form_el_<?php echo $jsSafeVariableId; ?> = document.getElementById('<?php echo $this->id ?>');
+			if (form_el_<?php echo $jsSafeVariableId; ?>) {
 				// create logic function
-				function logic_for_{$jsSafeVariableId} () {
+				function logic_for_<?php echo $jsSafeVariableId; ?> () {
 					//console.log('Doing logic checks');
-					var logic_els = form_el_{$jsSafeVariableId}.querySelectorAll('.haslogic');
+					var logic_els = form_el_<?php echo $jsSafeVariableId; ?>.querySelectorAll('.haslogic');
 					if (logic_els) {
 						//console.log('LOGIC ELS',logic_els);
 						logic_els.forEach((e)=>{
@@ -359,19 +359,19 @@ class Form {
 				}
 
 				// listen for changes on this form container
-				form_el_{$jsSafeVariableId}.addEventListener('input',function(e){
+				form_el_<?php echo $jsSafeVariableId; ?>.addEventListener('input',function(e){
 					let form_wrap_el = e.target.closest('.form_contain');
 					// do logic checks
-					logic_for_{$jsSafeVariableId}();
+					logic_for_<?php echo $jsSafeVariableId; ?>();
 				});
 
 				// call logic checks on pageload to ensure correct visibility
-				logic_for_{$jsSafeVariableId}();
+				logic_for_<?php echo $jsSafeVariableId; ?>();
 			}
 			else {
 				console.warn('Form element not found - validation / visibility logic may not work!');
 			}
 			</script>
-		";
+		<?php
 	}
 }
