@@ -10,10 +10,16 @@
         ]
     },
     "require-dev": {
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "pestphp/pest": "^2.36"
     },
     "require": {
         "phpmailer/phpmailer": "6.5.1",
         "erusev/parsedown": "^1.7"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
