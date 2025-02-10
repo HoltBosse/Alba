@@ -246,9 +246,10 @@ class Field_Image extends Field {
 						let datasetattribute = image.imageurl ? " data-hasimageurl='true'" : "";
 						image_list_markup += `
 						<li>
-							<a class='media_selector_selection' data-id='${image.id}'>
+							<a style='position:relative;' class='media_selector_selection' data-id='${image.id}'>
+							<aside style='font-size:0.75em; display:block; position:absolute; top:0px; right:0px; padding:0.25em 0.5em; background:rgba(0,0,0,0.5); color:#ddd;' class='media_size'>${image.width} x ${image.height}</aside>
 							<img title='${image.title}' alt='${image.alt}' ${datasetattribute} src='${image.imageurl ? image.imageurl : `<?php echo Config::uripath();?>/image/${image.id}/thumb`}'>
-							<span>${image.title}</span>
+							<span class='media_selector_info'>${image.title}</span>
 							</a>
 						</li>`;
 					});
