@@ -259,119 +259,115 @@ class Form {
 		$jsSafeVariableId = preg_replace("/[^a-zA-Z_$]|[^\\w$]/", "_safety_", $this->id);
 
 		// add logic js
-		echo "
+		?>
 			<script>
-			var form_el_{$jsSafeVariableId} = document.getElementById('{$this->id}');
-			if (form_el_{$jsSafeVariableId}) {
-				// create logic function
-				function logic_for_{$jsSafeVariableId} () {
-					//console.log('Doing logic checks');
-					var logic_els = form_el_{$jsSafeVariableId}.querySelectorAll('.haslogic');
-					if (logic_els) {
-						//console.log('LOGIC ELS',logic_els);
-						logic_els.forEach((e)=>{
-							//console.log(e);
-							let or_blocks = JSON.parse(e.dataset.logic);
-							if (or_blocks) {
-								var or_shows = [];
-								var show = false; // default to NO SHOW
-								console.log(or_blocks);
-								// loop over OR blocks
-								// single block is normal for single AND
-								or_blocks.forEach((and_arr)=>{
-									var and_show = true; // default to show
-									// b = AND array block
-									and_arr.forEach((b)=>{
-										// b = single AND obj
-										// and_show starts as true
-										// any single negative test will set and_show to false
-										let logic_target_el = document.getElementById(b.field);
-										// todo: make this work for any other 
-										// non-value driven field - e.g. checkbox (done!)
-										if (logic_target_el) {
-											// set to value of el by default
-											var logic_target_value = logic_target_el.value;
-											if (logic_target_el.nodeName=='INPUT') {
-												if (logic_target_el.type=='checkbox') {
+				const form_el_<?php echo $jsSafeVariableId; ?> = document.getElementById('<?php echo $this->id ?>');
+				if (form_el_<?php echo $jsSafeVariableId; ?>) {
+					// create logic function
+					function logic_for_<?php echo $jsSafeVariableId; ?> () {
+						//console.log('Doing logic checks');
+						const logic_els = form_el_<?php echo $jsSafeVariableId; ?>.querySelectorAll('.haslogic');
+						if (logic_els) {
+							//console.log('LOGIC ELS',logic_els);
+							logic_els.forEach((e)=>{
+								//console.log(e);
+								const or_blocks = JSON.parse(e.dataset.logic);
+								if (or_blocks) {
+									const or_shows = [];
+									let show = false; // default to NO SHOW
+									//console.log(or_blocks);
+									// loop over OR blocks
+									// single block is normal for single AND
+									or_blocks.forEach((and_arr)=>{
+										let and_show = true; // default to show
+										// b = AND array block
+										and_arr.forEach((b)=>{
+											// b = single AND obj
+											// and_show starts as true
+											// any single negative test will set and_show to false
+											let logic_target_el = document.getElementById(b.field);
+											// todo: make this work for any other 
+											// non-value driven field - e.g. checkbox (done!)
+											if (logic_target_el) {
+												// set to value of el by default
+												let logic_target_value = logic_target_el.value;
+												if (logic_target_el.nodeName=='INPUT' && logic_target_el.type=='checkbox') {
 													logic_target_value = logic_target_el.checked;
 												}
-											}
-											switch(b.test) {
-												case '==' :
-													local_show = logic_target_value==b.value;
-													if (!local_show) {
-														and_show = false;
-													}
-													break;
-												case '!=' :
-														local_show = logic_target_value!=b.value;
+												switch(b.test) {
+													case '==' :
+														local_show = logic_target_value==b.value;
 														if (!local_show) {
 															and_show = false;
 														}
 														break;
-												default:
-													console.warn('Unknown logic test for ',b)
-													break;
+													case '!=' :
+															local_show = logic_target_value!=b.value;
+															if (!local_show) {
+																and_show = false;
+															}
+															break;
+													default:
+														console.warn('Unknown logic test for ',b)
+														break;
+												}
 											}
-										}
-										else {
-											console.warn('Unable to find logic target for ',b);
-										}
+											else {
+												console.warn('Unable to find logic target for ',b);
+											}
+										});
+										// push AND final show to or_shows arr
+										or_shows.push(and_show);
 									});
-									// push AND final show to or_shows arr
-									or_shows.push(and_show);
-								});
-								// have all ORS (usually only 1 :) )
-								// loop over all ORS or until single TRUE is found
-								for (var n=0; n<or_shows.length; n++) {
-									if (or_shows[n]!==false) {
-										show = true;
-										break;
+									// have all ORS (usually only 1 :) )
+									// loop over all ORS or until single TRUE is found
+									for (let n=0; n<or_shows.length; n++) {
+										if (or_shows[n]!==false) {
+											show = true;
+											break;
+										}
+									}	
+									// set visibility
+									// todo: handle 'required'
+									// find el inside e that has 'name' attr, target that
+									let actual_named_el = document.getElementById(e.dataset.field_id);
+									let is_required = e.dataset.required=='true' ? true : false; 
+									if (show) {
+										// restore required from json default
+										if (actual_named_el) {
+											actual_named_el.required = is_required;
+										}
+										e.classList.remove('logic_hide');
+									} else {
+										// remove required and hide
+										// cannot be required, hidden
+										if (actual_named_el) {
+											actual_named_el.required = false; 
+										}
+										e.classList.add('logic_hide');
 									}
-								}	
-								// set visibility
-								// todo: handle 'required'
-								// find el inside e that has 'name' attr, target that
-								let actual_named_el = document.getElementById(e.dataset.field_id);
-								let is_required = e.dataset.required=='true' ? true : false; 
-								if (show) {
-									// restore required from json default
-									if (actual_named_el) {
-										actual_named_el.required = is_required;
-									}
-									e.classList.remove('logic_hide');
 								}
 								else {
-									// remove required and hide
-									// cannot be required, hidden
-									if (actual_named_el) {
-										actual_named_el.required = false; 
-									}
-									e.classList.add('logic_hide');
+									console.warn('Failed to decode logic for ',e);
 								}
-							}
-							else {
-								console.warn('Failed to decode logic for ',e);
-							}
-						});
-						
+							});
+							
+						}
 					}
+
+					// listen for changes on this form container
+					form_el_<?php echo $jsSafeVariableId; ?>.addEventListener('input', (e)=>{
+						//let form_wrap_el = e.target.closest('.form_contain');
+						// do logic checks
+						logic_for_<?php echo $jsSafeVariableId; ?>();
+					});
+
+					// call logic checks on pageload to ensure correct visibility
+					logic_for_<?php echo $jsSafeVariableId; ?>();
+				} else {
+					console.warn('Form element not found - validation / visibility logic may not work!');
 				}
-
-				// listen for changes on this form container
-				form_el_{$jsSafeVariableId}.addEventListener('input',function(e){
-					let form_wrap_el = e.target.closest('.form_contain');
-					// do logic checks
-					logic_for_{$jsSafeVariableId}();
-				});
-
-				// call logic checks on pageload to ensure correct visibility
-				logic_for_{$jsSafeVariableId}();
-			}
-			else {
-				console.warn('Form element not found - validation / visibility logic may not work!');
-			}
 			</script>
-		";
+		<?php
 	}
 }
