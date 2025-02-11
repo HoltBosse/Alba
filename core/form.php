@@ -336,6 +336,9 @@ class Form {
 					formEl_<?php echo $jsSafeVariableId; ?>.addEventListener('input', (e)=>{
 						updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run when a form element changes value
 					});
+					formEl_<?php echo $jsSafeVariableId; ?>.addEventListener('change', (e)=>{ //a normal select does an input+change event. a slimselect only does a change
+						updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run when a form element changes value
+					});
 
 					updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run on init
 				}
