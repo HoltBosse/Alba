@@ -27,7 +27,7 @@ class Field_Select extends Field {
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='" . ($this->slimselect ? "slimselect_select" : ($this->multiple ? " is-multiple select" : " select")) . "'>";
-					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} " . ($this->multiple ? "multiple" : false) . " class='slimselect_target_{{repeatable_id_suffix}}'>";
+					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} " . ($this->multiple ? "multiple" : false) . ">";
 						if ($this->required || $this->placeholder) {
 							$placeholder = $this->placeholder ?? $this->label;
 							echo "<option value='' >{$placeholder}</option>";
@@ -67,8 +67,8 @@ class Field_Select extends Field {
 		?>
 			<script>
 				try {
-					document.querySelector('.slimselect_target_{{repeatable_id_suffix}}').slimselect = new SlimSelect({
-						select: '#<?php echo $this->id;?>',
+					document.currentScript.parentNode.querySelector(`#<?php echo $this->id; ?>`).slimselect = new SlimSelect({
+						select: document.currentScript.parentNode.querySelector(`#<?php echo $this->id; ?>`),
 						<?php if($this->slimselect_ajax): ?>
 						searchingText: 'Searching...',
 						ajax: function (search, callback) {
@@ -96,7 +96,8 @@ class Field_Select extends Field {
 						}
 						<?php endif; ?>
 					});
-				} catch {
+				} catch(e) {
+					console.log(e);
 					alert("SlimSelect is not present!");
 				}
 			</script>
