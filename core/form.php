@@ -272,7 +272,16 @@ class Form {
 
 					function evaluateFieldCondition(form, condition, element) {
 						const { field, test, value } = condition;
-						const target = form.querySelector(`[name="${field}"]`);
+						let sectionRoot = form;
+						let name = field;
+
+						//if we are in a repeatable, then adjust root and fieldname
+						if(element.closest(".repeatable")) {
+							sectionRoot = element.closest(".repeatable");
+							name = `${field}[]`;
+						}
+
+						const target = sectionRoot.querySelector(`[name="${name}"]`);
 						let targetValue = target.value;
 
 						if (target.nodeName=='INPUT' && target.type=='checkbox') {
@@ -321,13 +330,15 @@ class Form {
 					}
 				}
 
-				const formEl_<?php echo $jsSafeVariableId; ?> = document.getElementById('<?php echo $this->id ?>'); //wrapping form
+				if(typeof formEl_<?php echo $jsSafeVariableId; ?> === 'undefined') {
+					const formEl_<?php echo $jsSafeVariableId; ?> = document.getElementById('<?php echo $this->id ?>'); //wrapping form
 
-				formEl_<?php echo $jsSafeVariableId; ?>.addEventListener('input', (e)=>{
-					updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run when a form element changes value
-				});
+					formEl_<?php echo $jsSafeVariableId; ?>.addEventListener('input', (e)=>{
+						updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run when a form element changes value
+					});
 
-				updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run on init
+					updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run on init
+				}
 			</script>
 		<?php
 	}

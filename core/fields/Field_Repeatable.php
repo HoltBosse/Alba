@@ -117,6 +117,8 @@ class Field_Repeatable extends Field {
 			var new_node = document.createRange().createContextualFragment(markup);
 			var this_repeater = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>');
 			this_repeater.appendChild(new_node);
+
+			updateAllFieldLogic(e.target.closest(".form_contain"));
 		});
 
 		function move_repeatable_up(el) {
