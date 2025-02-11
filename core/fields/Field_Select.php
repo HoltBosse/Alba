@@ -15,17 +15,6 @@ class Field_Select extends Field {
 	public $empty_string;
 
 	public function display() {
-		// if id needs to be unique for scripting purposes, make sure replacement text inserted
-		// this will be replaced during repeatable template literal js injection when adding new
-		// repeatable form item
-		if ($this->in_repeatable_form===null) {
-			$repeatable_id_suffix='';
-		}
-		else {
-			$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
-			$this->id = $this->id . $repeatable_id_suffix;
-		}
-		$UpdateSelect = [];
 		$required="";
 		if ($this->required) {$required=" required ";}
 		if (property_exists($this,'attribute_list')) {
@@ -49,15 +38,12 @@ class Field_Select extends Field {
 						}
 						foreach ($this->select_options as $select_option) {
 							$disabled = $select_option->disabled ?? false ? " disabled " : "";
-							/** @var object{text: mixed, value: mixed, UpdateSelect: mixed} $select_option */
+							/** @var object{text: mixed, value: mixed} $select_option */
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
 							} elseif ($select_option->value == $this->default) {
 								$selected="selected";
-							}
-							if (isset($select_option->UpdateSelect)) {
-								$UpdateSelect[$select_option->value] = $select_option->UpdateSelect;
 							}
 							echo "<option {$disabled} {$selected} value='{$select_option->value}'>" . Input::stringHtmlSafe($select_option->text) . "</option>";
 						}
@@ -77,39 +63,12 @@ class Field_Select extends Field {
 		if ($this->description) {
 			echo "<p class='help {$hidden}'>" . $this->description . "</p>";
 		}
-		if (sizeof($UpdateSelect) >=1):
-		?>
-			<script>	
-				function <?php echo "FieldUpdate" . $this->id; ?>() {	
-					var <?php echo $this->id . "_UpdateSelect"?> = <?php echo json_encode($UpdateSelect, JSON_UNESCAPED_SLASHES) ?>;	
-					var sel = document.getElementById("<?php echo $this->id; ?>");	
-					var oel = sel.options[sel.selectedIndex].value;	
-					if(<?php echo $this->id . "_UpdateSelect"?>[oel] && document.getElementById(<?php echo $this->id . "_UpdateSelect"?>[oel].id)){	
-						var markup="";	
-						var ojson = <?php echo $this->id . "_UpdateSelect"?>[oel].select_options	
-						for (const key in ojson) {	
-							if (ojson[key].text != "") {	
-								markup+=`<option value="${ojson[key].value}">${ojson[key].text}</option>`	
-							}	
-						}	
-						document.getElementById(<?php echo $this->id . "_UpdateSelect"?>[oel].id).innerHTML=markup;	
-					}	
-				}	
-				document.getElementById("<?php echo $this->id; ?>").addEventListener('change', (e) => {	
-					<?php echo "FieldUpdate" . $this->id; ?>();	
-				});	
-				window.addEventListener('load', function () {	
-					<?php echo "FieldUpdate" . $this->id; ?>();	
-				});	
-			</script>
-		<?php
-		endif;
 		if($this->slimselect):
 		?>
 			<script>
 				try {
-					document.getElementById('<?php echo $this->id;?>').slimselect = new SlimSelect({
-						select: '#<?php echo $this->id;?>',
+					document.currentScript.parentNode.querySelector(`#<?php echo $this->id; ?>`).slimselect = new SlimSelect({
+						select: document.currentScript.parentNode.querySelector(`#<?php echo $this->id; ?>`),
 						<?php if($this->slimselect_ajax): ?>
 						searchingText: 'Searching...',
 						ajax: function (search, callback) {
@@ -137,7 +96,8 @@ class Field_Select extends Field {
 						}
 						<?php endif; ?>
 					});
-				} catch {
+				} catch(e) {
+					console.log(e);
 					alert("SlimSelect is not present!");
 				}
 			</script>

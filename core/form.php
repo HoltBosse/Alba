@@ -317,7 +317,7 @@ class Form {
 							console.log(evaluateFieldLogic(form, JSON.parse(el.dataset.logic), el)===true ? "true" : "false"); */
 
 							const isRequired = el.dataset.required=='true' ? true : false;
-							const actualNamedEl = document.getElementById(el.dataset.field_id);
+							const actualNamedEl = el.querySelector(`#${el.dataset.field_id}`);
 
 							if(evaluateFieldLogic(form, JSON.parse(el.dataset.logic), el)) {
 								actualNamedEl.required = isRequired;
@@ -334,6 +334,9 @@ class Form {
 					const formEl_<?php echo $jsSafeVariableId; ?> = document.getElementById('<?php echo $this->id ?>'); //wrapping form
 
 					formEl_<?php echo $jsSafeVariableId; ?>.addEventListener('input', (e)=>{
+						updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run when a form element changes value
+					});
+					formEl_<?php echo $jsSafeVariableId; ?>.addEventListener('change', (e)=>{ //a normal select does an input+change event. a slimselect only does a change
 						updateAllFieldLogic(formEl_<?php echo $jsSafeVariableId; ?>); //run when a form element changes value
 					});
 
