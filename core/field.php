@@ -103,6 +103,56 @@ class Field {
 		return true;
 	}
 
+	public function get_form_editor_visibility() {
+		return false;
+	}
+
+	public function get_form_editor_display() {
+		return "<p>" . explode("_", get_class($this))[1] . "</p>";
+	}
+
+	public function get_form_editor_config() {
+		$blackList = ["valid", "type", "missingconfig", "in_repeatable_form"];
+		$varTypeToInputType = [
+			"string"=>"text",
+			"integer"=>"number",
+			"double"=>"number",
+		];
+
+		$stockField = new Field();
+		$stockField->load_from_config((object) []);
+		$options = [];
+
+		foreach($stockField as $key=>$value) {
+			if(in_array($key, $blackList)) {
+				continue;
+			}
+
+			if(gettype($value)=="boolean") {
+				$options[] = (object) [
+					"type"=>"select",
+					"name"=>$key,
+					"id"=>$key,
+					"label"=>ucwords($key),
+					"options"=>(object) [
+						"true"=>"True",
+						"false"=>"False",
+					]
+				];
+			} else {
+				$options[] = (object) [
+					"type"=>"input",
+					"input_type"=>$varTypeToInputType[gettype($value)] ?? "string",
+					"name"=>$key,
+					"id"=>$key,
+					"label"=>ucwords($key),
+				];
+			}
+		}
+
+		return $options;
+	}
+
 	public function load_from_config($config) {
 		// config is json field already converted to object by form class
 		$this->type = $config->type ?? 'error!!!';

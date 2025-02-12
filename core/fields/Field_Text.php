@@ -67,6 +67,14 @@ class Field_Text extends Field {
 		}
 	}
 
+	public function get_form_editor_visibility() {
+		return true;
+	}
+
+	public function get_form_editor_display() {
+		return "<input class='input' type='text' placeholder='Text Field' />";
+	}
+
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 		
