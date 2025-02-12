@@ -27,19 +27,21 @@ $fieldsList = array_merge($coreFields, $userFields);
                 foreach($fieldsList as $fieldPath) {
                     $className = basename($fieldPath, ".php");
                     $type = str_replace("Field_", "", $className);
-                    /*
                     $classInstance = new $className();
-                    //if($classInstance::show_in_editor()) {
-                    $markup = $classInstance::get_editor_markup();
-                    */
-                    $markup = "<p>$type</p>";
-                    echo "<a
-                            class='button is-info'
-                            data-display_markup='$markup'
-                            data-type='$type'
-                        >
-                        $type
-                        </a>";
+
+                    if($classInstance->get_form_editor_visibility()) {
+                        $markup = htmlspecialchars($classInstance->get_form_editor_display());
+                        $config = json_encode($classInstance->get_form_editor_config());
+                        //$markup = "<p>$type</p>";
+                        echo "<a
+                                class='button is-info'
+                                data-display_markup='$markup'
+                                data-type='$type'
+                                data-config='$config'
+                            >
+                            $type
+                            </a>";
+                    }
                 }
             ?>
         </div>

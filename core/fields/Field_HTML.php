@@ -12,7 +12,9 @@ class Field_HTML extends Field {
 		echo $this->html;
 	}
 
-
+	public function get_form_editor_visibility() {
+		return true;
+	}
 
 	public function load_from_config($config) {
 		parent::load_from_config($config);
