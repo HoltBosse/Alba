@@ -27,6 +27,10 @@
         &:has(#field_settings:checked) .field_configuration_list {
             display: grid;
         }
+
+        .field_configuration_list {
+            gap: 1rem;
+        }
     }
     
     .fields_panel {
