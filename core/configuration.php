@@ -24,7 +24,7 @@ class Configuration {
 		}
 
 		// fallback - get complete json and get property in PHP
-		$query = "select configuration from configurations where name=?";
+		$query = "SELECT configuration FROM configurations WHERE name=?";
 		$stmt = $pdo->prepare($query);
 		$ok = $stmt->execute([$form_name]);
 		$configuration = $stmt->fetch();
@@ -35,8 +35,7 @@ class Configuration {
 			}
 		}
 		// not in db, get default from form
-		$form_path = CMSPATH . "/admin/forms/" . $form_name . ".json";
-		$form = JSON::load_obj_from_file ($form_path);
+		$form = JSON::load_obj_from_file (CMSPATH . "/admin/controllers/settings/views/general/general_options.json");
 		//CMS::pprint_r ($form);
 		$default = null; 
 		if (property_exists($form,'fields')) { 
