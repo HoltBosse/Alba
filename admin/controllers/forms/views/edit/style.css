@@ -30,6 +30,15 @@
 
         .field_configuration_list {
             gap: 1rem;
+
+            label {
+                display: block;
+                padding-bottom: 0.25rem;
+            }
+
+            .form_field_options_submit {
+                margin-top: 0.5rem;
+            }
         }
     }
     
