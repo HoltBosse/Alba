@@ -23,7 +23,7 @@ function field_options_to_markup(input){
                 </div>
             </div>`;
         } else {
-            markup += `<p>invalid field</p>`;
+            markup += "<p>invalid field</p>";
         }
     });
 
