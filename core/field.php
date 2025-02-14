@@ -127,6 +127,7 @@ class Field {
 		$stockField->load_from_config((object) []);
 		$options = [];
 
+		// @phpstan-ignore-next-line
 		foreach($stockField as $key=>$value) {
 			if(in_array($key, $blackList)) {
 				continue;
