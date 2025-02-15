@@ -64,15 +64,22 @@ defined('CMSPATH') or die; // prevent unauthorized access
                 <?php if ($content_list_fields):?>
                     <?php foreach ($content_list_fields as $content_list_field):?>
                         <td><?php 
-                            $propname = "{$content_list_field->name}"; 
-                            $classname = "Field_" . $content_list_field->type;
-                            $curfield = new $classname();
-                            $curfield->load_from_config($named_custom_fields[$propname]); // load config - useful for some fields
-                            $curfield->default = $content_item->$propname; // set temp field value to current stored value
-                            // TODO: pass precalc array of table names for content types to aid in performance of lookups 
-                            // some fields will currently parse json config files to determine tables to query for friendly values
-                            // PER row/field. not ideal. ESPECIALLY IMPORTANT FOR ORDER VIEW SINCE ALL CONTENT ITEMS SHOWN
-                            echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
+                            // limit number of rows to show friendly values for performance/timeout reasons
+                            // TODO: make per-content type json config value - allow for flexibility?
+                            if (sizeof($all_content) < 500) {
+                                $propname = "{$content_list_field->name}"; 
+                                $classname = "Field_" . $content_list_field->type;
+                                $curfield = new $classname();
+                                $curfield->load_from_config($named_custom_fields[$propname]); // load config - useful for some fields
+                                $curfield->default = $i->$propname; // set temp field value to current stored value
+                                // TODO: pass precalc array of table names for content types to aid in performance of lookups 
+                                // some fields will currently parse json config files to determine tables to query for friendly values
+                                // PER row/field. not ideal. ESPECIALLY IMPORTANT FOR ORDER VIEW SINCE ALL CONTENT ITEMS SHOWN
+                                echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
+                            }
+                            else {
+                                echo $i->{$content_list_field->name}; // field contents from DB
+                            }
                             ?>
                         </td>
                     <?php endforeach; ?>
