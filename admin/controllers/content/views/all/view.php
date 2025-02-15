@@ -138,7 +138,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php if ($order_by):?>
 		<a class='button is-primary is-outlined is-small' href='<?php echo $_SERVER['HTTP_REFERER'];?>'>FINISH ORDERING</a>
 	<?php else: ?>
-		<a class='button is-primary is-outlined is-small' href='?order_by=ordering'>MANAGE ORDERING</a>
+		<a class='button is-primary is-outlined is-small' href='<?php echo Config::uripath() . "/admin/content/order/{$content_type_filter}";?>'>MANAGE ORDERING</a>
 	<?php endif; ?>
 
 	<table class='table'>

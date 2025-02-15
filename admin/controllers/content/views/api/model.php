@@ -43,3 +43,25 @@ if ($action=='insert') {
 	echo '{"success":1,"message":"Ordering complete"}';
 	exit(0);
 }
+elseif ($action=="setorderall") {
+	$content_type = Input::getvar('content_type','INT');
+	$id_arr_string = Input::getvar('ids','RAW');
+	$id_arr = explode(",",$id_arr_string);
+	$content_table = Content::get_table_name_for_content_type($content_type);
+	if (is_array($id_arr) && $content_table) {
+		$index=0;
+		foreach ($id_arr as $id) {
+			DB::exec("UPDATE $content_table SET `ordering`=? WHERE id=?",[$index, $id]);
+			$index++;
+		}
+		echo '{"success":1,"message":"Ordering complete"}';
+		exit(0);
+	}
+	else {
+		echo '{"success":0,"message":"No ordering performed"}';
+	}
+}
+else {
+	echo '{"success":0,"message":"Unknown operation"}';
+	exit(0);
+}
