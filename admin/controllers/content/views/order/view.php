@@ -24,17 +24,29 @@ defined('CMSPATH') or die; // prevent unauthorized access
     .sortable-drag {
     }
     table#orderitems tr {
-        grid-template-columns: repeat(6, 1fr); /* match # of columns in ordering table */
+        grid-template-columns: repeat(<?php echo sizeof($content_list_fields)+4;?>, 1fr); /* match # of columns in ordering table */
     }
     table.table td:nth-of-type(<?php echo Admin_Config::$show_ids_in_tables ? 3 : 2; ?>), table.table th:nth-of-type(<?php echo Admin_Config::$show_ids_in_tables ? 3 : 2; ?>) {
         grid-column: span 3;
     }
 </style>
 
+<h1 class='title is-1'>Order <?php echo "&ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; ";?>Content
+	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/all/<?php echo $content_type;?>'>Back To All &ldquo;<?php echo Content::get_content_type_title($content_type);?>&rdquo; Content</a>
+    <span class='unimportant subheading'>Drag and drop items into your preferred order. </span>
+</h1>
+
 <table class='table is-fullwidth' id="orderitems">
     <thead>
-        <th>State</th>
-        <th>Title</th>
+        <tr>
+            <th>State</th>
+            <th>Title</th>
+            <?php if ($content_list_fields):?>
+                <?php foreach ($content_list_fields as $content_list_field):?>
+                    <th><?php echo $content_list_field->label; ?></th>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tr>
     </thead>
     <tbody id="ordertablebody">
         <?php foreach ($all_content as $i):?>
@@ -49,6 +61,22 @@ defined('CMSPATH') or die; // prevent unauthorized access
                 ?>
                 </td>
                 <td><?=$i->title;?></td>
+                <?php if ($content_list_fields):?>
+                    <?php foreach ($content_list_fields as $content_list_field):?>
+                        <td><?php 
+                            $propname = "{$content_list_field->name}"; 
+                            $classname = "Field_" . $content_list_field->type;
+                            $curfield = new $classname();
+                            $curfield->load_from_config($named_custom_fields[$propname]); // load config - useful for some fields
+                            $curfield->default = $content_item->$propname; // set temp field value to current stored value
+                            // TODO: pass precalc array of table names for content types to aid in performance of lookups 
+                            // some fields will currently parse json config files to determine tables to query for friendly values
+                            // PER row/field. not ideal. ESPECIALLY IMPORTANT FOR ORDER VIEW SINCE ALL CONTENT ITEMS SHOWN
+                            echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
+                            ?>
+                        </td>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tr>
         <?php endforeach; ?>
     </tbody>
