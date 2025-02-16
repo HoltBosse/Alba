@@ -3,7 +3,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
 ob_end_clean();
 
-// TODO: endure logged in user is allowed to actually perform these tasks!
+if (!CMS::Instance()->user->is_member_of('admin')) {
+	echo '{"success":0,"message":"Access denied"}';
+	exit(0);
+}
 
 $action = Input::getvar('action','STRING');
 
