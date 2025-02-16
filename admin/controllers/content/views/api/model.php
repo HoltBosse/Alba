@@ -47,12 +47,13 @@ if ($action=='insert') {
 	exit(0);
 }
 elseif ($action=="setorderall") {
+	// slow but guarantees perfect ordering
 	$content_type = Input::getvar('content_type','INT');
 	$id_arr_string = Input::getvar('ids','RAW');
 	$id_arr = explode(",",$id_arr_string);
 	$content_table = Content::get_table_name_for_content_type($content_type);
 	if (is_array($id_arr) && $content_table) {
-		$index=0;
+		$index=0; 
 		$start = microtime(true);
 		foreach ($id_arr as $id) {
 			DB::exec("UPDATE $content_table SET `ordering`=? WHERE id=?",[$index, $id]);
@@ -67,6 +68,31 @@ elseif ($action=="setorderall") {
 	else {
 		echo '{"success":0,"message":"No ordering performed"}';
 	}
+}
+elseif ($action=="changeorder") {
+	// id, new_order, prev_order, content_type
+	// more efficient than setorderall
+	$id = Input::getvar('id','NUMBER');
+	$new_order = Input::getvar('new_order','INT');
+	$prev_order = Input::getvar('prev_order','INT');
+	$content_type = Input::getvar('content_type','INT');
+	if (!$id || !$new_order || !$prev_order || !$content_type) {
+		echo '{"success":0,"message":"No ordering performed - one or more missing parameters"}';
+		exit(0);
+	}
+	$content_table = Content::get_table_name_for_content_type($content_type);
+	// First, update the ordering index of the item being moved
+    $stmt = DB::exec("UPDATE $content_table SET ordering = ? WHERE id = ?",[$new_order, $id]);
+    // Then, update the ordering indices of the other items
+    if ($new_order > $prev_order) {
+        // Item was moved down, so decrement the ordering indices of the items above it
+		DB::exec("UPDATE $content_table SET ordering = ordering - 1 WHERE ordering > ? AND ordering <= ?", [$prev_order, $new_order]);
+    } elseif ($new_order < $prev_order) {
+        // Item was moved up, so increment the ordering indices of the items below it
+		DB::exec("UPDATE $content_table SET ordering = ordering + 1 WHERE ordering >= ? AND ordering < ?",[$new_order, $prev_order]);
+    }
+	echo '{"success":1,"message":"Ordering complete"}';
+	exit(0);
 }
 else {
 	echo '{"success":0,"message":"Unknown operation"}';

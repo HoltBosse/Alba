@@ -50,7 +50,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
     </thead>
     <tbody id="ordertablebody">
         <?php foreach ($all_content as $i):?>
-            <tr data-content_type="<?=$content_type;?>" data-content_id="<?=$i->id;?>" class=" orderitem">
+            <tr data-ordering="<?=$i->ordering;?>" data-content_type="<?=$content_type;?>" data-content_id="<?=$i->id;?>" class=" orderitem">
                 <td>
                 <?php if ($i->state==1) { 
                     echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -114,9 +114,20 @@ defined('CMSPATH') or die; // prevent unauthorized access
                 
                 async function update_ordering() {
                     const formData = new FormData();
-					formData.append("ids", id_arr_string);
-					formData.append("action", "setorderall");
-					formData.append("content_type", <?=$content_type;?>);
+
+                    // orderall
+                    // can be used to pass ALL ids in content for ordering
+					//formData.append("ids", id_arr_string);
+					//formData.append("action", "setorderall");
+					//formData.append("content_type", <?=$content_type;?>);
+
+                    // changeorder
+                    // id, new_order, prev_order, content_type
+                    formData.append("action", "changeorder");
+                    formData.append("id", e.item.dataset.content_id);
+                    formData.append("content_type", <?=$content_type;?>);
+                    formData.append("new_order", e.newIndex+1); // client-size index 0 based, ordering 1
+                    formData.append("prev_order", e.oldIndex+1);
                     fetch("<?=Config::uripath();?>/admin/content/api", {
                             method: "POST",
                             body: formData,
