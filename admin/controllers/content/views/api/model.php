@@ -82,15 +82,15 @@ elseif ($action=="changeorder") {
 	}
 	$content_table = Content::get_table_name_for_content_type($content_type);
 	// First, update the ordering index of the item being moved
-    $stmt = DB::exec("UPDATE $content_table SET ordering = ? WHERE id = ?",[$new_order, $id]);
-    // Then, update the ordering indices of the other items
-    if ($new_order > $prev_order) {
-        // Item was moved down, so decrement the ordering indices of the items above it
+	$stmt = DB::exec("UPDATE $content_table SET ordering = ? WHERE id = ?",[$new_order, $id]);
+	// Then, update the ordering indices of the other items
+	if ($new_order > $prev_order) {
+		// Item was moved down, so decrement the ordering indices of the items above it
 		DB::exec("UPDATE $content_table SET ordering = ordering - 1 WHERE ordering > ? AND ordering <= ?", [$prev_order, $new_order]);
-    } elseif ($new_order < $prev_order) {
-        // Item was moved up, so increment the ordering indices of the items below it
+	} elseif ($new_order < $prev_order) {
+		// Item was moved up, so increment the ordering indices of the items below it
 		DB::exec("UPDATE $content_table SET ordering = ordering + 1 WHERE ordering >= ? AND ordering < ?",[$new_order, $prev_order]);
-    }
+	}
 	echo '{"success":1,"message":"Ordering complete"}';
 	exit(0);
 }
