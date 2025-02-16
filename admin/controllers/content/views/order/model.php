@@ -13,7 +13,7 @@ if (!is_numeric($content_type)) {
 }
 
 $content_table = Content::get_table_name_for_content_type($content_type);
-$all_content = DB::fetchAll("SELECT * FROM $content_table ORDER BY ordering ASC, id ASC");
+$all_content = DB::fetchAll("SELECT * FROM $content_table WHERE state<>-1 ORDER BY ordering ASC, id ASC");
 
 $location = Content::get_content_location($content_type);
 $custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');

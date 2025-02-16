@@ -58,6 +58,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
                 elseif ($i->state==0) {
                     echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
                 }
+                else {
+                    // TODO: custom states
+                    echo $i->state;
+                }
                 ?>
                 </td>
                 <td><?=$i->title;?></td>

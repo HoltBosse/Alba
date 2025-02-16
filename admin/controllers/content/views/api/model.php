@@ -50,11 +50,15 @@ elseif ($action=="setorderall") {
 	$content_table = Content::get_table_name_for_content_type($content_type);
 	if (is_array($id_arr) && $content_table) {
 		$index=0;
+		$start = microtime(true);
 		foreach ($id_arr as $id) {
 			DB::exec("UPDATE $content_table SET `ordering`=? WHERE id=?",[$index, $id]);
 			$index++;
 		}
-		echo '{"success":1,"message":"Ordering complete"}';
+		$end = microtime(true);
+		$execution_time = $end - $start;
+		$nice_execution_time = round($execution_time * 1000);
+		echo '{"success":1,"message":"Ordering complete - '.sizeof($id_arr).' - Time: '.$nice_execution_time.'ms"}';
 		exit(0);
 	}
 	else {
