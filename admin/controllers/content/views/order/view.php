@@ -71,7 +71,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
                 }
                 ?>
                 </td>
-                <td><?=$i->title;?></td>
+                <td><?php echo Input::stringHtmlSafe($i->title);?></td>
                 <?php if ($content_list_fields):?>
                     <?php foreach ($content_list_fields as $content_list_field):?>
                         <td><?php 
