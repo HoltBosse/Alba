@@ -17,15 +17,16 @@ function clean_ordering($table_name) {
 	// guarantees unique sensible ordering
 	// 1 based, not 0 based
 	$sql = "
-	WITH ordered_items AS (
-		SELECT id, ordering,
+	UPDATE `$table_name`
+	JOIN (
+		SELECT id,
 		ROW_NUMBER() OVER (ORDER BY ordering, id) AS new_ordering
-		FROM $table_name
-	)
-	UPDATE $table_name
-	JOIN ordered_items ON $table_name.id = ordered_items.id
-	SET $table_name.ordering = ordered_items.new_ordering;
+		FROM `$table_name`
+	) AS ordered_items
+	ON `$table_name`.id = ordered_items.id
+	SET `$table_name`.ordering = ordered_items.new_ordering;
 	";
+	
 	DB::exec($sql);
 }
 
