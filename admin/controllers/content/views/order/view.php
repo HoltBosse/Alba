@@ -104,7 +104,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <script>
     new Sortable(document.getElementById('ordertablebody'), {
         animation: 150,
-        onUpdate: function (e) {
+        onUpdate: (e)=>{
             /* console.log("From ", e.oldIndex, " to ", e.newIndex);
             console.log(e.item.dataset); */
             // update all ordering indices to ensure correctness
@@ -121,13 +121,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
                 
                 async function update_ordering() {
                     const formData = new FormData();
-
-                    // orderall
-                    // can be used to pass ALL ids in content for ordering
-					//formData.append("ids", id_arr_string);
-					//formData.append("action", "setorderall");
-					//formData.append("content_type", <?=$content_type;?>);
-
                     // changeorder
                     // id, new_order, prev_order, content_type
                     formData.append("action", "changeorder");

@@ -2,7 +2,6 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
-$order_by = Input::getvar('order_by','STRING');
 $search = Input::getvar('search','TEXT',null);
 $filters = Input::tuples_to_assoc( Input::getvar('filters','RAW',null) );
 // make sure coretags getvar returns empty array PHP 8+ in_array required haystack to be array
@@ -16,19 +15,7 @@ else {
 	CMS::show_error('Cannot determine content type to show');
 }
 
-if (!$order_by) {
-	$cur_page = Input::getvar('page','INT','1');
-}
-else {
-	// ordering view, DO NOT LIMIT OR PAGINATE
-	$cur_page = null;
-}
-
-// og all content call - comment out experimental section below to restore
-// and uncomment next 3 lines
-//$all_content = Content::get_all_content($order_by, $content_type_filter, null, null, null, [], [], null, null, $cur_page, $search);
-// og content count
-//$content_count = Content::get_content_count($content_type_filter, $search, -1);
+$cur_page = Input::getvar('page','INT','1');
 
 $all_content_types = Content::get_all_content_types();
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
@@ -57,12 +44,6 @@ if ($filters) {
 }
 if ($coretags) {
 	$content_search->tags = $coretags;
-}
-if ($order_by) {
-	$content_search->order_by = "ordering";
-	$content_search->order_direction = "ASC";
-	$content_search->page_size = 99999999; // silly large number
-	$content_search->page = 1; // always one for ordering view
 }
 $all_content = $content_search->exec();
 $content_count = $content_search->get_count();
