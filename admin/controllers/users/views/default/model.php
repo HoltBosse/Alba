@@ -25,19 +25,11 @@ else {
 
 // new user search - based on improved content search
 
-$order_by = Input::getvar('order_by','STRING');
 $search = Input::getvar('search','TEXT',null);
 $filters = Input::tuples_to_assoc( Input::getvar('filters','RAW',null) );
 $coretags = Input::getvar('coretags','ARRAYOFINT',[]);
 $groups = Input::getvar('groups','ARRAYOFINT',[]); 
-
-if (!$order_by) {
-	$cur_page = Input::getvar('page','INT','1');
-}
-else {
-	// ordering view, DO NOT LIMIT OR PAGINATE
-	$cur_page = null;
-}
+$cur_page = Input::getvar('page','INT','1');
 
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
 
@@ -60,12 +52,7 @@ if ($filters) {
 if ($coretags) {
 	$user_search->tags = $coretags;
 }
-if ($order_by) {
-	$user_search->order_by = "id";
-	$user_search->order_direction = "ASC";
-	$user_search->page_size = 99999999; // silly large number
-	$user_search->page = 1; // always one for ordering view
-}
+
 $all_users = $user_search->exec();
 $user_count = $user_search->get_count();
 

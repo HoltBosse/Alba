@@ -182,11 +182,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 </form>
 
-<?php
-	if (!$order_by) {
-		Component::create_pagination($user_count, $pagination_size, $cur_page);
-	}
-?>
+<?php Component::create_pagination($user_count, $pagination_size, $cur_page);?>
 
 <script>
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/users/views/default/script.js"); ?>
