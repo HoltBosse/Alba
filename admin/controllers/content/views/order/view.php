@@ -93,7 +93,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
     </tbody>
 </table>
 
-<script src='<?php echo Config::uripath();?>/admin/controllers/content/views/order/Sortable.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script>
     new Sortable(document.getElementById('ordertablebody'), {
         animation: 150,
