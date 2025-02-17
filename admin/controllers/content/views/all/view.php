@@ -135,11 +135,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<h2>No content to show!</h2>
 <?php else:?>
 
-	<?php if ($order_by):?>
-		<a class='button is-primary is-outlined is-small' href='<?php echo $_SERVER['HTTP_REFERER'];?>'>FINISH ORDERING</a>
-	<?php else: ?>
-		<a class='button is-primary is-outlined is-small' href='<?php echo Config::uripath() . "/admin/content/order/{$content_type_filter}";?>'>MANAGE ORDERING</a>
-	<?php endif; ?>
+	<a class='button is-primary is-outlined is-small' href='<?php echo Config::uripath() . "/admin/content/order/{$content_type_filter}";?>'>MANAGE ORDERING</a>
 
 	<table class='table'>
 		<thead>
@@ -152,7 +148,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				?>
 				<?php
 					//if in ordering mode or search, disable content listing order controls
-					if($order_by || $_GET["filters"]) {
+					if($_GET["filters"]) {
 						echo "<style>
 								.orderablerow{
 									pointer-events: none;
@@ -198,13 +194,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					<td class='drag_td'>
 					<div class="center_state">
 						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $content_item->id; ?>'/>
-						<?php if ($order_by && $content_type_filter):?>
-						<div draggable="true"  data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>"  ondragend="dragend_handler(event)" ondragstart="dragstart_handler(event)" class="grip"><i class="fas fa-grip-lines"></i></div>
-						<div class='before_after_wrap'>
-							<span droppable='true' class='drop_before order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">Before</span><br>
-							<span droppable='true' class='drop_after order_drop'  ondrop="drop_handler(event)" ondragover="dragover_handler(event)" ondragleave="dragleave_handler(event)">After</span>
-						</div>
-						<?php endif; ?>
 						<div class='button state_button'>
 							<button <?php if($content_item->state==0 || $content_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/content/action/toggle' name='id[]' value='$content_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
 								<?php 
@@ -320,7 +309,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php 
 /* CMS::pprint_r ($content_count);
 CMS::pprint_r ($pagination_size);
-CMS::pprint_r ($order_by);
 CMS::pprint_r (sizeof($all_content)); */
 $num_pages = ceil($content_count/$pagination_size);
 
@@ -340,11 +328,7 @@ if ($cur_page) {
 
 ?>
 
-<?php
-	if (!$order_by) {
-		Component::create_pagination($content_count, $pagination_size, $cur_page);
-	}
-?>
+<?php Component::create_pagination($content_count, $pagination_size, $cur_page);?>
 
 <script>
 	window.content_type_filter = <?php echo $content_type_filter; ?>;
