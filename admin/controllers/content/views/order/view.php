@@ -59,8 +59,15 @@ defined('CMSPATH') or die; // prevent unauthorized access
                     echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
                 }
                 else {
-                    // TODO: custom states
-                    echo $i->state;
+                    foreach($custom_fields->states as $state) {
+                        if($content_item->state==$state->state) {
+                            echo "<i style='color:$state->color' class='fas fa-times-circle' aria-hidden='true'></i>";
+                            $ok = true;
+                        }
+                    }
+                    if(!$ok) {
+                        echo "<i class='fas fa-times-circle' aria-hidden='true'></i>"; //default grey color if state not found
+                    }
                 }
                 ?>
                 </td>
