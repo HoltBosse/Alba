@@ -172,7 +172,7 @@ CREATE TABLE `widgets` (
   `global_position` varchar(255) DEFAULT NULL,
   `page_list` varchar(255) DEFAULT NULL COMMENT 'csv string page ids',
   `note` varchar(255) DEFAULT NULL,
-  `options` text NOT NULL,
+  `options` longtext NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
