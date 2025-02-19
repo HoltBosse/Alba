@@ -97,7 +97,11 @@ class Field_Image extends Field {
 				alert("no image selected");
 				return false;
 			}
-			let id = img_wrapper.querySelector("img").getAttribute("src").split("/")[2];
+			let imageUrlChunks = img_wrapper.querySelector("img").getAttribute("src").split("/");
+			if(imageUrlChunks[imageUrlChunks.length-1]=="thumb") {
+				imageUrlChunks.pop();
+			}
+			let id = imageUrlChunks[imageUrlChunks.length-1];
 
 			async function handle_img_editor() {
 				const result = await window.load_img_editor(id);

@@ -125,7 +125,7 @@ class Image {
                                 </header>
                                 <section class="modal-card-body">
                                     <div>
-                                        <img id="active_editing_image" src="/image/${id}">
+                                        <img id="active_editing_image" src="${window.uripath}/image/${id}">
                                     </div>
                                     <br>
                                     <div class="cropper_controls">

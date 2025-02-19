@@ -128,7 +128,7 @@ function do_upload(e) {
 		window.formdata.append('file-upload[]', myfiles[i]);
 	}
 
-	fetch('/image/gettags').then((response)=>response.json()).then((json)=>{
+	fetch(`${window.uripath}/image/gettags`).then((response)=>response.json()).then((json)=>{
 		const data = [];
 		json.data.forEach((item)=>{
 			data.push({text: item.text, value: item.value})

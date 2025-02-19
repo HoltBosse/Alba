@@ -152,6 +152,6 @@ echo json_encode((object) [
 	"files"=>$uploaded_files,
 	"ids"=>implode(",",$img_ids),
 	"tags"=>json_encode($tags),
-	"urls"=>implode(",", array_map(function($c){ return "/image/$c"; }, $img_ids)),
+	"urls"=>implode(",", array_map(function($c){ return Config::uripath() . "/image/$c"; }, $img_ids)),
 ]);
 exit(0);
