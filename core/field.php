@@ -21,6 +21,7 @@ class Field {
 	public $minlength;
 	public $save;
 	public $placeholder;
+	public $nowrap;
 
 	public function display() {
 		echo "<label class='label'>Field Label</label>";
@@ -121,5 +122,6 @@ class Field {
 		$this->minlength = $config->minlength ?? 0;
 		$this->placeholder = $config->placeholder ?? "";
 		$this->logic = $config->logic ?? '';
+		$this->nowrap = $config->nowrap;
 	}
 }
