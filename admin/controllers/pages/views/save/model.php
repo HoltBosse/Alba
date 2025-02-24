@@ -58,7 +58,7 @@ if ($success) {
 		$override_success = DB::exec("insert into page_widget_overrides (page_id, position, widgets) values (?,?,?) on duplicate key update page_id=?, position=?, widgets=?", $data);
 	}
 
-	$msg = "Page <a href='" . Config::uripath() . "/admin/pages/edit/{$page->id}/{$page->content_type}/{$page->view}'>{$page->title}</a> $status" . ($new_page ? 'created' : 'updated');
+	$msg = "Page <a href='" . Config::uripath() . "/admin/pages/edit/{$page->id}/{$page->content_type}/{$page->view}'>" . Input::stringHtmlSafe($page->title) . "</a> $status" . ($new_page ? 'created' : 'updated');
 	CMS::Instance()->queue_message($msg, 'success', Config::uripath().'/admin/pages');
 }
 else {

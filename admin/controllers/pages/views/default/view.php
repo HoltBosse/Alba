@@ -51,7 +51,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						echo "<span class='child_indicator'>-&nbsp;</span>";
 					}
 					?>
-					<a href='<?php echo Config::uripath() . "/admin/pages/edit/" . $page->id . "/" . $page->content_type . "/" . $page->content_view;?>'><?php echo $page->title; ?></a>
+					<a href='<?php echo Config::uripath() . "/admin/pages/edit/" . $page->id . "/" . $page->content_type . "/" . $page->content_view;?>'><?php echo Input::stringHtmlSafe($page->title); ?></a>
 					<br>
 					<?php 
 					if ($page->content_type > 0) {
