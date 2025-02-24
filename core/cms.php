@@ -148,7 +148,7 @@ final class CMS {
 		// injects page title, opengraph, analytics js etc...
 		ob_start();
 		?>
-		<title><?php echo Input::stringHtmlSafe($this->page->title);?> | <?php echo Config::sitename(); ?></title>
+		<title><?php echo $this->page->title;?> | <?php echo Config::sitename(); ?></title>
 		<?php if (Configuration::get_configuration_value ('general_options', 'og_enabled')):?>
 			<?php 
 			$og_title = $this->page->get_page_option_value("og_title") ? $this->page->get_page_option_value("og_title") : $this->page->title; 
