@@ -2,6 +2,7 @@
     "scripts": {
         "post-install-cmd": [
             "cp configTESTBACKUP.php config.php",
+            "cp configADMINTESTBACKUP.php admin/admin_config.php",
             "cp htaccess.txt .htaccess",
             "cp .htaccess ./admin/.htaccess"
         ],

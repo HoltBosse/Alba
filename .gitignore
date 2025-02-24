@@ -81,3 +81,4 @@ user_classes/**
 custom_user_fields.json
 vendor/*
 vendor/
+admin/admin_config.php
