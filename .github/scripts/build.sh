@@ -9,6 +9,7 @@ rm -rf user_classes
 rm -rf .gitignore
 rm -rf README.md
 rm -rf configTESTBACKUP.php
+rm -rf configADMINTESTBACKUP.php
 rm -rf home.svg
 rm -rf htaccess.txt
 rm -rf testform.json
