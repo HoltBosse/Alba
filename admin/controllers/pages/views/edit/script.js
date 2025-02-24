@@ -91,13 +91,12 @@ function unserialize_form(id) {
     } 
     form_data = JSON.parse(form_json);
     form_data.forEach(form_item => {
-        console.log('Looking for form element with name: ', form_item.field_name);
+        //console.log('Looking for form element with name: ', form_item.field_name);
         matching_form_element = document.querySelector(`[name="${form_item.field_name}"]`);
         if (matching_form_element) {
-            console.log('Inserting stored item: ', form_item);
+            //console.log('Inserting stored item: ', form_item);
             matching_form_element.value = form_item.field_value;
-        }
-        else {
+        } else {
             console.warn('Error deserializing form. No element with name matching: ',form_item.field_name);
         }
     });
