@@ -11,7 +11,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 <h1 class='title is-1'>
 	<?php if ($page->id):?>
-	Edit Page &ldquo;<?php echo $page->title;?>&rdquo;
+	Edit Page &ldquo;<?php echo Input::stringHtmlSafe($page->title);?>&rdquo;
 	<?php else:?>
 	New Page 
 	<?php endif; ?>

@@ -10,7 +10,7 @@ class Field_PageSelect extends Field_Select {
 		foreach(Page::get_all_pages_by_depth() as $page) {
 			$page_prefix="";
 			for ($n=0; $n<$page->depth; $n++) {
-				$page_prefix .= "&nbsp;-&nbsp;";
+				$page_prefix .= " - ";
 			}
 			$page_array[] = (object) [
 				"text" => $page_prefix . $page->title,
