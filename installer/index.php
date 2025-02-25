@@ -71,8 +71,14 @@ function show_message ($heading, $text, $class) {
 
 
 
-function get_pdo ($dbhost, $dbname, $dbuser, $dbpass, $dbchar) {
-	$dsn = "mysql:host=" . $dbhost . ";dbname=" . $dbname . ";charset=" . $dbchar;
+function get_pdo ($dbhost, $dbname, $dbuser, $dbpass, $dbchar, $dbtype) {
+	//may need options
+	//"pgsql:host=localhost;dbname=dbnameofserver;options='-c client_encoding=utf8'";
+	$dsn = $dbtype . ":host=" . $dbhost . ";dbname=" . $dbname . ";";
+	if($dbtype=="mysql") {
+		$dsn .= "charset=" . $dbchar;
+	}
+
 	$options = [
 		PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 		PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
@@ -123,7 +129,7 @@ include_once ($config_path);
 
 // config loaded
 // check db from config
-$pdo = get_pdo (Config::dbhost(), Config::dbname(), Config::dbuser(), Config::dbpass(), Config::dbchar());
+$pdo = get_pdo (Config::dbhost(), Config::dbname(), Config::dbuser(), Config::dbpass(), Config::dbchar(), Config::dbtype());
 
 if (!$pdo) {
 	// config pdo not working, see if we got new credentials from user and if so try those
@@ -135,13 +141,14 @@ if (!$pdo) {
 		$dbuser = $_POST['dbuser'];
 		$dbpass = $_POST['dbpass'];
 		$dbchar = $_POST['dbchar'];
+		$dbtype = $_POST['dbtype'];
 		$sitename = $_POST['sitename'];	
 		$uripath = $_POST['uripath']; // if site is in sub-folder from www-root add here
 		$template = 'basic';
 		$frontendlogin = false;
 		$debug = false;
 		$user_core_controllers = NULL;
-		$pdo = get_pdo ($dbhost,$dbname, $dbuser, $dbpass, $dbchar);
+		$pdo = get_pdo ($dbhost,$dbname, $dbuser, $dbpass, $dbchar, $dbtype);
 		if ($pdo) {
 			// credentials worked, save config
 			$newSettings = [
@@ -150,6 +157,7 @@ if (!$pdo) {
 				'dbuser' => $dbuser,
 				'dbpass' => $dbpass,
 				'dbchar' => $dbchar,
+				'dbtype' => $dbtype,
 				'uripath' => $uripath,
 				'sitename' => $sitename,
 				'template' => $template,
@@ -169,7 +177,7 @@ if (!$pdo) {
 
 if ($pdo) {
 	// config db credentials in config at this point are good 
-	$query = "select count(*) as c FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'users'";
+	$query = "SELECT count(*) AS c FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'users'";
 	$stmt = $pdo->prepare($query);
 	$stmt->execute([]);
 	$table_count = $stmt->fetch()->c;
@@ -184,6 +192,7 @@ if ($pdo) {
 		}
 		catch (PDOException $e) {
 			//show_error('DB Error: ' . $e->getMessage());
+			echo "<pre>"; print_r($e); echo "</pre>"; die;
 			show_error('DB Error: Unable to create new tables.');
 		} catch (Exception $e) {
 			show_error('Unknown Error: Unable to create new tables.');
@@ -195,7 +204,7 @@ if ($pdo) {
 	
 
 	// got here, db ok, tables ok
-	$query = "select count(*) as c from `groups`";
+	$query = "SELECT count(*) AS c FROM `groups`";
 	$stmt = $pdo->prepare($query);
 	$stmt->execute([]);
 	$group_count = $stmt->fetch()->c;
@@ -437,6 +446,14 @@ else {
 						<label for='dbchar'>Database Character Set</label>
 						<input type='text' maxlength=255 required value='<?php echo Config::dbchar();?>' name='dbchar' placeholder='character set'>
 						<p class='help'>If in any doubt, leave it as 'utf8mb4'</p>
+					</div>
+					<div class='input-group'>
+						<label for='dbchar'>Database Type</label>
+						<select required name="dbtype">
+							<option <?php if(Config::dbtype()=="mysql") {echo "selected";} ?> value="mysql">MariaDB</option>
+							<option <?php if(Config::dbtype()=="pgsql") {echo "selected";} ?> value="pgsql">Postgresql</option>
+						</select>
+						<p class='help'>If in any doubt, leave it as 'MariaDB'</p>
 					</div>
 					
 				</div>

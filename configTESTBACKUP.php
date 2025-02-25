@@ -8,6 +8,7 @@ class Config {
     static $dbuser = 'dbuser';
     static $dbpass = 'dbpass';
     static $dbchar = 'utf8mb4';
+    static $dbtype = 'mysql';
     static $sitename = "Alba";
     static $uripath = "";
     static $debug = false;
