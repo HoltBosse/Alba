@@ -25,7 +25,7 @@ class Field_Pageselector extends Field {
 						for ($n=0; $n<$page->depth; $n++) {
 							echo "&nbsp;-&nbsp;";
 						}
-						echo $page->title;
+						echo Input::stringHtmlSafe($page->title);
 					echo "</label>";
 				}
 				if ($this->description) {
@@ -54,10 +54,10 @@ class Field_Pageselector extends Field {
 									}
 								}
 								for ($n=0; $n<$page->depth; $n++) {
-									$page->title = "&nbsp;-&nbsp;" . $page->title;
+									$page->title = "&nbsp;-&nbsp;" . Input::stringHtmlSafe($page->title);
 								}
 								?>
-								<option <?php echo $selected;?> value="<?php echo $page->id;?>"><?php echo $page->title;?></option>
+								<option <?php echo $selected;?> value="<?php echo $page->id;?>"><?php echo Input::stringHtmlSafe($page->title);?></option>
 							<?php endforeach;?>
 						</select>
 					</div>
