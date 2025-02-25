@@ -135,6 +135,14 @@ table.dragging .before_after_wrap {
 	gap: 1em;
 }
 
+.state_button .navbar {
+	z-index: auto;
+}
+
+.state_button:hover button.navbar-item:not(:hover) {
+	background-color: hsl(var(--bulma-navbar-dropdown-item-h),var(--bulma-navbar-dropdown-item-s),calc(var(--bulma-navbar-dropdown-item-background-l) + var(--bulma-navbar-item-background-l-delta))) !important;
+}
+
 @media screen and (max-width: 1024px) {
 	/* disabled on mobile due to bulma lack of support */
 	.state_button .navbar-item.has-dropdown, .state_button hr {

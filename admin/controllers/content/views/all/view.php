@@ -216,7 +216,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 								?>
 							</button>
 							<hr>
-							<div class="navbar-item has-dropdown is-hoverable">
+							<div class="navbar navbar-item has-dropdown is-hoverable">
 								<a class="navbar-link"></a>
 								<div class="navbar-dropdown">
 									<form action='<?php echo Config::uripath();?>/admin/content/action/togglestate' method="post">
