@@ -79,12 +79,12 @@ class User {
 	}
 
 	public static function get_all_groups_for_user($user_id) {
-		$query = "SELECT * from `groups` where id in (select group_id from user_groups where user_id=?) ORDER BY display ASC";
+		$query = "SELECT * from groups where id in (select group_id from user_groups where user_id=?) ORDER BY display ASC";
 		return DB::fetchAll($query, $user_id);
 	}
 
 	public static function get_group_name ($group_id) {
-		$query = "select display from `groups` where id=?";
+		$query = "SELECT display FROM groups WHERE id=?";
 		$result = DB::fetch($query, [$group_id]);
 		return $result->display;
 	}
@@ -99,11 +99,11 @@ class User {
 
 	public function is_member_of ($group_value) {
 		if (is_numeric($group_value)) {
-			$query = "select * from user_groups where group_id=? and user_id=?";
+			$query = "SELECT * FROM user_groups WHERE group_id=? AND user_id=?";
 		}
 		else {
 			// by group name value
-			$query = "select id from `groups` where value=? and id in (select group_id from user_groups where user_id=?)";
+			$query = "SELECT id FROM groups WHERE value=? AND id IN (SELECT group_id FROM user_groups WHERE user_id=?)";
 		}
 		$result = DB::fetchAll($query, [$group_value, $this->id]);
 		if ($result) {
@@ -335,13 +335,7 @@ class User {
 
 	public static function get_all_groups() {
 		//echo "<p>Getting all users...</p>";
-		$result = CMS::Instance()->pdo->query("select * from `groups` ORDER BY display ASC")->fetchAll();
+		$result = CMS::Instance()->pdo->query("SELECT * FROM groups ORDER BY display ASC")->fetchAll();
 		return $result;
 	}
-
-
-
-
-
-
 }
