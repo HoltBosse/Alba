@@ -276,7 +276,10 @@ final class CMS {
 
 		// db
 		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
-		$dsn = "mysql:host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";charset=" . Config::dbchar();
+		$dsn = Config::dbtype() . ":host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";";
+		if(Config::dbtype()=="mysql") {
+			$dsn .= "charset=" . Config::dbchar();
+		}
 		$options = [
 			PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
