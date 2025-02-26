@@ -182,6 +182,10 @@ if ($pdo) {
 	$stmt->execute([]);
 	$table_count = $stmt->fetch()->c;
 
+	if($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'pgsql') {
+		$schema_sql = file_get_contents( __DIR__ . '/pgsql_schema.sql');
+	}
+
 	if ($table_count==0) {
 		// no tables found, assume install :)
 		try {
@@ -192,7 +196,6 @@ if ($pdo) {
 		}
 		catch (PDOException $e) {
 			//show_error('DB Error: ' . $e->getMessage());
-			echo "<pre>"; print_r($e); echo "</pre>"; die;
 			show_error('DB Error: Unable to create new tables.');
 		} catch (Exception $e) {
 			show_error('Unknown Error: Unable to create new tables.');
@@ -204,7 +207,7 @@ if ($pdo) {
 	
 
 	// got here, db ok, tables ok
-	$query = "SELECT count(*) AS c FROM `groups`";
+	$query = "SELECT count(*) AS c FROM groups";
 	$stmt = $pdo->prepare($query);
 	$stmt->execute([]);
 	$group_count = $stmt->fetch()->c;
@@ -215,9 +218,9 @@ if ($pdo) {
 	
 
 	// setup default groups
-	$query = "truncate table `groups`; ";
-	$query .= "insert into `groups` (value, display) values ('admin','Administrators');";
-	$query .= "insert into `groups` (value, display) values ('editor','Contributors');";
+	$query = "truncate table groups; ";
+	$query .= "insert into groups (value, display) values ('admin','Administrators');";
+	$query .= "insert into groups (value, display) values ('editor','Contributors');";
 	$pdo->exec($query);
 
 
@@ -254,7 +257,7 @@ if ($pdo) {
 	$admin_user_id = $pdo->lastInsertId();
 	// insert user group map
 	// get admin group id
-	$query = "select id from `groups` where value='admin'";
+	$query = "select id from groups where value='admin'";
 	$stmt = $pdo->prepare($query);
 	$stmt->execute([]);
 	$admin_group_id = $stmt->fetch()->id;

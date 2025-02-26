@@ -1,5 +1,10 @@
--- need to fix keys, timestamps defaults/updates
--- Adminer 4.8.1 PostgreSQL 14.15 (Ubuntu 14.15-0ubuntu0.22.04.1) dump
+CREATE OR REPLACE FUNCTION update_updated_column()
+RETURNS TRIGGER AS $$
+BEGIN
+NEW.updated = current_timestamp;
+RETURN NEW;
+END;
+$$ language 'plpgsql';
 
 DROP TABLE IF EXISTS "categories";
 DROP SEQUENCE IF EXISTS categories_id_seq;
@@ -34,7 +39,7 @@ CREATE TABLE "public"."content_types" (
     "title" character varying(255) NOT NULL,
     "controller_location" character varying(255) NOT NULL,
     "description" text NOT NULL,
-    "updated" timestamp NOT NULL,
+    "updated" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "state" smallint NOT NULL,
     CONSTRAINT "content_types_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
@@ -48,7 +53,7 @@ CREATE TABLE "public"."content_versions" (
     "id" integer DEFAULT nextval('content_versions_id_seq') NOT NULL,
     "content_id" integer NOT NULL,
     "created_by" integer NOT NULL,
-    "created" integer NOT NULL,
+    "created" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "fields_json" text NOT NULL,
     CONSTRAINT "content_versions_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
@@ -63,7 +68,7 @@ CREATE TABLE "public"."content_views" (
     "content_type_id" integer NOT NULL,
     "title" character varying(255) NOT NULL,
     "location" character varying(255) NOT NULL,
-    "description" text NOT NULL,
+    "description" text,
     CONSTRAINT "content_views_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
 
@@ -79,14 +84,14 @@ CREATE TABLE "public"."controller_basic_html" (
     "title" character varying(255) NOT NULL,
     "alias" character varying(255) NOT NULL,
     "content_type" integer NOT NULL,
-    "start" timestamp NOT NULL,
-    "end" timestamp NOT NULL,
+    "start" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "end" timestamp,
     "created_by" integer NOT NULL,
     "updated_by" integer NOT NULL,
     "note" character varying(255) NOT NULL,
-    "created" timestamp NOT NULL,
-    "category" integer NOT NULL,
-    "updated" timestamp NOT NULL,
+    "created" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "category" integer DEFAULT '0' NOT NULL,
+    "updated" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "markup" text NOT NULL,
     "og_description" text NOT NULL,
     "seo_keywords" text NOT NULL,
@@ -97,6 +102,7 @@ CREATE TABLE "public"."controller_basic_html" (
 
 COMMENT ON COLUMN "public"."controller_basic_html"."content_type" IS 'content_types table';
 
+CREATE TRIGGER "controller_basic_html_update_timestamp" BEFORE UPDATE ON "public"."controller_basic_html" FOR EACH ROW EXECUTE FUNCTION update_updated_column();
 
 DROP TABLE IF EXISTS "groups";
 DROP SEQUENCE IF EXISTS groups_id_seq;
@@ -118,7 +124,7 @@ CREATE TABLE "public"."media" (
     "id" integer DEFAULT nextval('media_id_seq') NOT NULL,
     "width" integer NOT NULL,
     "height" integer NOT NULL,
-    "modified" timestamp NOT NULL,
+    "modified" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "title" character varying(255) NOT NULL,
     "alt" character varying(255) NOT NULL,
     "filename" character varying(255) NOT NULL,
@@ -148,7 +154,7 @@ CREATE TABLE "public"."pages" (
     "alias" character varying(255) NOT NULL,
     "content_type" integer NOT NULL,
     "content_view" integer NOT NULL,
-    "updated" timestamp NOT NULL,
+    "updated" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "parent" integer DEFAULT '-1' NOT NULL,
     "template" integer DEFAULT '1' NOT NULL,
     "content_view_configuration" text NOT NULL,
@@ -189,14 +195,15 @@ CREATE TABLE "public"."redirects" (
     "referer" character varying,
     "note" character varying(255) NOT NULL,
     "hits" integer DEFAULT '0' NOT NULL,
-    "created" timestamp NOT NULL,
+    "created" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "created_by" integer DEFAULT '0' NOT NULL,
-    "updated" timestamp NOT NULL,
+    "updated" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "updated_by" integer NOT NULL,
     "header" smallint DEFAULT '301' NOT NULL,
     CONSTRAINT "redirects_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
 
+CREATE TRIGGER "redirects_update_timestamp" BEFORE UPDATE ON "public"."redirects" FOR EACH ROW EXECUTE FUNCTION update_updated_column();
 
 DROP TABLE IF EXISTS "tag_content_type";
 CREATE TABLE "public"."tag_content_type" (
@@ -262,8 +269,8 @@ CREATE SEQUENCE user_actions_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 C
 CREATE TABLE "public"."user_actions" (
     "id" integer DEFAULT nextval('user_actions_id_seq') NOT NULL,
     "userid" integer NOT NULL,
-    "date" timestamp NOT NULL,
-    "type" timestamp(6) NOT NULL,
+    "date" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "type" character varying(255) NOT NULL,
     "json" text NOT NULL,
     CONSTRAINT "user_actions_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
@@ -287,9 +294,9 @@ CREATE TABLE "public"."users" (
     "password" character varying(255) NOT NULL,
     "email" character varying(255) NOT NULL,
     "state" smallint NOT NULL,
-    "created" timestamp NOT NULL,
-    "reset_key_expires" timestamp NOT NULL,
-    "reset_key" character varying(250) NOT NULL,
+    "created" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    "reset_key_expires" timestamp,
+    "reset_key" character varying(250),
     CONSTRAINT "users_email" UNIQUE ("email"),
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
@@ -329,6 +336,3 @@ CREATE TABLE "public"."widgets" (
 COMMENT ON COLUMN "public"."widgets"."type" IS 'id from widget_types';
 
 COMMENT ON COLUMN "public"."widgets"."page_list" IS 'page_list';
-
-
--- 2025-02-25 04:56:31.504768+00
