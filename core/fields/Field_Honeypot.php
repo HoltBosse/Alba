@@ -7,6 +7,7 @@ class Field_Honeypot extends Field {
 	public $save;
 	public $maxlength;
 	public $autocomplete;
+	public $fake_thanks_url;
 
 	public function display() {
 		// autocomplete attribute set to nonsense which is calculated to be same as 'off' without being explicit
@@ -32,7 +33,7 @@ class Field_Honeypot extends Field {
 		
 		$this->filter = $config->filter ?? 'STRING';
 		$this->default = $config->default ?? $this->default;
-		$this->fake_thanks_url ?? null;
+		$this->fake_thanks_url = $config->fake_thanks_url ?? null;
 		$this->autocomplete = $config->autocomplete ?? "nothingtoseehere";
 	}
 
