@@ -9,6 +9,6 @@ class Field_UserGroupsMultiple extends Field_Select {
 		$this->slimselect = $config->slimselect ?? true;
 		$this->multiple = $config->multiple ?? true;
 
-		$this->select_options = DB::fetchall("SELECT id AS value, display AS text FROM `groups` ORDER BY display ASC");
+		$this->select_options = DB::fetchall("SELECT id AS value, display AS text FROM groups ORDER BY display ASC");
 	}
 }
