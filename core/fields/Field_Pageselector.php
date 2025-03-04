@@ -23,7 +23,7 @@ class Field_Pageselector extends Field {
 						}
 						echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='{$page->id}'>";
 						for ($n=0; $n<$page->depth; $n++) {
-							echo "&nbsp;-&nbsp;";
+							echo " - ";
 						}
 						echo Input::stringHtmlSafe($page->title);
 					echo "</label>";
@@ -54,7 +54,7 @@ class Field_Pageselector extends Field {
 									}
 								}
 								for ($n=0; $n<$page->depth; $n++) {
-									$page->title = "&nbsp;-&nbsp;" . Input::stringHtmlSafe($page->title);
+									$page->title = " - " . Input::stringHtmlSafe($page->title);
 								}
 								?>
 								<option <?php echo $selected;?> value="<?php echo $page->id;?>"><?php echo Input::stringHtmlSafe($page->title);?></option>
