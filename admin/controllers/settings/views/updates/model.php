@@ -174,6 +174,7 @@ if (!$messages_table_ok) {
 		`state` int(11) NOT NULL DEFAULT 1,
 		`userid` int(11) NOT NULL,
 		`message` mediumtext NOT NULL,
+		`type` mediumtext NOT NULL,
 		`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
 		PRIMARY KEY (`id`),
 		KEY `userid` (`userid`)
