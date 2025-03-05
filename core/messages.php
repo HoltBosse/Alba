@@ -49,6 +49,40 @@ class Messages {
 		return true;
 		
 	}
+
+	public static function save_message($users, $message) {
+        $users = is_array($users) ? $users : [$users];
+        $users = array_filter($users, function($user) {
+            return is_numeric($user);
+        });
+
+        $users = array_map(function($user) {
+            return (int)$user;
+        }, $users);
+
+        $users = array_unique($users);
+
+        $users = array_filter($users, function($user) {
+            return $user > 0;
+        });
+
+        $users = array_values($users);
+
+        if(count($users) == 0) {
+            return false;
+        }
+
+        $params = [];
+        $sql = "INSERT INTO `messages` (`userid`, `message`) VALUES ";
+        $sql .= implode(",", array_map(function($user) use ($message, &$params) {
+            $params = array_merge($params, [$user, $message]);
+            return "(?, ?)";
+        }, $users));
+
+        DB::exec($sql, $params);
+
+        return true;
+    }
 	
 	//-----------------------------------------------------------------------------------------------
 	// display()
@@ -80,6 +114,19 @@ class Messages {
 					$messages .= $this->msgBefore . $msg . $this->msgAfter;	
 				}
 				$data .= sprintf($this->msgWrapper, $this->msgClass, $type, $messages);
+			}
+
+			//get server messages - check that the table exists, else the install page will not be able to load
+			if(DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'messages' LIMIT 1")) {
+				$messages = DB::fetchall("SELECT * FROM messages WHERE userid=? AND state=1", CMS::Instance()->user->id);
+				if(sizeof($messages) > 0) {
+					foreach($messages as $item) {
+						$data .= sprintf($this->msgWrapper, $this->msgClass, "info", $this->msgBefore . $item->message . $this->msgAfter);
+					}
+					//state is set to 0 as that is read, while -1 is deleted
+					$messageIds = implode(",", array_column($messages, "id"));
+					DB::exec("UPDATE messages set state=0 WHERE id IN ($messageIds)");
+				}
 			}
 			
 			// Clear ALL of the messages

@@ -105,9 +105,16 @@ else {
 	show_message ('User Actions Details Table','User Actions table created.','is-warning');
 }
 
-if ($user_actions_details_table_ok) {
+if ($form_submissions_table_ok) {
 	show_message ('Form Submissions Table','Form Submissions table OK.','is-success');
 }
 else {
 	show_message ('Form Submissions Table','Form Submissions table created.','is-warning');
+}
+
+if ($messages_table_ok) {
+	show_message ('Messages Table','Messages table OK.','is-success');
+}
+else {
+	show_message ('Messages Table','Messages table created.','is-warning');
 }

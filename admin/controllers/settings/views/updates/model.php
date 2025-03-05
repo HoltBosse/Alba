@@ -164,6 +164,23 @@ if (!$form_submissions_table_ok) {
 	");
 }
 
+// ensure messages table exists
+$messages_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'messages' LIMIT 1");
+if (!$messages_table_ok) {
+	DB::exec("DROP TABLE IF EXISTS `messages`;");
+	DB::exec("
+	CREATE TABLE `messages` (
+		`id` int(11) NOT NULL AUTO_INCREMENT,
+		`state` int(11) NOT NULL DEFAULT 1,
+		`userid` int(11) NOT NULL,
+		`message` mediumtext NOT NULL,
+		`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+		PRIMARY KEY (`id`),
+		KEY `userid` (`userid`)
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+	");
+}
+
 // Perform update if required
 
 if ($submitted) { 
