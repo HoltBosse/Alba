@@ -94,6 +94,8 @@ class Field_Repeatable extends Field {
 			ob_start(); // start new output buffer to escape any backticks / string literals inside form display - image field has LOTS
 			?>
 			<div class='repeatable'><button type='button' onclick='this.closest(".repeatable").remove();' class='button btn pull-right is-warning remove_repeater'>-</button>
+			<button type='button' onclick='move_repeatable_up(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>^</button>
+			<button type='button' onclick='move_repeatable_down(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>v</button>
 			<?php
 			$this->form->display_front_end(true); // pass true here to let form know it's for template/repeatable
 			echo "</div>";
