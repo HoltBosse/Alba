@@ -164,48 +164,27 @@ class Field_Rich extends Field {
 						}
 					});
 
-					document.addEventListener('click',function(e){
+					document.addEventListener('click', (e)=>{
 						// click event handler for editor 
 
-						
+						//check that we are being called from inside the editor
+						if(!e.target.closest(".editorfieldwrapper")) {
+							return
+						}
+
+						if(!window.getSelection().focusNode || !window.getSelection().focusNode.parentElement.closest(".editor.content[contenteditable='true']")) {
+							alert("Please select in editor where you want to apply this command!");
+							return;		
+						}
 
 						if (e.target.nodeName==='A') {
 							
 							// only work on anchors inside editor (i.e. not toolbar or elswhere... :) )
 							let in_editor = e.target.closest('.editor');
 							if (in_editor) {
-								// remember dynamic editor/textarea
-								window.this_editor = e.target.closest('.control').querySelector('.editor');
-								window.this_textarea = e.target.closest('.control').querySelector('textarea');
-
-								//console.log('show anchor editor');
-								window.editor_anchor = e.target;
-
-								let href = e.target.getAttribute('href');
-								let text = e.target.innerText;
-								let classes = e.target.classList.value;
-								let target = e.target.getAttribute('target') ? e.target.getAttribute('target') : "";
-
-								/* console.log('URL',href);
-								console.log('TEXT',text);
-								console.log('CLASS',classes); */
-								
-								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
-								let iL = ["URL", "Display Text", "Class", "Target"];
-								let iI = ["a_url", "a_text", "a_class","a_target"];
-								let cV = [href, text, classes, target];
-								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
-
-								function onAdd_a() {
-									// update anchors
-									window.editor_anchor.innerText = document.getElementById('a_text').value;
-									window.editor_anchor.href = document.getElementById('a_url').value;
-									window.editor_anchor.classList.value = document.getElementById('a_class').value;
-									window.editor_anchor.target = document.getElementById('a_target').value;
-								}
-
-								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, null, onAdd_a);
+								window.currentAnchorToEdit = e.target;
+								e.target.closest(".editorfieldwrapper").querySelector('[data-command="createlink"]').click();
+								return;
 							}
 						}
 
@@ -283,67 +262,84 @@ class Field_Rich extends Field {
 							}
 							
 							else if (command == 'createlink') {
-
-								window.anchor_choice = function(e) {
-									let id = e.dataset.id;
-									let url_for_markup_input = document.getElementById('url_for_markup');
-									if (url_for_markup_input) {
-										url_for_markup_input.value = id;
-									}
-								}
-
-								var selection = window.getSelection().toString();
+								var selection = window.currentAnchorToEdit ? window.currentAnchorToEdit.innerText : window.getSelection().toString();
+								console.log("selection: ", selection);
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
-								let href="";
-								let classes="";
-								let target="";
+								let href=window.currentAnchorToEdit ? window.currentAnchorToEdit.getAttribute('href') : "";
+								let classes=window.currentAnchorToEdit ? window.currentAnchorToEdit.classList.value : "";
+								let target=window.currentAnchorToEdit ? (window.currentAnchorToEdit.getAttribute('target') ? window.currentAnchorToEdit.getAttribute('target') : "") : "";
 
-								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
-								let iL = ["URL", "Display Text", "Class", "Target"];
-								let iI = ["a_url", "a_text", "a_class","a_target"];
-								let cV = [href, selection, classes, target];
-								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
+								const fields = [
+									{
+										type: "input",
+										id: "a_url",
+										label: "URL",
+										pattern: `https?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?`,
+										value: href,
+									},
+									{
+										type: "input",
+										id: "a_text",
+										label: "Display Text",
+										value: selection,
+									},
+									{
+										type: "input",
+										id: "a_class",
+										label: "Class",
+										value: classes,
+									},
+									{
+										type: "select",
+										id: "a_target",
+										label: "Open in",
+										value: target,
+										options: [
+											{
+												value: "",
+												text: "Current Window",
+											},
+											{
+												value: "_blank",
+												text: "New Window/Tab",
+											}
+										],
+									}
+								];
 
-								var helptext = "Enter full link including https:// <br>";
-								let anchors = document.querySelectorAll('a.internal_anchor');
-								if (anchors.length>0) {
-									console.log('Found anchors: ',anchors);
-									helptext += "<strong>or</strong> one of the following anchors: <ul>";
-									anchors.forEach(a => {
-										helptext += "<li onClick='anchor_choice(this)' class='insert_anchor' data-id='#"+a.id+"' >#" + a.id + "</li>";
-									});
-									helptext += "</ul>";
-								}
-								
-								function onCreate() {
-									// insert link html at anchor location
+								if(!window.currentAnchorToEdit) {
 									let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
 									document.execCommand('insertHTML', false, link_html);							
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
+								} else if(window.currentAnchorToEdit) {
+									window.currentAnchorToEdit.id = "newly_created_link_for_<?php echo $this->name;?>";
 								}
 
-								function onAdd() {
+								window.live_editor = this_editor;
+								const modal = createModal(fields);
+								modal.addEventListener("modalFormAdd", (e)=>{
 									// get values and update link
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-									link.href = document.getElementById(iI[0]).value;
-									link.innerHTML = document.getElementById(iI[1]).value;
-									link.classList.value = document.getElementById(iI[2]).value;
-									link.target = document.getElementById(iI[3]).value;
+									link.href = document.getElementById(fields[0].id).value;
+									link.innerHTML = document.getElementById(fields[1].id).value;
+									link.classList.value = document.getElementById(fields[2].id).value;
+									link.target = document.getElementById(fields[3].id).value;
 									link.removeAttribute('id');		// remove id so future links not messed up
-								}
 
+									window.currentAnchorToEdit = undefined;
+								});
+								modal.addEventListener("modalFormCancel", (e)=>{
+									if(!window.currentAnchorToEdit) {
+										// replace anchor with original text
+										let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+										link.parentNode.replaceChild(document.createTextNode(selection), link);
+									}
 
-								function onCancel() {
-									// replace anchor with original text
-									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-									link.parentNode.replaceChild(document.createTextNode(selection), link);
-								}
-								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, onCreate, onAdd, onCancel);
-
+									window.currentAnchorToEdit = undefined;
+								});
 							}
 
 							else if (command == 'createanchor') {
@@ -387,27 +383,36 @@ class Field_Rich extends Field {
 
 									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
-									// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
-									let iL = ["Alt Text", "Image Title"];
-									let iI = [`alt_text_for_${uniq}`, `title_for_${uniq}`,];
-									let cV = [alt, title];
-									let hL = ["Alternative text for the visually impaired, will also display when the browser cannot render the image.",
-											"Title will appear in a tooltip on hover of the image. It can also be used to provide a broader description than the alt text."];
-									
-									function onAdd() {
+									const fields = [
+										{
+											type: "input",
+											id: `alt_text_for_${uniq}`,
+											label: "Alt Text",
+											value: alt,
+											helpText: "Alternative text for the visually impaired, will also display when the browser cannot render the image.",
+										},
+										{
+											type: "input",
+											id: `title_for_${uniq}`,
+											label: "Image Title",
+											value: title,
+											helpText: "Title will appear in a tooltip on hover of the image. It can also be used to provide a broader description than the alt text.",
+										},
+									];
+
+									window.live_editor = this_editor;
+									const modal = createModal(fields);
+									modal.addEventListener("modalFormAdd", (e)=>{
 										// set to image
-										let new_alt = document.getElementById(iI[0]).value;
-										let new_title = document.getElementById(iI[1]).value;
+										let new_alt = document.getElementById(fields[0].id).value;
+										let new_title = document.getElementById(fields[1].id).value;
 										active_image.alt = new_alt;
 										active_image.title = new_title;
 										active_image.classList.remove('rich_image_active');
 										
 										// push updated content to textarea
 										active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
-									}
-									window.live_editor = this_editor;
-									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
-									
+									});
 								}
 								else {
 									alert('No image selected');
@@ -426,19 +431,42 @@ class Field_Rich extends Field {
 
 									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
-									// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
-									let iL = ["Image Author", "Image Source", "License Name", "License Link"];
-									let iI = [`image_author_for_${uniq}`, `image_source_for_${uniq}`, `license_name_for_${uniq}`, `license_link_for_${uniq}`];
-									let cV = [author, source, license, licenselink];
-									let hL = ["", "", "", "Enter full link including https://"];
+									const fields = [
+										{
+											type: "input",
+											id: `image_author_for_${uniq}`,
+											label: "Image Author",
+											value: author,
+										},
+										{
+											type: "input",
+											id: `image_source_for_${uniq}`,
+											label: "Image Source",
+											value: source,
+										},
+										{
+											type: "input",
+											id: `license_name_for_${uniq}`,
+											label: "License Name",
+											value: license,
+										},
+										{
+											type: "input",
+											id: `license_link_for_${uniq}`,
+											label: "License Link",
+											value: licenselink,
+											helpText: "Enter full link including https://",
+										},
+									];
 
-									function onAdd() {
-										
+									window.live_editor = this_editor;
+									const modal = createModal(fields);
+									modal.addEventListener("modalFormAdd", (e)=>{
 										// get new values for information
-										let new_author = document.getElementById(iI[0]).value;
-										let new_source = document.getElementById(iI[1]).value;
-										let new_license = document.getElementById(iI[2]).value;
-										let new_licenselink = document.getElementById(iI[3]).value;
+										let new_author = document.getElementById(fields[0].id).value;
+										let new_source = document.getElementById(fields[1].id).value;
+										let new_license = document.getElementById(fields[2].id).value;
+										let new_licenselink = document.getElementById(fields[3].id).value;
 										
 										// update image dataset
 										active_image.dataset.author = new_author;
@@ -540,10 +568,7 @@ class Field_Rich extends Field {
 										else if (!hasFigure && !hasCaptions) {
 											// all is well, do nothing
 										}
-
-									}
-									window.live_editor = this_editor;
-									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+									});
 									
 								}
 								else {
@@ -767,7 +792,7 @@ class Field_Rich extends Field {
 										}
 										
 										// add click event handler to capture child selection clicks
-										media_selector.addEventListener('click',function(e){
+										media_selector.addEventListener('click',(e)=>{
 											//console.log(e.target);
 											e.preventDefault();
 											e.stopPropagation();
@@ -777,18 +802,6 @@ class Field_Rich extends Field {
 												var url = `<?php echo Config::uripath();?>/image/${media_id}/web`;
 												var image_markup = `<img class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
 												console.log(image_markup);
-												// this is only for rich editor
-												//document.execCommand('insertHTML',false, image_markup);
-												var modal = selected_image.closest('.media_selector_modal');
-												modal.parentNode.removeChild(modal);
-
-												// this is only for image field class
-												var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
-												preview.src = '<?php echo Config::uripath() . '/image/';?>' + media_id + '/thumb/';
-												preview.closest('.selected_image_wrap').classList.add('active');
-
-												hidden_input = document.getElementById('<?php echo $this->id;?>');
-												hidden_input.value = media_id;
 
 											} // else clicked on container not on an anchor or it's children
 										});
@@ -827,23 +840,26 @@ class Field_Rich extends Field {
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
-								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
-								let iL = ["Add Class"];
-								let iI = [`new_class_for_${uniq}`];
-								let cV = [""];
-								let hL = ["Must be alphanumeric with no spaces or will not be added."];
+								const fields = [
+									{
+										type: "input",
+										id: `new_class_for_${uniq}`,
+										label: "Add Class",
+										value: "",
+										helpText: "Must be alphanumeric with no spaces or will not be added.",
+									},
+								];
 								
-								function onAdd() {
-									
+								window.live_editor = this_editor;
+								const modal = createModal(fields);
+								modal.addEventListener("modalFormAdd", (e)=>{
 									// add class
-									let new_class_name = document.getElementById(iI[0]).value;
+									let new_class_name = document.getElementById(fields[0].id).value;
 									var modal = event.target.closest('.modal');
 									if (new_class_name) {
 										parent.classList.add(new_class_name);
 									}
-								}
-								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+								});
 
 							}
 
@@ -912,30 +928,39 @@ class Field_Rich extends Field {
 					window.editor_code_already_exists = true;
 				}
 
-				
+				//takes a js object and converts it to a form field
+				function renderField(field) {
+					let html = `<div class="field">`;
+						if(field.label) {
+							html+=`<label class="label">${field.label}</label>`;
+						}
+						switch (field.type) {
+							case "input":
+								html+=`<input id="${field.id}" ${field.pattern ? `pattern="${field.pattern}"` : ""} class="input" type="text" value="${field.value}">`;
+								break;
 
-				/**
-				 * Creates and displays a modal handling onclick events for user input. An example function call might look
-				 * like the following:
-				 * 
-				 * createModal(["Name", "Age"], 
-				 *			   ["John", "23"],
-				 *			   ["This is what people call you", "This is how long you've existed"], 
-				 *			   function() { console.log("I'm called in onCreate!")}, 
-				 *			   function() { console.log("I'm called in onAdd!")}, 
-				 *			   function() { console.log("I'm called in onCancel!")});
-				 *
-				 * @param {array} inputLabels - An array with the basic names of inputs being requested.
-				 * @param {array} inputIds - An array containing the ids for created input fields.
-				 * @param {array} currentValues - An array containing the current values of inputs if they exist. Empty by default.
-				 * @param {array} helpLabels - An array containing the help values associated with the inputs to be displayed to the user.
-				 * @param {function} onCreate - A user defined function to be executed upon creation of the modal.
-				 * @param {function} onAdd - A user defined function to be executed upon user's click of "Add" button.
-				 * @param {function} onCancel - A user defined function to be executed upon user's click of "Cancel" button.
-				**/
-				function createModal(inputLabels, inputIds, currentValues=[], helpLabels, onCreate, onAdd, onCancel) {
+							case "select":
+								html+=`<div class="select"><select style="width: 100%;" id="${field.id}">`;
+									field.options.forEach((option)=>{
+										html+=`<option ${option.value==field.value ? "selected" : ""} value="${option.value}">${option.text}</option>`;
+									});
+								html+=`</select></div>`;
+								break;
 
-					onCreate();
+							default:
+								html+=`<p>INVALID FIELD TYPE!!!`;
+								break;
+						}
+						if(field.helpText) {
+							html+=`<p class='help'>${field.helpText}</p>`;
+						}
+					html += `</div>`;
+
+					return html;
+				}
+
+				//creates a sane modal from fields provided, returns a modal. listen to custom events modalFormAdd, and modalFormCancel
+				function createModal(fields=[]) {
 					// create and show modal based on desired user inputs
 					let modal = document.createElement('div');
 					// modal.id = "add_info_modal_for_<?php echo $this->name;?>";
@@ -945,17 +970,9 @@ class Field_Rich extends Field {
 						<div class="modal-content">
 							<div class="box">
 					`;
-					for (let i = 0; i < inputLabels.length; i++) {
-						modal_html += `
-								<div class="field">
-									<label class="label">${inputLabels[i]}</label>
-									<div class="control">
-										<input id="${inputIds[i]}" class="input" type="text" value="${currentValues[i]}">
-									</div>
-									<p class='help'>${helpLabels[i]}</p>
-								</div>
-						`;
-					}
+					fields.forEach((field)=>{
+						modal_html+=renderField(field);
+					})
 					modal_html += `
 								<button class="button is-primary" data-modal-action="add">Add</button>
 								<button class="button is-warning" data-modal-action="cancel">Cancel</button>
@@ -989,17 +1006,31 @@ class Field_Rich extends Field {
 						switch (e.target.dataset.modalAction) {
 							
 							case "add":
-								onAdd();
+								let validity = true;
+								modal.querySelectorAll("input, select").forEach((el)=>{
+									if(el.validity.valid==false) {
+										validity = false;
+									}
+								});
+
+								if(validity==false) {
+									alert("Invalid Field Entry!");
+									return;
+								}
+
+								modal.dispatchEvent(new CustomEvent("modalFormAdd", { target: modal }));
 								closeModal();
 								break;
 
 							case "cancel":
-								onCancel();
+								modal.dispatchEvent(new CustomEvent("modalFormCancel", { target: modal }));
 								closeModal();
 								break;
 						}
 
 					});
+
+					return modal;
 				}
 			});
 		</script>
