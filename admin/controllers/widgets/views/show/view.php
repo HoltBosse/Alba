@@ -5,6 +5,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/widgets/views/show/style.css"); ?>
 </style>
 
+<form method='post'>
+	<?php
+		$searchForm->display_front_end();
+	?>
+</form>
+
 <form action='' method='post' name='widget_action' id='widget_action_form'>
 
 	<h1 class='title'><?php echo $widget_type_title; ?> Widgets
