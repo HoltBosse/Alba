@@ -756,7 +756,7 @@ class Field_Rich extends Field {
 										}
 										
 										// add click event handler to capture child selection clicks
-										media_selector.addEventListener('click',function(e){
+										media_selector.addEventListener('click',(e)=>{
 											//console.log(e.target);
 											e.preventDefault();
 											e.stopPropagation();
@@ -766,18 +766,6 @@ class Field_Rich extends Field {
 												var url = `<?php echo Config::uripath();?>/image/${media_id}/web`;
 												var image_markup = `<img class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
 												console.log(image_markup);
-												// this is only for rich editor
-												//document.execCommand('insertHTML',false, image_markup);
-												var modal = selected_image.closest('.media_selector_modal');
-												modal.parentNode.removeChild(modal);
-
-												// this is only for image field class
-												var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
-												preview.src = '<?php echo Config::uripath() . '/image/';?>' + media_id + '/thumb/';
-												preview.closest('.selected_image_wrap').classList.add('active');
-
-												hidden_input = document.getElementById('<?php echo $this->id;?>');
-												hidden_input.value = media_id;
 
 											} // else clicked on container not on an anchor or it's children
 										});
