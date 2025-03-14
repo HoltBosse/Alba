@@ -276,6 +276,7 @@ class Field_Rich extends Field {
 										type: "input",
 										id: "a_url",
 										label: "URL",
+										pattern: `https?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?`,
 										value: href,
 									},
 									{
@@ -291,11 +292,20 @@ class Field_Rich extends Field {
 										value: classes,
 									},
 									{
-										type: "input",
+										type: "select",
 										id: "a_target",
-										label: "Target",
+										label: "Open in",
 										value: target,
-										helpText: "'_blank' for new window/tab, otherwise leave empty",
+										options: [
+											{
+												value: "",
+												text: "Current Window",
+											},
+											{
+												value: "_blank",
+												text: "New Window/Tab",
+											}
+										],
 									}
 								];
 
@@ -924,14 +934,14 @@ class Field_Rich extends Field {
 						}
 						switch (field.type) {
 							case "input":
-								html+=`<input id="${field.id}" class="input" type="text" value="${field.value}">`;
+								html+=`<input id="${field.id}" ${field.pattern ? `pattern="${field.pattern}"` : ""} class="input" type="text" value="${field.value}">`;
 								break;
 
 							case "select":
-								html+=`<div class="select"><select>`;
-								for (const [key, value] of Object.entries(field.options)) {
-									html+=`<option ${field.value==value ? "selected" : ""} value="${value}">${key}</option>`;
-								}
+								html+=`<div class="select"><select style="width: 100%;" id="${field.id}">`;
+									field.options.forEach((option)=>{
+										html+=`<option ${option.value==field.value ? "selected" : ""} value="${option.value}">${option.text}</option>`;
+									});
 								html+=`</select></div>`;
 								break;
 
@@ -994,6 +1004,18 @@ class Field_Rich extends Field {
 						switch (e.target.dataset.modalAction) {
 							
 							case "add":
+								let validity = true;
+								modal.querySelectorAll("input, select").forEach((el)=>{
+									if(el.validity.valid==false) {
+										validity = false;
+									}
+								});
+
+								if(validity==false) {
+									alert("Invalid Field Entry!");
+									return;
+								}
+
 								modal.dispatchEvent(new CustomEvent("modalFormAdd", { target: modal }));
 								closeModal();
 								break;
