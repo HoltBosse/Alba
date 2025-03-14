@@ -31,3 +31,20 @@ span.page_list, td.note_td, .lighter_note {
 .widget_admin_row.selected {
 	background:rgba(200,255,200,0.3);
 }
+
+#search_form {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.5rem 2rem;
+    width: 100%;
+    padding-bottom: 2rem;
+    align-items: end;
+
+    .field {
+        margin-bottom: 0;
+
+        select {
+            width: 100%;
+        }
+    }
+}
