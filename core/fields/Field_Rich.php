@@ -172,7 +172,7 @@ class Field_Rich extends Field {
 							return
 						}
 
-						if(!window.getSelection().focusNode || !window.getSelection().focusNode.closest(".editor.content[contenteditable='true']")) {
+						if(!window.getSelection().focusNode || !window.getSelection().focusNode.parentElement.closest(".editor.content[contenteditable='true']")) {
 							alert("Please select in editor where you want to apply this command!");
 							return;		
 						}
