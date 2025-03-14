@@ -332,9 +332,11 @@ class Field_Rich extends Field {
 									window.currentAnchorToEdit = undefined;
 								});
 								modal.addEventListener("modalFormCancel", (e)=>{
-									// replace anchor with original text
-									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-									link.parentNode.replaceChild(document.createTextNode(selection), link);
+									if(!window.currentAnchorToEdit) {
+										// replace anchor with original text
+										let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+										link.parentNode.replaceChild(document.createTextNode(selection), link);
+									}
 
 									window.currentAnchorToEdit = undefined;
 								});
