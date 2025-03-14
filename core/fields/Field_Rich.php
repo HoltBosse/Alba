@@ -164,10 +164,18 @@ class Field_Rich extends Field {
 						}
 					});
 
-					document.addEventListener('click',function(e){
+					document.addEventListener('click', (e)=>{
 						// click event handler for editor 
 
-						
+						//check that we are being called from inside the editor
+						if(!e.target.closest(".editorfieldwrapper")) {
+							return
+						}
+
+						if(!window.getSelection().focusNode || !window.getSelection().focusNode.closest(".editor.content[contenteditable='true']")) {
+							alert("Please select in editor where you want to apply this command!");
+							return;		
+						}
 
 						if (e.target.nodeName==='A') {
 							
