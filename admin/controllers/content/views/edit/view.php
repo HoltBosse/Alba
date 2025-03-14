@@ -2,9 +2,6 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 ?>
 
-<script>
-	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/edit/script.js"); ?>
-</script>
 <style>
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/edit/style.css"); ?>
 </style>
