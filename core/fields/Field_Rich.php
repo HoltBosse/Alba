@@ -205,7 +205,7 @@ class Field_Rich extends Field {
 								}
 
 								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, null, onAdd_a);
+								createModal(iL, iI, cV, hL, ()=>{}, onAdd_a, ()=>{});
 							}
 						}
 
@@ -406,7 +406,7 @@ class Field_Rich extends Field {
 										active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
 									}
 									window.live_editor = this_editor;
-									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+									createModal(iL, iI, cV, hL, ()=>{}, onAdd, ()=>{});
 									
 								}
 								else {
@@ -543,7 +543,7 @@ class Field_Rich extends Field {
 
 									}
 									window.live_editor = this_editor;
-									createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+									createModal(iL, iI, cV, hL, ()=>{}, onAdd, ()=>{});
 									
 								}
 								else {
@@ -843,7 +843,7 @@ class Field_Rich extends Field {
 									}
 								}
 								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, function(){}, onAdd, function(){});
+								createModal(iL, iI, cV, hL, ()=>{}, onAdd, ()=>{});
 
 							}
 
