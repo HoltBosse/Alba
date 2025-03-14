@@ -196,16 +196,14 @@ class Field_Rich extends Field {
 								let cV = [href, text, classes, target];
 								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
 
-								function onAdd_a() {
-									// update anchors
+								window.live_editor = this_editor;
+								const modal = createModal(iL, iI, cV, hL);
+								modal.addEventListener("modalFormAdd", (e)=>{
 									window.editor_anchor.innerText = document.getElementById('a_text').value;
 									window.editor_anchor.href = document.getElementById('a_url').value;
 									window.editor_anchor.classList.value = document.getElementById('a_class').value;
 									window.editor_anchor.target = document.getElementById('a_target').value;
-								}
-
-								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, ()=>{}, onAdd_a, ()=>{});
+								});
 							}
 						}
 
@@ -316,16 +314,15 @@ class Field_Rich extends Field {
 									});
 									helptext += "</ul>";
 								}
-								
-								function onCreate() {
-									// insert link html at anchor location
-									let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
-									document.execCommand('insertHTML', false, link_html);							
-									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
-								}
 
-								function onAdd() {
+								let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
+								document.execCommand('insertHTML', false, link_html);							
+								let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+								link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
+
+								window.live_editor = this_editor;
+								const modal = createModal(iL, iI, cV, hL);
+								modal.addEventListener("modalFormAdd", (e)=>{
 									// get values and update link
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.href = document.getElementById(iI[0]).value;
@@ -333,17 +330,12 @@ class Field_Rich extends Field {
 									link.classList.value = document.getElementById(iI[2]).value;
 									link.target = document.getElementById(iI[3]).value;
 									link.removeAttribute('id');		// remove id so future links not messed up
-								}
-
-
-								function onCancel() {
+								});
+								modal.addEventListener("modalFormCancel", (e)=>{
 									// replace anchor with original text
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.parentNode.replaceChild(document.createTextNode(selection), link);
-								}
-								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, onCreate, onAdd, onCancel);
-
+								});
 							}
 
 							else if (command == 'createanchor') {
@@ -393,8 +385,10 @@ class Field_Rich extends Field {
 									let cV = [alt, title];
 									let hL = ["Alternative text for the visually impaired, will also display when the browser cannot render the image.",
 											"Title will appear in a tooltip on hover of the image. It can also be used to provide a broader description than the alt text."];
-									
-									function onAdd() {
+
+									window.live_editor = this_editor;
+									const modal = createModal(iL, iI, cV, hL);
+									modal.addEventListener("modalFormAdd", (e)=>{
 										// set to image
 										let new_alt = document.getElementById(iI[0]).value;
 										let new_title = document.getElementById(iI[1]).value;
@@ -404,10 +398,7 @@ class Field_Rich extends Field {
 										
 										// push updated content to textarea
 										active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
-									}
-									window.live_editor = this_editor;
-									createModal(iL, iI, cV, hL, ()=>{}, onAdd, ()=>{});
-									
+									});
 								}
 								else {
 									alert('No image selected');
@@ -432,8 +423,9 @@ class Field_Rich extends Field {
 									let cV = [author, source, license, licenselink];
 									let hL = ["", "", "", "Enter full link including https://"];
 
-									function onAdd() {
-										
+									window.live_editor = this_editor;
+									const modal = createModal(iL, iI, cV, hL);
+									modal.addEventListener("modalFormAdd", (e)=>{
 										// get new values for information
 										let new_author = document.getElementById(iI[0]).value;
 										let new_source = document.getElementById(iI[1]).value;
@@ -540,10 +532,7 @@ class Field_Rich extends Field {
 										else if (!hasFigure && !hasCaptions) {
 											// all is well, do nothing
 										}
-
-									}
-									window.live_editor = this_editor;
-									createModal(iL, iI, cV, hL, ()=>{}, onAdd, ()=>{});
+									});
 									
 								}
 								else {
@@ -833,17 +822,16 @@ class Field_Rich extends Field {
 								let cV = [""];
 								let hL = ["Must be alphanumeric with no spaces or will not be added."];
 								
-								function onAdd() {
-									
+								window.live_editor = this_editor;
+								const modal = createModal(iL, iI, cV, hL);
+								modal.addEventListener("modalFormAdd", (e)=>{
 									// add class
 									let new_class_name = document.getElementById(iI[0]).value;
 									var modal = event.target.closest('.modal');
 									if (new_class_name) {
 										parent.classList.add(new_class_name);
 									}
-								}
-								window.live_editor = this_editor;
-								createModal(iL, iI, cV, hL, ()=>{}, onAdd, ()=>{});
+								});
 
 							}
 
@@ -912,7 +900,7 @@ class Field_Rich extends Field {
 					window.editor_code_already_exists = true;
 				}
 
-				
+
 
 				/**
 				 * Creates and displays a modal handling onclick events for user input. An example function call might look
@@ -929,13 +917,8 @@ class Field_Rich extends Field {
 				 * @param {array} inputIds - An array containing the ids for created input fields.
 				 * @param {array} currentValues - An array containing the current values of inputs if they exist. Empty by default.
 				 * @param {array} helpLabels - An array containing the help values associated with the inputs to be displayed to the user.
-				 * @param {function} onCreate - A user defined function to be executed upon creation of the modal.
-				 * @param {function} onAdd - A user defined function to be executed upon user's click of "Add" button.
-				 * @param {function} onCancel - A user defined function to be executed upon user's click of "Cancel" button.
 				**/
-				function createModal(inputLabels, inputIds, currentValues=[], helpLabels, onCreate, onAdd, onCancel) {
-
-					onCreate();
+				function createModal(inputLabels, inputIds, currentValues=[], helpLabels) {
 					// create and show modal based on desired user inputs
 					let modal = document.createElement('div');
 					// modal.id = "add_info_modal_for_<?php echo $this->name;?>";
@@ -989,17 +972,19 @@ class Field_Rich extends Field {
 						switch (e.target.dataset.modalAction) {
 							
 							case "add":
-								onAdd();
+								modal.dispatchEvent(new CustomEvent("modalFormAdd", { target: modal }));
 								closeModal();
 								break;
 
 							case "cancel":
-								onCancel();
+								modal.dispatchEvent(new CustomEvent("modalFormCancel", { target: modal }));
 								closeModal();
 								break;
 						}
 
 					});
+
+					return modal;
 				}
 			});
 		</script>
