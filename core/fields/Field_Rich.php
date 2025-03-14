@@ -182,36 +182,9 @@ class Field_Rich extends Field {
 							// only work on anchors inside editor (i.e. not toolbar or elswhere... :) )
 							let in_editor = e.target.closest('.editor');
 							if (in_editor) {
-								// remember dynamic editor/textarea
-								window.this_editor = e.target.closest('.control').querySelector('.editor');
-								window.this_textarea = e.target.closest('.control').querySelector('textarea');
-
-								//console.log('show anchor editor');
-								window.editor_anchor = e.target;
-
-								let href = e.target.getAttribute('href');
-								let text = e.target.innerText;
-								let classes = e.target.classList.value;
-								let target = e.target.getAttribute('target') ? e.target.getAttribute('target') : "";
-
-								/* console.log('URL',href);
-								console.log('TEXT',text);
-								console.log('CLASS',classes); */
-								
-								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
-								let iL = ["URL", "Display Text", "Class", "Target"];
-								let iI = ["a_url", "a_text", "a_class","a_target"];
-								let cV = [href, text, classes, target];
-								let hL = ["", "", "","'_blank' for new window/tab, otherwise leave empty"];
-
-								window.live_editor = this_editor;
-								const modal = createModal(iL, iI, cV, hL);
-								modal.addEventListener("modalFormAdd", (e)=>{
-									window.editor_anchor.innerText = document.getElementById('a_text').value;
-									window.editor_anchor.href = document.getElementById('a_url').value;
-									window.editor_anchor.classList.value = document.getElementById('a_class').value;
-									window.editor_anchor.target = document.getElementById('a_target').value;
-								});
+								window.currentAnchorToEdit = e.target;
+								e.target.closest(".editorfieldwrapper").querySelector('[data-command="createlink"]').click();
+								return;
 							}
 						}
 
@@ -298,13 +271,14 @@ class Field_Rich extends Field {
 									}
 								}
 
-								var selection = window.getSelection().toString();
+								var selection = window.currentAnchorToEdit ? window.currentAnchorToEdit.innerText : window.getSelection().toString();
+								console.log("selection: ", selection);
 
 								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
 
-								let href="";
-								let classes="";
-								let target="";
+								let href=window.currentAnchorToEdit ? window.currentAnchorToEdit.getAttribute('href') : "";
+								let classes=window.currentAnchorToEdit ? window.currentAnchorToEdit.classList.value : "";
+								let target=window.currentAnchorToEdit ? (window.currentAnchorToEdit.getAttribute('target') ? window.currentAnchorToEdit.getAttribute('target') : "") : "";
 
 								// iL=inputLabels, iI=inputIds, cV=currentValues=[], hL=helpLabels
 								let iL = ["URL", "Display Text", "Class", "Target"];
@@ -323,10 +297,14 @@ class Field_Rich extends Field {
 									helptext += "</ul>";
 								}
 
-								let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
-								document.execCommand('insertHTML', false, link_html);							
-								let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-								link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
+								if(!window.currentAnchorToEdit) {
+									let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
+									document.execCommand('insertHTML', false, link_html);							
+									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
+									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
+								} else if(window.currentAnchorToEdit) {
+									window.currentAnchorToEdit.id = "newly_created_link_for_<?php echo $this->name;?>";
+								}
 
 								window.live_editor = this_editor;
 								const modal = createModal(iL, iI, cV, hL);
@@ -338,11 +316,15 @@ class Field_Rich extends Field {
 									link.classList.value = document.getElementById(iI[2]).value;
 									link.target = document.getElementById(iI[3]).value;
 									link.removeAttribute('id');		// remove id so future links not messed up
+
+									window.currentAnchorToEdit = undefined;
 								});
 								modal.addEventListener("modalFormCancel", (e)=>{
 									// replace anchor with original text
 									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
 									link.parentNode.replaceChild(document.createTextNode(selection), link);
+
+									window.currentAnchorToEdit = undefined;
 								});
 							}
 
