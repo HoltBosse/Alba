@@ -71,6 +71,7 @@ class Field_Tab extends Field {
 		
 		$this->tabs = $config->tabs ?? $this->tabs;
 		$this->mode = $config->mode ?? "tabs";
+		$this->nowrap = true;
 	}
 
 	public function validate() {
