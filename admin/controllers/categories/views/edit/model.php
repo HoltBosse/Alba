@@ -24,7 +24,7 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 	$new_cat = true;
 }
 else {
-	CMS::Instance()->queue_message('Unknown cat operation','danger',Config::uripath().'/admin/categories/show');
+	CMS::Instance()->queue_message('Unknown cat operation','danger',Config::uripath().'/admin/categories/all');
 	exit(0);
 }
 
