@@ -45,7 +45,7 @@ if(is_numeric($widget_type_id)) {
 	$params[] = $widget_type_id;
 }
 
-if(isset($_POST["state"])) {
+if(isset($_POST["state"]) && is_numeric($_POST["state"])) {
 	$query .= " AND w.state=?";
 	$params[] = $_POST["state"];
 }
