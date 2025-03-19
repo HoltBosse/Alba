@@ -188,6 +188,9 @@ class Field_Rich extends Field {
 							// only work on anchors inside editor (i.e. not toolbar or elswhere... :) )
 							let in_editor = e.target.closest('.editor');
 							if (in_editor) {
+								if(e.target.classList.contains('internal_anchor')) {
+									return;
+								}
 								window.currentAnchorToEdit = e.target;
 								e.target.closest(".editorfieldwrapper").querySelector('[data-command="createlink"]').click();
 								return;
@@ -349,15 +352,39 @@ class Field_Rich extends Field {
 							}
 
 							else if (command == 'createanchor') {
-								window.sel = document.getSelection();
-								anchorid = prompt('Anchor ID: ','');
-								if (anchorid) {
-									if (window.sel.getRangeAt && window.sel.rangeCount) {
-										range = window.sel.getRangeAt(0);
-										var frag = range.createContextualFragment("<a title='#"+anchorid+"' class='internal_anchor' id='"+anchorid+"' ><i class='fa fa-anchor' aria-hidden='true'></i></a>");
-										range.insertNode(frag);
-									}
+								//capture the current selection and save the range - need to do this to properly insert anchor into text later
+								const selection = document.getSelection();
+								let savedRange = null;
+								
+								if (selection.getRangeAt && selection.rangeCount) {
+									savedRange = selection.getRangeAt(0).cloneRange(); //store a copy of the range immediately
 								}
+								
+								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
+								
+								const fields = [
+									{
+										type: "input",
+										id: `anchor_id_for_${uniq}`,
+										label: "Anchor ID",
+										value: "",
+										helpText: "Enter a unique ID for this anchor. Will be used in URLs like #your-id",
+									}
+								];
+								
+								window.live_editor = this_editor;
+								const modal = createModal(fields);
+
+								modal.addEventListener("modalFormAdd", (e)=>{
+									// get values and update link
+									let anchorid = document.getElementById(fields[0].id).value;
+									if (anchorid && savedRange) {
+										//restore the range (so the anchor is inserted at the correct position in the text editor)
+										var frag = savedRange.createContextualFragment(`<a title='#${anchorid}' class='internal_anchor' id='${anchorid}' ><i class='fa fa-anchor' aria-hidden='true'></i></a>`);
+										savedRange.insertNode(frag);
+									}
+								});
+								
 							}
 
 							else if (command=='floatleft') {
