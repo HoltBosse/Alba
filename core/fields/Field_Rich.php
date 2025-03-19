@@ -173,14 +173,11 @@ class Field_Rich extends Field {
 						}
 
 						if(!window.getSelection().focusNode || !window.getSelection().focusNode.parentElement.closest(".editor.content[contenteditable='true']")) {
-								//only show the alert if we're not interacting with the code view toggle or raw editor
-								if(!e.target.classList.contains('toggle_editor_raw') && 
-								!e.target.closest('.toggle_editor_raw') && 
-								!e.target.classList.contains('editor_raw')) {
-									
-									alert("Please select in editor where you want to apply this command!");
-									return;
-								}
+							//only show the alert if we're not interacting with the code view toggle or raw editor
+							if(!e.target.classList.contains('toggle_editor_raw') && !e.target.closest('.toggle_editor_raw') && !e.target.classList.contains('editor_raw')) {
+								alert("Please select in editor where you want to apply this command!");
+								return;
+							}
 						}
 
 						if (e.target.nodeName==='A') {
