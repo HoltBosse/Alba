@@ -76,7 +76,7 @@ function generateForm(formId) {
 }
 
 function getFormId() {
-    return "generated_json";
+    return "replaceWithFormAliasHere";
 }
 
 document.querySelector(".add_field_list.controls_button_fields_grid").addEventListener("click", (e)=>{
