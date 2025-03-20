@@ -1,0 +1,21 @@
+{
+	"id": "form_options",
+	"fields": [
+		{
+			"label":"Email CC to",
+			"name":"cc_users",
+			"id":"cc_users",
+			"type":"UserPicker",
+			"required":false,
+			"slimselect": true
+		},
+        {
+			"label":"Email BCC to",
+			"name":"bcc_users",
+			"id":"bcc_users",
+			"type":"UserPicker",
+			"required":false,
+			"slimselect": true
+		}
+    ]
+}
