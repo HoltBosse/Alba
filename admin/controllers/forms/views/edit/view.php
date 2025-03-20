@@ -7,7 +7,7 @@ $fieldsList = array_merge($coreFields, $userFields);
 //CMS::pprint_r($fieldsList);
 ?>
 
-<form>
+<form method="POST">
     <style>
         <?php
             echo file_get_contents(CMSPATH . "/admin/controllers/forms/views/edit/style.css");
