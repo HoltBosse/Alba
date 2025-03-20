@@ -45,6 +45,40 @@ function updateElementConfig(input) {
     return JSON.stringify(config);
 }
 
+function fieldConfigToClassConfig(field) {
+    const config = JSON.parse(field.dataset.config);
+    const classConfig = {};
+    classConfig["type"] = field.dataset.type;
+
+    config.forEach((field)=>{
+        if(field.type=="input" || field.type=="select") {
+            if(field.default && field.default!="") {
+                classConfig[field.name] = field.default;
+            }
+        }
+    });
+
+    return classConfig;
+}
+
+function generateForm(formId) {
+    const fields = [];
+    document.querySelector(".fields_panel").querySelectorAll(".displayfield").forEach((field)=>{
+        fields.push(fieldConfigToClassConfig(field));
+    });
+
+    const form = {
+        "id": formId,
+        "fields": fields,
+    };
+
+    return form;
+}
+
+function getFormId() {
+    return "generated_json";
+}
+
 document.querySelector(".add_field_list.controls_button_fields_grid").addEventListener("click", (e)=>{
     if(e.target.classList.contains("button")) {
         const displayField = document.createElement("div");
@@ -54,12 +88,14 @@ document.querySelector(".add_field_list.controls_button_fields_grid").addEventLi
         displayField.innerHTML = e.target.dataset.display_markup;
 
         document.querySelector(".fields_panel").appendChild(displayField);
+        document.querySelector("[name='form_json']").value = JSON.stringify(generateForm(getFormId()));
     }
 });
 
 document.querySelector(".field_configuration_list").addEventListener("click", (e)=>{
     if(e.target.classList.contains("form_field_options_submit")) {
         currentlySelectedField.dataset.config = updateElementConfig(currentlySelectedField.dataset.config);
+        document.querySelector("[name='form_json']").value = JSON.stringify(generateForm(getFormId()));
 
         currentlySelectedField = null;
         document.querySelector("[for='add_field']").click();

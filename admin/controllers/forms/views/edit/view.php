@@ -53,6 +53,7 @@ $fieldsList = array_merge($coreFields, $userFields);
         
     </div>
 </section>
+<input name="form_json" type="text" style="display: none;">
 <br><br>
 
 <div class="fixed-control-bar">
