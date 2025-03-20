@@ -48,7 +48,7 @@ function updateElementConfig(input) {
 function fieldConfigToClassConfig(field) {
     const config = JSON.parse(field.dataset.config);
     const classConfig = {};
-    classConfig["type"] = field.dataset.type;
+    classConfig.type = field.dataset.type;
 
     config.forEach((field)=>{
         if(field.type=="input" || field.type=="select") {
