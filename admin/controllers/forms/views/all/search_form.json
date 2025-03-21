@@ -1,0 +1,48 @@
+{
+	"id": "search_fields",
+	"fields": [
+		{
+			"label":"Search Title/Note",
+			"name":"title",
+			"id":"title",
+			"type":"Text",
+			"maxlength":255
+		},
+		{
+			"name": "state",
+			"id": "state",
+			"type": "Select",
+			"label": "State",
+			"placeholder": "State",
+			"select_options":[
+				{"value":1,"text":"Published"},
+				{"value":0,"text":"Unpublished"},
+				{"value":-1,"text":"Deleted"}
+			]
+		},
+		{
+			"name": "category",
+			"id": "category",
+			"type": "Category",
+			"content_type":1,
+			"label": "Category",
+			"default":0
+		},
+		{
+			"label":"Creator",
+			"name":"creator",
+			"id":"creator",
+			"type":"UserPicker",
+			"required":false,
+			"slimselect": false,
+			"multiple": false
+		},
+		{
+			"label":"Tags",
+			"name":"tags",
+			"id":"tags",
+			"type":"TagMultiple",
+			"required":false
+		}
+	]
+}

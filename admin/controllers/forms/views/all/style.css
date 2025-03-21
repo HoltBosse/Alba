@@ -1,0 +1,9 @@
+#search_fields {
+	display: flex;
+	gap: 1rem;
+	align-items: end;
+
+	.field_id_tags > .field {
+		margin-bottom: 0;
+	}
+}
