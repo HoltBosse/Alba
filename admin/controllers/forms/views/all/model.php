@@ -12,7 +12,7 @@ $searchFormObject->fields[] = (object) [
 $searchForm = new Form($searchFormObject);
 
 $formItems = DB::fetchall(
-	"SELECT fi.id, fi.state, fi.title, fi.category, fi.start, fi.end, cbu.username AS created_by, ubu.username AS updated_by, fi.note
+	"SELECT fi.id, fi.state, fi.title, fi.alias, fi.category, fi.start, fi.end, cbu.username AS created_by, ubu.username AS updated_by, fi.note
 	FROM form_instances fi
 	LEFT JOIN users cbu ON fi.created_by=cbu.id
 	LEFT JOIN users ubu ON fi.updated_by=ubu.id"
