@@ -106,9 +106,7 @@ class Field_Select extends Field {
 	}
 
 	public function get_friendly_value($helpful_info) {
-		// TODO: select fields need to store config somewhere to retrieve friendly values
-		// for now return id
-		return $this->id;
+		return $this->default;
 	}
 
 	public function load_from_config($config) {
