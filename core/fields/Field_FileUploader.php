@@ -77,7 +77,8 @@ class Field_FileUploader extends Field {
 					$accept_string .= $m . ',';
 				}				
 				
-				echo "<input type='{$this->input_type}' value='{$this->default}' accept='{$accept_string}' {$multiple} {$this->name} {$required} id='{$this->id}' >";
+				$value = Input::stringHtmlSafe($this->default);
+				echo "<input type='{$this->input_type}' value='{$value}' accept='{$accept_string}' {$multiple} {$this->name} {$required} id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
@@ -148,6 +149,7 @@ class Field_FileUploader extends Field {
 
 		$this->multiple = $config->multiple ?? "";
 		$this->mime_type = $config->mime_type ?? [];
+		$this->max_size = $this->get_bytes(ini_get("upload_max_filesize"));
 		if ($config->max_size < $this->get_bytes(ini_get("upload_max_filesize"))) {
 			$this->max_size = $config->max_size;
 		}
