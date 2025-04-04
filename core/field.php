@@ -72,12 +72,10 @@ class Field {
 
 	public function set_from_submit() {
 		$value = Input::getvar($this->name, $this->filter);
-		if (is_string($value)||is_numeric($value)) {
-			$this->default = $value;
-		}
 		if (is_array($value)) {
 			$this->default = json_encode($value);
 		}
+		$this->default = $value;
 	}
 
 	public function set_from_submit_repeatable($index=0) {
