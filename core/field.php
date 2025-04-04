@@ -74,8 +74,9 @@ class Field {
 		$value = Input::getvar($this->name, $this->filter);
 		if (is_array($value)) {
 			$this->default = json_encode($value);
+		} else {
+			$this->default = $value;
 		}
-		$this->default = $value;
 	}
 
 	public function set_from_submit_repeatable($index=0) {

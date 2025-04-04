@@ -15,7 +15,6 @@ class Field_Select extends Field {
 	public $empty_string;
 
 	public function display() {
-		CMS::pprint_r(0===null ? "true" : "false");
 		$required="";
 		if ($this->required) {$required=" required ";}
 		if (property_exists($this,'attribute_list')) {
@@ -43,6 +42,7 @@ class Field_Select extends Field {
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
+							// @phpstan-ignore-next-line
 							} elseif ($select_option->value === $this->default) {
 								$selected="selected";
 							}
