@@ -42,7 +42,6 @@ class Field_Select extends Field {
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
-							// @phpstan-ignore-next-line
 							} elseif ($select_option->value === $this->default) {
 								$selected="selected";
 							}
