@@ -42,7 +42,7 @@ class Field_Select extends Field {
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
-							} elseif ($select_option->value == $this->default) {
+							} elseif ($select_option->value === $this->default) {
 								$selected="selected";
 							}
 							echo "<option {$disabled} {$selected} value='{$select_option->value}'>" . Input::stringHtmlSafe($select_option->text) . "</option>";

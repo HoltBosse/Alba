@@ -140,15 +140,15 @@ else {
 		$required_details_form->get_field_by_name('tags')->default = json_encode($tag_id_array); 
 	}
 	// set content form TODO
-	foreach ($content_form->fields as $content_field) {
-		if (property_exists($content_field,'save')) {
-			if ($content_field->save===false) {
-				continue; // skip unsaveable fields
+	if(!$new_content) {
+		foreach ($content_form->fields as $content_field) {
+			if (property_exists($content_field,'save')) {
+				if ($content_field->save===false) {
+					continue; // skip unsaveable fields
+				}
 			}
-		}
-		$value = $content->get_field($content_field->name);
-		//CMS::pprint_r ('got '); CMS::pprint_r ($value);
-		if ($value||is_numeric($value)) {
+			$value = $content->get_field($content_field->name);
+			//CMS::pprint_r ('got '); CMS::pprint_r ($value);
 			$content_field->default = $value;
 		}
 	}
