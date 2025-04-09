@@ -335,3 +335,7 @@ if ($cur_page) {
 
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/all/script.js") ?>
 </script>
+<script type="module">
+	import {handleAdminRows} from "/core/js/admin_row.js";
+	handleAdminRows(".content_admin_row");
+</script>

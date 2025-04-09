@@ -1,7 +1,5 @@
 // image click handler
-all_image_containers = document.querySelectorAll('.all_images_image_container');
-//console.log(all_image_containers);
-all_image_containers.forEach(container => {
+document.querySelectorAll('.all_images_image_container').forEach(container => {
 	container.addEventListener('click',(e)=> {
 		e.target.classList.toggle('active');
 	});
@@ -116,7 +114,7 @@ function get_selected() {
 
 function get_selected_ids() {
 	thisarray=[];
-	selected = document.querySelectorAll('.all_images_image_container.active');
+	const selected = document.querySelectorAll('.all_images_image_container.active');
 	selected.forEach(selimage => {
 		thisarray.push(selimage.dataset.id);
 	});
@@ -124,7 +122,7 @@ function get_selected_ids() {
 }
 
 function rename_image() {
-	selected = get_selected();
+	const selected = get_selected();
 	if (selected.length<1) {
 		alert('Select an image');
 	}
@@ -146,7 +144,7 @@ function rename_image() {
 }
 
 function crop_image() {
-	selected = get_selected();
+	const selected = get_selected();
 	if (selected.length<1) {
 		alert('Select an image');
 	}
@@ -292,4 +290,20 @@ function delete_items() {
 		alert('No images selected');
 	}
 }
+
+document.querySelector("[data-clickaction='clear_selection']").addEventListener("click", ()=>{
+	clear_selection();
+});
+document.querySelector("[data-clickaction='rename_image']").addEventListener("click", ()=>{
+	rename_image();
+});
+document.querySelector("[data-clickaction='crop_image']").addEventListener("click", ()=>{
+	crop_image();
+});
+document.querySelector("[data-clickaction='clear_tags']").addEventListener("click", ()=>{
+	clear_tags();
+});
+document.querySelector("[data-clickaction='delete_items']").addEventListener("click", ()=>{
+	delete_items();
+});
 

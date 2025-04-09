@@ -184,6 +184,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <?php Component::create_pagination($user_count, $pagination_size, $cur_page);?>
 
-<script>
-	<?php echo file_get_contents(CMSPATH . "/admin/controllers/users/views/default/script.js"); ?>
+<script type="module">
+	import {handleAdminRows} from "/core/js/admin_row.js";
+	handleAdminRows(".user_admin_row");
 </script>

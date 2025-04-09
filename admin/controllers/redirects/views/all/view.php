@@ -221,6 +221,7 @@ if ($cur_page) {
 
 <?php Component::create_pagination($redirect_count, $page_size, $cur_page); ?>
 
-<script>
-	<?php echo file_get_contents(CMSPATH . "/admin/controllers/redirects/views/all/script.js"); ?>
+<script type="module">
+	import {handleAdminRows} from "/core/js/admin_row.js";
+	handleAdminRows(".content_admin_row");
 </script>

@@ -135,6 +135,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	</table>
 </form>
 
-<script>
-	<?php echo file_get_contents(CMSPATH . "/admin/controllers/tags/views/show/script.js"); ?>
+<script type="module">
+	import {handleAdminRows} from "/core/js/admin_row.js";
+	handleAdminRows(".tag_admin_row");
 </script>
