@@ -1131,7 +1131,8 @@ class Field_Rich extends Field {
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 		
-		$this->default = $config->default ?? '<p></p>';
+		//this space is inbetween the the p tags specifically to prevent the set_from_submit stripping out the default p
+		$this->default = $config->default ?? '<p> </p>';
 	}
 
 	public function validate() {

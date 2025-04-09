@@ -42,7 +42,13 @@ class Field_Select extends Field {
 							$selected = "";
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
-							} elseif ($select_option->value === $this->default) {
+							/*
+								this is due to legacy, and how types in php are handle.
+								we get for example number values as both strings and ints, so cant use === operator here
+								thus we have the issue where if we have a select item with a value of 0 it will equal null in php
+								thus we add an additional check for this
+							*/
+							} elseif ($select_option->value == $this->default && ($select_option->value!=0 && $this->default!=null)) {
 								$selected="selected";
 							}
 							echo "<option {$disabled} {$selected} value='{$select_option->value}'>" . Input::stringHtmlSafe($select_option->text) . "</option>";
