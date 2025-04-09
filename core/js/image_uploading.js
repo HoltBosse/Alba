@@ -302,7 +302,7 @@ function addImageUploadDialog() {
 		</div>
 	`;
 
-	let modal = document.createElement("div");
+	const modal = document.createElement("div");
 	modal.id="image_uploader";
 	modal.classList.add("modal");
 	modal.classList.add("is-active");

@@ -1,6 +1,6 @@
 export function loadImgEditor(id) {
     return new Promise(resolve => {
-        let markup = `
+        const markup = `
             <style>
                 #active_editing_image {
                     display: block;
@@ -65,7 +65,7 @@ export function loadImgEditor(id) {
         `;
 
         //create and add modal to page
-        let modal = document.createElement("div");
+        const modal = document.createElement("div");
         modal.id="image_editor";
         modal.classList.add("modal");
         modal.classList.add("is-active");
@@ -74,23 +74,23 @@ export function loadImgEditor(id) {
 
         const cropper = new Cropper(document.getElementById('active_editing_image'), {
             initialAspectRatio: 16 / 9, //todo: maybe make this match current image size?
-            aspectRatio: NaN, //allows us to use initial aspect ratio
+            aspectRatio: Number.NaN, //allows us to use initial aspect ratio
             viewMode: 1, //prevent them from having dead space
         });
 
         //make controls work
         modal.querySelector(".cropper_controls").addEventListener("click", (e)=>{
-            let actions = {
-                "rotate_left": function() {cropper.rotate(-45/2)},
-                "rotate_right": function() {cropper.rotate(45/2)},
-                "zoom_in": function() {cropper.zoom(0.1)},
-                "zoom_out": function() {cropper.zoom(-0.1)},
-                "reset": function() {cropper.reset()},
-                "ar_16_9": function() {cropper.setAspectRatio(16/9)},
-                "ar_4_3": function() {cropper.setAspectRatio(4/3)},
-                "ar_1_1": function() {cropper.setAspectRatio(1/1)},
-                "ar_2_3": function() {cropper.setAspectRatio(2/3)},
-                "ar_free": function() {cropper.setAspectRatio(NaN)},
+            const actions = {
+                "rotate_left": ()=>{cropper.rotate(-45/2)},
+                "rotate_right": ()=>{cropper.rotate(45/2)},
+                "zoom_in": ()=>{cropper.zoom(0.1)},
+                "zoom_out": ()=>{cropper.zoom(-0.1)},
+                "reset": ()=>{cropper.reset()},
+                "ar_16_9": ()=>{cropper.setAspectRatio(16/9)},
+                "ar_4_3": ()=>{cropper.setAspectRatio(4/3)},
+                "ar_1_1": ()=>{cropper.setAspectRatio(1/1)},
+                "ar_2_3": ()=>{cropper.setAspectRatio(2/3)},
+                "ar_free": ()=>{cropper.setAspectRatio(Number.NaN)},
             }
             //console.log(e.target);
             if(e.target.dataset.action && actions[e.target.dataset.action]) {
@@ -99,7 +99,7 @@ export function loadImgEditor(id) {
         });
 
         //close logic
-        window.close_img_editor = function() {
+        window.close_img_editor = ()=>{
             document.getElementById('image_editor').remove();
             resolve(0);
         };
@@ -107,11 +107,12 @@ export function loadImgEditor(id) {
         //util func
         function dataURLtoFile(dataurl, filename) {
 
-            var arr = dataurl.split(','),
-                mime = arr[0].match(/:(.*?);/)[1],
-                bstr = atob(arr[1]), 
-                n = bstr.length, 
-                u8arr = new Uint8Array(n);
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            // biome-ignore lint: not solving now
+            let u8arr = new Uint8Array(n);
                 
             while(n--){
                 u8arr[n] = bstr.charCodeAt(n);
@@ -121,7 +122,7 @@ export function loadImgEditor(id) {
         }
 
         //save logic
-        window.save_img_editor = function() {
+        window.save_img_editor = ()=>{
             resolve(dataURLtoFile(cropper.getCroppedCanvas().toDataURL('image/png'), "test.png"));
         }
     });

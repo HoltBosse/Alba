@@ -13,8 +13,6 @@ class Field_Image extends Field {
 	public $listing_endpoint;
 
 	public function display($repeatable_template=false) {
-		//add the image editor
-		Image::add_image_js_editor();
 		echo "<script>";
 			echo "window.max_upload_size_bytes = " . File::get_max_upload_size_bytes() . ";";
 		echo "</script>";
