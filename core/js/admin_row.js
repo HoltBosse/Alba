@@ -1,5 +1,5 @@
-export function handleAdminRows(classname) {
-    document.querySelectorAll(`.${classname}`).forEach(row => {
+export function handleAdminRows(elementSelector) {
+    document.querySelectorAll(elementSelector).forEach(row => {
         row.addEventListener('click',(e)=> {
             const tr = e.target.closest('tr');
             const hidden_checkbox = tr.querySelector('.hidden_multi_edit');

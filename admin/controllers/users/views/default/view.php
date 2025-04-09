@@ -186,5 +186,5 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <script type="module">
 	import {handleAdminRows} from "/core/js/admin_row.js"
-	handleAdminRows("user_admin_row");
+	handleAdminRows(".user_admin_row");
 </script>

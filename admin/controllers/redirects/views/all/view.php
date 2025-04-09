@@ -223,5 +223,5 @@ if ($cur_page) {
 
 <script type="module">
 	import {handleAdminRows} from "/core/js/admin_row.js"
-	handleAdminRows("content_admin_row");
+	handleAdminRows(".content_admin_row");
 </script>
