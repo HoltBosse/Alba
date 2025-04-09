@@ -43,7 +43,7 @@ class Field_Select extends Field {
 							if ($this->multiple && $this->default != "" && in_array($select_option->value, json_decode($this->default))) {
 								$selected="selected";
 							/*
-								this is due to legacy, and how types in php are handle.
+								this is due to legacy, and how types in php are handled.
 								we get for example number values as both strings and ints, so cant use === operator here
 								thus we have the issue where if we have a select item with a value of 0 it will equal null in php
 								thus we add an additional check for this
