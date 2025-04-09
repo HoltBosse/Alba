@@ -1,6 +1,0 @@
-x ./admin/controllers/content/views/order/script.js
-y ./admin/controllers/pages/views/edit/script.js
-? ./admin/controllers/images/views/show/script.js
-? ./admin/js/menu_widget_admin.js
-? ./admin/templates/clean/js/script.js
-x ./widgets/crowdriff/script.js
