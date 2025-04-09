@@ -9,8 +9,7 @@
 			"label":"Content",
 			"required":true,
 			"minlength":3,
-			"filter":"RAW",
-			"default":"<p></p>"
+			"filter":"RAW"
 		},
 		{
 			"name":"custom",
