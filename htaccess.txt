@@ -52,6 +52,9 @@ RedirectMatch 404 composer.json
 RedirectMatch 404 composer.lock
 RedirectMatch 404 /vendor
 
+# send js stuff to 404 page
+RedirectMatch 404 /nodedev
+
 # match anything in .git folder or .gitignore files, etc
 RedirectMatch 404 /\.git
 # any file matching readme

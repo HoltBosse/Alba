@@ -1,0 +1,1 @@
+import{R as o,j as t,a as s,r}from"./chunks/client.js";function c(){const[e,n]=r.useState(0);return t.jsxs("div",{children:[t.jsx("p",{children:"sample react component in php"}),t.jsxs("button",{onClick:()=>n(e+1),children:["Count is: ",e]})]})}o.createRoot(document.getElementById("root")).render(t.jsx(s.StrictMode,{children:t.jsx(c,{})}));
