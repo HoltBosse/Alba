@@ -100,6 +100,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </form>
 
 <script type="module">
-	import {handleAdminRows} from "/core/js/admin_row.js"
+	import {handleAdminRows} from "/core/js/admin_row.js";
 	handleAdminRows(".page_admin_row");
 </script>

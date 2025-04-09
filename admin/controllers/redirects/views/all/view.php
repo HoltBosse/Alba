@@ -222,6 +222,6 @@ if ($cur_page) {
 <?php Component::create_pagination($redirect_count, $page_size, $cur_page); ?>
 
 <script type="module">
-	import {handleAdminRows} from "/core/js/admin_row.js"
+	import {handleAdminRows} from "/core/js/admin_row.js";
 	handleAdminRows(".content_admin_row");
 </script>
