@@ -4,4 +4,3 @@ y ./admin/controllers/pages/views/edit/script.js
 ? ./admin/js/menu_widget_admin.js
 ? ./admin/templates/clean/js/script.js
 x ./widgets/crowdriff/script.js
-y image.php js code

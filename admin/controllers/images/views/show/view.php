@@ -9,11 +9,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 	<!-- tag operation toolbar -->
 	<div id="tag_operations" class="pull-right buttons has-addons">
-		<button type="button" onclick='clear_selection()' class='button is-primary' >Select None</button>
-		<button type="button" onclick='rename_image()' class='button is-info' >Edit</button>
-		<button type="button" onclick='crop_image()' class='button is-info' >Crop</button>
-		<button type="button" onclick='clear_tags()' class='button is-warning' >Clear Tags</button>
-		<button type="button" onclick='delete_items()' class='button is-danger' >Delete</button>
+		<button type="button" data-clickaction='clear_selection' class='button is-primary' >Select None</button>
+		<button type="button" data-clickaction='rename_image' class='button is-info' >Edit</button>
+		<button type="button" data-clickaction='crop_image' class='button is-info' >Crop</button>
+		<button type="button" data-clickaction='clear_tags' class='button is-warning' >Clear Tags</button>
+		<button type="button" data-clickaction='delete_items' class='button is-danger' >Delete</button>
 	</div>
 </h1>
 
@@ -156,7 +156,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php endif; ?>
 <script type="module">
 	import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/core/js/image_uploading.js";
+	import {loadImgEditor} from "/core/js/image_editing.js";
 
+	window.load_img_editor = loadImgEditor;
 	<?php
 		echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/script.js");
 	?>

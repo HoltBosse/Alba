@@ -88,6 +88,7 @@ class Field_Image extends Field {
 
 		<script type="module">
 		import {addImageUploadDialog} from "/core/js/image_uploading.js";
+		import {loadImgEditor} from "/core/js/image_editing.js";
 
 		
 		document.getElementById("trigger_image_crop_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
@@ -97,13 +98,14 @@ class Field_Image extends Field {
 				return false;
 			}
 			let imageUrlChunks = img_wrapper.querySelector("img").getAttribute("src").split("/");
+			imageUrlChunks = imageUrlChunks.filter((el)=>{return el!="";});
 			if(imageUrlChunks[imageUrlChunks.length-1]=="thumb") {
 				imageUrlChunks.pop();
 			}
 			let id = imageUrlChunks[imageUrlChunks.length-1];
 
 			async function handle_img_editor() {
-				const result = await window.load_img_editor(id);
+				const result = await loadImgEditor(id);
 				//console.log(result);
 
 				if(result != 0) {
@@ -298,7 +300,7 @@ class Field_Image extends Field {
 							preview.title = e.target.title;
 							preview.closest('.selected_image_wrap').classList.add('active');
 
-							hidden_input = document.getElementById('<?php echo $this->id;?>');
+							const hidden_input = document.getElementById('<?php echo $this->id;?>');
 							hidden_input.setCustomValidity('');
 							hidden_input.value = e.target.dataset.hasimageurl ? url : media_id;
 
