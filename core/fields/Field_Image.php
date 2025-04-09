@@ -15,7 +15,6 @@ class Field_Image extends Field {
 	public function display($repeatable_template=false) {
 		//add the image editor
 		Image::add_image_js_editor();
-		Image::add_image_upload_dialog();
 		echo "<script>";
 			echo "window.max_upload_size_bytes = " . File::get_max_upload_size_bytes() . ";";
 		echo "</script>";
@@ -87,7 +86,8 @@ class Field_Image extends Field {
 
 		
 
-		<script>
+		<script type="module">
+		import {addImageUploadDialog} from "/core/js/image_uploading.js";
 
 		
 		document.getElementById("trigger_image_crop_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
@@ -137,7 +137,7 @@ class Field_Image extends Field {
 		document.getElementById("trigger_image_upload_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
 			window.image_upload_el = "<?php echo $this->id; ?>";
 			window.upload_endpoint = "<?php echo $this->upload_endpoint; ?>";
-			window.load_img_uploader();
+			addImageUploadDialog();
 		});
 	
 		window.cur_media_page = 1;

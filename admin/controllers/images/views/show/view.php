@@ -111,7 +111,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php endif; ?>
 
 <style>
-	<?php echo Image::get_uploader_zone_css(); ?>
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/style.css"); ?>
 </style>
 
