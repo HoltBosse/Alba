@@ -229,7 +229,6 @@ function doUpload(e) {
 }
 
 function initGraphicalUploaderEventListeners(elementSelector) {
-    console.log("hello from module");
     // GET THE DROP ZONE
     const uploader = document.querySelector(elementSelector);
 
