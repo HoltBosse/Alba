@@ -155,10 +155,13 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php else: ?>
 	<script>window.autoclose = false;</script>
 <?php endif; ?>
-<script>
+<script type="module">
+	import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/core/js/image_uploading.js";
+
 	<?php
-		echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/image_upload_handling.js");
 		echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/script.js");
-		echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/upload_space_handling.js");
 	?>
+
+	initGraphicalUploaderEventListeners("#upload_space");
+	initInputFileUploaderEventListeners("#regular_upload");
 </script>

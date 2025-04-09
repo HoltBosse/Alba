@@ -18,7 +18,6 @@ class Field_Image extends Field {
 		Image::add_image_upload_dialog();
 		echo "<script>";
 			echo "window.max_upload_size_bytes = " . File::get_max_upload_size_bytes() . ";";
-			echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/image_upload_handling.js");
 		echo "</script>";
 
 		// repeatable template boolean initiated in Field_Repeatable.php if inside repeatable form

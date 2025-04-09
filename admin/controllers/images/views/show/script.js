@@ -1,7 +1,5 @@
 // image click handler
-all_image_containers = document.querySelectorAll('.all_images_image_container');
-//console.log(all_image_containers);
-all_image_containers.forEach(container => {
+document.querySelectorAll('.all_images_image_container').forEach(container => {
 	container.addEventListener('click',(e)=> {
 		e.target.classList.toggle('active');
 	});

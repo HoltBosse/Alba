@@ -1,4 +1,4 @@
-const valid_image_types = {
+const validImageTypes = {
 	"image/png": true,
 	"image/webp": true,
 	"image/jpeg": true,
@@ -7,13 +7,13 @@ const valid_image_types = {
 	"image/gif": true,
 }
 
-const web_friendly_blacklist = {
+const webFriendlyBlacklist = {
 	"image/svg+xml": true,
 	"image/svg": true,
 	"image/gif": true,
 }
 
-function do_upload(e) {
+function doUpload(e) {
 	// check method
 	let myfiles;
 	if (e.type=="drop") {
@@ -30,7 +30,7 @@ function do_upload(e) {
 	let invalid_counter = 0;
 	for (let i = 0; i < myfiles.length; i++) {
 		console.log(myfiles[i].type);
-		if (!valid_image_types[myfiles[i].type]) {
+		if (!validImageTypes[myfiles[i].type]) {
             // skip anything but png or jpg
 			invalid_counter++;
             continue;
@@ -80,7 +80,7 @@ function do_upload(e) {
 	// this allows browser html form checking to trigger
     upload_form.innerHTML = '<button style="display:none !important" class="button" id="image_upload_form_submit" type="submit">Upload</button>';
     for (let i = 0; i < myfiles.length; i++) {
-		if (!valid_image_types[myfiles[i].type]) {
+		if (!validImageTypes[myfiles[i].type]) {
             // skip anything but png or jpg
             continue;
         }
@@ -105,7 +105,7 @@ function do_upload(e) {
 
 						</select>
 					</div>
-                    <div class='field' style='${(web_friendly_blacklist[myfiles[i].type] ? "display:none;" : "")}'>
+                    <div class='field' style='${(webFriendlyBlacklist[myfiles[i].type] ? "display:none;" : "")}'>
                         <label>Web Friendly</label>
                         <select name='web_friendly[]'>
                             <option selected value='1'>Yes</option>
@@ -227,3 +227,40 @@ function do_upload(e) {
 		modal.remove();
 	});
 }
+
+function initGraphicalUploaderEventListeners(elementSelector) {
+    console.log("hello from module");
+    // GET THE DROP ZONE
+    const uploader = document.querySelector(elementSelector);
+
+    // STOP THE DEFAULT BROWSER ACTION FROM OPENING THE FILE
+    uploader.addEventListener("dragover", (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        e.target.classList.add('ready');
+    });
+
+    uploader.addEventListener("dragleave", (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        e.target.classList.remove('ready');
+    });
+
+    // ADD OUR OWN UPLOAD ACTION
+    uploader.addEventListener("drop", (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        e.target.classList.remove('ready');
+        document.querySelector("#image_uploader")?.remove();
+        doUpload(e);
+    });
+}
+
+function initInputFileUploaderEventListeners(elementSelector) {
+    document.querySelector(elementSelector).addEventListener('change', (e)=>{
+        document.querySelector("#image_uploader")?.remove();
+        doUpload(e);
+    });
+}
+
+export {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners, doUpload}

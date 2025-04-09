@@ -1,8 +1,6 @@
 x ./admin/controllers/content/views/order/script.js
 y ./admin/controllers/pages/views/edit/script.js
-y ./admin/controllers/images/views/show/image_upload_handling.js
 ? ./admin/controllers/images/views/show/script.js
-y ./admin/controllers/images/views/show/upload_space_handling.js
 ? ./admin/js/menu_widget_admin.js
 ? ./admin/templates/clean/js/script.js
 x ./widgets/crowdriff/script.js

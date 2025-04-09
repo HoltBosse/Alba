@@ -267,7 +267,9 @@ class Image {
             <style>
                 <?php echo Image::get_uploader_zone_css(); ?>
             </style>
-            <script>
+            <script type="module">
+                import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/core/js/image_uploading.js";
+
                 window.load_img_uploader = function() {
                     let markup = `
                         <div class="modal-background"></div>
@@ -295,7 +297,8 @@ class Image {
                     });
                     document.body.appendChild(modal);
 
-                    <?php echo file_get_contents(CMSPATH . "/admin/controllers/images/views/show/upload_space_handling.js"); ?>
+                    initGraphicalUploaderEventListeners("#upload_space");
+                    initInputFileUploaderEventListeners("#regular_upload");
                 }
 
             </script>
