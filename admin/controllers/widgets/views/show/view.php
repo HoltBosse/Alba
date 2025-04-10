@@ -36,7 +36,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	Component::addon_page_title("Widgets", null, $rightContent);
 ?>
 
-<form method='post'>
+<form method='post' style="margin-bottom: 0;">
 	<?php
 		$searchForm->display_front_end();
 	?>
