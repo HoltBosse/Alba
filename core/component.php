@@ -105,6 +105,17 @@ class Component {
                     }
                 }
             </style>
+            <script>
+                document.addEventListener("adminRowSelected", (e)=>{
+                    document.querySelectorAll("#<?php echo $addonButtonGroupArgs[0]; ?> button").forEach((el)=>{
+                        if(e.detail.counter > 0) {
+                            el.classList.remove("is-outlined");
+                        } else {
+                            el.classList.add("is-outlined");
+                        }
+                    });
+                });
+            </script>
         <?php
 
         echo "<div class='addon_button_toolbar'>";
