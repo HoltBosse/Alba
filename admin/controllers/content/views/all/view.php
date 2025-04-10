@@ -23,8 +23,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	}
 </style>
 
-<form id='searchform' action="" method="GET"></form>
-
 <?php
 	$content_type_fields = Content::get_content_type_fields($content_type_filter);
 
@@ -34,6 +32,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	Component::addon_page_title($header, $byline, $rightContent);
 ?>
 
+<form id='searchform' action="" method="GET" style="margin: 0;">
 	<div id='content_search_controls' class='flex'>
 
 		<div class="field">
@@ -128,6 +127,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 		
 	</div>
+</form>
 
 <?php if (!$all_content):?>
 	<h2>No content to show!</h2>

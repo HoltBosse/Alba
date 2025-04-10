@@ -6,7 +6,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/users/views/default/style.css"); ?>
 </style>
 
-<form id='searchform' action="" method="GET"></form>
 <?php
 	$header = "Users: " . $group_name;
 	$rightContent = "<a href='" . Config::uripath() . "/admin/users/edit' class='button is-primary pull-right'>
@@ -18,6 +17,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	Component::addon_page_title($header, null, $rightContent);
 ?>
 
+<form id='searchform' action="" method="GET" style="margin: 0;">
 	<div id='content_search_controls' class='flex'>
 
 		<div class="field">
@@ -99,6 +99,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			</div>
 		</div>
 	</div>
+</form>
+
 <form action='' method='post' name='user_action' id='user_action_form'>
 	<?php
 		$addonButtonGroupArgs = ["user_operations", "users", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]];
