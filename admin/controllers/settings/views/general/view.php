@@ -1,7 +1,8 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
+
+Component::addon_page_title("General Options");
 ?>
-<h1 class='title is-1'>General Options</h1>
 
 <?php 
 //$debug = Configuration::get_configuration_value('general_options','debug'); CMS::pprint_r ($debug);

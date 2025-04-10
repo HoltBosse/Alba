@@ -7,23 +7,16 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </style>
 
 <form id='searchform' action="" method="GET"></form>
-
-<form action='' method='post' name='user_action' id='user_action_form'>
-	<h1 class='title is-1'>
-		Users: <?php echo $group_name; ?>
-		<a href='<?php echo Config::uripath() . "/admin/users/edit"?>' class="button is-primary pull-right">
-			<span class="icon is-small">
-				<i class="fas fa-check"></i>
-			</span>
-			<span>New User</span>
-		</a>
-		<!-- user operation toolbar -->
-		<div id="user_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::uripath();?>/admin/users/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/users/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/users/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
-		</div>
-	</h1>
+<?php
+	$header = "Users: " . $group_name;
+	$rightContent = "<a href='" . Config::uripath() . "/admin/users/edit' class='button is-primary pull-right'>
+		<span class='icon is-small'>
+			<i class='fas fa-check'></i>
+		</span>
+		<span>New User</span>
+	</a>";
+	Component::addon_page_title($header, null, $rightContent);
+?>
 
 	<div id='content_search_controls' class='flex'>
 
@@ -106,7 +99,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			</div>
 		</div>
 	</div>
-
+<form action='' method='post' name='user_action' id='user_action_form'>
+	<?php
+		$addonButtonGroupArgs = ["user_operations", "users", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]];
+		Component::addon_button_toolbar($addonButtonGroupArgs);
+	?>
 	<table id='all_users_table' class="table">
 		<thead>
 			<th>Status</th>

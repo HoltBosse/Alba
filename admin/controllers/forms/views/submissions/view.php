@@ -17,7 +17,8 @@ $urlQueryParams["exportcsv"]=1;
 $urlPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 $exportUrl = $urlPath . "?" . http_build_query($urlQueryParams);
 
-echo "<h1 style='display: flex; justify-content: space-between;' class='title is-1'>$titleText <a href='$exportUrl' class='button'>Export All</a></h1>";
+$rightContent = "<a href='$exportUrl' class='button'>Export All</a>";
+Component::addon_page_title($titleText, null, $rightContent);
 
 echo "<form>";
     $searchFieldsForm->display_front_end();

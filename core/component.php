@@ -73,16 +73,93 @@ class Component {
     }
 
     public static function addon_button_group($id, $location, $buttons=["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]) {
-        echo "<div id='$id' class='pull-right buttons has-addons'>";
+        echo "<div id='$id' class='buttons has-addons'>";
             foreach($buttons as $button=>$class) {
                 echo    "<button
                             formaction='" . Config::uripath() . "/admin/$location/action/$button'
-                            class='button is-$class'
+                            class='button is-$class is-small is-outlined'
                             type='submit'
                             " . ($button=="delete" ? "onclick='return window.confirm(\"Are you sure?\")'" : "") . "
                         >" . ucwords($button) . "</button>";
             }
         echo "</div>";
+    }
+
+    public static function addon_button_toolbar($addonButtonGroupArgs, $leftContent="") {
+        ?>
+            <style>
+                .addon_button_toolbar {
+                    position: sticky;
+                    top: 0;
+                    display: flex;
+                    gap: 1rem;
+                    justify-content: space-between;
+                    padding: 1rem 0;
+                    z-index: 1;
+                    background-color: var(--bulma-body-background-color);
+                }
+
+                @media only screen and (max-width: 1024px) {
+                    .addon_button_toolbar {
+                        top: calc(var(--bulma-navbar-height) + 1.4rem);
+                    }
+                }
+            </style>
+        <?php
+
+        echo "<div class='addon_button_toolbar'>";
+            echo "<div>";
+                echo $leftContent;
+            echo "</div>";
+            Component::addon_button_group(...$addonButtonGroupArgs);
+        echo "</div>";
+    }
+
+    public static function addon_page_title($header, $byline=null, $rightContent=null) {
+        ?>
+            <style>
+                .addon_page_title_wrapper {
+                    display: flex;
+                    gap: 1rem;
+                    justify-content: space-between;
+
+                    &:has(.subheading) h1 {
+                        margin-bottom: 0.5rem; 
+                    }
+
+                    &:not(.subheading) {
+                        margin-bottom: var(--bulma-block-spacing);
+                    }
+
+                    .subheading {
+                        display: block;
+                        font-size: 1.5rem;
+                        font-weight: normal;
+                    }
+                }
+
+                @media only screen and (max-width: 1024px) {
+                    .addon_page_title_wrapper {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+            <div class="addon_page_title_wrapper">
+                <div>
+                    <h1 class="title is-1"><?php echo $header; ?></h1>
+                    <?php
+                        if($byline) {
+                            echo "<span class='subheading'>$byline</span>";
+                        }
+                    ?>
+                </div>
+                <?php
+                    if($rightContent) {
+                        echo "<div>$rightContent</div>";
+                    }
+                ?>
+            </div>
+        <?php
     }
 
     public static function render_admin_nav($navigation, $enable_overrides=true) {
@@ -140,7 +217,7 @@ class Component {
                 <div class="navbar-dropdown">
                     <?php
                         foreach($menu["links"] as $label=>$url) {
-                            if($label=="hr") {
+                            if($label=="hr" || $url=="hr") {
                                 echo "<hr class='dropdown-divider'>";
                             } else {
                                 echo "<a class='navbar-item' href='" . Config::uripath() . "$url'>" . ucwords($label) . "</a>";

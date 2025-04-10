@@ -8,20 +8,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <form id='searchform' action="" method="GET"></form>
 
-
-
-<form action='' method='post' name='redirect_action' id='redirect_action_form'>
-<h1 class='title is-1'>Redirects
-	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/redirects/edit/new'>New Redirect</a>
-	<!-- content operation toolbar -->
-	<div id="content_operations" class="pull-right buttons has-addons">
-		<button formaction='<?php echo Config::uripath();?>/admin/redirects/action/publish' class='button is-primary' type='submit'>Publish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/redirects/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/redirects/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
-	</div>
-</h1>
-
-	<?php //CMS::pprint_r ($filters); ?>
+<?php
+	$rightContent = "<a class='is-primary pull-right button btn' href='" . Config::uripath() . "/admin/redirects/edit/new'>New Redirect</a>";
+	Component::addon_page_title("Redirects", null, $rightContent);
+?>
 
 	<div id='content_search_controls' class='flex'>
 
@@ -51,12 +41,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				</div>
 			</div>
 		</div>
-
-		<script>
-		new SlimSelect({
-			select:'#content_search_tags'
-		});
-		</script>
 		
 		<div class='field'>
 			<label class="label">&nbsp;</label>
@@ -79,11 +63,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		
 	</div>
 
+<form action='' method='post' name='redirect_action' id='redirect_action_form'>
 
-	
-	
-
-
+<?php
+	$addonButtonGroupArgs = ["content_operations", "redirects"];
+	Component::addon_button_toolbar($addonButtonGroupArgs);
+?>
 
 <?php if (!$redirects):?>
 	<h2>No redirects found.</h2>

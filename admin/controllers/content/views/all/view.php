@@ -24,17 +24,15 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </style>
 
 <form id='searchform' action="" method="GET"></form>
-<form id='orderform' action="" methpd="GET"></form>
 
-<form action='' method='post' name='content_action' id='content_action_form'>
-<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
-<h1 class='title is-1'>All <?php echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";?>Content
-	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Content</a>
-	<span class='unimportant subheading'><?php $content_type_fields = Content::get_content_type_fields($content_type_filter);  echo $content_type_fields->description; ?></span>
-	<?php Component::addon_button_group("content_operations", "content", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]); ?>
-</h1>
+<?php
+	$content_type_fields = Content::get_content_type_fields($content_type_filter);
 
-	<?php //CMS::pprint_r ($filters); ?>
+	$header = "All &ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; Content";
+	$byline = $content_type_fields->description;
+	$rightContent = "<a class='is-primary button btn' href='" . Config::uripath() . "/admin/content/edit/new/$content_type_filter'>New &ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; Content</a>";
+	Component::addon_page_title($header, $byline, $rightContent);
+?>
 
 	<div id='content_search_controls' class='flex'>
 
@@ -134,8 +132,15 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php if (!$all_content):?>
 	<h2>No content to show!</h2>
 <?php else:?>
+	<form style="margin: 0;" id='orderform' action="" methpd="GET"></form>
 
-	<a class='button is-primary is-outlined is-small' href='<?php echo Config::uripath() . "/admin/content/order/{$content_type_filter}";?>'>MANAGE ORDERING</a>
+	<form action='' method='post' name='content_action' id='content_action_form'>
+	<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
+	<?php
+		$leftContent = "<a class='button is-primary is-outlined is-small' href='" . Config::uripath() . "/admin/content/order/{$content_type_filter}'>MANAGE ORDERING</a>";
+		$addonButtonGroupArgs = ["content_operations", "content", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]];
+		Component::addon_button_toolbar($addonButtonGroupArgs, $leftContent);
+	?>
 
 	<table class='table'>
 		<thead>

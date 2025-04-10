@@ -8,40 +8,39 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <form id='searchform' action="" method="GET"></form>
 
-<form action='' method='post' name='content_action' id='content_action_form'>
-<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
-<h1 class='title is-1'>All <?php if ($content_type_filter) { echo "&ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; ";}?>Categories
-	<?php if ($content_type_filter):?>
+<?php
+	ob_start();
+	if ($content_type_filter) {
+?>
 	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/categories/edit/new/<?php echo $content_type_filter;?>'>New &ldquo;<?php echo Content::get_content_type_title($content_type_filter);?>&rdquo; Category</a>
-	
-	<?php else: ?>
-		<div class='field pull-right'>
-			<label class='label'>New Category</label>
-			<div class='control'>
-				<div class='select'>
-					<select onchange="choose_new_content_type();" data-widget_type_id='0' id='new_content_type_selector'>
-						<option value='666'>Make selection:</option>
-						<?php foreach ($all_content_types as $content_type):?>
+<?php
+	} else {
+?>
+	<div class='field pull-right'>
+		<label class='label'>New Category</label>
+		<div class='control'>
+			<div class='select'>
+				<select onchange="choose_new_content_type();" data-widget_type_id='0' id='new_content_type_selector'>
+					<option value='666'>Make selection:</option>
+					<?php foreach ($all_content_types as $content_type):?>
 						<option value='<?php echo $content_type->id;?>'><?php echo $content_type->title;?></option>
-						<?php endforeach; ?>
-					</select>
-					<script>
+					<?php endforeach; ?>
+				</select>
+				<script>
 					function choose_new_content_type() {
 						new_id = document.getElementById("new_content_type_selector").value;
 						window.location.href = "<?php echo Config::uripath();?>/admin/categories/edit/new/" + new_id;
 					}
-					</script>
-				</div>
+				</script>
 			</div>
 		</div>
-	<?php endif; ?>
-	<!-- content operation toolbar -->
-	<div id="content_operations" class="pull-right buttons has-addons">
-		<button formaction='<?php echo Config::uripath();?>/admin/categories/action/publish' class='button is-primary' type='submit'>Publish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/categories/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-		<button formaction='<?php echo Config::uripath();?>/admin/categories/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
 	</div>
-</h1>
+<?php
+	}
+	$rightContent = ob_get_clean();
+	$header = "All Categories";
+	Component::addon_page_title($header, null, $rightContent);
+?>
 
 	<div class="field has-addons">
 		<div class="control">
@@ -59,7 +58,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</div>
 	</div>
 
-
+<form action='' method='post' name='content_action' id='content_action_form'>
+<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
+<?php
+	$addonButtonGroupArgs = ["content_operations", "categories"];
+	Component::addon_button_toolbar($addonButtonGroupArgs);
+?>
 
 <?php if (!$all_categories):?>
 	<h2>No categories to show!</h2>
@@ -120,3 +124,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php endif; ?>
 
 </form>
+
+<script type="module">
+	import {handleAdminRows} from "/core/js/admin_row.js";
+	handleAdminRows(".content_admin_row");
+</script>
