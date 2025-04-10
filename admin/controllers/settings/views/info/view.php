@@ -48,12 +48,7 @@ function embedded_phpinfo()
         ";
 }
 
-?>
-
-<h1 class='title is-1'>System Information</h1>
-
-<?php 
-
+Component::addon_page_title("System Information");
 
 if ($native_zip) {
 	show_message ('Native Zip','Native zip handling is available. This is required for automatic update installation.','is-success');

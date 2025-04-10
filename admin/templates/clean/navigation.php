@@ -77,6 +77,8 @@ $navigation = [
             "links"=>array_merge(
                 DB::fetchall("SELECT title, CONCAT('/admin/categories/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
                 ["hr"=>"hr"],
+                ["all Categories"=>"/admin/categories/all"],
+                ["hr2"=>"hr"],
                 ["tags"=>"/admin/categories/all/-3"],
             )
         ]

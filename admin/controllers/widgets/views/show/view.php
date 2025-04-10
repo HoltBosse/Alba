@@ -5,40 +5,48 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/widgets/views/show/style.css"); ?>
 </style>
 
-<form method='post'>
+<?php
+	ob_start();
+	if ($widget_type_id) {
+?>
+	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/widgets/edit/new/<?php echo $widget_type_id;?>'>New &ldquo;<?php echo $widget_type_title;?>&rdquo; Widget</a>
+<?php } else { ?>
+	<div class='field pull-right'>
+		<label class='label'>New Widget</label>
+		<div class='control'>
+			<div class='select'>
+				<select onchange="choose_new_widget_type();" data-widget_type_id='0' id='new_widget_type_selector'>
+					<option value='666'>Make selection:</option>
+					<?php foreach ($all_widget_types as $widget_type):?>
+						<option value='<?php echo $widget_type->id;?>'><?php echo $widget_type->title;?></option>
+					<?php endforeach; ?>
+				</select>
+				<script>
+					function choose_new_widget_type() {
+						new_id = document.getElementById("new_widget_type_selector").value;
+						window.location.href = "<?php echo Config::uripath();?>/admin/widgets/edit/new/" + new_id;
+					}
+				</script>
+			</div>
+		</div>
+	</div>
+<?php
+	}
+	$rightContent = ob_get_clean();
+	Component::addon_page_title("Widgets", null, $rightContent);
+?>
+
+<form method='post' style="margin-bottom: 0;">
 	<?php
 		$searchForm->display_front_end();
 	?>
 </form>
 
 <form action='' method='post' name='widget_action' id='widget_action_form'>
-
-	<h1 class='title'><?php echo $widget_type_title; ?> Widgets
-		<?php if ($widget_type_id):?>
-			<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/widgets/edit/new/<?php echo $widget_type_id;?>'>New &ldquo;<?php echo $widget_type_title;?>&rdquo; Widget</a>
-		<?php else: ?>
-			<div class='field pull-right'>
-				<label class='label'>New Widget</label>
-				<div class='control'>
-					<div class='select'>
-						<select onchange="choose_new_widget_type();" data-widget_type_id='0' id='new_widget_type_selector'>
-							<option value='666'>Make selection:</option>
-							<?php foreach ($all_widget_types as $widget_type):?>
-							<option value='<?php echo $widget_type->id;?>'><?php echo $widget_type->title;?></option>
-							<?php endforeach; ?>
-						</select>
-						<script>
-						function choose_new_widget_type() {
-							new_id = document.getElementById("new_widget_type_selector").value;
-							window.location.href = "<?php echo Config::uripath();?>/admin/widgets/edit/new/" + new_id;
-						}
-						</script>
-					</div>
-				</div>
-			</div>
-		<?php endif; ?>
-		<?php Component::addon_button_group("widget_operations", "widgets"); ?>
-	</h1>
+	<?php
+		$addonButtonGroupArgs = ["widget_operations", "widgets"];
+		Component::addon_button_toolbar($addonButtonGroupArgs);
+	?>
 
 	<table class='table'>
 		<thead>

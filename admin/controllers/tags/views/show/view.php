@@ -7,17 +7,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <form id='searchform' action="" method="GET"></form>
 
-<form action='' method='post' name='tag_action' id='tag_action_form'>
-
-	<h1 class='title'>All Tags
-		<a class='pull-right button is-primary' href='<?php echo Config::uripath();?>/admin/tags/edit/new'>New Tag</a>
-		<!-- tag operation toolbar -->
-		<div id="tag_operations" class="pull-right buttons has-addons">
-			<button formaction='<?php echo Config::uripath();?>/admin/tags/action/publish' class='button is-primary' type='submit'>Publish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/tags/action/unpublish' class='button is-warning' type='submit'>Unpublish</button>
-			<button formaction='<?php echo Config::uripath();?>/admin/tags/action/delete' onclick='return window.confirm("Are you sure?")' class='button is-danger' type='submit'>Delete</button>
-		</div>
-	</h1>
+<?php
+	$header = "All Tags";
+	$rightContent = "<a class='pull-right button is-primary' href='" . Config::uripath() ."/admin/tags/edit/new'>New Tag</a>";
+	Component::addon_page_title($header, null, $rightContent);
+?>
 
 	<div id='tag_search_controls' class='flex'>
 
@@ -47,6 +41,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</div>
 
 	</div>
+<form action='' method='post' name='tag_action' id='tag_action_form'>
+	<?php
+		$addonButtonGroupArgs = ["tag_operations", "tags"];
+		Component::addon_button_toolbar($addonButtonGroupArgs);
+	?>
 
 	<table class='table'>
 		<thead>

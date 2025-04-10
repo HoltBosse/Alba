@@ -4,9 +4,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 echo "<style>";
     echo file_get_contents(CMSPATH . "/admin/controllers/audit/views/default/style.css");
 echo "</style>";
-?>
 
-<h1 class="title is-1">Audit Log</h1>
+Component::addon_page_title("Audit Log");
+?>
 
 <br>
 

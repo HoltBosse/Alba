@@ -6,18 +6,22 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/pages/views/default/style.css"); ?>
 </style>
 
-<form action='' method='post' name='page_action' id='page_action_form'>
-
-	<h1 class='title is-1'>
-		All Pages
-		<a href='<?php echo Config::uripath() . "/admin/pages/edit/0"?>' class="button is-primary pull-right">
-			<span class="icon is-small">
-				<i class="fas fa-check"></i>
+<?php
+	$header = "All Pages";
+	$rightContent = "<a href='" . Config::uripath() . "/admin/pages/edit/0' class='button is-primary pull-right'>
+			<span class='icon is-small'>
+				<i class='fas fa-check'></i>
 			</span>
 			<span>New Page</span>
-		</a>
-		<?php Component::addon_button_group("page_operations", "pages"); ?>
-	</h1>
+		</a>";
+	Component::addon_page_title($header, null, $rightContent);
+?>
+
+<form action='' method='post' name='page_action' id='page_action_form'>
+	<?php
+		$addonButtonGroupArgs = ["page_operations", "pages"];
+		Component::addon_button_toolbar($addonButtonGroupArgs);
+	?>
 
 	<table id='all_pages_table' class="table">
 		<thead>

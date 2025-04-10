@@ -13,8 +13,8 @@ function show_message ($heading, $text, $class) {
 </article>";
 }
 
+Component::addon_page_title("System Version and Updates");
 ?>
-<h1 class='title is-1'>System Version and Updates</h1>
 <h4 class='title is-4'>Current <?=$channel;?> version: <?php echo CMS::Instance()->version;?></h4>
 <?php if ( $latest_version_current_channel == CMS::Instance()->version ):?>
 	<h5 class='title is-5'>You are on the latest version!</h4>

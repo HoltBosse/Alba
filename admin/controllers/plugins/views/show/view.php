@@ -5,11 +5,13 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/plugins/views/show/style.css"); ?>
 </style>
 
+<?php Component::addon_page_title("Plugins"); ?>
+	
 <form action='' method='post' name='plugin_action' id='plugin_action_form'>
-
-	<h1 class='title'>Plugins
-		<?php Component::addon_button_group("plugin_operations", "plugins"); ?>
-	</h1>
+	<?php
+		$addonButtonGroupArgs = ["plugin_operations", "plugins"];
+		Component::addon_button_toolbar($addonButtonGroupArgs);
+	?>
 
 	<table class='table'>
 		<thead>
