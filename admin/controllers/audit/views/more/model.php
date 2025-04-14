@@ -2,6 +2,9 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
+if(sizeof($segments)>3) {
+    CMS::raise_404();
+}
 
 $viewmore = DB::fetch("SELECT * FROM user_actions_details WHERE id=?", ($segments[2] ?? 0));
 
