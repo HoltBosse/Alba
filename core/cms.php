@@ -276,7 +276,10 @@ final class CMS {
 
 		// db
 		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
-		$dsn = "mysql:host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";charset=" . Config::dbchar();
+		$dsn = Config::dbtype() . ":host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";";
+		if(Config::dbtype()=="mysql") {
+			$dsn .= "charset=" . Config::dbchar();
+		}
 		$options = [
 			PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
 			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
@@ -336,7 +339,7 @@ final class CMS {
 					$this->user->email = $result->email;
 					$this->user->id = $result->id;
 					// get groups
-					$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
+					$query = "SELECT * FROM groups WHERE id IN (SELECT group_id FROM user_groups WHERE user_id=?)";
 					$stmt = $this->pdo->prepare($query);
 					$stmt->execute([$session_user_id]);
 					$this->user->groups = $stmt->fetchAll();

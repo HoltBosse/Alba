@@ -43,10 +43,25 @@ class Widget {
 	}
 
 	public static function get_widgets_for_position($page_id, $position) {
-		$query = 'select id,title,type,state 
-		from widgets 
-		where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) 
-		and global_position=? and state>=0 ORDER BY ordering,id ASC';
+		$find_in_set_sub_query = "find_in_set(?, page_list)";
+		if(Config::dbtype()=="pgsql") {
+			$find_in_set_sub_query = "? = ANY(string_to_array(page_list, ','))";
+		}
+
+		$query = "SELECT id,title,type,state 
+		FROM widgets 
+		WHERE (
+			(
+				position_control=1
+				AND NOT $find_in_set_sub_query
+			)
+			OR
+			(
+				position_control=0
+				AND $find_in_set_sub_query
+			)
+		) 
+		AND global_position=? AND state>=0 ORDER BY ordering,id ASC";
 		return DB::fetchAll($query, [$page_id, $page_id, $position]);
 	}
 
