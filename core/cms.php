@@ -91,7 +91,7 @@ final class CMS {
 					$pattern = '/(' . implode('|', array_map('preg_quote', $ignore_suffixes)) . ')$/i';
 					$ignore_file = preg_match($pattern, $relative_url);
 					// check if url contains, at any position, any of the following strings and ignore for redirect storage
-					$ignore_contains = ['wp-admin','wp-content','wp-includes','wp-login', 'wp-add', '.well-known','adminer','phpmyadmin'];
+					$ignore_contains = ['wp-admin','wp-content','wp-includes','wp-login', 'wp-add', '.well-known','adminer','phpmyadmin','.git'];
 					$pattern = '/' . implode('|', array_map('preg_quote', $ignore_contains)) . '/i';
 					$ignore_request = preg_match($pattern, $relative_url);
 					if (!$ignore_file && !$ignore_request) {
