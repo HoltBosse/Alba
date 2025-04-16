@@ -1,8 +1,11 @@
-export function open_media_selector(element_id, images_per_page, cur_media_page, cur_media_searchtext, mimetypes, tags, listing_endpoint, from_richtext=false) {
+export function open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint, from_richtext=false) {
+    let cur_media_page = 1;
+    let cur_media_searchtext = null;
+
     // launch image selector
-    var media_selector = document.createElement('div');
+    const media_selector = document.createElement('div');
     media_selector.id = "media_selector";
-    media_selector.classList.add("media_selector_for_" + element_id);
+    media_selector.classList.add(`media_selector_for_${element_id}`);
     media_selector.innerHTML =`
     <div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
         <div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
@@ -28,7 +31,7 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
 
     // set up rich text editor variables if needed
     if(from_richtext) {
-        last_editor = document.querySelector('#editor_toolbar_for_' + element_id);
+        last_editor = document.querySelector(`#editor_toolbar_for_${element_id}`);
         console.log("last editor");
         console.log(last_editor);
         selected = document.getSelection(); 
@@ -36,27 +39,27 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
     }
     
     // handle click close - set up once when creating the selector
-    document.getElementById('media_selector_modal_close').addEventListener('click', function(e) {
-        e.target.closest("#media_selector").remove();
+    document.getElementById('media_selector_modal_close').addEventListener('click', (e) => {
+            e.target.closest("#media_selector").remove();
     });
 
     // add click event handler to capture child selection clicks - only need ONE handler
-    media_selector.addEventListener('click', function(e) {
+    media_selector.addEventListener('click', (e) => {
         console.log('e.target: ' , e.target);
         e.preventDefault();
         e.stopPropagation();
     
-        let selected_image = e.target.closest('.media_selector_selection');
+        const selected_image = e.target.closest('.media_selector_selection');
         if (selected_image !== null) {
-            let media_id = selected_image.dataset.id;
-            let alt = selected_image.querySelector('img').alt;
-            let title = selected_image.querySelector('img').title;
-            let url = e.target.dataset.hasimageurl ? e.target.src : `${window.uripath}/image/${media_id}/thumb`;
+            const media_id = selected_image.dataset.id;
+            const alt = selected_image.querySelector('img').alt;
+            const title = selected_image.querySelector('img').title;
+            const url = e.target.dataset.hasimageurl ? e.target.src : `${window.uripath}/image/${media_id}/thumb`;
             
             if (from_richtext) {
                 // Handle rich text editor behavior
-                let url = e.target.dataset.hasimageurl ? e.target.src : `${window.uripath}/image/${media_id}/web`;
-                let image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
+                const url = e.target.dataset.hasimageurl ? e.target.src : `${window.uripath}/image/${media_id}/web`;
+                const image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
                 // console.log("Image markup: ", image_markup);
 
                 last_editor.focus();
@@ -65,7 +68,7 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
                 document.execCommand('insertHTML',false, image_markup);
             } else {
                 // Handle non-rich text cases
-                let preview = document.getElementById('image_selector_chosen_preview_' + element_id);
+                const preview = document.getElementById(`image_selector_chosen_preview_${element_id}`);
                 preview.src = url;
                 preview.alt = alt;
                 preview.title = title;
@@ -77,32 +80,32 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
             }
     
             // remove the modal
-            let modal = selected_image.closest('.media_selector_modal');
+            const modal = selected_image.closest('.media_selector_modal');
             modal.parentNode.removeChild(modal);
         }
     });
 
     // search handler
-    document.getElementById('trigger_media_selector_search').addEventListener('click', function(e) {
-        var searchtext = document.getElementById('media_selector_modal_search').value;
+    document.getElementById('trigger_media_selector_search').addEventListener('click', (e) => {
+        const searchtext = document.getElementById('media_selector_modal_search').value;
         cur_media_page = 1;
         cur_media_searchtext = searchtext ?? null;
         fetch_images(searchtext); // string, no tags
     });
     
     // press return
-    document.getElementById('media_selector_modal_search').addEventListener('keyup', function(e) {
+    document.getElementById('media_selector_modal_search').addEventListener('keyup', (e) => {
         if (e.key === "Enter") {
             cur_media_page = 1;
-            var searchtext = document.getElementById('media_selector_modal_search').value;
+            const searchtext = document.getElementById('media_selector_modal_search').value;
             cur_media_searchtext = searchtext ?? null;
             fetch_images(searchtext); // string, no tags
         }
     });
     
     // escape key to close
-    document.addEventListener('keyup', function(e) {
-        let media_selector = document.getElementById('media_selector');
+    document.addEventListener('keyup', (e) => {
+        const media_selector = document.getElementById('media_selector');
         if (media_selector) {
             if (e.key == "Escape") {
                 media_selector.parentNode.removeChild(media_selector);
@@ -111,7 +114,7 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
     });
     
     // handle clear
-    document.getElementById('clear_media_selector_search').addEventListener('click', function(e) {
+    document.getElementById('clear_media_selector_search').addEventListener('click', (e) => {
         document.getElementById('media_selector_modal_search').value = "";
         cur_media_searchtext = null;
         cur_media_page = 1;
@@ -119,12 +122,12 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
     });
     
     // handle pages
-    document.getElementById('next_page').addEventListener('click', function(e) {
+    document.getElementById('next_page').addEventListener('click', (e) => {
         cur_media_page++;
         fetch_images(cur_media_searchtext);
     });
     
-    document.getElementById('prev_page').addEventListener('click', function(e) {
+    document.getElementById('prev_page').addEventListener('click', (e) => {
         cur_media_page--;
         if (cur_media_page == 0) {
             cur_media_page = 1;
@@ -137,9 +140,9 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
     fetch_images(); // no search, all tags
 
     function fetch_images(searchtext=null, taglist=null) {
-        let fetchParams = {
+        const fetchParams = {
             "action": "list_images",
-            "page": cur_media_page ?? 1,
+            "page": cur_media_page,
             "images_per_page": images_per_page ?? 50,
             "searchtext": searchtext ?? null,
             ...(mimetypes ? { mimetypes } : {}),
@@ -149,7 +152,7 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
         // console.log("fetching images");
         // console.log(fetchParams);
 
-        let fetchFormData = new FormData();
+        const fetchFormData = new FormData();
         Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
     
         // fetch images
@@ -160,13 +163,13 @@ export function open_media_selector(element_id, images_per_page, cur_media_page,
         .then((res) => res.json())
         .then((data) => {
             // console.log(data);
-            var image_list = data;
-            var image_list_markup = "<ul class='media_selector_list single'>";
+            const image_list = data;
+            let image_list_markup = "<ul class='media_selector_list single'>";
             if (image_list.images.length == 0) {
                 image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
             }
             image_list.images.forEach(image => {
-                let datasetattribute = image.imageurl ? " data-hasimageurl='true'" : "";
+                const datasetattribute = image.imageurl ? " data-hasimageurl='true'" : "";
                 image_list_markup += `
                 <li>
                     <a style='position:relative;' class='media_selector_selection' data-id='${image.id}'>

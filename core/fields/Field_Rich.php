@@ -646,8 +646,6 @@ class Field_Rich extends Field {
 								//alert('choose image');
 								// get variables for media_selector()
                                 let element_id = "<?php echo $this->id; ?>";
-                                let cur_media_page = 1;
-                                let cur_media_searchtext = null;
                                 let images_per_page = <?php echo $this->images_per_page ?? 50;?>;
                                 let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
                                 let tags = <?php echo json_encode($this->tags);?>;
@@ -655,7 +653,7 @@ class Field_Rich extends Field {
 
 								
 								// launch image selector
-								open_media_selector(element_id, images_per_page, cur_media_page, cur_media_searchtext, mimetypes, tags, listing_endpoint, true);
+								open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint, true);
 
 								let runNormal = false;
 								if (runNormal) {

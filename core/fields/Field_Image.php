@@ -143,8 +143,6 @@ class Field_Image extends Field {
 
 		// get variables for media_selector()
 		let element_id = "<?php echo $this->id; ?>";
-		let cur_media_page = 1;
-		let cur_media_searchtext = null;
 		let images_per_page = <?php echo $this->images_per_page; ?>;
 		let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
 		let tags = <?php echo json_encode($this->tags);?>;
@@ -153,7 +151,7 @@ class Field_Image extends Field {
 		
 		document.getElementById('trigger_image_selector_' + element_id).addEventListener('click', e => {
 			// open media selector (choose new image)
-			open_media_selector(element_id, images_per_page, cur_media_page, cur_media_searchtext, mimetypes, tags, listing_endpoint);
+			open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint);
 		});
 
 		</script>
