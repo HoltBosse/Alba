@@ -1,3 +1,63 @@
+function fetch_images(searchtext=null, page, perPage, mimetypes, listingEndpoint, tags, media_selector) {
+    const fetchParams = {
+        "action": "list_images",
+        "page": page,
+        "images_per_page": perPage ?? 50,
+        "searchtext": searchtext ?? null,
+        ...(mimetypes ? { mimetypes } : {}),
+        ...(tags ? { tags } : {})
+    };
+
+    console.log("fetchParams: ");
+    console.log(fetchParams);
+
+    const fetchFormData = new FormData();
+    Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
+
+    // fetch images
+    fetch(listingEndpoint, {
+        method: "POST",
+        body: fetchFormData,
+    }).then((res) => res.json()).then((data) => {
+        // console.log(data);
+        const image_list = data;
+        let image_list_markup = "<ul class='media_selector_list single'>";
+        if (image_list.images.length == 0) {
+            image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
+        }
+        image_list.images.forEach(image => {
+            const datasetattribute = image.imageurl ? " data-hasimageurl='true'" : "";
+            image_list_markup += `
+            <li>
+                <a style='position:relative;' class='media_selector_selection' data-id='${image.id}'>
+                <aside style='font-size:0.75em; display:block; position:absolute; top:0px; right:0px; padding:0.25em 0.5em; background:rgba(0,0,0,0.5); color:#ddd;' class='media_size'>${image.width} x ${image.height}</aside>
+                <img title='${image.title}' alt='${image.alt}' ${datasetattribute} src='${image.imageurl ? image.imageurl : `${window.uripath}/image/${image.id}/thumb`}'>
+                <span class='media_selector_info'>${image.title}</span>
+                </a>
+            </li>`;
+        });
+        image_list_markup += "</ul>";
+        media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
+
+        // update page buttons
+        if (image_list.images.length < perPage) {
+            document.getElementById('next_page').setAttribute('disabled', true); 
+        }
+        else {
+            document.getElementById('next_page').removeAttribute('disabled');
+        }
+        if (page == 1) {
+            document.getElementById('prev_page').setAttribute('disabled', true);
+        }
+        else {
+            document.getElementById('prev_page').removeAttribute('disabled');
+        }
+    })
+    .catch((error) => {
+        console.error("An error occurred:", error.name, error.message, error.stack);
+    });
+} //end fetch_images()
+
 export function open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint, from_richtext=false) {
     let cur_media_page = 1;
     let cur_media_searchtext = null;
@@ -90,7 +150,7 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
         const searchtext = document.getElementById('media_selector_modal_search').value;
         cur_media_page = 1;
         cur_media_searchtext = searchtext ?? null;
-        fetch_images(searchtext); // string, no tags
+        fetch_images(searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, media_selector); // string, no tags
     });
     
     // press return
@@ -99,7 +159,7 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
             cur_media_page = 1;
             const searchtext = document.getElementById('media_selector_modal_search').value;
             cur_media_searchtext = searchtext ?? null;
-            fetch_images(searchtext); // string, no tags
+            fetch_images(searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, media_selector); // string, no tags
         }
     });
     
@@ -118,13 +178,13 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
         document.getElementById('media_selector_modal_search').value = "";
         cur_media_searchtext = null;
         cur_media_page = 1;
-        fetch_images(); // string, no tags, num pages, always page 1
+        fetch_images(null, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, media_selector); // string, no tags, num pages, always page 1
     });
     
     // handle pages
     document.getElementById('next_page').addEventListener('click', (e) => {
         cur_media_page++;
-        fetch_images(cur_media_searchtext);
+        fetch_images(cur_media_searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, media_selector); // updated to include current page
     });
     
     document.getElementById('prev_page').addEventListener('click', (e) => {
@@ -133,71 +193,17 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
             cur_media_page = 1;
             document.getElementById('prev_page').setAttribute('disabled', true);
         }
-        fetch_images(cur_media_searchtext);
+        fetch_images(cur_media_searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, media_selector); // updated to include current page
     });
 
+    console.log("cur_media_page: ", cur_media_page);
+    console.log("cur_media_searchtext: ", cur_media_searchtext);
+    console.log("mimetypes: ", mimetypes);
+    console.log("tags: ", tags);
+    console.log("listing_endpoint: ", listing_endpoint);
+    console.log("element_id: ", element_id);
+    console.log("images_per_page: ", images_per_page);
+
     // Do initial image load
-    fetch_images(); // no search, all tags
-
-    function fetch_images(searchtext=null, taglist=null) {
-        const fetchParams = {
-            "action": "list_images",
-            "page": cur_media_page,
-            "images_per_page": images_per_page ?? 50,
-            "searchtext": searchtext ?? null,
-            ...(mimetypes ? { mimetypes } : {}),
-            ...(tags ? { tags } : {})
-        };
-
-        // console.log("fetching images");
-        // console.log(fetchParams);
-
-        const fetchFormData = new FormData();
-        Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
-    
-        // fetch images
-        fetch(listing_endpoint, {
-            method: "POST",
-            body: fetchFormData,
-        })
-        .then((res) => res.json())
-        .then((data) => {
-            // console.log(data);
-            const image_list = data;
-            let image_list_markup = "<ul class='media_selector_list single'>";
-            if (image_list.images.length == 0) {
-                image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
-            }
-            image_list.images.forEach(image => {
-                const datasetattribute = image.imageurl ? " data-hasimageurl='true'" : "";
-                image_list_markup += `
-                <li>
-                    <a style='position:relative;' class='media_selector_selection' data-id='${image.id}'>
-                    <aside style='font-size:0.75em; display:block; position:absolute; top:0px; right:0px; padding:0.25em 0.5em; background:rgba(0,0,0,0.5); color:#ddd;' class='media_size'>${image.width} x ${image.height}</aside>
-                    <img title='${image.title}' alt='${image.alt}' ${datasetattribute} src='${image.imageurl ? image.imageurl : `${window.uripath}/image/${image.id}/thumb`}'>
-                    <span class='media_selector_info'>${image.title}</span>
-                    </a>
-                </li>`;
-            });
-            image_list_markup += "</ul>";
-            media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
-
-            // update page buttons
-            if (image_list.images.length < images_per_page) {
-                document.getElementById('next_page').setAttribute('disabled', true); 
-            }
-            else {
-                document.getElementById('next_page').removeAttribute('disabled');
-            }
-            if (cur_media_page == 1) {
-                document.getElementById('prev_page').setAttribute('disabled', true);
-            }
-            else {
-                document.getElementById('prev_page').removeAttribute('disabled');
-            }
-        })
-        .catch((error) => {
-            console.error("An error occurred:", error.name, error.message, error.stack);
-        });
-    } //end fetch_images()
+    fetch_images(cur_media_searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, media_selector); // no search, all tags
 }
