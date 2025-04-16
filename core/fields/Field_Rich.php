@@ -142,7 +142,8 @@ class Field_Rich extends Field {
 			border: 2px dashed red;
 		}
 		</style>
-		<script>
+		<script type="module">
+		import {open_media_selector} from "/core/js/media_selector.js";
 			// TODO: make id/agnostic for repeatable + live additions
 			document.addEventListener("DOMContentLoaded", function(){
 
@@ -151,15 +152,15 @@ class Field_Rich extends Field {
 					// with multiple editor fields / repeatables
 					document.addEventListener('input',function(e){
 						if (e.target.classList.contains('editor')) {
-							//console.log('INPUT DETECTED IN EDITOR');
+							// console.log('INPUT DETECTED IN EDITOR');
 							// move markup to hidden textarea
-							raw = e.target.innerHTML; 
-							textarea = e.target.closest('.control').querySelector('textarea');
+							let raw = e.target.innerHTML; 
+							let textarea = e.target.closest('.control').querySelector('textarea');
 							textarea.value = raw; 
 						}
 						if (e.target.classList.contains('editor_raw')) {
 							// move textarea to markup in editable on any change
-							raw = e.target.value;
+							let raw = e.target.value;
 							e.target.closest('.control').querySelector('.editor').innerHTML = raw;
 						}
 					});
@@ -234,13 +235,14 @@ class Field_Rich extends Field {
 							window.this_editor = e.target.closest('.control').querySelector('.editor');
 							window.this_textarea = e.target.closest('.control').querySelector('textarea');
 
+							let editor_button;
 							if (e.target.classList.contains('fa')) {
 								editor_button = e.target.closest('.editor_button');
 							}
 							else {
 								editor_button = e.target;
 							}
-							command = editor_button.dataset.command;
+							const command = editor_button.dataset.command;
 							console.log('Command: ',command);
 
 							if (editor_button.classList.contains('toggle_editor_raw')) {
@@ -642,7 +644,22 @@ class Field_Rich extends Field {
 							
 							else if (command=='img') {
 								//alert('choose image');
+								// get variables for media_selector()
+                                let element_id = "<?php echo $this->id; ?>";
+                                let cur_media_page = 1;
+                                let cur_media_searchtext = null;
+                                let images_per_page = <?php echo $this->images_per_page ?? 50;?>;
+                                let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
+                                let tags = <?php echo json_encode($this->tags);?>;
+                                let listing_endpoint = '<?php echo Config::uripath();?>/image/list_images';
+
+								
 								// launch image selector
+								open_media_selector(element_id, images_per_page, cur_media_page, cur_media_searchtext, mimetypes, tags, listing_endpoint, true);
+
+								let runNormal = false;
+								if (runNormal) {
+								console.log("hi	running");
 								var media_selector = document.createElement('div');
 								media_selector.id = "editor_media_selector";
 								media_selector.innerHTML =`
@@ -666,7 +683,13 @@ class Field_Rich extends Field {
 
 								// remember the editor to refocus for image insertion
 								window.last_editor = document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>');
+								console.log("window.last editor below");
+								console.log(window.last_editor);
+								console.log("window.last editor end")
 								window.sel = document.getSelection(); 
+								console.log("window.selected below");
+								console.log(window.sel);
+								console.log("window.selected end");
 								window.saved = [ window.sel.focusNode, window.sel.focusOffset ];
 
 								// handle click close
@@ -773,6 +796,8 @@ class Field_Rich extends Field {
 										<?php echo $this->tags ? ',"tags": "' . "$this->tags" . '"' : "";?>
 									};
 
+                                    console.log(fetchParams);
+
 									let fetchFormData = new FormData();
 									Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
 
@@ -838,7 +863,7 @@ class Field_Rich extends Field {
 									}).catch((error) => {
 										console.log(error);
 									});
-								}
+								}}
 							}
 
 							else if (command=='toggle_external_link') {
