@@ -1,4 +1,4 @@
-function fetch_images(searchtext=null, page, perPage, mimetypes, listingEndpoint, tags, media_selector) {
+function fetch_images(searchtext, page, perPage, mimetypes, listingEndpoint, tags, media_selector) {
     const fetchParams = {
         "action": "list_images",
         "page": page,
