@@ -16,8 +16,9 @@ class Field_Turnstile extends Field {
 
 	public function validate() {
 		
-		$this->default = Input::getvar('cf-turnstile-response',"STRING",false);
+		$this->default = Input::getvar('cf-turnstile-response',"RAW",false);
 		if ($this->is_missing()) {
+			CMS::log("turnstile field failed validation due to missing check");
 			return false;
 		}
 		// get cloudflare response
@@ -42,6 +43,7 @@ class Field_Turnstile extends Field {
 		$captcha_success=json_decode($verify);
 		//CMS::log(print_r($captcha_success, true));
 		if ($captcha_success->success==false) {
+			CMS::log("turnstile field failed - response: " . print_r ($captcha_success,true));
 			CMS::Instance()->queue_message('Failed Cloudflare test','danger');
 			return false;
 		}
@@ -54,6 +56,6 @@ class Field_Turnstile extends Field {
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 
-		$this->filter = $config->filter ?? 'STRING';
+		$this->filter = $config->filter ?? 'RAW';
 	}
 }
