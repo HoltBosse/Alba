@@ -143,7 +143,7 @@ class Field_Rich extends Field {
 		}
 		</style>
 		<script type="module">
-		import {open_media_selector} from "/core/js/media_selector.js";
+		import {openMediaSelector} from "/core/js/media_selector.js";
 			// TODO: make id/agnostic for repeatable + live additions
 			document.addEventListener("DOMContentLoaded", function(){
 
@@ -643,29 +643,29 @@ class Field_Rich extends Field {
 							}
 							
 							else if (command=='img') {
-								// get variables for media_selector()
-                                let element_id = "<?php echo $this->id; ?>";
-                                let images_per_page = <?php echo $this->images_per_page ?? 50;?>;
-                                let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
-                                let tags = <?php echo json_encode($this->tags);?>;
-                                let listing_endpoint = '<?php echo Config::uripath();?>/image/list_images';
+								// get variables for openMediaSelector()
+								let elementId = "<?php echo $this->id; ?>";
+								let imagesPerPage = <?php echo $this->images_per_page ?? 50;?>;
+								let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
+								let tags = <?php echo json_encode($this->tags);?>;
+								let listingEndpoint = '<?php echo Config::uripath();?>/image/list_images';
 								
 								// set up rich editor variables
-								let last_editor = document.querySelector(`#editor_toolbar_for_${element_id}`);
+								let lastEditor = document.querySelector(`#editor_toolbar_for_${elementId}`);
 								let selected = document.getSelection(); 
-								let saved = [ selected.focusNode, selected.focusOffset ];
+								let saved = [selected.focusNode, selected.focusOffset];
 
 								// launch image selector
-								const mediaSelector = open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint, true);
+								const mediaSelector = openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint);
 								
 								mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
 									const url = mediaE.detail.url + "/web";
-									const image_markup = `<img alt="${mediaE.detail.alt}" title="${mediaE.detail.title}" class="rich_image" data-media_id="${mediaE.detail.mediaId}" data-size="web" src="${url}"/>`;
+									const imageMarkup = `<img alt="${mediaE.detail.alt}" title="${mediaE.detail.title}" class="rich_image" data-mediaId="${mediaE.detail.mediaId}" data-size="web" src="${url}"/>`;
 									
 									// focus back on the editor and insert the HTML at the saved position
-									last_editor.focus();
+									lastEditor.focus();
 									selected.collapse(saved[0], saved[1]);
-									document.execCommand('insertHTML', false, image_markup);
+									document.execCommand('insertHTML', false, imageMarkup);
 								});
 							}
 

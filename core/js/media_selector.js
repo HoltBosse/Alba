@@ -1,8 +1,8 @@
-function fetch_images(searchtext, page, perPage, mimetypes, listingEndpoint, tags, mediaSelector) {
+function fetchImages(searchtext, page, perPage, mimetypes, listingEndpoint, tags, mediaSelector) {
     const fetchParams = {
         "action": "list_images",
         "page": page,
-        "images_per_page": perPage ?? 50,
+        "imagesPerPage": perPage ?? 50,
         "searchtext": searchtext ?? null,
         ...(mimetypes ? { mimetypes } : {}),
         ...(tags ? { tags } : {})
@@ -54,14 +54,14 @@ function fetch_images(searchtext, page, perPage, mimetypes, listingEndpoint, tag
     });
 }
 
-export function open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint, from_richtext=false) {
-    let cur_media_page = 1;
-    let cur_media_searchtext = null;
+export function openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint) {
+    let curMediaPage = 1;
+    let curMediaSearchtext = null;
 
     // launch image selector
     const mediaSelector = document.createElement('div');
     mediaSelector.id = "media_selector";
-    mediaSelector.classList.add(`media_selector_for_${element_id}`);
+    mediaSelector.classList.add(`media_selector_for_${elementId}`);
     mediaSelector.innerHTML =`
     <div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
         <div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
@@ -121,18 +121,18 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
     // search handler
     mediaSelector.querySelector('#trigger_media_selector_search').addEventListener('click', (e) => {
         const searchtext = mediaSelector.querySelector('#media_selector_modal_search').value;
-        cur_media_page = 1;
-        cur_media_searchtext = searchtext ?? null;
-        fetch_images(searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, mediaSelector); // string, no tags
+        curMediaPage = 1;
+        curMediaSearchtext = searchtext ?? null;
+        fetchImages(searchtext, curMediaPage, imagesPerPage, mimetypes, listingEndpoint, tags, mediaSelector); // string, no tags
     });
     
     // press return
     mediaSelector.querySelector('#media_selector_modal_search').addEventListener('keyup', (e) => {
         if (e.key === "Enter") {
-            cur_media_page = 1;
+            curMediaPage = 1;
             const searchtext = mediaSelector.querySelector('#media_selector_modal_search').value;
-            cur_media_searchtext = searchtext ?? null;
-            fetch_images(searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, mediaSelector); // string, no tags
+            curMediaSearchtext = searchtext ?? null;
+            fetchImages(searchtext, curMediaPage, imagesPerPage, mimetypes, listingEndpoint, tags, mediaSelector); // string, no tags
         }
     });
     
@@ -149,28 +149,28 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
     // handle clear
     mediaSelector.querySelector('#clear_media_selector_search').addEventListener('click', (e) => {
         mediaSelector.querySelector('#media_selector_modal_search').value = "";
-        cur_media_searchtext = null;
-        cur_media_page = 1;
-        fetch_images(null, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, mediaSelector); // string, no tags, num pages, always page 1
+        curMediaSearchtext = null;
+        curMediaPage = 1;
+        fetchImages(null, curMediaPage, imagesPerPage, mimetypes, listingEndpoint, tags, mediaSelector); // string, no tags, num pages, always page 1
     });
     
     // handle pages
     mediaSelector.querySelector('#next_page').addEventListener('click', (e) => {
-        cur_media_page++;
-        fetch_images(cur_media_searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, mediaSelector); // updated to include current page
+        curMediaPage++;
+        fetchImages(curMediaSearchtext, curMediaPage, imagesPerPage, mimetypes, listingEndpoint, tags, mediaSelector); // updated to include current page
     });
     
     mediaSelector.querySelector('#prev_page').addEventListener('click', (e) => {
-        cur_media_page--;
-        if (cur_media_page == 0) {
-            cur_media_page = 1;
+        curMediaPage--;
+        if (curMediaPage == 0) {
+            curMediaPage = 1;
             mediaSelector.querySelector('#prev_page').setAttribute('disabled', true);
         }
-        fetch_images(cur_media_searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, mediaSelector); // updated to include current page
+        fetchImages(curMediaSearchtext, curMediaPage, imagesPerPage, mimetypes, listingEndpoint, tags, mediaSelector); // updated to include current page
     });
 
     // Do initial image load
-    fetch_images(cur_media_searchtext, cur_media_page, images_per_page, mimetypes, listing_endpoint, tags, mediaSelector); // no search, all tags
+    fetchImages(curMediaSearchtext, curMediaPage, imagesPerPage, mimetypes, listingEndpoint, tags, mediaSelector); // no search, all tags
 
     return mediaSelector;
 }

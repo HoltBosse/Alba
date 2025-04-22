@@ -87,7 +87,7 @@ class Field_Image extends Field {
 		<script type="module">
 		import {addImageUploadDialog} from "/core/js/image_uploading.js";
 		import {loadImgEditor} from "/core/js/image_editing.js";
-		import {open_media_selector} from "/core/js/media_selector.js";
+		import {openMediaSelector} from "/core/js/media_selector.js";
 
 		
 		document.getElementById("trigger_image_crop_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
@@ -141,31 +141,29 @@ class Field_Image extends Field {
 			addImageUploadDialog();
 		});
 
-		// get variables for media_selector()
-		let element_id = "<?php echo $this->id; ?>";
-		let images_per_page = <?php echo $this->images_per_page; ?>;
+		// get variables for openMediaSelector()
+		let elementId = "<?php echo $this->id; ?>";
+		let imagesPerPage = <?php echo $this->images_per_page; ?>;
 		let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
 		let tags = <?php echo json_encode($this->tags);?>;
-		let listing_endpoint = "<?php echo $this->listing_endpoint; ?>";
+		let listingEndpoint = "<?php echo $this->listing_endpoint; ?>";
 
-		
-		document.getElementById('trigger_image_selector_' + element_id).addEventListener('click', e => {
+		document.getElementById('trigger_image_selector_' + elementId).addEventListener('click', e => {
 			// open media selector (choose new image)
-			const mediaSelector = open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint);
+			const mediaSelector = openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint);
 			mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
-                const preview = document.getElementById(`image_selector_chosen_preview_${element_id}`);
+				const preview = document.getElementById(`image_selector_chosen_preview_${elementId}`);
 				const url = `${mediaE.detail.url}/thumb`;
-                preview.src = url;
-                preview.alt = mediaE.detail.alt;
-                preview.title = mediaE.detail.title;
-                preview.closest('.selected_image_wrap').classList.add('active');
-    
-                const hidden_input = document.getElementById(element_id);
-                hidden_input.setCustomValidity('');
-                hidden_input.value = e.target.dataset.hasimageurl ? url : mediaE.detail.mediaId;	
+				preview.src = url;
+				preview.alt = mediaE.detail.alt;
+				preview.title = mediaE.detail.title;
+				preview.closest('.selected_image_wrap').classList.add('active');
+
+				const hiddenInput = document.getElementById(elementId);
+				hiddenInput.setCustomValidity('');
+				hiddenInput.value = e.target.dataset.hasimageurl ? url : mediaE.detail.mediaId;	
 			});
 		});
-
 		</script>
 	<?php
 	} // end display
