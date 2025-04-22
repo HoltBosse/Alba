@@ -107,6 +107,7 @@ export function openMediaSelector(elementId, imagesPerPage, mimetypes, tags, lis
                     mediaId: mediaId,
                     alt: alt,
                     title: title,
+                    hasImageUrl: e.target.dataset.hasimageurl ?? false,
                 },
             });
 

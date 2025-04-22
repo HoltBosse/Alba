@@ -153,7 +153,7 @@ class Field_Image extends Field {
 			const mediaSelector = openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint);
 			mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
 				const preview = document.getElementById(`image_selector_chosen_preview_${elementId}`);
-				const url = `${mediaE.detail.url}/thumb`;
+				const url = mediaE.detail.hasImageUrl ? mediaE.detail.url : `${mediaE.detail.url}/thumb`;
 				preview.src = url;
 				preview.alt = mediaE.detail.alt;
 				preview.title = mediaE.detail.title;
@@ -161,7 +161,7 @@ class Field_Image extends Field {
 
 				const hiddenInput = document.getElementById(elementId);
 				hiddenInput.setCustomValidity('');
-				hiddenInput.value = e.target.dataset.hasimageurl ? url : mediaE.detail.mediaId;	
+				hiddenInput.value = mediaE.detail.hasImageUrl ? url : mediaE.detail.mediaId;	
 			});
 		});
 		</script>
