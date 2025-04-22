@@ -151,7 +151,19 @@ class Field_Image extends Field {
 		
 		document.getElementById('trigger_image_selector_' + element_id).addEventListener('click', e => {
 			// open media selector (choose new image)
-			open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint);
+			const mediaSelector = open_media_selector(element_id, images_per_page, mimetypes, tags, listing_endpoint);
+			mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
+                const preview = document.getElementById(`image_selector_chosen_preview_${element_id}`);
+				const url = `${mediaE.detail.url}/thumb`;
+                preview.src = url;
+                preview.alt = mediaE.detail.alt;
+                preview.title = mediaE.detail.title;
+                preview.closest('.selected_image_wrap').classList.add('active');
+    
+                const hidden_input = document.getElementById(element_id);
+                hidden_input.setCustomValidity('');
+                hidden_input.value = e.target.dataset.hasimageurl ? url : mediaE.detail.mediaId;	
+			});
 		});
 
 		</script>

@@ -80,19 +80,6 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
     </div>
     `;
     document.body.appendChild(mediaSelector);
-
-    let last_editor = null;
-    let selected = null;
-    let saved = null;
-
-    // set up rich text editor variables if needed
-    if(from_richtext) {
-        last_editor = document.querySelector(`#editor_toolbar_for_${element_id}`);
-        // console.log("last editor");
-        // console.log(last_editor);
-        selected = document.getSelection(); 
-        saved = [ selected.focusNode, selected.focusOffset ];
-    }
     
     // handle click close - set up once when creating the selector
     mediaSelector.querySelector('#media_selector_modal_close').addEventListener('click', (e) => {
@@ -106,33 +93,24 @@ export function open_media_selector(element_id, images_per_page, mimetypes, tags
     
         const selected_image = e.target.closest('.media_selector_selection');
         if (selected_image !== null) {
-            const media_id = selected_image.dataset.id;
+            const mediaId = selected_image.dataset.id;
             const alt = selected_image.querySelector('img').alt;
             const title = selected_image.querySelector('img').title;
-            const url = e.target.dataset.hasimageurl ? e.target.src : `${window.uripath}/image/${media_id}/thumb`;
-            
-            if (from_richtext) {
-                // Handle rich text editor behavior
-                const url = e.target.dataset.hasimageurl ? e.target.src : `${window.uripath}/image/${media_id}/web`;
-                const image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
-                // console.log("Image markup: ", image_markup);
+            // biome-ignore lint: needs to stay as "let" since it is used in the event handler
+            let url = e.target.dataset.hasimageurl ? e.target.src : `${window.uripath}/image/${mediaId}`;
 
-                last_editor.focus();
-                selected.collapse(saved[0], saved[1]);
-                // console.log("Image markup: ", image_markup);
-                document.execCommand('insertHTML',false, image_markup);
-            } else {
-                // Handle non-rich text cases
-                const preview = document.getElementById(`image_selector_chosen_preview_${element_id}`);
-                preview.src = url;
-                preview.alt = alt;
-                preview.title = title;
-                preview.closest('.selected_image_wrap').classList.add('active');
-    
-                const hidden_input = document.getElementById(element_id);
-                hidden_input.setCustomValidity('');
-                hidden_input.value = e.target.dataset.hasimageurl ? url : media_id;
-            }
+            const mediaItemSelected = new CustomEvent("mediaItemSelected", {
+                bubbles: true,
+                target: mediaSelector,
+                detail: {
+                    url: url,
+                    mediaId: mediaId,
+                    alt: alt,
+                    title: title,
+                },
+            });
+
+            mediaSelector.dispatchEvent(mediaItemSelected);
     
             // remove the modal
             const modal = selected_image.closest('.media_selector_modal');
