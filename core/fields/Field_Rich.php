@@ -142,7 +142,8 @@ class Field_Rich extends Field {
 			border: 2px dashed red;
 		}
 		</style>
-		<script>
+		<script type="module">
+		import {openMediaSelector} from "/core/js/media_selector.js";
 			// TODO: make id/agnostic for repeatable + live additions
 			document.addEventListener("DOMContentLoaded", function(){
 
@@ -151,15 +152,15 @@ class Field_Rich extends Field {
 					// with multiple editor fields / repeatables
 					document.addEventListener('input',function(e){
 						if (e.target.classList.contains('editor')) {
-							//console.log('INPUT DETECTED IN EDITOR');
+							// console.log('INPUT DETECTED IN EDITOR');
 							// move markup to hidden textarea
-							raw = e.target.innerHTML; 
-							textarea = e.target.closest('.control').querySelector('textarea');
+							let raw = e.target.innerHTML; 
+							let textarea = e.target.closest('.control').querySelector('textarea');
 							textarea.value = raw; 
 						}
 						if (e.target.classList.contains('editor_raw')) {
 							// move textarea to markup in editable on any change
-							raw = e.target.value;
+							let raw = e.target.value;
 							e.target.closest('.control').querySelector('.editor').innerHTML = raw;
 						}
 					});
@@ -234,13 +235,14 @@ class Field_Rich extends Field {
 							window.this_editor = e.target.closest('.control').querySelector('.editor');
 							window.this_textarea = e.target.closest('.control').querySelector('textarea');
 
+							let editor_button;
 							if (e.target.classList.contains('fa')) {
 								editor_button = e.target.closest('.editor_button');
 							}
 							else {
 								editor_button = e.target;
 							}
-							command = editor_button.dataset.command;
+							const command = editor_button.dataset.command;
 							console.log('Command: ',command);
 
 							if (editor_button.classList.contains('toggle_editor_raw')) {
@@ -641,204 +643,30 @@ class Field_Rich extends Field {
 							}
 							
 							else if (command=='img') {
-								//alert('choose image');
+								// get variables for openMediaSelector()
+								let elementId = "<?php echo $this->id; ?>";
+								let imagesPerPage = <?php echo $this->images_per_page ?? 50;?>;
+								let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
+								let tags = <?php echo json_encode($this->tags);?>;
+								let listingEndpoint = '<?php echo Config::uripath();?>/image/list_images';
+								
+								// set up rich editor variables
+								let lastEditor = document.querySelector(`#editor_toolbar_for_${elementId}`);
+								let selected = document.getSelection(); 
+								let saved = [selected.focusNode, selected.focusOffset];
+
 								// launch image selector
-								var media_selector = document.createElement('div');
-								media_selector.id = "editor_media_selector";
-								media_selector.innerHTML =`
-								<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
-									<div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
-										<button style="right: 1rem;" id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
-										<h1 style='color:white;'>Click image or search: </h1>
-										<div class='form-group' style='display:flex; gap:2rem;'>
-											<input id='media_selector_modal_search'/>
-											<button class='button btn is-small is-primary' type='button' id='trigger_media_selector_search'>Search</button>
-											<button class='button btn is-small' type='button' id='clear_media_selector_search'>Clear</button>
-											|
-											<button class='button btn is-small is-info' disabled id='prev_page'>Prev Page</button>
-											<button class='button btn is-small is-info' id='next_page'>Next Page</button>
-										</div>
-									</div>
-									<div class='media_selector'><h2>LOADING</h2></div>
-								</div>
-								`;
-								document.body.appendChild(media_selector); 
-
-								// remember the editor to refocus for image insertion
-								window.last_editor = document.querySelector('#editor_toolbar_for_<?php echo $this->name; ?>');
-								window.sel = document.getSelection(); 
-								window.saved = [ window.sel.focusNode, window.sel.focusOffset ];
-
-								// handle click close
-								document.getElementById('media_selector_modal_close').addEventListener('click',function(e){
-									var modal = e.target.closest('.media_selector_modal');
-									modal.parentNode.removeChild(modal);
+								const mediaSelector = openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint);
+								
+								mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
+									const url = mediaE.detail.url + "/web";
+									const imageMarkup = `<img alt="${mediaE.detail.alt}" title="${mediaE.detail.title}" class="rich_image" data-mediaId="${mediaE.detail.mediaId}" data-size="web" src="${url}"/>`;
+									
+									// focus back on the editor and insert the HTML at the saved position
+									lastEditor.focus();
+									selected.collapse(saved[0], saved[1]);
+									document.execCommand('insertHTML', false, imageMarkup);
 								});
-								// handle modal close
-								/* media_selector.querySelector('.delete_parent').addEventListener('click',function(e){
-									e.preventDefault();
-									e.target.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode);
-								}); */
-								// add click event handler to capture child selection clicks
-								media_selector.addEventListener('click',function(e){
-									//console.log(e.target);
-									e.preventDefault();
-									e.stopPropagation();
-									let selected_image = e.target.closest('.media_selector_selection');
-									console.log(selected_image);
-									if (selected_image!==null) {
-										let media_id = selected_image.dataset.id;
-										let alt = selected_image.querySelector('img').alt;
-										let title = selected_image.querySelector('img').title;
-										let url = `<?php echo Config::$uripath;?>/image/${media_id}/web`;
-										let image_markup = `<img alt="${alt}" title="${title}" class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
-										console.log(image_markup);
-										// refocus editor
-										window.last_editor.focus();
-										// restore caret position
-										window.sel.collapse(window.saved[0], window.saved[1]);
-										// insert image
-										document.execCommand('insertHTML',false, image_markup);
-										let modal = selected_image.closest('.media_selector_modal');
-										modal.parentNode.removeChild(modal);
-									} // else clicked on container not on an anchor or it's children
-								});
-								// search handler
-								let searchtrigger = document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
-									let searchtext = document.getElementById('media_selector_modal_search').value;
-									rich_fetch_images(searchtext, null); // string, no tags
-								});
-
-								window.cur_media_page = 1;
-								window.cur_media_searchtext = null;
-								window.images_per_page = 50;
-
-								// do initial listing
-								rich_fetch_images (null, null); // no search, all tags
-
-								// todo: DRY below two event listeners
-								//click button
-								document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
-									var searchtext = document.getElementById('media_selector_modal_search').value;
-									window.cur_media_page = 1;
-									window.cur_media_searchtext = searchtext ?? null;
-									rich_fetch_images(searchtext); // string, no tags
-								});
-								// press return
-								document.getElementById('media_selector_modal_search').addEventListener('keyup',function(e){
-									if (e.key==="Enter") {
-										window.cur_media_page = 1;
-										var searchtext = document.getElementById('media_selector_modal_search').value;
-										window.cur_media_searchtext = searchtext ?? null;
-										rich_fetch_images(searchtext); // string, no tags
-									}
-								});
-								document.addEventListener('keyup',function(e){
-									let media_selector = document.getElementById('media_selector');
-									if (media_selector) {
-										if (e.key=="Escape") {
-											media_selector.parentNode.removeChild(media_selector);
-										}
-									}
-								});
-								// handle clear
-								document.getElementById('clear_media_selector_search').addEventListener('click',function(e){
-									document.getElementById('media_selector_modal_search').value="";
-									window.cur_media_searchtext = null;
-									window.cur_media_page = 1;
-									rich_fetch_images(); // string, no tags, num pages, always page 1
-								});
-								// handle pages
-								document.getElementById('next_page').addEventListener('click',function(e){
-									window.cur_media_page++;
-									rich_fetch_images(window.cur_media_searchtext);
-								});
-								document.getElementById('prev_page').addEventListener('click',function(e){
-									window.cur_media_page--;
-									if (window.cur_media_page==0) {
-										window.cur_media_page=1;
-										document.getElementById('prev_page').setAttribute('disabled',true);
-									}
-									rich_fetch_images(window.cur_media_searchtext);
-								});
-
-								function rich_fetch_images(searchtext=null, taglist=null) {
-
-									let fetchParams = {
-										"action":"list_images",
-										"page":window.cur_media_page,
-										"images_per_page":window.images_per_page,
-										"searchtext":searchtext
-										<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>
-										<?php echo $this->tags ? ',"tags": "' . "$this->tags" . '"' : "";?>
-									};
-
-									let fetchFormData = new FormData();
-									Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
-
-									// fetch images
-									fetch('<?php echo Config::uripath();?>/image/list_images',
-										{
-											method: "POST",
-											body: fetchFormData,
-										}
-									).then((res)=>res.json()).then((data)=>{
-										console.log(data);
-										var image_list = data;//JSON.parse(data);
-										var image_list_markup = "<ul class='media_selector_list single'>";
-										if (image_list.images.length==0) {
-											image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
-										}
-										image_list.images.forEach(image => {
-											image_list_markup += `
-											<li>
-												<a style='position:relative;' class='media_selector_selection' data-id='${image.id}'>
-												<aside style='font-size:0.75em; display:block; position:absolute; top:0px; right:0px; padding:0.25em 0.5em; background:rgba(0,0,0,0.5); color:#ddd;' class='media_size'>${image.width} x ${image.height}</aside>
-												<img title='${image.title}' alt='${image.alt}' src='<?php echo Config::uripath();?>/image/${image.id}/thumb'>
-												<span>${image.title}</span>
-												</a>
-											</li>`;
-										});
-										image_list_markup += "</ul>";
-										media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
-										// handle click close
-										document.getElementById('media_selector_modal_close').addEventListener('click',function(e){
-											var modal = e.target.closest('.media_selector_modal');
-											modal.parentNode.removeChild(modal);
-										});
-
-										// update page buttons
-										if (image_list.images.length < window.images_per_page) {
-											document.getElementById('next_page').setAttribute('disabled',true); 
-										}
-										else {
-											document.getElementById('next_page').removeAttribute('disabled');
-										}
-										if (window.cur_media_page==1) {
-											document.getElementById('prev_page').setAttribute('disabled',true);
-										}
-										else {
-											document.getElementById('prev_page').removeAttribute('disabled');
-										}
-										
-										// add click event handler to capture child selection clicks
-										media_selector.addEventListener('click',(e)=>{
-											//console.log(e.target);
-											e.preventDefault();
-											e.stopPropagation();
-											var selected_image = e.target.closest('.media_selector_selection');
-											if (selected_image!==null) {
-												var media_id = selected_image.dataset.id;
-												var url = `<?php echo Config::uripath();?>/image/${media_id}/web`;
-												var image_markup = `<img class="rich_image" data-media_id="${media_id}" data-size="web" src="${url}"/>`;
-												console.log(image_markup);
-
-											} // else clicked on container not on an anchor or it's children
-										});
-									}).catch((error) => {
-										console.log(error);
-									});
-								}
 							}
 
 							else if (command=='toggle_external_link') {

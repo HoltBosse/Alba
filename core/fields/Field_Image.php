@@ -87,6 +87,7 @@ class Field_Image extends Field {
 		<script type="module">
 		import {addImageUploadDialog} from "/core/js/image_uploading.js";
 		import {loadImgEditor} from "/core/js/image_editing.js";
+		import {openMediaSelector} from "/core/js/media_selector.js";
 
 		
 		document.getElementById("trigger_image_crop_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
@@ -139,183 +140,33 @@ class Field_Image extends Field {
 			window.upload_endpoint = "<?php echo $this->upload_endpoint; ?>";
 			addImageUploadDialog();
 		});
-	
-		window.cur_media_page = 1;
-		window.cur_media_searchtext = null;
-		window.images_per_page = <?php echo $this->images_per_page; ?>;
 
-		// choose new image button event listener
-		var trigger_image_selector_<?php echo $this->id; ?> = document.getElementById('trigger_image_selector_<?php echo $this->id;?>');
-		trigger_image_selector_<?php echo $this->id; ?>.addEventListener('click',function(e){
-			// launch image selector
-			var media_selector = document.createElement('div');
-			media_selector.id = "media_selector";
-			media_selector.classList.add("media_selector_for_<?php echo $this->id; ?>");
-			media_selector.innerHTML =`
-			<div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
-				<div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
-					<button style="right: 1rem;" id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
-					<h1 style='color:white;'>Click image or search: </h1>
-					<div class='form-group' style='display:flex; gap:2rem;'>
-						<input id='media_selector_modal_search'/>
-						<button class='button btn is-small is-primary' type='button' id='trigger_media_selector_search'>Search</button>
-						<button class='button btn is-small' type='button' id='clear_media_selector_search'>Clear</button>
-						|
-						<button class='button btn is-small is-info' disabled id='prev_page'>Prev Page</button>
-						<button class='button btn is-small is-info' id='next_page'>Next Page</button>
-					</div>
-				</div>
-				<div class='media_selector'><h2>LOADING</h2></div>
-			</div>
-			`;
-			document.body.appendChild(media_selector); 
+		// get variables for openMediaSelector()
+		let elementId = "<?php echo $this->id; ?>";
+		let imagesPerPage = <?php echo $this->images_per_page; ?>;
+		let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
+		let tags = <?php echo json_encode($this->tags);?>;
+		let listingEndpoint = "<?php echo $this->listing_endpoint; ?>";
 
-			// todo: DRY below two event listeners
-			//click button
-			document.getElementById('trigger_media_selector_search').addEventListener('click',function(e){
-				var searchtext = document.getElementById('media_selector_modal_search').value;
-				window.cur_media_page = 1;
-				window.cur_media_searchtext = searchtext ?? null;
-				fetch_images(searchtext); // string, no tags
+		document.getElementById('trigger_image_selector_' + elementId).addEventListener('click', e => {
+			// open media selector (choose new image)
+			const mediaSelector = openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint);
+			mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
+				const preview = document.getElementById(`image_selector_chosen_preview_${elementId}`);
+				const url = mediaE.detail.hasImageUrl ? mediaE.detail.url : `${mediaE.detail.url}/thumb`;
+				preview.src = url;
+				preview.alt = mediaE.detail.alt;
+				preview.title = mediaE.detail.title;
+				preview.closest('.selected_image_wrap').classList.add('active');
+
+				const hiddenInput = document.getElementById(elementId);
+				hiddenInput.setCustomValidity('');
+				hiddenInput.value = mediaE.detail.hasImageUrl ? url : mediaE.detail.mediaId;	
 			});
-			// press return
-			document.getElementById('media_selector_modal_search').addEventListener('keyup',function(e){
-				if (e.key==="Enter") {
-					window.cur_media_page = 1;
-					var searchtext = document.getElementById('media_selector_modal_search').value;
-					window.cur_media_searchtext = searchtext ?? null;
-					fetch_images(searchtext); // string, no tags
-				}
-			});
-			document.addEventListener('keyup',function(e){
-				let media_selector = document.getElementById('media_selector');
-				if (media_selector) {
-					if (e.key=="Escape") {
-						media_selector.parentNode.removeChild(media_selector);
-					}
-				}
-			});
-			// handle clear
-			document.getElementById('clear_media_selector_search').addEventListener('click',function(e){
-				document.getElementById('media_selector_modal_search').value="";
-				window.cur_media_searchtext = null;
-				window.cur_media_page = 1;
-				fetch_images(); // string, no tags, num pages, always page 1
-			});
-			// handle pages
-			document.getElementById('next_page').addEventListener('click',function(e){
-				window.cur_media_page++;
-				fetch_images(window.cur_media_searchtext);
-			});
-			document.getElementById('prev_page').addEventListener('click',function(e){
-				window.cur_media_page--;
-				if (window.cur_media_page==0) {
-					window.cur_media_page=1;
-					document.getElementById('prev_page').setAttribute('disabled',true);
-				}
-				fetch_images(window.cur_media_searchtext);
-			});
-
-			fetch_images (); // no search, all tags
-
-			function fetch_images(searchtext=null, taglist=null) {
-
-				let fetchParams = {
-					"action":"list_images",
-					"page":window.cur_media_page,
-					"images_per_page":<?php echo $this->images_per_page;?>,
-					"searchtext":searchtext
-					<?php echo $this->mimetypes ? ',"mimetypes":' . json_encode($this->mimetypes) : "";?>
-					<?php echo $this->tags ? ',"tags": "' . "$this->tags" . '"' : "";?>
-				};
-
-				let fetchFormData = new FormData();
-				Object.keys(fetchParams).forEach(key => fetchFormData.append(key, fetchParams[key]));
-			
-				// fetch images
-				fetch('<?php echo $this->listing_endpoint;?>',
-					{
-						method: "POST",
-						body: fetchFormData,
-					}
-				).then((res)=>res.json()).then((data)=>{
-					console.log(data);
-					var image_list = data;//JSON.parse(data);
-					var image_list_markup = "<ul class='media_selector_list single'>";
-					if (image_list.images.length==0) {
-						image_list_markup += `<li style='display:block; width:100%;'><h5 class='is-5 title' style='text-align:center;'>No images found - please try another search</h2></li>`;
-					}
-					image_list.images.forEach(image => {
-						let datasetattribute = image.imageurl ? " data-hasimageurl='true'" : "";
-						image_list_markup += `
-						<li>
-							<a style='position:relative;' class='media_selector_selection' data-id='${image.id}'>
-							<aside style='font-size:0.75em; display:block; position:absolute; top:0px; right:0px; padding:0.25em 0.5em; background:rgba(0,0,0,0.5); color:#ddd;' class='media_size'>${image.width} x ${image.height}</aside>
-							<img title='${image.title}' alt='${image.alt}' ${datasetattribute} src='${image.imageurl ? image.imageurl : `<?php echo Config::uripath();?>/image/${image.id}/thumb`}'>
-							<span class='media_selector_info'>${image.title}</span>
-							</a>
-						</li>`;
-					});
-					image_list_markup += "</ul>";
-					media_selector.querySelector('.media_selector').innerHTML = image_list_markup;
-					// handle click close
-					document.getElementById('media_selector_modal_close').addEventListener('click',(e)=>{
-						e.target.closest("#media_selector").remove();
-					});
-
-					// update page buttons
-					if (image_list.images.length < window.images_per_page) {
-						document.getElementById('next_page').setAttribute('disabled',true); 
-					}
-					else {
-						document.getElementById('next_page').removeAttribute('disabled');
-					}
-					if (window.cur_media_page==1) {
-						document.getElementById('prev_page').setAttribute('disabled',true);
-					}
-					else {
-						document.getElementById('prev_page').removeAttribute('disabled');
-					}
-					
-					// add click event handler to capture child selection clicks
-					media_selector.addEventListener('click',function(e){
-						//console.log(e.target);
-						e.preventDefault();
-						e.stopPropagation();
-						var selected_image = e.target.closest('.media_selector_selection');
-						if (selected_image!==null) {
-							console.log(e.target);
-							var media_id = selected_image.dataset.id;
-							var url = e.target.dataset.hasimageurl ? e.target.src  : `<?php echo Config::uripath();?>/image/${media_id}/thumb/`;
-
-							var modal = selected_image.closest('.media_selector_modal');
-							modal.parentNode.removeChild(modal);
-
-							// this is only for image field class
-							var preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
-							preview.src = url;
-							preview.alt = e.target.alt;
-							preview.title = e.target.title;
-							preview.closest('.selected_image_wrap').classList.add('active');
-
-							const hidden_input = document.getElementById('<?php echo $this->id;?>');
-							hidden_input.setCustomValidity('');
-							hidden_input.value = e.target.dataset.hasimageurl ? url : media_id;
-
-						} // else clicked on container not on an anchor or it's children
-					});
-				}).catch((error) => {
-					console.log(error);
-				});
-			}
 		});
 		</script>
-		<?php
-		if ($this->in_repeatable_form===null) {
-			//echo "</script>"; // no need anymore
-		}
-		
-	}
+	<?php
+	} // end display
 
 	public function get_friendly_value($helpful_info) {
 		if($helpful_info && $helpful_info->return_in_text_form==true) {
