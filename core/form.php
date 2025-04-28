@@ -286,9 +286,7 @@ class Form {
 						let targetValue = target.value;
 
 						if (target.nodeName=='INPUT' && target.type=='checkbox') {
-							const checked_target = sectionRoot.querySelector(`[name="${name}"]:checked`);
-							// set to checked value or default hidden checkbox value of 0
-							targetValue = checked_target ? checked_target.value : "0";
+							targetValue = sectionRoot.querySelector(`[name="${name}"]:checked`) ? 1 : 0;
 						}
 
 						switch (test) {
