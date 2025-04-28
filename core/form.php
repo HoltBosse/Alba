@@ -282,11 +282,11 @@ class Form {
 						}
 
 						// get first un-ignored named field - primarily used to ignore checkbox default hidden values
-						const target = sectionRoot.querySelector(`[name="${name}"]:not(.ignore_logic)`); 
+						const target = sectionRoot.querySelector(`[name="${name}"]:not([data-logicignore])`); 
 						let targetValue = target.value;
 
 						if (target.nodeName=='INPUT' && target.type=='checkbox') {
-							targetValue = sectionRoot.querySelector(`[name="${name}"]:checked`) ? 1 : 0;
+							targetValue = target.checked ? 1 : 0;
 						}
 
 						switch (test) {
