@@ -6,7 +6,6 @@ class Field_Checkbox extends Field {
 	public function display() {
 		echo "<div class='field'>";
 			echo "<label for='{$this->id}' class='checkbox'>";
-				// ignore_logic class used in core form class logic javascript
 				echo "<input type='hidden' data-logicignore value='0' {$this->get_rendered_name()}>"; // ensure submitted value
 				$required="";
 				if ($this->required) {$required=" required ";}
