@@ -16,7 +16,7 @@
 			"coltype":"tinyint NOT NULL DEFAULT '1'"
 		},
 		{
-			"label":"Old URL",
+			"label":"Source",
 			"name":"old_url",
 			"id":"old_url",
 			"type":"Text",
@@ -28,7 +28,7 @@
 			"nowrap":false
 		},
 		{
-			"label":"New URL",
+			"label":"Destination",
 			"name":"new_url",
 			"id":"new_url",
 			"type":"Text",

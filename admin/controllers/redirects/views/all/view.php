@@ -83,8 +83,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						echo "<th>Id</th>";
 					}
 				?>
-				<th>Old URL</th>
-				<th>New URL</th>
+				<th>Source</th>
+				<th>Destination</th>
 				<th>Referer</th>
 				<th>Created</th>
 				<th>Created By</th>
