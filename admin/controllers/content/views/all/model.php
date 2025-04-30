@@ -8,10 +8,11 @@ $filters = Input::tuples_to_assoc( Input::getvar('filters','RAW',null) );
 $coretags = Input::getvar('coretags','ARRAYOFINT',[]);
 
 $content_type_filter = null;
-if (sizeof($segments)==3) {
+if (sizeof($segments)>3) {
+	CMS::raise_404();
+} elseif (sizeof($segments)==3) {
 	$content_type_filter = $segments[2];
-}
-else {
+} else {
 	CMS::show_error('Cannot determine content type to show');
 }
 

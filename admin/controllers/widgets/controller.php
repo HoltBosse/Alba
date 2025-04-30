@@ -77,6 +77,10 @@ if ($missing) { ?>
 
 //CMS::queue_message('Test','success');
 
-$widgets_controller = new Controller(realpath(dirname(__FILE__)),$view);
-$widgets_controller->load_view($view);
+if ($view && is_dir(realpath(dirname(__FILE__) . "/views")) && is_dir(realpath(dirname(__FILE__) . "/views/$view"))) {
+	$widgets_controller = new Controller(realpath(dirname(__FILE__)),$view);
+	$widgets_controller->load_view($view);
+} else {
+	CMS::raise_404();
+}
 

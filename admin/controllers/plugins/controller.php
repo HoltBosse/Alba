@@ -4,20 +4,14 @@ defined('CMSPATH') or die; // prevent unauthorized access
 // router
 
 $segments = CMS::Instance()->uri_segments;
-if (sizeof($segments)==0) {
-	$view = 'default';
-	$plugin_id = false;
+if ($segments[1]=='show') {
+	$view = 'show';
 }
-else {
-	if ($segments[1]=='show') {
-		$view = 'show';
-	}
-	elseif ($segments[1]=='edit') {
-		$view = 'edit';
-	}
-	elseif ($segments[1]=='action') {
-		$view = 'action';
-	}
+elseif ($segments[1]=='edit') {
+	$view = 'edit';
+}
+elseif ($segments[1]=='action') {
+	$view = 'action';
 }
 
 // check for new plugins
@@ -77,6 +71,10 @@ if ($missing) { ?>
 
 //CMS::queue_message('Test','success');
 
-$plugin_controller = new Controller(realpath(dirname(__FILE__)),$view);
-$plugin_controller->load_view($view);
+if ($view && is_dir(realpath(dirname(__FILE__) . "/views")) && is_dir(realpath(dirname(__FILE__) . "/views/$view"))) {
+	$plugin_controller = new Controller(realpath(dirname(__FILE__)),$view);
+	$plugin_controller->load_view($view);
+} else {
+	CMS::raise_404();
+}
 

@@ -1,6 +1,11 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+$segments = CMS::Instance()->uri_segments;
+if(sizeof($segments) > 2) {
+    CMS::raise_404();
+}
+
 $paginationSize = Configuration::get_configuration_value ('general_options', 'pagination_size');
 
 $curPage = Input::getvar('page','INT','1');

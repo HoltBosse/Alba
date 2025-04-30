@@ -3,8 +3,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 $segments = CMS::Instance()->uri_segments;
 
-if (sizeof($segments)!==3) {
+if (sizeof($segments) < 3) {
     CMS::show_error('Cannot determine content type to order');
+} elseif(sizeof($segments) !== 3) {
+	CMS::raise_404();
 }
 
 $content_type = $segments[2];

@@ -1,6 +1,11 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
+$segments = CMS::Instance()->uri_segments;
+if(sizeof($segments)>2) {
+    CMS::raise_404();
+}
+
 $valid_image_types = [];
 foreach(File::$image_types as $type => $value) {
     array_push($valid_image_types, "'$type'");
