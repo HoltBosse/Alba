@@ -2,6 +2,11 @@
 defined('CMSPATH') or die; 
 // prevent unauthorized access 
 require_once (CMSPATH . "/core/cms.php");
+
+$segments = CMS::Instance()->uri_segments;
+if(sizeof($segments)>0 && !is_dir(CMSPATH . "/admin/controllers/" . $segments[0])) {
+	CMS::raise_404();
+}
 ?>
 
 <html>

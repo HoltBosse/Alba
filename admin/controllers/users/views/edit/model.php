@@ -8,6 +8,10 @@ $all_groups = $edit_user->get_all_groups();
 $segments = CMS::Instance()->uri_segments;
 // check if editing, if we are, get userid and load into edit_user object
 
+if(sizeof($segments) > 3) {
+	CMS::raise_404();
+}
+
 $core_user_fields_form = new Form(CMSPATH . "/admin/controllers/users/views/edit/core_user_fields.json");
 $custom_user_fields_form = file_exists(CMSPATH . "/custom_user_fields.json") ? new Form(CMSPATH . "/custom_user_fields.json") : null;
 
