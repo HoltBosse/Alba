@@ -51,7 +51,7 @@ class Form {
 		}
 	}
 
-	private function set_field_required_based_on_logic($field) {
+	public function set_field_required_based_on_logic($field) {
 		// logic here mirrors that of js section in 'display_front_end' function in this class
 		// algorithm is essentially:
 		// loop over logic arrays
