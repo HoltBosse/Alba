@@ -84,14 +84,10 @@ class Field {
 		$raw_value = $raw_value_array[$index]; // get nth entry in raw array
 		$value = Input::filter($raw_value, $this->filter); // filter raw value appropriately according to field filter in json
 		$this->index = $index; // set repeatable field index for validation
-		if (is_string($value)||is_numeric($value)) {
-			$this->default = $value;
-		}
-		elseif (is_array($value)) {
+
+		$this->default = $value;
+		if (is_array($value)) {
 			$this->default = json_encode($value);
-		}
-		elseif (is_bool($value)) {
-			$this->default = $value;
 		}
 	}
 
