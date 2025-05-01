@@ -8,7 +8,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <?php
 	$header = "Users: " . $group_name;
-	$rightContent = "<a href='" . Config::uripath() . "/admin/users/edit' class='button is-primary pull-right'>
+	$rightContent = "<a href='" . Config::uripath() . "/admin/users/edit' class='button is-primary'>
 		<span class='icon is-small'>
 			<i class='fas fa-check'></i>
 		</span>
