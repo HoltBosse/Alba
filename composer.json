@@ -1,10 +1,10 @@
 {
     "scripts": {
         "post-install-cmd": [
-            "cp configTESTBACKUP.php config.php",
-            "cp configADMINTESTBACKUP.php admin/admin_config.php",
-            "cp htaccess.txt .htaccess",
-            "cp .htaccess ./admin/.htaccess"
+            "if ! test -f config.php; then cp configTESTBACKUP.php config.php; fi",
+            "if ! test -f admin/admin_config.php; then cp configADMINTESTBACKUP.php admin/admin_config.php; fi",
+            "if ! test -f htaccess.txt; then cp htaccess.txt .htaccess; fi",
+            "if ! test -f htaccess.txt; then cp .htaccess ./admin/.htaccess; fi"
         ],
         "albatests": [
             "vendor/bin/phpstan analyse"
