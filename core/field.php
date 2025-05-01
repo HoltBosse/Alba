@@ -22,6 +22,7 @@ class Field {
 	public $save;
 	public $placeholder;
 	public $nowrap;
+	public $index; // used to determine POST/GET array index in repeatables
 
 	public function display() {
 		echo "<label class='label'>Field Label</label>";
@@ -51,11 +52,9 @@ class Field {
 	public function is_missing() {
 		if ($this->in_repeatable_form ?? null) {
 			// value will be in array
-			// TODO: apply filter before testing?
-			$value = Input::getvar($this->name)[0] ?? null;
+			$value = Input::filter(Input::getvar($this->name)[$this->index], $this->filter);
 		}
 		else {
-			// can apply filter correctly for non-repeatable value
 			$value = Input::getvar($this->name, $this->filter);
 		}
 		if ($value===false && $this->required) {
@@ -81,15 +80,13 @@ class Field {
 
 	public function set_from_submit_repeatable($index=0) {
 		// index = index of repeated form inside repeatable
-		
 		$raw_value_array = Input::getvar($this->name, "ARRAYRAW"); // get raw array
 		$raw_value = $raw_value_array[$index]; // get nth entry in raw array
 		$value = Input::filter($raw_value, $this->filter); // filter raw value appropriately according to field filter in json
+		$this->index = $index; // set repeatable field index for validation
 
-		if (is_string($value)||is_numeric($value)) {
-			$this->default = $value;
-		}
-		elseif (is_array($value)) {
+		$this->default = $value;
+		if (is_array($value)) {
 			$this->default = json_encode($value);
 		}
 	}

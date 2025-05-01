@@ -165,6 +165,9 @@ class Field_Repeatable extends Field {
 			foreach ($repeatable_form->fields as $field) {
 				$field->set_from_submit_repeatable($n);
 			}
+			foreach ($repeatable_form->fields as $field) {
+				$repeatable_form->set_field_required_based_on_logic($field);
+			}
 			$forms[] = $repeatable_form;
 		}
 		$this->forms = $forms;
@@ -188,7 +191,6 @@ class Field_Repeatable extends Field {
 				$all_valid=false;
 			}
 		}
-		return true;
-		//return $all_valid;
+		return $all_valid;
 	}
 }
