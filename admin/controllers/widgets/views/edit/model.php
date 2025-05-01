@@ -29,8 +29,8 @@ else {
 }
 
 // prep forms
-$required_details_form = new Form(CMSPATH . '/widgets/required_fields_form.json');
-$position_options_form = new Form(CMSPATH . '/widgets/position_options_form.json');
+$required_details_form = new Form(CMSPATH . '/admin/controllers/widgets/views/edit/required_fields_form.json');
+$position_options_form = new Form(CMSPATH . '/admin/controllers/widgets/views/edit/position_options_form.json');
 $widget_options_form = new Form($widget->form_data);
 
 // old way - TODO: delete?
