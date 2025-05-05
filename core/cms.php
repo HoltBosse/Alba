@@ -103,7 +103,7 @@ final class CMS {
 				}
 			}
 			if (file_exists(CMSPATH . "/my_404.php")) {
-				include('my_404.php'); // provide your own HTML for the error page
+				include(CMSPATH . "/my_404.php"); // provide your own HTML for the error page
 			}
 			else {
 				CMS::show_error("Oops, something went wrong &#129300", "404");
