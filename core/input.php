@@ -33,7 +33,8 @@ class Input {
 
 	//this method exists so that if any future improvements are to be made, it is easy to do in one place
 	static public function stringHtmlSafe($string) {
-		return htmlspecialchars($string);
+		//for older php versions that convert only double quotes, we want to match modern php
+		return htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
 	}
 
 	static public function make_alias($string) {
