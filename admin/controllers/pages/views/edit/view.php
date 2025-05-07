@@ -22,7 +22,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		<input name="state" type="hidden" value="<?php echo $page->state;?>"/>
 
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
-<div class='toggle_wrap <?php if ($page->id) { echo " hidden ";}?>'>		
+<div class='toggle_wrap'>		
 <div class='fields-horizontal'>
 	<?php
 		//for better or for worse, currently these two fields are saved in the db htmlspecialchars encoded :/ - so we decode it here before passing to text field which re encodes
