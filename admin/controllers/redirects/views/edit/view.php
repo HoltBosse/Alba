@@ -33,10 +33,7 @@ div.flex > * {min-width:2rem;}
 </style>
 
 
-<div class="fixed-control-bar">
-	<button title='Save and exit' class="button is-primary" type="submit">Save</button>
-	<button class="button is-warning" type="button" onclick="window.history.back();">Cancel</button>
-</div>
+<?php Component::create_fixed_control_bar(); ?>
 
 
 </form>

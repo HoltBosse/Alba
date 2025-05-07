@@ -35,12 +35,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <hr>
 
-
-<div class="fixed-control-bar">
-	<button title='Save and exit' class="button is-primary" type="submit">Save</button>
-	<button title='Save and keep working!' class="button is-info" name="quicksave" value="quicksave" type="submit">Quick Save</button>
-	<button class="button is-warning" type="button" onclick="window.history.back();">Cancel</button>
-</div>
+<?php
+	$otherButton = '<button title=\'Save and keep working!\' class="button is-info" name="quicksave" value="quicksave" type="submit">Quick Save</button>';
+	Component::create_fixed_control_bar($otherButton);
+?>
 
 
 </form>

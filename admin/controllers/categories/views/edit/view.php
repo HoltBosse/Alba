@@ -34,9 +34,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/categories/views/edit/style.css"); ?>
 </style>
 
-<div class="fixed-control-bar">
-	<button class='button is-primary' type='submit'>Save</button>
-	<button class="button is-warning" type="button" onclick="window.history.back();">Cancel</button>
-</div>
+<?php Component::create_fixed_control_bar(); ?>
 </form>
 
