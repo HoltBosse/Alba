@@ -4,7 +4,6 @@ echo "build script init"
 #keep admin-controllers-core-plugins-widgets
 rm -rf images
 rm -rf installer
-rm -rf templates
 rm -rf user_classes
 rm -rf .gitignore
 rm -rf README.md
