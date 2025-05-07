@@ -243,4 +243,41 @@ class Component {
     public static function render_admin_nav_link($link) {
         echo "<a class='navbar-item' href='" . Config::uripath() . "{$link['url']}' class='navbar-link'>" . ucwords($link["label"]) . "</a>";
     }
+
+    public static function create_fixed_control_bar($other_html="") {
+        ?>
+            <style>
+                .fixed-control-bar {
+                    position:fixed;
+                    overflow:hidden;
+                    width:100vw;
+                    padding:1rem;
+                    border-bottom:1px solid #aaa;
+                    box-shadow:0 0 10px rgba(0,0,0,0.5);
+                    top:0;
+                    left:0;
+                    background-color: var(--bulma-body-background-color) !important;
+                    z-index:40;
+                }
+            </style>
+            <script>
+                function fixedControllerBarGoBack() {
+                    if(window.history.length <= 1) {
+                        if(document.referrer!=='' && (new URL(document.referrer)).origin == window.location.origin) {
+                            window.location.href = document.referrer;
+                            return;
+                        }
+                        window.location.href = window.location.origin + window.uripath + "/admin";
+                    } else {
+                        window.history.back();
+                    }
+                }
+            </script>
+            <div class="fixed-control-bar">
+                <button title="Save and exit" class="button is-primary" type="submit">Save</button>
+                <?php echo $other_html; ?>
+                <button class="button is-warning" type="button" onclick="fixedControllerBarGoBack();">Cancel</button>
+            </div>
+        <?php
+    }
 }

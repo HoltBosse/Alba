@@ -23,11 +23,6 @@
         background-color: #0a8dd1 !important;
     }
 
-    /* top of page bar */
-    .fixed-control-bar {
-        background-color: var(--bulma-body-background-color) !important;
-    }
-
     /* custom state button */
     .button.state_button {
         button {

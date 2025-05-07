@@ -21,9 +21,6 @@ $plugin_options_form->display_front_end();
 	<?php echo file_get_contents(CMSPATH . "/admin/controllers/plugins/views/edit/style.css"); ?>
 </style>
 
-<div class='fixed-control-bar'>
-		<button class='button is-primary' type='submit'>Save</button>
-		<button class='button is-warning' type='button' onclick="window.history.back();">Cancel</button>
-	</div>
+<?php Component::create_fixed_control_bar(); ?>
 </form>
 
