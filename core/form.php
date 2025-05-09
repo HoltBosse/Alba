@@ -3,6 +3,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Form {
 	public $id;
+	public $display_name;
 	public $fields;
 	public $json;
 	public $repeatable;
@@ -31,6 +32,7 @@ class Form {
 		if ($obj) {
 			$tempfields = $obj->fields;
 			$this->id = $obj->id;
+			$this->display_name = isset($obj->display_name) ? $obj->display_name : $this->id;
 			
 			foreach ($tempfields as $field_config) {
 				$class = "Field_" . $field_config->type;
@@ -205,6 +207,52 @@ class Form {
 			"INSERT INTO form_submissions (form_id, form_path, data) values (?,?,?)",
 			[$this->id, str_replace(CMSPATH, "", $this->form_path), $this->serialize_json()]
 		);
+	}
+
+	public static function create_email_html_wrapper($body) {
+		ob_start();
+
+		$admin_logo_id = Configuration::get_configuration_value('general_options','admin_logo');
+		$site_domain = "https://" . $_SERVER['SERVER_NAME'];
+		$logo_src = $site_domain . "/image/" . $admin_logo_id;
+		?>
+			<div style='font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 16px; padding: 0; margin: 0;'>
+            <table style="padding: 0; margin: 0; border-spacing: 0px; background-color: lightgrey;">
+                <tbody>
+                    <tr style="height: 25px;"></tr>
+                    <tr>
+                        <td style="width: 50px;"></th>
+                        <td style="width: 500px; padding: 25px; background-color: white; border-radius: 0px;">
+                            <br>
+                            <div style="text-align: center;">
+                                <a href="<?php echo $site_domain ?>">
+                                    <img src="<?php echo $logo_src ?>" alt="<?php echo Config::sitename(); ?> Logo" style="width: 300px;">
+                                </a>
+                            </div>
+                            <br>
+							<div style="text-align: left; font-weight: normal;">
+                            	<?php echo $body; ?>
+							</div>
+                        </th>
+                        <td style="width: 50px; "></th>
+                    </tr>
+                    <tr style="height: 25px;"></tr>
+                </tbody>
+            </table>
+        </div>    
+		<?php
+		return ob_get_clean();
+	}
+
+	public function create_email_html() {
+		ob_start();
+			echo "<h1 style='text-align: center;  font-size: 24px;'>$this->display_name submission</h1>";
+			foreach($this->fields as $field) {
+				if($field->name!="error!!!" && $field->save!==false) {
+					echo "<p>" . $field->label . ": " . $field->default . "<p>";
+				}
+			}
+		return $this->create_email_html_wrapper(ob_get_clean());
 	}
 
 	public function display_front_end($repeatable_template=false) {

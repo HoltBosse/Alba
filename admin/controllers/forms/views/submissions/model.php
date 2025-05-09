@@ -10,8 +10,25 @@ $paginationSize = Configuration::get_configuration_value ('general_options', 'pa
 
 $curPage = Input::getvar('page','INT','1');
 
+$formSelectOptions = DB::fetchall("SELECT DISTINCT form_id AS value, form_path FROM form_submissions");
+$formSelectOptions = array_map(function($input) {
+    $option = (object) [
+        "value"=>$input->value,
+        "text"=>$input->value,
+    ];
+
+    $json = json_decode(file_get_contents(CMSPATH . $input->form_path));
+    if(isset($json->display_name)) {
+        $option->text = $json->display_name;
+    }
+
+    return $option;
+    
+}, $formSelectOptions);
+
 $searchFieldsObject = json_decode(file_get_contents(CMSPATH . "/admin/controllers/forms/views/submissions/search_fields.json"));
-$searchFieldsObject->fields[0]->select_options = DB::fetchall("SELECT DISTINCT form_id AS text, form_id as value FROM form_submissions");
+$searchFieldsObject->fields[0]->select_options = $formSelectOptions;
+// @phpstan-ignore-next-line
 if(!$_GET["form"] && $searchFieldsObject->fields[0]->select_options[0]) {
     $searchFieldsObject->fields[0]->default = $searchFieldsObject->fields[0]->select_options[0]->value;
 }
