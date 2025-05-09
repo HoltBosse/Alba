@@ -28,6 +28,7 @@ $formSelectOptions = array_map(function($input) {
 
 $searchFieldsObject = json_decode(file_get_contents(CMSPATH . "/admin/controllers/forms/views/submissions/search_fields.json"));
 $searchFieldsObject->fields[0]->select_options = $formSelectOptions;
+// @phpstan-ignore-next-line
 if(!$_GET["form"] && $searchFieldsObject->fields[0]->select_options[0]) {
     $searchFieldsObject->fields[0]->default = $searchFieldsObject->fields[0]->select_options[0]->value;
 }
