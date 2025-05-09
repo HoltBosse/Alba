@@ -76,10 +76,7 @@ $fieldsList = array_merge($coreFields, $userFields);
     <input name="form_json" type="text" style="display: none;">
     <br><br>
 
-    <div class="fixed-control-bar">
-        <button title="Save and exit" class="button is-primary" type="submit">Save</button>
-        <button class="button is-warning" type="button" onclick="window.history.back();">Cancel</button>
-    </div>
+    <?php Component::create_fixed_control_bar(); ?>
 
     <script>
         <?php echo file_get_contents(CMSPATH . "/admin/controllers/forms/views/edit/script.js"); ?>
