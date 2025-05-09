@@ -145,7 +145,7 @@ class Field_Rich extends Field {
 		<script type="module">
 		import {openMediaSelector} from "/core/js/media_selector.js";
 			// TODO: make id/agnostic for repeatable + live additions
-			document.addEventListener("DOMContentLoaded", function(){
+			//document.addEventListener("DOMContentLoaded", function(){
 
 				if (!window.hasOwnProperty('editor_code_already_exists')) {
 					// editor code only needs to exist once for a given page
@@ -890,7 +890,7 @@ class Field_Rich extends Field {
 
 					return modal;
 				}
-			});
+			//});
 		</script>
 		<?php
 		if (!Config::debug()) {
