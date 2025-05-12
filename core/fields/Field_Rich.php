@@ -165,6 +165,21 @@ class Field_Rich extends Field {
 						}
 					});
 
+					/* 
+						we have this here to save users who think they are so smart from themselves
+						as the raw html is being edited, it is being put into the dom, which is quite forgiving.
+						however when it is saved, the literal text is what is saved rather than the dom version
+						so on page reload, it will load the broken version which can lead to weirdness such as the textarea in the editor, etc
+						this of course would not be an issue if we properly iframed, etc the content of the editor.
+						this work around updates the textarea after focus leaves from the dom so that a "fixed" version is saved and avoids the above issues
+					*/
+					document.addEventListener("focusout", (e)=>{
+						if(e.target.classList.contains("editor_raw")) {
+							let raw = e.target.closest('.control').querySelector('.editor').innerHTML;
+							e.target.value = raw;
+						}
+					});
+
 					document.addEventListener('click', (e)=>{
 						// click event handler for editor 
 
