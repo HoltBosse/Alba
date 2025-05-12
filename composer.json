@@ -8,6 +8,9 @@
         ],
         "albatests": [
             "vendor/bin/phpstan analyse"
+        ],
+        "albainstall": [
+            "php installer/installer.php"
         ]
     },
     "require-dev": {
