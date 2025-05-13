@@ -12,8 +12,7 @@ Native PHP zip + 'fopen' PHP function availablity required for automatic updates
 ## Installation
 1. Download .zip and extract into working directory
 2. run `composer install`
-3. run `composer albaconfigure`
-4. Follow prompts in terminal
+3. Follow prompts in terminal
 
 That's it, now browse to /admin to start. See [wiki](https://github.com/HoltBosse/Alba/wiki) for more info.
 

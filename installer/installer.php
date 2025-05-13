@@ -8,6 +8,7 @@ if(php_sapi_name()!=="cli") {
     die;
 }
 
+//disables script when env var is provided in places such as github actions where we are doing automated installs and dont care about a full cms
 if(getenv('alba_installer_skip_configuration')=="true") {
     echo "installer configuration disable by env var, terminating\n";
     die;
