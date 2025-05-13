@@ -5,7 +5,7 @@
             "if ! test -f admin/admin_config.php; then cp configADMINTESTBACKUP.php admin/admin_config.php; fi",
             "if ! test -f htaccess.txt; then cp htaccess.txt .htaccess; fi",
             "if ! test -f htaccess.txt; then cp .htaccess ./admin/.htaccess; fi",
-            "if test -f installer/installer.php; then php installer/installer.php; fi"
+            "if ! test -f installer/installer.php; then php installer/installer.php; fi"
         ],
         "albatests": [
             "vendor/bin/phpstan analyse"
