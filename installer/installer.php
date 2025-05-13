@@ -28,7 +28,39 @@ if(Config::sitename()=="Alba") {
 }
 
 if(!checkDbConnection()) {
-    outputError("TODO - Implement config file updating!!!");
+    $fields = [
+        "dbhost"=>[],
+        "dbname"=>[],
+        "dbuser"=>[],
+        "dbpass"=>[],
+        "dbchar"=>[],
+    ];
+
+    $firstTime = true;
+
+    while(!checkDbConnection()) {
+        if($firstTime) {
+            $firstTime = false;
+        } else {
+            outputLine("issue with credentials", "ERROR");
+        }
+
+        $filledInFields = fillInFields($fields);
+
+        Config::$dbhost = $filledInFields["dbhost"][0];
+        Config::$dbname = $filledInFields["dbname"][0];
+        Config::$dbuser = $filledInFields["dbuser"][0];
+        Config::$dbpass = $filledInFields["dbpass"][0];
+        Config::$dbchar = $filledInFields["dbchar"][0];
+    }
+
+    updateConfigFile("dbhost", Config::$dbhost);
+    updateConfigFile("dbname", Config::$dbname);
+    updateConfigFile("dbuser", Config::$dbuser);
+    updateConfigFile("dbpass", Config::$dbpass);
+    updateConfigFile("dbchar", Config::$dbchar);
+
+    outputLine("DB credentials configured", "SUCCESS");
 } else {
     outputLine("DB credentials configured");
 }
