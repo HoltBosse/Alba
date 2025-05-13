@@ -38,7 +38,7 @@ if(!checkDbConnection()) {
 
     $firstTime = true;
 
-    while(!checkDbConnection()) {
+    while(checkDbConnection()==false) {
         if($firstTime) {
             $firstTime = false;
         } else {
