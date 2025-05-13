@@ -261,8 +261,8 @@ class Field_Rich extends Field {
 							console.log('Command: ',command);
 
 							if (editor_button.classList.contains('toggle_editor_raw')) {
-								control = editor_button.closest('.control');
-								raw = control.querySelector('textarea.editor_raw');
+								let control = editor_button.closest('.control');
+								let raw = control.querySelector('textarea.editor_raw');
 								if (raw.style.display=='block') {
 									raw.style.display='none';
 								}
