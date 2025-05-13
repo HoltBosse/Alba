@@ -132,7 +132,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <hr>
 
 <div id='content_type_section' class='fields-horizontal'>
-	<div class="field  width33">
+	<div class="field">
 		<label class="label">Main Content</label>
 		<div class="control has-icons-left has-icons-right">
 		 
@@ -184,41 +184,40 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					</div>
 				</div>
 			</div>
-
-			<div id="content_type_controller_view_options" style="width: 100%;">
-				<h6 class='heading title is-6'>VIEW OPTIONS</h6>
-				<?php 
-					if ($page->view>0) {
-						$content_loc = Content::get_content_location($page->content_type);
-						$view_loc = Content::get_view_location($page->view);
-						// OLD method
-						//include_once (CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options.php");
-						// NEW uses json forms
-						$options_form_filepath = CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json";
-						if (is_file($options_form_filepath)) {
-							$options_form = new Form($options_form_filepath);
-							// set options form values from json stored in view_configuration
-							$options_form->deserialize_json($page->view_configuration);
-							$options_form->display_front_end();
-						}
-						else {
-							echo "<p>No options for this view.</p>";
-						}
-					}
-					else {
-						echo "<p>Choose a view first to see display options.</p>";
-					}
-				?>
-			</div>
-
-			
-
 		</div>
-
 	<?php endif; ?>
-
 </div> <!-- content_type_section -->
-	<hr>
+<br>
+
+<?php if ($page->content_type):?>
+	<div id="content_type_controller_view_options" style="width: 100%;">
+		<h6 class='heading title is-6'>VIEW OPTIONS</h6>
+		<?php 
+			if ($page->view>0) {
+				$content_loc = Content::get_content_location($page->content_type);
+				$view_loc = Content::get_view_location($page->view);
+				// OLD method
+				//include_once (CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options.php");
+				// NEW uses json forms
+				$options_form_filepath = CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json";
+				if (is_file($options_form_filepath)) {
+					$options_form = new Form($options_form_filepath);
+					// set options form values from json stored in view_configuration
+					$options_form->deserialize_json($page->view_configuration);
+					$options_form->display_front_end();
+				}
+				else {
+					echo "<p>No options for this view.</p>";
+				}
+			}
+			else {
+				echo "<p>Choose a view first to see display options.</p>";
+			}
+		?>
+	</div>
+
+<?php endif; ?>
+<hr>
 
 	
 
