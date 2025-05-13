@@ -8,6 +8,11 @@ if(php_sapi_name()!=="cli") {
     die;
 }
 
+if(getenv('alba_installer_skip_configuration')=="true") {
+    echo "installer configuration disable by env var, terminating\n";
+    die;
+}
+
 define ("CMSPATH", realpath(dirname(__file__) . "/../"));
 define ("INSTALLERPATH", realpath(dirname(__file__)));
 
