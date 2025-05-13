@@ -1,12 +1,24 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access 
 
-function outputLine($input) {
-    echo $input . "\n";
+function stylePrefix($input) {
+	if($input=="NOTICE") {
+		return "\033[0;37;43m[" . $input . "]\033[0m";
+	} elseif($input=="ERROR") {
+		return "\033[0;37;41m[" . $input . "]\033[0m";
+	} elseif($input=="SUCCESS") {
+		return "\033[0;37;42m[" . $input . "]\033[0m";
+	} else {
+		return "[" . $input . "]";
+	}
 }
 
-function outputError($input) {
-    echo $input . "\n";
+function outputLine($input, $prefix="NOTICE") {
+    echo stylePrefix($prefix) . ": " . $input . "\n";
+}
+
+function outputError($input, $prefix="ERROR") {
+    echo outputLine($input, $prefix);
     die;
 }
 
@@ -63,4 +75,37 @@ function loadDb() {
 	}
 
 	require_once(CMSPATH . "/core/db.php");
+}
+
+function fillInFields($fields) {
+	foreach($fields as $field=>$value) {
+        while (sizeof($fields[$field])<2) {
+            if(sizeof($fields[$field])==0) {
+                $input = readline("Enter $field: ");
+                $fields[$field][0] = $input;
+            } elseif(sizeof($fields[$field])==1) {
+                $input = readline("Confirm $field: ");
+                if($input == $fields[$field][0]) {
+                    $fields[$field][1] = $input;
+                } else {
+                    $fields[$field] = [];
+                    outputLine("Fields dont match!!!", "ERROR");
+                }
+            }
+        }
+    }
+
+	return $fields;
+}
+
+function updateConfigFile($param, $value) {
+	$lines = file(CMSPATH . "/config.php", FILE_IGNORE_NEW_LINES);
+
+	foreach ($lines as &$line) {
+        if (strpos($line, "$" . $param . " ") !== false) {
+            $line = "    static \$$param = '$value';";
+        }
+    }
+
+	file_put_contents(CMSPATH . "/config.php", implode(PHP_EOL, $lines));
 }

@@ -14,69 +14,125 @@ define ("INSTALLERPATH", realpath(dirname(__file__)));
 require_once(INSTALLERPATH . "/php/utilities.php");
 
 if(!file_exists(CMSPATH . "/config.php")) {
-    outputError("ERROR: Config file not found!!!");
+    outputError("Config file not found!!!");
 }
 
 require_once(CMSPATH . "/config.php");
 
-if(!checkDbConnection()) {
-    outputError("TODO: Implement config file updating!!!");
+if(Config::sitename()=="Alba") {
+    Config::$sitename = readline("Enter site name: ");
+    updateConfigFile("sitename", Config::$sitename);
+    
+    Config::$uripath = readline("Enter uripath: ");
+    updateConfigFile("uripath", Config::$uripath);
+}
 
-    /* outputLine(Config::$sitename);
-    Config::$sitename = "lol";
-    outputLine(Config::$sitename); */
+if(!checkDbConnection()) {
+    outputError("TODO - Implement config file updating!!!");
 } else {
-    outputLine("SUCCESS: DB credentials configured");
+    outputLine("DB credentials configured");
 }
 
 loadDb();
-outputLine("SUCCESS: Loaded DB");
+outputLine("Loaded DB", "SUCCESS");
 
 $sqlFiles = glob(INSTALLERPATH . "/sql/mariadb/*.sql");
 foreach($sqlFiles as $file) {
     $tableName = explode(".", basename($file))[0];
 
-    $tableStatus = DB::fetch("SELECT count(*) AS c FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '$tableName'")->c;
+    $tableStatus = DB::fetch("SELECT count(*) AS c FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?", [$tableName, Config::dbname()])->c;
 
     if($tableStatus) {
-        outputLine("NOTICE: table $tableName is already installed, skipping");
+        outputLine("table $tableName is already installed, skipping");
     } else {
-        outputLine("NOTICE: installing $tableName");
+        outputLine("installing $tableName");
         DB::exec(file_get_contents($file));
-        outputLine("NOTICE: installed");
+        outputLine("installed", "SUCCESS");
     }
 }
 
 if(DB::fetch("SELECT count(*) AS c FROM groups")->c == 0) {
     DB::exec("INSERT INTO `groups` (value, display) VALUES ('admin','Administrators')");
     DB::exec("INSERT INTO `groups` (value, display) VALUES ('editor','Contributors')");
-    outputLine("NOTICE: groups installed");
+    outputLine("groups installed");
 } else {
-    outputLine("NOTICE: groups already installed");
+    outputLine("groups already installed");
 }
 
 if(DB::fetch("SELECT count(*) AS c FROM templates")->c == 0) {
     DB::exec("INSERT INTO templates (is_default, title, folder, description) VALUES (1,'basic','basic','A very simple template to get you started.')");
-    outputLine("NOTICE: templates installed");
+    outputLine("templates installed");
 } else {
-    outputLine("NOTICE: templates already installed");
+    outputLine("templates already installed");
 }
 
 if(DB::fetch("SELECT count(*) AS c FROM content_types")->c == 0) {
     DB::exec("INSERT INTO content_types (title, controller_location, description, state) VALUES ('Basic Article','basic_article','A simple HTML content item with a WYSIWYG editor.',1)");
-    outputLine("NOTICE: content_types installed");
+    outputLine("content_types installed");
 } else {
-    outputLine("NOTICE: content_types already installed");
+    outputLine("content_types already installed");
 }
 
 if(DB::fetch("SELECT count(*) AS c FROM content_views")->c == 0) {
     DB::exec("INSERT INTO content_views (content_type_id, title, location) VALUES (1,'Single Article','single')");
     DB::exec("INSERT INTO content_views (content_type_id, title, location) VALUES (1,'Blog','blog')");
-    outputLine("NOTICE: content_views installed");
+    outputLine("content_views installed");
 } else {
-    outputLine("NOTICE: content_views already installed");
+    outputLine("content_views already installed");
 }
 
-outputLine("TODO: handle email, username, password - site name, uripath");
+if(DB::fetch("SELECT count(*) AS c FROM pages")->c == 0) {
+    DB::exec(
+        "INSERT INTO pages (title, alias, content_type, parent, template, page_options) VALUES (?,?,?,?,?,?)",
+        [
+            "My Home Page",
+            "home",
+            -1,
+            -1,
+            0,
+            ""
+        ]
+    );
 
-outputLine("NOTICE: cms installation finished");
+    outputLine("home page created");
+} else {
+    outputLine("pages already exist");
+}
+
+if(DB::fetch("SELECT count(*) as c FROM users")->c == 0) {
+    $fields = [
+        "username"=>[],
+        "email"=>[],
+        "password"=>[],
+    ];
+
+    $fields = fillInFields($fields);
+
+    //CMS::pprint_r($fields);
+    $hash = password_hash($fields["password"][0], PASSWORD_DEFAULT);
+	DB::exec(
+        "INSERT INTO users (username, email, password, state) VALUES (?,?,?,1)",
+        [
+            $fields["username"][0],
+            $fields["email"][0],
+            $hash,
+        ]
+    );
+
+    $userId = DB::get_last_insert_id();
+    $adminGroupId = DB::fetch("SELECT id FROM `groups` WHERE value='admin'")->id;
+
+    DB::exec(
+        "INSERT INTO user_groups (user_id, group_id) VALUES (?,?)",
+        [
+            $userId,
+            $adminGroupId,
+        ]
+    );
+
+    outputLine("inserted user");
+} else {
+    outputLine("user already added to database");
+}
+
+outputLine("cms installation finished");
