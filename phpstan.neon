@@ -15,6 +15,7 @@ parameters:
 		- widgets/crowdriff
 		- config.php
 		- index.php
+		- installer
 	excludePaths:
 		- core/controllers/adminer
 	ignoreErrors:
