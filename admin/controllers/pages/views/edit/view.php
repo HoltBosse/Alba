@@ -227,7 +227,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		<?php include_once($layout_path); ?>
 	</div>
 
-	<?php Component::create_fixed_control_bar(); ?>
+	<?php
+		$otherButton = '<button title=\'Save and keep working!\' class="button is-info" name="quicksave" value="quicksave" type="submit">Quick Save</button>';
+		Component::create_fixed_control_bar($otherButton);
+	?>
 	
 </form>
 
