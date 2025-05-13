@@ -9,8 +9,8 @@
         "albatests": [
             "vendor/bin/phpstan analyse"
         ],
-        "albainstall": [
-            "php installer/installer.php"
+        "albaconfigure": [
+            "if test -f installer/installer.php; then php installer/installer.php; fi"
         ]
     },
     "require-dev": {
