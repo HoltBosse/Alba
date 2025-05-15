@@ -69,6 +69,9 @@ input:invalid {
 input:required:valid {
   border: 1px solid green;
 }
+input[type="date"] {
+  display: block;
+}
 
 .menu_node {
     /* margin: 1rem; */
