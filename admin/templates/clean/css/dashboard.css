@@ -69,7 +69,7 @@ input:invalid {
 input:required:valid {
   border: 1px solid green;
 }
-input[type="date"] {
+input[type="date"], input[type="datetime-local"], input[type="time"], input[type="month"], input[type="week"] {
   display: block;
 }
 
