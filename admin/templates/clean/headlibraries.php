@@ -5,9 +5,9 @@ defined('CMSPATH') or die;
 <script>window.uripath = "<?php echo Config::uripath();?>";</script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.0/css/bulma.min.css"></link>
-<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/darkmode.css?v=1"></link>
-<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/dashboard.css?v=1"></link>
-<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/layout.css?v=1"></link>
+<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/darkmode.css?v=2"></link>
+<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/dashboard.css?v=2"></link>
+<link rel="stylesheet" href="<?php echo Config::uripath();?>/admin/templates/clean/css/layout.css?v=2"></link>
 
 <script src="https://kit.fontawesome.com/e73dd5d55b.js" crossorigin="anonymous"></script>
 
