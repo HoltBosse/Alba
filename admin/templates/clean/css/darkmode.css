@@ -37,4 +37,12 @@
             }
         }
     }
+    input[type="date"], input[type="datetime-local"], input[type="time"], input[type="month"], input[type="week"] {
+        &::-webkit-calendar-picker-indicator {
+          filter: invert(1);
+        }
+    }
+    .ss-main .ss-multi-selected, .ss-single-selected {
+        border: 1px solid hsl(221, 14%,calc(24% + 0%)) !important;
+    }
 }
