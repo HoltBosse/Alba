@@ -3,6 +3,10 @@ export function handleAdminRows(elementSelector) {
 
     document.querySelectorAll(elementSelector).forEach(row => {
         row.addEventListener('click',(e)=> {
+            if((e.target.tagName=="BUTTON" || e.target.closest("button")) || (e.target.tagName=="A" && e.target.hasAttribute("href"))) {
+                return;
+            }
+
             const tr = e.target.closest('tr');
             const hidden_checkbox = tr.querySelector('.hidden_multi_edit');
 

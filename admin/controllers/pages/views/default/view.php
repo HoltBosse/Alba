@@ -28,13 +28,10 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<th>Status</th>
 			<th>Title</th>
 			<th>URL</th>
-			<!-- <th>Content</th> -->
 			<th>Template</th>
-			<!-- <th>Configuration</th> -->
-			<!-- <th>Created</th> -->
 			<th>ID</th>
 		</thead>
-		<tbody>
+		<tbody> 
 			<?php foreach($all_pages as $page):?>
 			<tr class='page_admin_row'>
 				<td>
@@ -62,15 +59,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						echo "<span class='unimportant'>" . Content::get_content_type_title($page->content_type) ;
 						echo " &raquo; ";
 						echo Content::get_view_title($page->content_view) . "</span>";
-						//echo "<br><p>TODO: get options nice</p>";
 						$component_path = Content::get_content_location($page->content_type);
 						$component_view = Content::get_view_location($page->content_view);
-						// TODO - maybe make this an option to view content info on pages overview? it works!
-						/* $view_options = new View_Options($component_path, $component_view, $page->content_view_configuration);
-						$content_info = $view_options->get_content_info();
-						if ($content_info) {
-							echo "<p>{$content_info}</p>";
-						} */
 					}
 					else {
 						echo "<span class='unimportant'>Widgets only</span>";
@@ -78,7 +68,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					?>
 				</td>
 				<td>
-					<span class='unimportant'><?php echo $page->alias; ?></span>
+					<?php
+						$pageInstance = new Page();
+						$pageInstance->load_from_id($page->id);	
+					?>
+					<a style="color: var(--bulma-table-color);" target="_blank" class='unimportant' href="<?php echo $pageInstance->get_url(); ?>"><?php echo $page->alias; ?></a>
 				</td>
 			
 				
@@ -88,12 +82,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						echo "<br><span class='has-text-info widget_override_indicator'>Has Widget Overrides</span>";
 					}?>
 				</td>
-				<!-- <td>
-					<span class='unimportant'><?php //echo $page->content_view_configuration; ?></span>
-				</td> -->
-				<!-- <td>
-					<span class='unimportant'><?php //echo $page->updated; ?></span>
-				</td> -->
 				<td class='unimportant'>
 					<span class=''><?php echo $page->id; ?></span>
 				</td>
