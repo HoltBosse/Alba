@@ -109,7 +109,7 @@ class Category {
 		$this->state = $required_details_form->get_field_by_name('state')->default;
 		$this->parent = $required_details_form->get_field_by_name('parent')->default; 
 		$this->content_type = $required_details_form->get_field_by_name('content_type')->default; 
-		$this->custom_fields = $custom_fields_form ? $custom_fields_form->serialize_json() : "";
+		$this->custom_fields = $custom_fields_form ? json_encode($custom_fields_form->serialize_json) : "";
 
 		if ($this->id) {
 			Actions::add_action("categoryupdate", (object) [
