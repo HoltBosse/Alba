@@ -268,7 +268,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
                 $options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
                 $options_form->set_from_submit();
-                $page->view_configuration = $options_form->serialize_json();
+                $page->view_configuration = json_encode($options_form);
 
                 $page->save();
 

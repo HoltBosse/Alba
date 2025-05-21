@@ -38,11 +38,11 @@ if ($page->content_type && $page->view) {
 		CMS::Instance()->queue_message('Page creation/update failed - invalid view options form','danger',Config::uripath().'/admin/pages');
 	}
 	// get name/value pairs json from form to add to view_configuration of page
-	$page->view_configuration = $options_form->serialize_json();
+	$page->view_configuration = json_encode($options_form);
 }
 
 // save page seo/og options
-$page->page_options = $page->page_options_form->serialize_json(); // not view options, page seo/og options :)
+$page->page_options = json_encode($page->page_options_form); // not view options, page seo/og options :)
 $is_valid = $page_options_form->validate();
 if (!$is_valid) {
 	CMS::Instance()->queue_message('Page creation/update failed - invalid page options form','danger',Config::uripath().'/admin/pages');

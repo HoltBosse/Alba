@@ -1,7 +1,7 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-class Form {
+class Form implements JsonSerializable {
 	public $id;
 	public $display_name;
 	public $fields;
@@ -139,7 +139,7 @@ class Form {
 		return true;
 	}
 
-	public function serialize_json() {
+	public function jsonSerialize(): mixed {
 		$name_value_pairs = [];
 		foreach ($this->fields as $field) {
 			$pair = new stdClass();
@@ -170,7 +170,11 @@ class Form {
 				$name_value_pairs[] = $pair;
 			}
 		}
-		return json_encode ($name_value_pairs);
+		return $name_value_pairs;
+	}
+
+	public function serialize_json() {
+		return json_encode($this);
 	}
 
 	public function deserialize_json($json) {
