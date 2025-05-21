@@ -177,7 +177,7 @@ class Form implements JsonSerializable {
 		return json_encode($this);
 	}
 
-	public function deserialize_json($json): mixed {
+	public function deserialize_json($json) {
 		$json_obj = json_decode($json);
 		if ($json_obj) {
 			foreach ($json_obj as $option) {
