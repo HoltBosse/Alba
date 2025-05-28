@@ -4,13 +4,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <style>
     <?php echo file_get_contents(CMSPATH . "/admin/controllers/content/views/all/style.css"); ?>
-    #orderitems {}
-    .orderitem {
-        /* display:flex;
-        gap:1rem; */
-        &:hover {
-            cursor:move;
-        }
+    .orderitem:hover {
+        cursor:move;
     }
     .sortable-chosen {
         font-weight:bold;
@@ -18,15 +13,20 @@ defined('CMSPATH') or die; // prevent unauthorized access
     table#orderitems tr {
         grid-template-columns: repeat(<?php echo sizeof($content_list_fields)+4;?>, 1fr); /* match # of columns in ordering table */
     }
-    table.table td:nth-of-type(<?php echo Admin_Config::$show_ids_in_tables ? 3 : 2; ?>), table.table th:nth-of-type(<?php echo Admin_Config::$show_ids_in_tables ? 3 : 2; ?>) {
+    table.table td:nth-of-type(2), table.table th:nth-of-type(2) {
         grid-column: span 3;
+    }
+    [data-hidestate="true"] {
+        display: none !important;
     }
 </style>
 
-<h1 class='title is-1'>Order <?php echo "&ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; ";?>Content
-	<a class='is-primary pull-right button btn' href='<?php echo Config::uripath();?>/admin/content/all/<?php echo $content_type;?>'>Back To All &ldquo;<?php echo Content::get_content_type_title($content_type);?>&rdquo; Content</a>
-    <span class='unimportant subheading'>Drag and drop items into your preferred order. </span>
-</h1>
+<?php
+    $header = "Order &ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; Content";
+    $byline = "Drag and drop items into your preferred order.";
+    $rightContent = "<a class='is-primary button btn' href='" . Config::uripath() . "/admin/content/all/$content_type'>Back To All &ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; Content</a>";
+    Component::addon_page_title($header, $byline, $rightContent);
+?>
 
 <table class='table is-fullwidth' id="orderitems">
     <thead>
@@ -42,7 +42,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
     </thead>
     <tbody id="ordertablebody">
         <?php foreach ($all_content as $i):?>
-            <tr data-ordering="<?=$i->ordering;?>" data-content_type="<?=$content_type;?>" data-content_id="<?=$i->id;?>" class=" orderitem">
+            <tr data-ordering="<?=$i->ordering;?>" data-content_type="<?=$content_type;?>" data-content_id="<?=$i->id;?>" data-hidestate="<?=$i->state<0  ? "true" : "false";?>" class=" orderitem">
                 <td>
                 <?php if ($i->state==1) { 
                     echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
