@@ -36,14 +36,7 @@ if ($action=="changeorder") {
 	$stmt = DB::exec("UPDATE `$content_table` SET ordering = ? WHERE id = ?",[$new_order, $id]);
 	rj([
 		"success"=>1,
-		"message"=>"Ordering complete",
-		"data"=>[
-			"id"=>$id,
-			"new_order"=>$new_order,
-			"prev_order"=>$prev_order,
-			"content_type"=>$content_type,
-			
-		]
+		"message"=>"Ordering complete"
 	]);
 	exit(0);
 }
