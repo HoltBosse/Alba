@@ -23,9 +23,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <?php
     $header = "Order &ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; Content";
-	$byline = "Drag and drop items into your preferred order.";
-	$rightContent = "<a class='is-primary button btn' href='" . Config::uripath() . "/admin/content/all/$content_type'>Back To All &ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; Content</a>";
-	Component::addon_page_title($header, $byline, $rightContent);
+    $byline = "Drag and drop items into your preferred order.";
+    $rightContent = "<a class='is-primary button btn' href='" . Config::uripath() . "/admin/content/all/$content_type'>Back To All &ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; Content</a>";
+    Component::addon_page_title($header, $byline, $rightContent);
 ?>
 
 <table class='table is-fullwidth' id="orderitems">
