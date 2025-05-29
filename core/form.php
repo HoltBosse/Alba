@@ -204,7 +204,7 @@ class Form implements JsonSerializable {
 	public function save_to_db() {
 		//if the form was loaded from an object and the path not set afterwords.....
 		if(gettype($this->form_path)!="string") {
-			CMS::show_error("Failed to save form submission, bad form path!", 500);
+			throw new Exception("Failed to save form submission, bad form path!");
 		}
 
 		DB::exec(

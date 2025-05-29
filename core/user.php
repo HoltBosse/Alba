@@ -40,13 +40,7 @@ class User {
 			return $id;
 		}
 		else {
-			if (Config::debug()) {
-				CMS::pprint_r('Unable to create new user');
-				CMS::pprint_r(debug_backtrace());
-				die();
-			} else {
-				CMS::Instance()->show_error('Unable to create new user');
-			}
+			throw new Exception('Unable to create new user');
 		}
 	}
 	

@@ -55,7 +55,7 @@ class Mail {
 	public function send() {
 
 		if (!$this->to || !$this->subject || !$this->html) {
-			CMS::show_error('No to, subject, or content provided to send email');
+			throw new Exception('No to, subject, or content provided to send email');
 		}
 
 		$smtp_name = Configuration::get_configuration_value ('general_options', 'smtp_name');

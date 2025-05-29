@@ -17,13 +17,7 @@ class Image {
     
     public function __construct($id) {
         if (!is_numeric($id)) {
-            if (Config::debug()) {
-                CMS::pprint_r("Cannot create image object from non-numerical id");
-                CMS::pprint_r(debug_backtrace());
-                die();
-            } else {
-                CMS::Instance()->show_error('Cannot create image object from non-numerical id');
-            }
+            throw new Exception('Cannot create image object from non-numerical id');
         }
         else {
             $this->id = $id;

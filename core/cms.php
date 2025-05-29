@@ -282,16 +282,8 @@ final class CMS {
 			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
 			PDO::ATTR_EMULATE_PREPARES   => false,
 		];
-		try {
-			$this->pdo = new PDO($dsn, Config::dbuser(), Config::dbpass(), $options);
-		} catch (\PDOException $e) {
-			if (Config::debug()) {
-				throw new \PDOException($e->getMessage(), (int)$e->getCode());
-			}
-			else {
-				$this->show_error("Failed to connect to database: " . Config::dbname() . "<br>Update config file or run installer and try again.");
-			}
-		}
+		//possible exception handled by exception handler
+		$this->pdo = new PDO($dsn, Config::dbuser(), Config::dbpass(), $options);
 
 		// END DB SETUP
 
@@ -756,7 +748,7 @@ final class CMS {
 					$cms_head .= $he;
 				}
 				if(!str_contains($this->page_contents, "<!--CMSHEAD-->")) {
-					CMS::show_error("Failed to Load Head", 500);
+					throw new Exception("Failed to Load Head");
 				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 				if(Config::dev_banner() ?? null) {
@@ -776,6 +768,33 @@ final class CMS {
 		}
 	}
 }
+
+// EXCEPTION HANDLER
+
+set_exception_handler(function($e) {
+    if(Config::debug()) {
+        echo "<div style='
+            background: #ffeeee;
+            border: 1px solid #cc0000;
+            padding: 16px;
+            font-family: monospace;
+            color: #333;
+            margin:16px auto;
+            border-radius:8px;
+        '>";
+            echo "<h3 style='margin-top:0;color:#cc0000;'>Uncaught Exception</h3>";
+            echo "<strong>Message:</strong> " . htmlspecialchars($e->getMessage()) . "<br>";
+            echo "<strong>Code:</strong> " . $e->getCode() . "<br>";
+            echo "<strong>File:</strong> " . htmlspecialchars($e->getFile()) . "<br>";
+            echo "<strong>Line:</strong> " . $e->getLine() . "<br>";
+            echo "<details style='margin-top:8px;'><summary>Stack Trace</summary>";
+            echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
+            echo "</details>";
+        echo "</div>";
+    } else {
+        CMS::show_error($e->getMessage(), 500);
+    }
+});
 
 // CLASS AUTOLOADER
 
