@@ -56,7 +56,7 @@ class Template {
 			return new Template($result->id);
 		}
 		else {
-			CMS::show_error('Failed to determine default template');
+			throw new Exception('Failed to determine default template');
 		}
 	}
 

@@ -24,13 +24,7 @@ class Content {
 
 	public static function get_table_name_for_content_type($type_id) {
 		if (!is_numeric($type_id)) {
-			if (Config::debug()) {
-				CMS::pprint_r("Unable to determine table name for non-numeric content type");
-				CMS::pprint_r(debug_backtrace());
-				die();
-			} else {
-				CMS::Instance()->show_error('Unable to determine table name for non-numeric content type');
-			}
+			throw new Exception('Unable to determine table name for non-numeric content type');
 		}
 		else {
 			$location = Content::get_content_location($type_id);
@@ -40,13 +34,7 @@ class Content {
 				return $table_name;
 			}
 			else {
-				if (Config::debug()) {
-					CMS::pprint_r('Unable to determine table name for content id ' . $type_id);
-					CMS::pprint_r(debug_backtrace());
-					die();
-				} else {
-					CMS::Instance()->show_error('Unable to determine table name for content id ' . $type_id);
-				}
+				throw new Exception('Unable to determine table name for content id ' . $type_id);
 			}
 		}
 	}
@@ -110,12 +98,9 @@ class Content {
 		if (!$this->table_name) {
 			if(Config::debug()) {
 				CMS::pprint_r ($this);
-				CMS::pprint_r(debug_backtrace());
-				die();
-			} else {
-				CMS::show_error('Unknown table name', 500);
-				die();
 			}
+			
+			throw new Exception('Unknown table name', 500);
 		}
 		$query = "select `{$field_name}` as v from `{$this->table_name}` where id=?";
 		$value = DB::fetch($query, [$this->id])->v; // todo: can we make col name param?

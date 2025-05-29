@@ -37,7 +37,7 @@ class Controller {
 				}
 			}
 			else {
-				CMS::Instance()->show_error("View folder {$this->view} doesn't exist for controller at " . $this->path, 500);
+				throw new Exception("View folder {$this->view} doesn't exist for controller at " . $this->path);
 			}
 		}
 	}

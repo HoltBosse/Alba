@@ -2,48 +2,12 @@
 defined('CMSPATH') or die; // prevent unauthorized access
 
 class DB {
-	public $pdo;
-
-	public function __construct() {
-		$dsn = "mysql:host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";charset=" . Config::dbchar();
-		$options = [
-			PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-			PDO::ATTR_EMULATE_PREPARES   => false,
-		];
-		try {
-			$this->pdo = new PDO($dsn, Config::dbuser(), Config::dbpass(), $options);
-		} catch (\PDOException $e) {
-			if (Config::debug()) {
-				throw new \PDOException($e->getMessage(), (int)$e->getCode());
-			}
-			else {
-				CMS::show_error("Failed to connect to database: " . Config::dbname());
-			}
-		}
-	}	
-
 	public static function exec($query, $paramsarray=[]) {
 		if (!is_array($paramsarray)) {
 			$paramsarray = [$paramsarray];
 		}
-		try {
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$success = $stmt->execute($paramsarray);
-		}
-		catch (\PDOException $e) {
-			if (Config::debug()) {
-				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
-				CMS::pprint_r(debug_backtrace());
-				die();
-			}
-			else {
-				//CMS::pprint_r(debug_backtrace()); die();
-				CMS::show_error("Failed to create PDO query statement: " . $e->getMessage());
-				//CMS::show_error("Database query error - turn on debug for more information.");
-			}
-		}
-		return $success;
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		return $stmt->execute($paramsarray);
 	}
 
 	public static function get_last_insert_id() {
@@ -54,23 +18,9 @@ class DB {
 		if (!is_array($paramsarray)) {
 			$paramsarray = [$paramsarray];
 		}
-		try {
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute($paramsarray);
-			$result = $stmt->fetchAll($options["mode"] ?? PDO::FETCH_OBJ);
-		}
-		catch (\PDOException $e) {
-			if (Config::debug()) {
-				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
-				CMS::pprint_r(debug_backtrace());
-				die();
-			}
-			else {
-				//CMS::pprint_r(debug_backtrace()); die();
-				CMS::show_error("Database query error - turn on debug for more information.");
-			}
-		}
-		return $result;
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute($paramsarray);
+		return $stmt->fetchAll($options["mode"] ?? PDO::FETCH_OBJ);
 	}
 
 	public static function fetchallcolumn($query, $paramsarray=[]) {
@@ -81,22 +31,8 @@ class DB {
 		if (!is_array($paramsarray)) {
 			$paramsarray = [$paramsarray];
 		}
-		try {
-			$stmt = CMS::Instance()->pdo->prepare($query);
-			$stmt->execute($paramsarray);
-			$result = $stmt->fetch($options["mode"] ?? PDO::FETCH_OBJ);
-		}
-		catch (\PDOException $e) {
-			if (Config::debug()) {
-				CMS::pprint_r("Failed to create PDO query statement: " . $e->getMessage());
-				CMS::pprint_r(debug_backtrace());
-				die();
-			}
-			else {
-				//CMS::pprint_r(debug_backtrace()); die();
-				CMS::show_error("Database query error - turn on debug for more information.");
-			}
-		}
-		return $result;
+		$stmt = CMS::Instance()->pdo->prepare($query);
+		$stmt->execute($paramsarray);
+		return $stmt->fetch($options["mode"] ?? PDO::FETCH_OBJ);
 	}
 }

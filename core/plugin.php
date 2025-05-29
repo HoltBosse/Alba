@@ -37,15 +37,15 @@ class Plugin {
     } 
     
     public function init() {
-        CMS::show_error('Default plugin init called - should never happen');
+        throw new Exception('Default plugin init called - should never happen');
     }
 
     public function execute_action(...$args) {
-        CMS::show_error('Default plugin execute_action called - should never happen');
+        throw new Exception('Default plugin execute_action called - should never happen');
     }
 
     public function execute_filter($data, ...$args) {
-        CMS::show_error('Default plugin execute_filter called - should never happen');
+        throw new Exception('Default plugin execute_filter called - should never happen');
     }
 
 	public static function get_plugin_title ($id) {
@@ -93,7 +93,7 @@ class Plugin {
 			}
         }
         else {
-            CMS::show_error('Unknown plugin');
+            throw new Exception('Unknown plugin');
         }
 	}
 }
