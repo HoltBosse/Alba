@@ -8,9 +8,9 @@ class JSON {
 				$json = file_get_contents($file);
 				$obj = json_decode($json);
 				if (!$obj) {
-					$messsage = "JSON decode error";
+					$message = "JSON decode error";
 					if (Config::debug()) {
-						$mssage = 'Error decoding JSON in file &ldquo;' . $file . '&rdquo;';
+						$message = 'Error decoding JSON in file &ldquo;' . $file . '&rdquo;';
 					}
 
 					throw new Exception($message);
