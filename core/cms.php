@@ -26,7 +26,11 @@ if (Config::debug()) {
 	}
 }
 
-
+HoltBosse\DB\DB::createInstance(
+	"mysql:host=" . Config::dbhost() .";dbname=" . Config::dbname() .";charset=" . Config::dbchar(),
+	Config::dbuser(),
+	Config::dbpass()
+);
 
 
 final class CMS {
@@ -272,21 +276,8 @@ final class CMS {
 			$this->need_session=false; // don't need session for image api
 		}
 
-		
-
-		// db
-		// TODO: move all db setup to db.php - make it not a class, just a old fashioned include
-		$dsn = "mysql:host=" . Config::dbhost() . ";dbname=" . Config::dbname() . ";charset=" . Config::dbchar();
-		$options = [
-			PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-			PDO::ATTR_EMULATE_PREPARES   => false,
-		];
-		//possible exception handled by exception handler
-		$this->pdo = new PDO($dsn, Config::dbuser(), Config::dbpass(), $options);
-
-		// END DB SETUP
-
+		$dbInstance = HoltBosse\DB\DB::getInstance();
+		$this->pdo = $dbInstance->getPdo();
 		
 		// Load plugins
 		$GLOBALS['hooks'] = []; // reset hooks array

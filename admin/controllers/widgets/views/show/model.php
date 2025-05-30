@@ -16,7 +16,7 @@ if(!is_numeric($widget_type_id)) {
         "name"=>"widget_type",
         "id"=>"widget_type",
         "placeholder"=>"widget",
-        "select_options"=>DB::fetchall("SELECT title AS text, location AS value FROM widget_types"),
+        "select_options"=>DB::fetchAll("SELECT title AS text, location AS value FROM widget_types"),
 	];
 }
 $searchFormObject->fields[] = (object) [
@@ -62,7 +62,7 @@ if($_POST["widget_type"]) {
 
 $query .= ' ORDER BY id DESC';
 
-$all_widgets = DB::fetchall($query, $params);
+$all_widgets = DB::fetchAll($query, $params);
 
 $all_widget_types = Widget::get_all_widget_types();
 

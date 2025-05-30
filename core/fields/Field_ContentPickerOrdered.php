@@ -35,7 +35,7 @@ class Field_ContentPickerOrdered extends Field_PickerOrdered {
 				}
 				if (!$this->tags) {
 					// default order is alphabetical
-					$options_all_articles = DB::fetchall(
+					$options_all_articles = DB::fetchAll(
 						"SELECT id AS value, title AS text
 						FROM {$table_name}
 						WHERE state>={$min_state}

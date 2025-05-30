@@ -14,7 +14,7 @@ else {
 }
 
 // check for new content types
-$all_content_types = DB::fetchall("select * from content_types");
+$all_content_types = DB::fetchAll("select * from content_types");
 $missing_content_types=[];
 $missing=[];
 //CMS::pprint_r ($all_content_types);
@@ -141,7 +141,7 @@ foreach ($all_content_types as $content_type) {
 	}
 	else {
 		$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{$table_name}'";
-		$cols = DB::fetchallcolumn($query);
+		$cols = DB::fetchAllColumn($query);
 		foreach ($custom_fields->fields as $f) {
 			if (!in_array($f->name, $cols)) {
 				// check if column is saveable

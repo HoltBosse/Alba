@@ -17,6 +17,10 @@ if(getenv('alba_installer_skip_configuration')=="true") {
 define ("CMSPATH", realpath(dirname(__file__) . "/../"));
 define ("INSTALLERPATH", realpath(dirname(__file__)));
 
+include_once(CMSPATH . '/vendor/autoload.php');
+
+use HoltBosse\DB\DB;
+
 require_once(INSTALLERPATH . "/php/utilities.php");
 
 if(!file_exists(CMSPATH . "/config.php")) {
@@ -157,7 +161,7 @@ if(DB::fetch("SELECT count(*) as c FROM users")->c == 0) {
         ]
     );
 
-    $userId = DB::get_last_insert_id();
+    $userId = DB::getLastInsertedId();
     $adminGroupId = DB::fetch("SELECT id FROM `groups` WHERE value='admin'")->id;
 
     DB::exec(

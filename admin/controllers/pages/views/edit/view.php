@@ -171,7 +171,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						<select  id='content_type_controller_view' name='content_type_controller_view'>
 							<option value=''>Choose View:</option>
 							<?php
-							$all_views = DB::fetchall('select * from content_views where content_type_id=?', [$page->content_type]);
+							$all_views = DB::fetchAll('select * from content_views where content_type_id=?', [$page->content_type]);
 							foreach ($all_views as $view) {
 								$view_selected = "";
 								if ($page->view==$view->id) {
@@ -250,7 +250,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</div>
 		<hr>
 	  	<div class='widget_buttons '>
-			<?php $all_published_widgets = DB::fetchall('SELECT w.*, wt.title AS widget_type FROM widgets w, widget_types wt WHERE wt.id = w.type AND w.state >= 0');
+			<?php $all_published_widgets = DB::fetchAll('SELECT w.*, wt.title AS widget_type FROM widgets w, widget_types wt WHERE wt.id = w.type AND w.state >= 0');
 			foreach ($all_published_widgets as $widget):?>
 			<div class='widget_controls_wrap '>
 				<div class='widget_title_and_type'>

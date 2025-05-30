@@ -60,7 +60,7 @@ class User {
 					group by u.id";
 		/* $result = CMS::Instance()->pdo->query($query)->fetchAll();
 		return $result; */
-		return DB::fetchall($query);
+		return DB::fetchAll($query);
 	}
 
 	public function get_all_users_in_group($group_id) {
@@ -69,7 +69,7 @@ class User {
 					Left Join `groups` g on ug.group_id = g.id 
 					WHERE g.id=? 
 					group by u.id";
-		return DB::fetchall($query, [$group_id]);
+		return DB::fetchAll($query, [$group_id]);
 	}
 
 	public static function get_all_groups_for_user($user_id) {
@@ -143,11 +143,11 @@ class User {
 			$this->state = $result->state;
 			// get groups
 			$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
-			$this->groups = DB::fetchall($query, [$id]);
+			$this->groups = DB::fetchAll($query, [$id]);
 
 			// get tags
 			$query = "select tag_id from tagged where content_type_id=-2 and content_id=?";
-			$tag_obj_array = DB::fetchall($query, [$id]);
+			$tag_obj_array = DB::fetchAll($query, [$id]);
 			foreach ($tag_obj_array as $tag) {
 				$this->tags[] = $tag->tag_id;
 			}

@@ -60,7 +60,7 @@ class Content {
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
-			$results = DB::fetchall("select * from `{$this->table_name}` where alias=? and content_type=?", [$this->alias, $this->content_type] );
+			$results = DB::fetchAll("select * from `{$this->table_name}` where alias=? and content_type=?", [$this->alias, $this->content_type] );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
 			if ($this->id) {
@@ -393,7 +393,7 @@ class Content {
 		//$db = CMS::$pdo;
 		//$result = $db->pdo->query("select * from users")->fetchAll();
 		//$result = CMS::Instance()->pdo->query("select * from content_types where state > 0 order by id ASC")->fetchAll();
-		$result = DB::fetchall('select * from content_types where state > 0 order by id ASC');
+		$result = DB::fetchAll('select * from content_types where state > 0 order by id ASC');
 		return $result;
 	}
 	
@@ -459,13 +459,13 @@ class Content {
 	public static function get_applicable_tags ($content_type_id) {
 		$query = "select * from tags where (filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)) ";
 		$query.= "or (filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)) ";
-		$tags = DB::fetchall($query, [$content_type_id, $content_type_id]);
+		$tags = DB::fetchAll($query, [$content_type_id, $content_type_id]);
 		return $tags;
 	}
 
 	public static function get_applicable_categories ($content_type_id) {
 		$query = "select * from categories where content_type=?";
-		$cats = DB::fetchall($query, [$content_type_id]);
+		$cats = DB::fetchAll($query, [$content_type_id]);
 		return $cats;
 	}
 

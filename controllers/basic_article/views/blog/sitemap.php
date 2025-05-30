@@ -24,7 +24,7 @@ if($normalizedOptions["blogtag"] && is_numeric($normalizedOptions["blogtag"])) {
 }
 
 
-$articles = DB::fetchall($query, $params);
+$articles = DB::fetchAll($query, $params);
 //CMS::pprint_r($articles);
 
 foreach($articles as $item) {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f66bdfdacf31bf9aca4fdc016960150c",
+    "content-hash": "509dd55557a372777c3cd5ff3b4752a8",
     "packages": [
         {
             "name": "erusev/parsedown",
@@ -55,6 +55,40 @@
                 "source": "https://github.com/erusev/parsedown/tree/1.7.x"
             },
             "time": "2019-12-30T22:54:17+00:00"
+        },
+        {
+            "name": "holtbosse/db",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HoltBosse/db.git",
+                "reference": "a2f2ac52726c58e0050302e925214e2c551bef24"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HoltBosse/db/zipball/a2f2ac52726c58e0050302e925214e2c551bef24",
+                "reference": "a2f2ac52726c58e0050302e925214e2c551bef24",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HoltBosse\\DB\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "simple database class for working with pdo",
+            "support": {
+                "issues": "https://github.com/HoltBosse/db/issues",
+                "source": "https://github.com/HoltBosse/db/tree/1.0.0"
+            },
+            "time": "2025-05-29T18:52:46+00:00"
         },
         {
             "name": "phpmailer/phpmailer",

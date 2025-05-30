@@ -260,12 +260,12 @@ class Content_Search {
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
-			$result = DB::fetchall($query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? [])); // title and note
+			$result = DB::fetchAll($query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? [])); // title and note
 			// set count
 			$this->count = DB::fetch($count_query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? []))->c ?? 0;
 		}
 		else {
-			$result = DB::fetchall($query, array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []) );
+			$result = DB::fetchAll($query, array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []) );
 			// set count
 			$this->count = DB::fetch($count_query, array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []) )->c ?? 0;
 		}

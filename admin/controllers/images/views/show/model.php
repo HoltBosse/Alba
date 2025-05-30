@@ -23,7 +23,7 @@ if ($searchtext) {
     $params = ["%".$searchtext."%", "%".$searchtext."%", "%".$searchtext."%"];
 }
 
-$all_images = DB::fetchall("SELECT * " . $query . " LIMIT " . $pagination_size . " OFFSET " . ($cur_page-1)*$pagination_size, $params);
+$all_images = DB::fetchAll("SELECT * " . $query . " LIMIT " . $pagination_size . " OFFSET " . ($cur_page-1)*$pagination_size, $params);
 $images_count = DB::fetch("SELECT count(*) as count " . $query, $params)->count;
 
 $image_tags = Content::get_applicable_tags ("-1");

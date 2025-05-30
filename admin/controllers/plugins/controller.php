@@ -15,7 +15,7 @@ elseif ($segments[1]=='action') {
 }
 
 // check for new plugins
-$all_plugins = DB::fetchall("select * from plugins");
+$all_plugins = DB::fetchAll("select * from plugins");
 $missing_plugins=[];
 foreach (new DirectoryIterator(CMSPATH . '/plugins/') as $f) {
 	if($f->isDot()) continue; // no dot files, shouldn't even happen with PHP defaults

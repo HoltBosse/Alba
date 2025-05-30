@@ -35,7 +35,7 @@ $navigation = [
         "menu"=>[
             "label"=>"content",
             "links"=>array_merge(
-                DB::fetchall("SELECT title, CONCAT('/admin/content/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
+                DB::fetchAll("SELECT title, CONCAT('/admin/content/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
                 ["hr"=>"hr"],
                 ["check flat tables"=>"/admin/content/check"],
             )
@@ -46,7 +46,7 @@ $navigation = [
         "menu"=>[
             "label"=>"widgets",
             "links"=>array_merge(
-                DB::fetchall("SELECT title, CONCAT('/admin/widgets/show/', id) FROM widget_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
+                DB::fetchAll("SELECT title, CONCAT('/admin/widgets/show/', id) FROM widget_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
                 ["hr"=>"hr"],
                 ["all widgets"=>"/admin/widgets/show"],
             )
@@ -57,7 +57,7 @@ $navigation = [
         "menu"=>[
             "label"=>"plugins",
             "links"=>array_merge(
-                DB::fetchall("SELECT title, CONCAT('/admin/plugins/edit/', id) FROM plugins", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
+                DB::fetchAll("SELECT title, CONCAT('/admin/plugins/edit/', id) FROM plugins", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
                 ["hr"=>"hr"],
                 ["all plugins"=>"/admin/plugins/show"],
             )
@@ -75,7 +75,7 @@ $navigation = [
         "menu"=>[
             "label"=>"categories",
             "links"=>array_merge(
-                DB::fetchall("SELECT title, CONCAT('/admin/categories/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
+                DB::fetchAll("SELECT title, CONCAT('/admin/categories/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
                 ["hr"=>"hr"],
                 ["all Categories"=>"/admin/categories/all"],
                 ["hr2"=>"hr"],

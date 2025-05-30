@@ -21,7 +21,7 @@ class Actions {
 
         DB::exec("INSERT INTO user_actions (userid, type, json) VALUES (?, ?, ?)", [$userid, $type, json_encode($action)]);
 
-        return DB::get_last_insert_id();
+        return DB::getLastInsertedId();
     }
 
     public static function add_action_details($actionid, $details) {

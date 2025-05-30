@@ -10,7 +10,7 @@ $paginationSize = Configuration::get_configuration_value ('general_options', 'pa
 
 $curPage = Input::getvar('page','INT','1');
 
-$formSelectOptions = DB::fetchall("SELECT DISTINCT form_id AS value, form_path FROM form_submissions");
+$formSelectOptions = DB::fetchAll("SELECT DISTINCT form_id AS value, form_path FROM form_submissions");
 $formSelectOptions = array_map(function($input) {
     $option = (object) [
         "value"=>$input->value,
@@ -74,7 +74,7 @@ $paginationQuery = " LIMIT $paginationSize";
 $offset = ($curPage-1) * $paginationSize;
 $paginationQuery .= " OFFSET $offset";
 
-$results = DB::fetchall($query . $queryWhereFilters . $paginationQuery, $params);
+$results = DB::fetchAll($query . $queryWhereFilters . $paginationQuery, $params);
 
 $headerFields = [];
 if($results[0]) {
@@ -100,7 +100,7 @@ if($_GET["exportcsv"]) {
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
 
-    $results = DB::fetchall("SELECT * FROM form_submissions WHERE 1" . $queryWhereFilters, $params);
+    $results = DB::fetchAll("SELECT * FROM form_submissions WHERE 1" . $queryWhereFilters, $params);
 
     echo implode(",", $headerFields) . "\n";
     foreach($results as $row) {

@@ -5,6 +5,6 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class User_User {
 	public function get_all_users() {
-		return DB::fetchall('select * from users where state=1');
+		return DB::fetchAll('select * from users where state=1');
 	}
 }

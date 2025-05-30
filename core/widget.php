@@ -186,7 +186,7 @@ class Widget {
 			// new
 			$params = [$this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)] ;
 			$result = DB::exec("insert into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)", $params);
-			$new_widget_id = DB::get_last_insert_id();
+			$new_widget_id = DB::getLastInsertedId();
 			if ($result) {
 				CMS::Instance()->queue_message("Widget <a href='" . Config::uripath() . "/admin/widgets/edit/{$new_widget_id}'>{$this->title}</a> created", 'success', $redirect_url);	
 			}

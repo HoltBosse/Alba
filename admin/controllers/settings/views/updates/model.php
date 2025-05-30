@@ -30,14 +30,14 @@ else {
 // Legacy DB Checks / Fixes
 
 // check page_options column in pages table
-$page_options_ok = DB::fetchall("show columns FROM `pages` LIKE 'page_options'");
+$page_options_ok = DB::fetchAll("show columns FROM `pages` LIKE 'page_options'");
 if (!$page_options_ok) {
 	// add column
 	DB::exec("ALTER TABLE `pages` ADD `page_options` text NOT NULL COMMENT 'seo and og settings';");
 	$fixed_ok = true;
 }
 
-$plugins_table_ok = DB::fetchall("SELECT * FROM information_schema.tables WHERE table_name = 'plugins' LIMIT 1;");;
+$plugins_table_ok = DB::fetchAll("SELECT * FROM information_schema.tables WHERE table_name = 'plugins' LIMIT 1;");;
 if (!$plugins_table_ok) {
 	DB::exec("DROP TABLE IF EXISTS `plugins`;");
 	DB::exec("CREATE TABLE `plugins` (

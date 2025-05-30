@@ -21,7 +21,7 @@ else {
 }
 
 // check for new widget types
-$all_widget_types = DB::fetchall("select * from widget_types");
+$all_widget_types = DB::fetchAll("select * from widget_types");
 $missing_widgets=[];
 foreach (new DirectoryIterator(CMSPATH . '/widgets/') as $f) {
 	if($f->isDot()) continue; // no dot files, shouldn't even happen with PHP defaults
