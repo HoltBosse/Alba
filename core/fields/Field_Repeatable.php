@@ -38,22 +38,7 @@ class Field_Repeatable extends Field {
 			foreach ($saved_data as $repeatable_index=>$repeatable_form_data) {
 				// load form
 				$repeatable_form = new Form(CMSPATH . ($repeatable_form_data->form_path ?? $this->form_path), true); // second parameter is boolean for repeatable or not
-				/* 
-					you may wonder why this null coalesce chain exists.
-					and think its terrible - your right
-					the tldr is everything in this system saves json data in different ways - very bad
-					we also have worked to make it better so we have to deal with legacy data
-
-					in summary this handles the follow use cases
-					1. page options repeatables
-					2. content page repeatables
-					3. legacy content page repeatables
-
-					on 3, for future people reading this. basically in the set_from_submit method of this class, it would encode the whole class.
-					this is in contrast to other parts of the system that encoded as an array of objects(containing name/value) for the form class
-					when the system was unified, it started saving in the new format which wasnt handled here
-				*/
-				foreach (($repeatable_form_data->fields ?? $repeatable_form_data->value ?? $repeatable_form_data) as $field_info) {
+				foreach (($repeatable_form_data->fields ?? $repeatable_form_data->value) as $field_info) {
 					$field = $repeatable_form->get_field_by_name($field_info->name);
 					if ($field) {
 						//CMS::pprint_r ($field_info);
@@ -186,6 +171,12 @@ class Field_Repeatable extends Field {
 			$forms[] = $repeatable_form;
 		}
 		$this->forms = $forms;
+
+		foreach ($forms as &$form) {
+			$form = (object) ((array) $form); // convert to object again to ensure json encoding works
+			unset($form);
+		}
+
 		$this->default = json_encode($forms);
 	}
 
