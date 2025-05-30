@@ -15,28 +15,6 @@ function show_message ($heading, $text, $class) {
 
 Component::addon_page_title("System Version and Updates");
 ?>
-<h4 class='title is-4'>Current <?=$channel;?> version: <?php echo CMS::Instance()->version;?></h4>
-<?php if ( $latest_version_current_channel == CMS::Instance()->version ):?>
-	<h5 class='title is-5'>You are on the latest version!</h4>
-<?php else:?>
-	<?php if ($latest_version_current_channel!==null):?>
-		<?php if ($latest_version_current_channel < CMS::Instance()->version):?>
-			<h4 class='title is-4'>YOU ARE FROM THE FUTURE HOW IS THIS POSSIBLE - Latest version: <?php echo $latest->version;?></h4>
-		<?php else:?>
-			<h4 class='title is-4'>Latest version: <?php echo $latest_version_current_channel;?></h4>
-			<?php if (class_exists("ZipArchive",false)):?>
-				<form method="POST">
-					<input type='hidden' value='ohyesplease' name='update_please'/>
-					<button class='btn button is-success' type='submit'>Perform Update</button>
-				</form>
-			<?php else: ?>
-				<p><em>Native ZIP archive handling not available on this server. Updates must be performed manually.</em></p>
-			<?php endif; ?>
-		<?php endif;?>
-	<?php else:?>
-		<h4 class='title is-4'>Unable to determine latest version</h4>
-	<?php endif; ?>
-<?php endif; ?>
 
 <hr>
 <h5 class='is-5 title is-title'>Legacy DB Checks/Fixes</h5>
