@@ -171,6 +171,12 @@ class Field_Repeatable extends Field {
 			$forms[] = $repeatable_form;
 		}
 		$this->forms = $forms;
+
+		foreach ($forms as &$form) {
+			$form = (object) ((array) $form); // convert to object again to ensure json encoding works
+			unset($form);
+		}
+
 		$this->default = json_encode($forms);
 	}
 
