@@ -76,7 +76,7 @@ if ($segments[1]=='list_images') {
 	exit(0);
 } elseif($segments[1]=='gettags') {
 	header('Content-Type: application/json; charset=utf-8');
-	$tags = DB::fetchall(
+	$tags = DB::fetchAll(
 		"SELECT title as text, id as value
 		FROM tags
 		WHERE (

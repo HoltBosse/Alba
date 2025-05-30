@@ -11,7 +11,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
     private function get_data() {
         $pluginOptions = array_combine(array_column($this->options, 'name'), array_column($this->options, 'value'));
         $groupOptionsArray = json_decode($pluginOptions["access"] ?? "") ?? [];
-        $userGroups = DB::fetchall("SELECT group_id FROM user_groups WHERE user_id=?", CMS::Instance()->user->id, ["mode"=>PDO::FETCH_COLUMN]);
+        $userGroups = DB::fetchAll("SELECT group_id FROM user_groups WHERE user_id=?", CMS::Instance()->user->id, ["mode"=>PDO::FETCH_COLUMN]);
 
         return (object) [
             "pluginOptions" => $pluginOptions,
@@ -91,7 +91,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
             $table = Content::get_table_name_for_content_type($contenttype);
 
-            $fieldNames = DB::fetchall("SHOW fields FROM $table");
+            $fieldNames = DB::fetchAll("SHOW fields FROM $table");
             $fieldNames = array_column($fieldNames, "Field");
 
             //TODO: maybe nicely show content over length limit???

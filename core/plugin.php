@@ -23,7 +23,7 @@ class Plugin {
     
     public static function get_all_plugins() {
 		//return CMS::Instance()->pdo->query('select * from plugins where state>-1')->fetchAll();
-		return DB::fetchall('select * from plugins where state > -1');
+		return DB::fetchAll('select * from plugins where state > -1');
     }
 
 

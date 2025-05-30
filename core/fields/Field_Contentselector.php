@@ -64,7 +64,7 @@ class Field_Contentselector extends Field_Select {
 
 			if (!$this->tags) {
 				// default order is alphabetical
-				$options_all_articles = DB::fetchall("SELECT id AS value, title AS text FROM `$table_name` WHERE state >={$min_state} ORDER BY $this->order_by_field $this->order_by_direction");
+				$options_all_articles = DB::fetchAll("SELECT id AS value, title AS text FROM `$table_name` WHERE state >={$min_state} ORDER BY $this->order_by_field $this->order_by_direction");
 				//CMS::pprint_r ($options_all_articles);
 			}
 			else {

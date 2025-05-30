@@ -94,14 +94,14 @@ class Page {
 		//$db = CMS::$pdo;
 		//$result = $db->pdo->query("select * from users")->fetchAll();
 		//$result = CMS::Instance()->pdo->query("select * from pages where state>-1")->fetchAll();
-		$result = DB::fetchall("select * from pages where state>-1");
+		$result = DB::fetchAll("select * from pages where state>-1");
 		return $result;
 	}
 
 	public static function get_all_pages_by_depth($parent=-1, $depth=-1) {
 		$depth = $depth+1;
 		$result=[];
-		$children = DB::fetchall("select * from pages where state>-1 and parent=?", [$parent]);
+		$children = DB::fetchAll("select * from pages where state>-1 and parent=?", [$parent]);
 		foreach ($children as $child) {
 			$child->depth = $depth;
 			$result[] = $child;
@@ -115,7 +115,7 @@ class Page {
 		if (is_array($id_array)) {
 			$in_string = implode(',',$id_array);
 			$query = "select * from pages where id in ({$in_string})";
-			$result = DB::fetchall($query);
+			$result = DB::fetchAll($query);
 			return  $result;
 		}
 		else {
@@ -124,7 +124,7 @@ class Page {
 	}
 
 	public static function has_overrides ($page) {
-		$w = DB::fetchall("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", [$page]);
+		$w = DB::fetchAll("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", [$page]);
 		//CMS::pprint_r ($w);
 		return $w;
 	}

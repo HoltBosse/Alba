@@ -41,20 +41,20 @@ class Tag {
 		$query = "select content_type_id from tag_content_type where tag_id=?";
 		$stmt = CMS::Instance()->pdo->prepare($query);
 		$stmt->execute([$this->id]);
-		//$result = DB::fetchall("select content_type_id from tag_content_type where tag_id=?", [$this->id));
+		//$result = DB::fetchAll("select content_type_id from tag_content_type where tag_id=?", [$this->id));
 		$this->contenttypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
 	}
 
 	public static function get_tags_for_content($content_id, $content_type_id=-1) {
 		// default to media/image content type
-		$result = DB::fetchall("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", [$content_id, $content_type_id]);
+		$result = DB::fetchAll("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", [$content_id, $content_type_id]);
 		return $result;
 	}
 
 	public static function get_tags_available_for_content_type ($content_type_id) {
-		$result = DB::fetchall("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
-		$result2 = DB::fetchall("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
+		$result = DB::fetchAll("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
+		$result2 = DB::fetchAll("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
 		return array_merge ($result,$result2);
 	}
 
@@ -73,13 +73,13 @@ class Tag {
 	public static function get_all_tags() {
 		//$query = "select * from tags";
 		//return CMS::Instance()->pdo->query($query)->fetchAll();
-		return DB::fetchall("select * from tags");
+		return DB::fetchAll("select * from tags");
 	}
 
 	public static function get_all_tags_by_depth($parent=0, $depth=-1) {
 		$depth = $depth+1;
 		$result=[];
-		$children = DB::fetchall("select t.*, cat.title as cat_title from (tags t) left join categories cat on t.category=cat.id where t.state>-1 and t.parent=?", [$parent]);
+		$children = DB::fetchAll("select t.*, cat.title as cat_title from (tags t) left join categories cat on t.category=cat.id where t.state>-1 and t.parent=?", [$parent]);
 		foreach ($children as $child) {
 			$child->depth = $depth;
 			$result[] = $child;
@@ -89,13 +89,13 @@ class Tag {
 	}
 
 	public static function get_tag_content_types($id) {
-		return DB::fetchall("select content_type_id from tag_content_type where tag_id=?", [$id]);
+		return DB::fetchAll("select content_type_id from tag_content_type where tag_id=?", [$id]);
 	}
 
 	public static function get_tag_content_type_titles($id) {
 		$tag = new Tag();
 		$tag->load($id);
-		$titles_obj = DB::fetchall("select title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", [$id]);
+		$titles_obj = DB::fetchAll("select title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", [$id]);
 		$titles = [];
 		if (in_array('-1',$tag->contenttypes)) {
 			$titles[] = "Media";

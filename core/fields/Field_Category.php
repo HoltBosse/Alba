@@ -21,7 +21,7 @@ class Field_Category extends Field_Select {
 			$params[] = $this->self_id;
 		}
 
-		$this->select_options = DB::fetchall($query, $params);
+		$this->select_options = DB::fetchAll($query, $params);
 
 		array_unshift(
 			$this->select_options,

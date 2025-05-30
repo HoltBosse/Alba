@@ -74,7 +74,11 @@ function loadDb() {
 		}
 	}
 
-	require_once(CMSPATH . "/core/db.php");
+	HoltBosse\DB\DB::createInstance(
+		"mysql:host=" . Config::dbhost() .";dbname=" . Config::dbname() .";charset=" . Config::dbchar(),
+		Config::dbuser(),
+		Config::dbpass()
+	);
 }
 
 function fillInFields($fields) {

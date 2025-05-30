@@ -29,7 +29,7 @@ $custom_fields = file_exists(CMSPATH . "/custom_user_fields.json") ? JSON::load_
 if ($custom_fields) {
 	$cols_added = [];
 	$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'custom_user_fields'";
-	$cols = DB::fetchall($query, [], ["mode"=>PDO::FETCH_COLUMN]);
+	$cols = DB::fetchAll($query, [], ["mode"=>PDO::FETCH_COLUMN]);
 	foreach ($custom_fields->fields as $f) {
 		if (!in_array($f->name, $cols)) {
 			// check if column is saveable
@@ -72,7 +72,7 @@ $new_custom_fields_c = DB::fetch('SELECT COUNT(*) AS c FROM custom_user_fields')
 if ($old_custom_user_fields_table_exists && $custom_fields && ($user_c != $new_custom_fields_c)) {
 	// have old custom_fields table and we have user_fields in a json file
 	// also mismatch in number of rows vs user table
-	$all_user_ids = DB::fetchall('select id from users', [], ["mode"=>PDO::FETCH_COLUMN]);
+	$all_user_ids = DB::fetchAll('select id from users', [], ["mode"=>PDO::FETCH_COLUMN]);
 	$count = 0;
 	foreach ($all_user_ids as $user_id) {
 		// check if user data migrated

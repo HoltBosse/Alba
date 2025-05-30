@@ -28,10 +28,10 @@ class Category {
 		$depth = $depth+1;
 		$result=[];
 		if ($content_type) {
-			$children = DB::fetchall("select * from categories where content_type=? and state>-1 and parent=?", [$content_type, $parent]);
+			$children = DB::fetchAll("select * from categories where content_type=? and state>-1 and parent=?", [$content_type, $parent]);
 		}
 		else {
-			$children = DB::fetchall("select * from categories where state>-1 and parent=?", [$parent]);
+			$children = DB::fetchAll("select * from categories where state>-1 and parent=?", [$parent]);
 		}
 		foreach ($children as $child) {
 			$child->depth = $depth;
