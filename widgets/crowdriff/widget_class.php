@@ -3,11 +3,17 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Widget_crowdriff extends Widget {
 	public function render() {
-		//CMS::pprint_r ($this);
-		$query = "select * from media where id in (select content_id from tagged where tag_id=? and content_type_id=-1)";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute(array($this->options[0]->value));
-		$images = $stmt->fetchAll();
+		$images = DB::fetchAll(
+			"SELECT *
+			FROM media
+			WHERE id IN (
+				SELECT content_id
+				FROM tagged
+				WHERE tag_id=?
+				AND content_type_id=-1
+			)",
+			$this->options[0]->value
+		);
 		//CMS::pprint_r ($images);
 		$image_array = array_values((array)$images);
 		shuffle($image_array);

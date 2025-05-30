@@ -24,7 +24,6 @@ class Tag {
 	}
 
 	public function load($id) {
-		//$info = CMS::Instance()->pdo->query('select * from tags where id=' . $id)->fetch();
 		$info = DB::fetch('select * from tags where id=?', [$id]);
 		$this->id = $info->id;
 		$this->title = $info->title;
@@ -38,11 +37,8 @@ class Tag {
 		$this->parent = $info->parent;
 		$this->category = $info->category;
 		$this->custom_fields = $info->custom_fields;
-		$query = "select content_type_id from tag_content_type where tag_id=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute([$this->id]);
 		//$result = DB::fetchAll("select content_type_id from tag_content_type where tag_id=?", [$this->id));
-		$this->contenttypes = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+		$this->contenttypes = DB::fetchAll("select content_type_id from tag_content_type where tag_id=?", $this->id. ["mode"=>PDO::FETCH_COLUMN]);
 
 	}
 
@@ -71,9 +67,7 @@ class Tag {
 	}
 
 	public static function get_all_tags() {
-		//$query = "select * from tags";
-		//return CMS::Instance()->pdo->query($query)->fetchAll();
-		return DB::fetchAll("select * from tags");
+		return DB::fetchAll("SELECT * FROM tags");
 	}
 
 	public static function get_all_tags_by_depth($parent=0, $depth=-1) {
@@ -195,7 +189,7 @@ class Tag {
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// insert new tag content_type relationships if required
-				$new_id = CMS::Instance()->pdo->lastInsertId();
+				$new_id = DB::getLastInsertedId();
 				foreach ($this->contenttypes as $contenttype) {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', [$new_id, $contenttype]);
 				}

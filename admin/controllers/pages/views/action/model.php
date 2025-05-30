@@ -66,11 +66,9 @@ if ($action=='delete') {
 		]);
 	}
 	$idlist = implode(',',$id);
-	$query = "select count(parent) as c from pages where parent in ({$idlist})";
-	$stmt = CMS::Instance()->pdo->prepare($query);
-	$result = $stmt->execute([]);
+	$result = DB::fetch("select count(parent) as c from pages where parent in ({$idlist})");
 	if ($result) {
-		$c = $stmt->fetch()->c;
+		$c = $result->c;
 		if ($c>0) {
 			CMS::Instance()->queue_message('Cannot delete page(s) with children','danger', $_SERVER['HTTP_REFERER']);
 		}

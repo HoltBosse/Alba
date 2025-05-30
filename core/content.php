@@ -180,7 +180,7 @@ class Content {
 		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category];
 		$required_result = DB::exec("INSERT into `{$table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
-			$this->id = CMS::Instance()->pdo->lastInsertId();
+			$this->id = DB::getLastInsertedId();
 
 			Actions::add_action("contentcreate", (object) [
 				"content_id"=>$this->id,
@@ -303,7 +303,7 @@ class Content {
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
 				// update object id with inserted id
-				$this->id = CMS::Instance()->pdo->lastInsertId();
+				$this->id = DB::getLastInsertedId();
 
 				$actionId = Actions::add_action("contentcreate", (object) [
 					"content_id"=>$this->id,
@@ -388,11 +388,6 @@ class Content {
 
 	// $pdo->prepare($sql)->execute([$name, $id]);
 	public static function get_all_content_types() {
-		//echo "<p>Getting all users...</p>";
-		//$db = new db();
-		//$db = CMS::$pdo;
-		//$result = $db->pdo->query("select * from users")->fetchAll();
-		//$result = CMS::Instance()->pdo->query("select * from content_types where state > 0 order by id ASC")->fetchAll();
 		$result = DB::fetchAll('select * from content_types where state > 0 order by id ASC');
 		return $result;
 	}

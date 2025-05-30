@@ -18,7 +18,6 @@ if ($action=='tag_media') {
 	$tag_id = Input::getvar('tag_id',"INT");
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
-	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
 		Actions::add_action("mediaupdate", (object) [
 			"affected_media"=>$image_id,
@@ -48,7 +47,6 @@ if ($action=='cleartags_media') {
 	$image_ids = explode(",", $image_ids_string);
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
-	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
 			Actions::add_action("mediaupdate", (object) [
 				"affected_media"=>$image_id,
@@ -70,7 +68,6 @@ if ($action=='delete_media') {
 	$image_ids = explode(",", $image_ids_string);
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
-	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
 		Actions::add_action("mediadelete", (object) [
 			"affected_media"=>$image_id,
@@ -108,7 +105,6 @@ if ($action=='untag_media') {
 	$image_ids_untagged=[];
 	$image_ids_failed=[];
 	$tag_id = Input::getvar('tag_id','NUM');
-	$pdo = CMS::Instance()->pdo;
 	foreach ($image_ids as $image_id) {
 		Actions::add_action("mediaupdate", (object) [
 			"affected_media"=>$image_id,

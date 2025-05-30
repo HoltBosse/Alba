@@ -39,7 +39,7 @@ class Widget {
 	}
 
 	public static function get_all_widget_types() {
-		return CMS::Instance()->pdo->query('select * from widget_types')->fetchAll();
+		return DB::fetchAll('SELECT * FROM widget_types');
 	}
 
 	public static function get_widgets_for_position($page_id, $position) {
@@ -100,7 +100,7 @@ class Widget {
 	public function load($id, $type_id=null) {
 		//id of -1 is a new widget
 		if($id!=-1) {
-			$info = CMS::Instance()->pdo->query('select * from widgets where id=' . $id)->fetch();
+			$info = DB::fetch('SELECT * FROM widgets WHERE id=?', $id);
 			$this->id = $info->id;
 			$this->title = $info->title;
 			$this->type_id = $info->type;
@@ -115,7 +115,7 @@ class Widget {
 			$this->type_id = $type_id;
 		}
 
-		$this->type = CMS::Instance()->pdo->query('select * from widget_types where id=' . $this->type_id)->fetch();
+		$this->type = DB::fetch('SELECT * FROM widget_types WHERE id=?', $this->type_id);
 		$this->form_data = JSON::load_obj_from_file(CMSPATH . '/widgets/' . $this->type->location . '/widget_config.json');
 
 		Hook::execute_hook_actions('on_widget_load', $this, "thinggg");
@@ -123,7 +123,7 @@ class Widget {
 
 	public static function get_widget_type_title($widget_type_id) {
 		if (is_numeric($widget_type_id)) {
-			return CMS::Instance()->pdo->query('select title from widget_types where id=' . $widget_type_id)->fetch()->title;
+			return DB::fetch('SELECT title FROM widget_types WHERE id=?', $widget_type_id)->title;
 		}
 		else {
 			return false;
@@ -132,7 +132,7 @@ class Widget {
 
 	public static function get_widget_type($widget_type_id) {
 		if (is_numeric($widget_type_id)) {
-			return CMS::Instance()->pdo->query('select * from widget_types where id=' . $widget_type_id)->fetch();
+			return DB::fetch('SELECT * FROM widget_types WHERE id=?', $widget_type_id);
 		}
 		else {
 			return false;

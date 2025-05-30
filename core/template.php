@@ -14,9 +14,7 @@ class Template {
 		if ($id===0) {
 			$id = $this->get_default_template()->id;
 		}
-		$stmt = CMS::Instance()->pdo->prepare("select * from templates where id=?");
-		$stmt->execute([$id]);
-		$template = $stmt->fetch();
+		$template = DB::fetch("SELECT * FROM templates WHERE id=?", $id);
 		$this->id = $template->id;
 		$this->title = $template->title;
 		$this->folder = $template->folder;
@@ -36,22 +34,12 @@ class Template {
 		return "";
 	}
 
-	// $pdo->prepare($sql)->execute([$name, $id]);
 	static public function get_all_templates() {
-		//echo "<p>Getting all users...</p>";
-		//$result = CMS::Instance()->pdo->query("select * from templates")->fetchAll();
-		$stmt = CMS::Instance()->pdo->prepare("select * from templates");
-		$stmt->execute();
-		$result = $stmt->fetchAll();
-		return $result;
+		return DB::fetchAll("SELECT * FROM templates");
 	}
 
 	static public function get_default_template() {
-		//echo "<p>Getting all users...</p>";
-		//$result = CMS::Instance()->pdo->query("select id from templates where is_default=1")->fetch();
-		$stmt = CMS::Instance()->pdo->prepare("select * from templates where is_default=1 LIMIT 1");
-		$stmt->execute();
-		$result = $stmt->fetch();
+		$result = DB::fetch("SELECT * FROM templates WHERE is_default=1 LIMIT 1");
 		if ($result) {
 			return new Template($result->id);
 		}

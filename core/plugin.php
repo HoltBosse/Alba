@@ -22,7 +22,6 @@ class Plugin {
     }
     
     public static function get_all_plugins() {
-		//return CMS::Instance()->pdo->query('select * from plugins where state>-1')->fetchAll();
 		return DB::fetchAll('select * from plugins where state > -1');
     }
 
@@ -58,7 +57,7 @@ class Plugin {
 	}
 
 	public function load($id) {
-		$info = CMS::Instance()->pdo->query('select * from plugins where id=' . $id)->fetch();
+		$info = DB::fetch('SELECT * FROM plugins WHERE id=' . $id);
 		$this->id = $info->id;
 		$this->title = $info->title;
 		$this->state = $info->state;

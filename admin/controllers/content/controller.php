@@ -78,7 +78,7 @@ if ($missing) { ?>
 							  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 							DB::exec($create_table_query);
 							// install views as well
-							$content_type_id = CMS::Instance()->pdo->lastInsertId();
+							$content_type_id = DB::getLastInsertedId();
 							$view_folders=[];
 							foreach (new DirectoryIterator(CMSPATH . '/controllers/' . $missed . "/views/") as $f) {
 								if($f->isDot()) continue; // no dot files, shouldn't even happen with PHP defaults

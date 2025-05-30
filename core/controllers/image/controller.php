@@ -8,6 +8,7 @@ ob_end_clean(); // not a mistake, a safety net
 
 $segments = CMS::Instance()->uri_segments;
 $segsize = sizeof($segments);
+$dbInstance = HoltBosse\DB\DB::getInstance();
 
 // handle list api request
 if ($segments[1]=='list_images') {
@@ -31,7 +32,7 @@ if ($segments[1]=='list_images') {
 		if($tags) {
 			$explodedTags = explode(",", $tags);
 			foreach($explodedTags as &$tag) {
-				$tag = CMS::Instance()->pdo->quote($tag);
+				$tag = $dbInstance->getPdo()->quote($tag);
 				unset($tag);
 			}
 			$wrappedTags = implode(",", $explodedTags);
@@ -53,14 +54,14 @@ if ($segments[1]=='list_images') {
 				if ($n>0) {
 					$query .= ",";
 				}
-				$query .= CMS::Instance()->pdo->quote($mimetypes[$n]);
+				$query .= $dbInstance->getPdo()->quote($mimetypes[$n]);
 			}
 			$query.=") ";
 		}
 		if($tags && !$mimetypes) {
 			$explodedTags = explode(",", $tags);
 			foreach($explodedTags as &$tag) {
-				$tag = CMS::Instance()->pdo->quote($tag);
+				$tag = $dbInstance->getPdo()->quote($tag);
 				unset($tag);
 			}
 			$wrappedTags = implode(",", $explodedTags);
@@ -190,10 +191,7 @@ function image_make_thumb ($src, $dest, $desired_width, $file, $quality, $mimety
 }
 
 function get_image ($id) {
-	$stmt = CMS::Instance()->pdo->prepare('select * from media where id=?');
-	$stmt->execute(array(CMS::Instance()->uri_segments[1])); // already tested to be number
-	$stmt->execute();
-	return $stmt->fetch();
+	return DB::fetch('SELECT * FROM media WHERE id=?', CMS::Instance()->uri_segments[1]);
 }
 
 if ($segsize<2 || !is_numeric($segments[1]) ) {
