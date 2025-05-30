@@ -189,7 +189,7 @@ class Tag {
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// insert new tag content_type relationships if required
-				$new_id = DB::getLastInsertId();
+				$new_id = DB::getLastInsertedId();
 				foreach ($this->contenttypes as $contenttype) {
 					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', [$new_id, $contenttype]);
 				}

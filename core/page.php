@@ -258,7 +258,7 @@ class Page {
 			}
 			if ($result) {
 				// update page id with last pdo insert
-				$this->id = DB::getLastInsertId();
+				$this->id = DB::getLastInsertedId();
 				Actions::add_action("pagecreate", (object) [
 					"affected_page"=>$this->id,
 				]);
@@ -266,7 +266,7 @@ class Page {
 			}
 			else {
 				// todo - check for username/email already existing and clarify
-				CMS::Instance()->queue_message('Unable to create page.' . $query ,'danger',Config::uripath().'/admin/pages');
+				CMS::Instance()->queue_message('Unable to create page.','danger',Config::uripath().'/admin/pages');
 				return false;
 			}
 		}

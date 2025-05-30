@@ -180,7 +180,7 @@ class Content {
 		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category];
 		$required_result = DB::exec("INSERT into `{$table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
-			$this->id = DB::getLastInsertId();
+			$this->id = DB::getLastInsertedId();
 
 			Actions::add_action("contentcreate", (object) [
 				"content_id"=>$this->id,
@@ -303,7 +303,7 @@ class Content {
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
 				// update object id with inserted id
-				$this->id = DB::getLastInsertId();
+				$this->id = DB::getLastInsertedId();
 
 				$actionId = Actions::add_action("contentcreate", (object) [
 					"content_id"=>$this->id,

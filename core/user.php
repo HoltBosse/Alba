@@ -30,7 +30,7 @@ class User {
 			$query = "INSERT INTO users (username, email, password, state) VALUES (?,?,?,?)";
 			//CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
 			DB::exec($query, [$username,$email,$hash,$state]);
-			$id = DB::getLastInsertId();
+			$id = DB::getLastInsertedId();
 			foreach ($groups as $group) {
 				if (is_int($group)) {
 					$query = "INSERT INTO user_groups (user_id, group_id) values (?,?)";
@@ -295,7 +295,7 @@ class User {
 				$result = false;
 			}
 			if ($result) {
-				$new_user_id = DB::getLastInsertId();
+				$new_user_id = DB::getLastInsertedId();
 				$this->id = $new_user_id;
 
 				Actions::add_action("usercreate", (object) [
