@@ -24,7 +24,6 @@ $tags = Input::getvar('tags','ARRAYOFSTRING');
 $web_friendly_array = Input::getvar('web_friendly','ARRAYOFINT');
 $directory = CMSPATH . '/images/processed';
 $uploaded_files = [];
-$pdo = CMS::Instance()->pdo;
 
 function make_thumb($src, $dest, $desired_width, $file) {
 	// TODO: move to Image class (sub-file class)

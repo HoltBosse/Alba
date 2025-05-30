@@ -8,15 +8,11 @@ class Configuration {
 	public $form;
 
 	static public function get_configuration_value ($form_name, $setting_name, $pdo=null) {
-		// pdo can be passed so this function works inside of core cms.php file during construction
-		// without having to reference an instance of itself
+		// pdo param is a spot left for legacy reasons, but not actually used
 		// TODO - fix json query
 		// this is unsafe - not preparing $setting_name is BAD
 		// mitigating with check for spaces
 		// perhaps attempt CONCAT in json path section with ? preparation
-		if (!$pdo) {
-			$pdo = CMS::Instance()->pdo;
-		}
 
 		if (strpos($setting_name, ' ') !== false) {
 			// setting names should not have spaces I'm guessing?
@@ -24,10 +20,7 @@ class Configuration {
 		}
 
 		// fallback - get complete json and get property in PHP
-		$query = "SELECT configuration FROM configurations WHERE name=?";
-		$stmt = $pdo->prepare($query);
-		$ok = $stmt->execute([$form_name]);
-		$configuration = $stmt->fetch();
+		$configuration = DB::fetch("SELECT configuration FROM configurations WHERE name=?", $form_name);
 		if ($configuration) {
 			$config = json_decode($configuration->configuration);
 			if (property_exists($config, $setting_name)) {
@@ -73,10 +66,7 @@ class Configuration {
 
 	public function load_from_db() {
 		// set config and form fields from configurations table entry
-		$query = "select * from configurations where name=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
-		$stmt->execute([$this->name]);
-		$result = $stmt->fetch();
+		$result = DB::fetch("SELECT * FROM configurations WHERE name=?", $this->name);
 		if ($result) {
 			// update object configuration
 			$this->configuration = json_decode($result->configuration);
@@ -98,12 +88,9 @@ class Configuration {
 	}
 
 	public function save() {
-		$json_config = json_encode($this->configuration);
 		// update or insert new set of configuration options
-		$query = "INSERT INTO configurations (name,configuration) VALUES (?,?) ON DUPLICATE KEY UPDATE configuration=?";
-		$stmt = CMS::Instance()->pdo->prepare($query);
 		$json_config = json_encode($this->configuration);
-		$ok = $stmt->execute([$this->name, $json_config, $json_config]);
+		$ok = DB::exec("INSERT INTO configurations (name,configuration) VALUES (?,?) ON DUPLICATE KEY UPDATE configuration=?", [$this->name, $json_config, $json_config]);
 		if ($ok) {
 			return $this;
 		}

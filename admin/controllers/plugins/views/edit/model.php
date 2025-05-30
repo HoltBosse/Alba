@@ -5,7 +5,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$plugin_id = $segments[2];
-	$plugin_info = CMS::Instance()->pdo->query('select * from plugins where id=' . $plugin_id)->fetch();
+	$plugin_info = DB::fetch('SELECT * FROM plugins WHERE id=?', $plugin_id);
 	$plugin_class_name = "Plugin_" . $plugin_info->location;
 	$plugin = new $plugin_class_name($plugin_info);
 }

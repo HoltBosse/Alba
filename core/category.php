@@ -111,7 +111,7 @@ class Category {
 			$required_result = DB::exec("insert into categories (state,title,content_type, parent, custom_fields) values(?,?,?,?,?)", [$this->state, $this->title, $this->content_type, $this->parent, $this->custom_fields]);
 			if ($required_result) {
 				// update object id with inserted id
-				$this->id = CMS::Instance()->pdo->lastInsertId();
+				$this->id = DB::getLastInsertId();
 
 				Actions::add_action("categorycreate", (object) [
 					"affected_category"=>$this->id,

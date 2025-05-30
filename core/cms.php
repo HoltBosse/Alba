@@ -35,7 +35,6 @@ HoltBosse\DB\DB::createInstance(
 
 final class CMS {
 	public $domain;
-	public $pdo;
 	public $user;
 	public $request;
 	public $uri_segments; // remaining segments of uri after controller found
@@ -167,7 +166,7 @@ final class CMS {
 			<meta property="og:url" content="<?php echo  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>" />
 			<meta name="description" content="<?php echo $og_description; ?>">
 			<?php if ($og_image):?>
-				<?php $og_image_dimensions = $this->pdo->query('select width,height from media where id=' . $og_image)->fetch();?>
+				<?php $og_image_dimensions = DB::fetch('SELECT width,height FROM mediaWHERE id=?', $og_image);?>
 				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::uripath() . "/image/" . $og_image ; ?>/web" />
 				<meta property="og:image:width" content="<?php echo $og_image_dimensions->width ; ?>" />
 				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
@@ -275,13 +274,10 @@ final class CMS {
 		if (@$this->uri_segments[0]=='image') {
 			$this->need_session=false; // don't need session for image api
 		}
-
-		$dbInstance = HoltBosse\DB\DB::getInstance();
-		$this->pdo = $dbInstance->getPdo();
 		
 		// Load plugins
 		$GLOBALS['hooks'] = []; // reset hooks array
-		$this->enabled_plugins = $this->pdo->query('select * from plugins where state>0')->fetchAll();
+		$this->enabled_plugins = DB::fetchAll('SELECT * FROM plugins WHERE state>0');
 		foreach ($this->enabled_plugins as $plugin_info) {
 			$plugin_class_name = "Plugin_" . $plugin_info->location;
 			$a_plugin = new $plugin_class_name($plugin_info);
@@ -308,10 +304,7 @@ final class CMS {
 				//$this->user->load_from_id(s::get('user_id'));
 				//$this->user->load_from_id($session_user_id); // cant use user class as it requires CMS - will call constructor twice!
 				// code below is almost same as 'load_from_id' in user class
-				$query = "select * from users where id=? and state>0";
-				$stmt = $this->pdo->prepare($query);
-				$stmt->execute([$session_user_id]);
-				$result = $stmt->fetch();
+				$result = DB::fetch("SELECT * FROM users WHERE id=? AND state>0", $session_user_id);
 				if ($result) {
 					$this->user->username = $result->username;
 					$this->user->password = $result->password;
@@ -319,10 +312,10 @@ final class CMS {
 					$this->user->email = $result->email;
 					$this->user->id = $result->id;
 					// get groups
-					$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
-					$stmt = $this->pdo->prepare($query);
-					$stmt->execute([$session_user_id]);
-					$this->user->groups = $stmt->fetchAll();
+					$this->user->groups = DB::fetchAll(
+						"SELECT * FROM `groups` WHERE id IN (SELECT group_id FROM user_groups WHERE user_id=?)",
+						$session_user_id
+					);
 				}
 			}
 			// check if session too old
@@ -346,7 +339,7 @@ final class CMS {
 					}
 				}
 			}
-			$session_time = Configuration::get_configuration_value('general_options','session_time', $this->pdo);
+			$session_time = Configuration::get_configuration_value('general_options','session_time');
 			if (!$session_time) {
 				$session_time = 10; // 10 min if config is missing
 			}
@@ -415,8 +408,6 @@ final class CMS {
 		echo "<p>Page:</p>";
 		$this->pprint_r($this->page);
 		echo "</div>";
-		echo "<p>DB:</p>";
-		$this->pprint_r($this->pdo);
 		echo "<h1>Session:</h1>";
 		echo "<code>"; $this->pprint_r ($_SESSION); echo "</code>";
 		echo "<h1>System Ready</h1>";
@@ -473,10 +464,7 @@ final class CMS {
 			}
 			else {
 				// get controller for current page
-				$query = "select controller_location from content_types where id=?";
-				$stmt = $this->pdo->prepare($query);
-				$stmt->execute([$this->page->content_type]);
-				$result = $stmt->fetch();
+				$result = DB::fetch("SELECT controller_location FROM content_types WHERE id=?", $this->page->content_type);
 				if ($result) {
 					$this->page->controller = $result->controller_location;
 					return $result->controller_location;
@@ -548,7 +536,7 @@ final class CMS {
 		}
 
 		// override debug if chosen
-		if (Configuration::get_configuration_value('general_options','debug', $this->pdo)) {
+		if (Configuration::get_configuration_value('general_options','debug')) {
 			Config::$debug = true;
 		} 
 
@@ -667,17 +655,16 @@ final class CMS {
 				if (sizeof($this->uri_segments)==0) {
 					// TODO: work with user selected HOME page
 					$alias = 'home';
-					$query = "select * from pages where parent=-1 and alias='home' and state>0";
-					$page = $this->pdo->query($query)->fetch();
+					$page = DB::fetch("SELECT * FROM pages WHERE parent=-1 AND alias='home' AND state>0");
 				}
 				else {
 					$parent = -1; // start with root
 					$this->uri_path_segments = [];
 					while ($this->uri_segments) {
-						$query = "select * from pages where parent=? and alias=? and state > 0";
-						$stmt = $this->pdo->prepare($query);
-						$stmt->execute([$parent, $this->uri_segments[0]]);
-						$result = $stmt->fetch();
+						$result = DB::fetch(
+							"SELECT * FROM pages WHERE parent=? AND alias=? AND state > 0",
+							[$parent, $this->uri_segments[0]]
+						);
 						if ($result) {
 							// found possible alias, will check for deeper match on next loop - if any
 							$alias = $result->alias;
@@ -698,8 +685,7 @@ final class CMS {
 					// magic alias of 'home' used for now - todo: make configurable via config option in future
 					// home page has to have a controller and alias of home and at root of pages and published
 					$alias = 'home'; // see magic alias comment above for this and query below
-					$query = "select * from pages where content_type>0 and parent=-1 and alias='home' and state>0";
-					$page = $this->pdo->query($query)->fetch();
+					$page = DB::fetch("SELECT * FROM pages WHERE content_type>0 AND parent=-1 AND alias='home' AND state>0");
 					if (!$page) {
 						// have params, but no page found and/or home has no controller to consume params
 						$this->raise_404();

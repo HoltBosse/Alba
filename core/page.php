@@ -89,11 +89,6 @@ class Page {
 
 	// $pdo->prepare($sql)->execute([$name, $id]);
 	public static function get_all_pages() {
-		//echo "<p>Getting all users...</p>";
-		//$db = new db();
-		//$db = CMS::$pdo;
-		//$result = $db->pdo->query("select * from users")->fetchAll();
-		//$result = CMS::Instance()->pdo->query("select * from pages where state>-1")->fetchAll();
 		$result = DB::fetchAll("select * from pages where state>-1");
 		return $result;
 	}
@@ -211,19 +206,21 @@ class Page {
 				"affected_page"=>$this->id,
 			]);
 			// update
-			$query = "update pages set state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=? where id=?";
-			$result = CMS::Instance()->pdo->prepare($query)->execute([
-				$this->state, 
-				$this->title, 
-				$this->alias, 
-				$this->content_type,
-				is_numeric($this->view) ? $this->view : NULL,
-				$this->parent,
-				$this->template_id,
-				$this->page_options,
-				$this->view_configuration,
-				$this->id
-			]);
+			$result = DB::exec(
+				"UPDATE pages SET state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=? WHERE id=?",
+				[
+					$this->state, 
+					$this->title, 
+					$this->alias, 
+					$this->content_type,
+					is_numeric($this->view) ? $this->view : NULL,
+					$this->parent,
+					$this->template_id,
+					$this->page_options,
+					$this->view_configuration,
+					$this->id
+				]
+			);
 			if ($result) {
 				// saved ok
 				return true;
@@ -234,20 +231,21 @@ class Page {
 		}
 		else {
 			// insert new
-			$query = "insert into pages (state, title, alias, content_type, content_view, parent, template, page_options, content_view_configuration) values(?,?,?,?,?,?,?,?,?)";
 			try {
-				$stmt = CMS::Instance()->pdo->prepare($query);
-				$result = $stmt->execute([
-					$this->state, 
-					$this->title, 
-					$this->alias, 
-					$this->content_type,
-					is_numeric($this->view) ? $this->view : NULL,
-					$this->parent,
-					$this->template_id,
-					$this->page_options,
-					$this->view_configuration
-				]);	
+				$result = DB::exec(
+					"INSERT INTO pages (state, title, alias, content_type, content_view, parent, template, page_options, content_view_configuration) VALUES (?,?,?,?,?,?,?,?,?)",
+					[
+						$this->state, 
+						$this->title, 
+						$this->alias, 
+						$this->content_type,
+						is_numeric($this->view) ? $this->view : NULL,
+						$this->parent,
+						$this->template_id,
+						$this->page_options,
+						$this->view_configuration
+					]
+				);	
 			}
 			catch (PDOException $e) {
 				//CMS::Instance()->queue_message('Error saving page','danger',Config::uripath().'/admin/pages/');
@@ -260,7 +258,7 @@ class Page {
 			}
 			if ($result) {
 				// update page id with last pdo insert
-				$this->id = CMS::Instance()->pdo->lastInsertId();
+				$this->id = DB::getLastInsertId();
 				Actions::add_action("pagecreate", (object) [
 					"affected_page"=>$this->id,
 				]);

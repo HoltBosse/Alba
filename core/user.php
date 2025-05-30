@@ -30,7 +30,7 @@ class User {
 			$query = "INSERT INTO users (username, email, password, state) VALUES (?,?,?,?)";
 			//CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
 			DB::exec($query, [$username,$email,$hash,$state]);
-			$id = CMS::Instance()->pdo->lastInsertId();
+			$id = DB::getLastInsertId();
 			foreach ($groups as $group) {
 				if (is_int($group)) {
 					$query = "INSERT INTO user_groups (user_id, group_id) values (?,?)";
@@ -43,24 +43,17 @@ class User {
 			throw new Exception('Unable to create new user');
 		}
 	}
-	
-	// $pdo->prepare($sql)->execute([$name, $id]);
+
 	public static function get_all_users() {
-		//echo "<p>Getting all users...</p>";
-		//$db = new db();
-		//$db = CMS::$pdo;
-		//$result = $db->pdo->query("select * from users")->fetchAll();
-		//$result = CMS::Instance()->pdo->query("select * from users")->fetchAll(); 
-		$query = "Select u.*, group_concat(DISTINCT g.display) as `groups`, group_concat(DISTINCT t.title) as tags 
-					from users u 
-					Left Join user_groups ug on ug.user_id = u.id 
-					Left Join `groups` g on ug.group_id = g.id 
-					Left Join tagged tt on tt.content_id = u.id AND content_type_id=-2 
-					Left Join tags t on t.id = tt.tag_id AND t.state > 0 
-					group by u.id";
-		/* $result = CMS::Instance()->pdo->query($query)->fetchAll();
-		return $result; */
-		return DB::fetchAll($query);
+		return DB::fetchAll(
+			"SELECT u.*, group_concat(DISTINCT g.display) AS `groups`, group_concat(DISTINCT t.title) AS tags 
+			FROM users u 
+			LEFT JOIN user_groups ug ON ug.user_id = u.id 
+			LEFT JOIN `groups` g ON ug.group_id = g.id 
+			LEFT JOIN tagged tt ON tt.content_id = u.id AND content_type_id=-2 
+			LEFT JOIN tags t ON t.id = tt.tag_id AND t.state > 0 
+			GROUP BY u.id"
+		);
 	}
 
 	public function get_all_users_in_group($group_id) {
@@ -236,9 +229,11 @@ class User {
 			$this->registered = DB::fetch("SELECT created FROM users WHERE id=?", $this->id)->created;
 			if ($this->password==null) {
 				// no password change
-				$query = "update users set username=?, email=? where id=?";
 				try {
-					$result = CMS::Instance()->pdo->prepare($query)->execute([$this->username, $this->email, $this->id]);
+					$result = DB::exec(
+						"UPDATE users SET username=?, email=? WHERE id=?",
+						[$this->username, $this->email, $this->id]
+					);
 				}
 				catch (PDOException $e) {
 					CMS::Instance()->queue_message('Username and/or email already exists','danger',Config::uripath().'/admin/users/');
@@ -250,8 +245,10 @@ class User {
 			}
 			else {
 				// new password
-				$query = "update users set username=?, password=?, email=? where id=?";
-				$result = CMS::Instance()->pdo->prepare($query)->execute([$this->username, $this->password, $this->email, $this->id]);
+				$result = DB::exec(
+					"UPDATE users SET username=?, password=?, email=? WHERE id=?",
+					[$this->username, $this->password, $this->email, $this->id]
+				);
 			}
 			if ($result) {
 				// user tags
@@ -284,9 +281,11 @@ class User {
 		}
 		else {
 			// insert new
-			$query = "insert into users (username,email,password) values(?,?,?)";
 			try {
-				$result = CMS::Instance()->pdo->prepare($query)->execute([$this->username, $this->email, $this->password]);	
+				$result = DB::exec(
+					"INSERT INTO users (username,email,password) VALUES (?,?,?)",
+					[$this->username, $this->email, $this->password]
+				);	
 			}
 			catch (PDOException $e) {
 				CMS::Instance()->queue_message('Username and/or email already exists','danger',Config::uripath().'/admin/users/');
@@ -296,7 +295,7 @@ class User {
 				$result = false;
 			}
 			if ($result) {
-				$new_user_id = CMS::Instance()->pdo->lastInsertId();
+				$new_user_id = DB::getLastInsertId();
 				$this->id = $new_user_id;
 
 				Actions::add_action("usercreate", (object) [
@@ -328,14 +327,6 @@ class User {
 	}
 
 	public static function get_all_groups() {
-		//echo "<p>Getting all users...</p>";
-		$result = CMS::Instance()->pdo->query("select * from `groups` ORDER BY display ASC")->fetchAll();
-		return $result;
+		return DB::fetchAll("SELECT * FROM `groups` ORDER BY display ASC");
 	}
-
-
-
-
-
-
 }
