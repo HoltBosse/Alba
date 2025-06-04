@@ -14,6 +14,7 @@ class Field_Antispam extends Field {
 	public $charset_check;
 	public $fake_thanks_url;
 	public $ends_with_ru_check;
+	public $bbcode_url_check;
 
 	function __construct($default_content="") {
 		$this->id = "";
@@ -51,6 +52,7 @@ class Field_Antispam extends Field {
 		$this->charset_check = $config->charset_check ?? false;
 		$this->fake_thanks_url = $config->fake_thanks_url ?? null;
 		$this->ends_with_ru_check = $config->ends_with_ru_check ?? false;
+		$this->bbcode_url_check = $config->bbcode_url_check ?? false;
 	}
 
 	private function in_blacklist ($value) {
@@ -119,6 +121,12 @@ class Field_Antispam extends Field {
 			// test string for ending with ru if required
 			if ($this->ends_with_ru_check) {
 				if ($this->ends_with_ru($val)) {
+					$valid = false;
+				}
+			}
+
+			if($this->bbcode_url_check) {
+				if(str_contains($val, "[url=") || str_contains($val,"[/url]")) {
 					$valid = false;
 				}
 			}
