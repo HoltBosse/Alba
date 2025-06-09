@@ -73,6 +73,10 @@ class Field_Rich extends Field {
 							z-index: 1;
 							border-radius: 0.5rem;
 
+							i, select {
+								cursor: pointer;
+							}
+
 							hr {
 								height: 1em;
 								width: 1px;
