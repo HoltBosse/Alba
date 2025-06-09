@@ -3,666 +3,1025 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_Rich extends Field {
 
-	public $mimetypes;
-	public $tags;
-
 	public function display() {
+		//$this->get_rendered_name()
+		//$this->name
+
 		?>
-		<style>
-		.editor a {
-			position:relative;
-		}
-		.editor a[target='_blank']::before {
-			content: "🔗";
-			font-weight:400;
-			display:block;
-			position:absolute;
-			transform:translateY(-1em);
-			text-align:right;
-			font-size:12px;
-			opacity:0.5;
-			right:0;
-			top:0;
-			min-width:16px;
-		}
-		.editor .internal_anchor {
-			display:inline-block;
-			width:2em;
-			height:2em;
-			text-align:center;
-			aspect-ratio:1/1;
-			content:"A";
-			background:black;
-			color:white;
-			margin:0.25em;
-			font-size:10px;
-			padding:0.25em;
-			/* text-indent:-9999px; */
-		}
-		
-		.editor { border:2px dashed #aaa; padding:1rem; max-height:25rem; overflow:auto;}
-		.editor_button {margin-left:1rem;}
-		.editor h1, .editor h2, .editor h3, .editor h4, .editor h5,.editor p, .editor ul, .editor ol {
-			padding:0.5rem;
-			margin:0.5rem;
-			background:rgba(0,0,0,0.05);
-			border:2px dotted rgba(0,0,0,0.05);
-			position:relative;
-		}
-		.editor p::before, .editor h1::before, .editor h2::before, .editor h3::before, .editor h4::before, .editor h5::before, .editor ul::before, .editor ol::before {
-			font-size:60%;
-			background:white;
-			padding:0.5rem;
-			margin:0.5rem;
-			box-shadow:0 0 5px rgba(0,0,0,0.2);
-			display:inline-block;
-			position:absolute;
-			top:-1rem;
-			right:-1rem;
-		}
-		.editor ul::before {
-			content:"UL";
-		}
-		.editor ol::before {
-			content:"UL";
-		}
-		.editor p::before {
-			content:"P";
-		}
-		.editor p {
-			overflow:hidden;
-		}
-		.editor h1::before {
-			content:"H1";
-		}
-		.editor h2::before {
-			content:"H2";
-		}
-		.editor h3::before {
-			content:"H3";
-		}
-		.editor h4::before {
-			content:"H4";
-		}
-		.editor h5::before {
-			content:"H5";
-		}
-		.editor .rich_image {
-			max-width:10em;
-			padding:1rem;
-			margin:1rem;
-			border:2px dotted rgba(0,0,0,0.2);
-		}
-		.editor .rich_image:hover {
-			cursor:pointer;
-		}
-		.editor .rich_image_active {
-			outline:2px dotted green;
-		}
-		.editor figure.rich_image_figure {
-			margin: 1rem;
-			padding: 1rem;
-			border: 2px solid rgba(0,0,0,0.1);
-			display: inline-block;
-		}
-		.editor [aria-hidden="true"] {
-			pointer-events:none;
-		}
+			<section class="editor_root_node">
+				<style>
+					.editor_root_node {
+						--border-color: color-mix(in srgb, currentcolor 100%, black 90%);
+						--background-color: var(--bulma-body-background-color);
 
-		[data-tooltip] {
-			position:relative;
-		}
-		[data-tooltip]:hover::before {
-			content: "";
-			position: absolute;
-			top:-0.25rem;
-			left:50%;
-			transform: translateX(-50%);
-			border-width: 4px 6px 0 6px;
-			border-style: solid;
-			border-color: rgba(0,0,0,0.7) transparent transparent transparent;
-			z-index: 100;
-		}
-		[data-tooltip]:hover::after {
-			content: attr(data-tooltip);
-			position: absolute;
-			left:50%;
-			top:-0.25rem;
-			transform: translateX(-50%) translateY(-100%);
-			background: rgba(0,0,0,0.7);
-			text-align: center;
-			color: #fff;
-			padding: 0.5rem 0.25rem;
-			font-size: 0.75rem;
-			min-width: 5rem;
-			border-radius: 0.25rem;
-			pointer-events: none;
-		}
-		.editorfieldwrapper:has(textarea:invalid) .editor.content {
-			border: 2px dashed red;
-		}
-		</style>
-		<script type="module">
-		import {openMediaSelector} from "/core/js/media_selector.js";
-			// TODO: make id/agnostic for repeatable + live additions
-			//document.addEventListener("DOMContentLoaded", function(){
+						border-radius: 0.5rem;
+						border: 1px solid var(--border-color);
+						position: relative;
 
-				if (!window.hasOwnProperty('editor_code_already_exists')) {
-					// editor code only needs to exist once for a given page
-					// with multiple editor fields / repeatables
-					document.addEventListener('input',function(e){
-						if (e.target.classList.contains('editor')) {
-							// console.log('INPUT DETECTED IN EDITOR');
-							// move markup to hidden textarea
-							let raw = e.target.innerHTML; 
-							let textarea = e.target.closest('.control').querySelector('textarea');
-							textarea.value = raw; 
-						}
-						if (e.target.classList.contains('editor_raw')) {
-							// move textarea to markup in editable on any change
-							let raw = e.target.value;
-							e.target.closest('.control').querySelector('.editor').innerHTML = raw;
-						}
-					});
+						.link-bubble-bar, .image-bubble-bar {
+							background-color: var(--background-color);
+							border-radius: 0.5rem;
+							border: 1px solid var(--border-color);
+							display: flex;
 
-					/* 
-						we have this here to save users who think they are so smart from themselves
-						as the raw html is being edited, it is being put into the dom, which is quite forgiving.
-						however when it is saved, the literal text is what is saved rather than the dom version
-						so on page reload, it will load the broken version which can lead to weirdness such as the textarea in the editor, etc
-						this of course would not be an issue if we properly iframed, etc the content of the editor.
-						this work around updates the textarea after focus leaves from the dom so that a "fixed" version is saved and avoids the above issues
-					*/
-					document.addEventListener("focusout", (e)=>{
-						if(e.target.classList.contains("editor_raw")) {
-							let raw = e.target.closest('.control').querySelector('.editor').innerHTML;
-							e.target.value = raw;
-						}
-					});
+							& > div {
+								padding: 0.5rem;
+								cursor: pointer;
+								font-size: 0.75rem;
+								display: flex;
+								align-items: center;
+								gap: 0.5rem;
 
-					document.addEventListener('click', (e)=>{
-						// click event handler for editor 
-
-						//check that we are being called from inside the editor
-						if(!e.target.closest(".editorfieldwrapper")) {
-							return;
-						}
-
-						if(!window.getSelection().focusNode || !window.getSelection().focusNode.parentElement.closest(".editor.content[contenteditable='true']")) {
-							//only show the alert if we're not interacting with the code view toggle or raw editor
-							if(!e.target.classList.contains('toggle_editor_raw') && !e.target.closest('.toggle_editor_raw') && !e.target.classList.contains('editor_raw')) {
-								alert("Please select in editor where you want to apply this command!");
-								return;
-							}
-						}
-
-						if (e.target.nodeName==='A') {
-							
-							// only work on anchors inside editor (i.e. not toolbar or elswhere... :) )
-							let in_editor = e.target.closest('.editor');
-							if (in_editor) {
-								if(e.target.classList.contains('internal_anchor')) {
-									return;
-								}
-								window.currentAnchorToEdit = e.target;
-								e.target.closest(".editorfieldwrapper").querySelector('[data-command="createlink"]').click();
-								return;
-							}
-						}
-
-						if (e.target.classList.contains('rich_image')) {
-							// handle rich image click
-							// clear any active rich image
-							var current_active = e.target.closest('.control').querySelector('.editor .rich_image_active');
-							if (current_active!==null) {
-								current_active.classList.remove('rich_image_active');
-							}
-							// make clicked active
-							var img = e.target;
-							img.classList.add('rich_image_active');
-						}
-						else {
-							// remove rich_image_active state
-							let editor = e.target.closest('.editor');
-							if (editor) {
-								let all_editor_active_images = editor.querySelectorAll('img.rich_image_active');
-								all_editor_active_images.forEach(img => {
-									img.classList.remove('rich_image_active');
-								});
-							}
-						}
-
-						if (e.target.classList.contains('internal_anchor')) {
-							let kill_anchor = window.confirm('Remove anchor?');
-							if (kill_anchor) {
-								e.target.remove();
-							}
-						}
-
-						let closest_editor_toolbar = e.target.closest('.hbcms_editor_toolbar');
-						if (closest_editor_toolbar) {
-						
-							// handle editor toolbar clicks
-
-							e.preventDefault();
-
-							// remember dynamic editor/textarea
-							window.this_editor = e.target.closest('.control').querySelector('.editor');
-							window.this_textarea = e.target.closest('.control').querySelector('textarea');
-
-							let editor_button;
-							if (e.target.classList.contains('fa')) {
-								editor_button = e.target.closest('.editor_button');
-							}
-							else {
-								editor_button = e.target;
-							}
-							const command = editor_button.dataset.command;
-							console.log('Command: ',command);
-
-							if (editor_button.classList.contains('toggle_editor_raw')) {
-								let control = editor_button.closest('.control');
-								let raw = control.querySelector('textarea.editor_raw');
-								if (raw.style.display=='block') {
-									raw.style.display='none';
-								}
-								else {
-									raw.style.display='block';
-								}
-								return false;
-							}
-
-							if (command == 'h1' || command == 'h2' || command == 'h3' || command == 'h4' || command == 'p') {
-								document.execCommand('formatBlock', false, command);
-							}
-
-							else if (command=="em") {
-								document.execCommand('italic', false, command);
-							}
-
-							else if (command=="small") {
-								document.execCommand('superscript', false, command);
-							}
-							
-							else if (command == 'createlink') {
-								var selection = window.currentAnchorToEdit ? window.currentAnchorToEdit.innerText : window.getSelection().toString();
-								console.log("selection: ", selection);
-
-								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-
-								let href=window.currentAnchorToEdit ? window.currentAnchorToEdit.getAttribute('href') : "";
-								let classes=window.currentAnchorToEdit ? window.currentAnchorToEdit.classList.value : "";
-								let target=window.currentAnchorToEdit ? (window.currentAnchorToEdit.getAttribute('target') ? window.currentAnchorToEdit.getAttribute('target') : "") : "";
-
-								const fields = [
-									{
-										type: "input",
-										id: "a_url",
-										label: "URL",
-										pattern: `https?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?`,
-										value: href,
-									},
-									{
-										type: "input",
-										id: "a_text",
-										label: "Display Text",
-										value: selection,
-									},
-									{
-										type: "input",
-										id: "a_class",
-										label: "Class",
-										value: classes,
-									},
-									{
-										type: "select",
-										id: "a_target",
-										label: "Open in",
-										value: target,
-										options: [
-											{
-												value: "",
-												text: "Current Window",
-											},
-											{
-												value: "_blank",
-												text: "New Window/Tab",
-											}
-										],
-									}
-								];
-
-								if(!window.currentAnchorToEdit) {
-									let link_html = `<a data-foo='bar' target='${target}' class='${classes}' id='newly_created_link_for_<?php echo $this->name;?>'>${selection}</a>`;
-									document.execCommand('insertHTML', false, link_html);							
-									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-									link.removeAttribute('style');	// get rid of any styling that might be preserved from user copy/paste
-								} else if(window.currentAnchorToEdit) {
-									window.currentAnchorToEdit.id = "newly_created_link_for_<?php echo $this->name;?>";
+								&:hover {
+									background-color: color-mix(in srgb, currentcolor 100%, black 50%);
+									color: color-mix(in srgb, currentcolor 100%, white 90%);
 								}
 
-								window.live_editor = this_editor;
-								const modal = createModal(fields);
-								modal.addEventListener("modalFormAdd", (e)=>{
-									// get values and update link
-									let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-									link.href = document.getElementById(fields[0].id).value;
-									link.innerHTML = document.getElementById(fields[1].id).value;
-									link.classList.value = document.getElementById(fields[2].id).value;
-									link.target = document.getElementById(fields[3].id).value;
-									link.removeAttribute('id');		// remove id so future links not messed up
-
-									window.currentAnchorToEdit = undefined;
-								});
-								modal.addEventListener("modalFormCancel", (e)=>{
-									if(!window.currentAnchorToEdit) {
-										// replace anchor with original text
-										let link = document.getElementById('newly_created_link_for_<?php echo $this->name;?>');
-										link.parentNode.replaceChild(document.createTextNode(selection), link);
-									}
-
-									window.currentAnchorToEdit = undefined;
-								});
-							}
-
-							else if (command == 'createanchor') {
-								//capture the current selection and save the range - need to do this to properly insert anchor into text later
-								const selection = document.getSelection();
-								let savedRange = null;
-								
-								if (selection.getRangeAt && selection.rangeCount) {
-									savedRange = selection.getRangeAt(0).cloneRange(); //store a copy of the range immediately
+								&:first-of-type {
+									border-top-left-radius: 0.5rem;
+									border-bottom-left-radius: 0.5rem;
 								}
-								
-								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-								
-								const fields = [
-									{
-										type: "input",
-										id: `anchor_id_for_${uniq}`,
-										label: "Anchor ID",
-										value: "",
-										helpText: "Enter a unique ID for this anchor. Will be used in URLs like #your-id",
-									}
-								];
-								
-								window.live_editor = this_editor;
-								const modal = createModal(fields);
 
-								modal.addEventListener("modalFormAdd", (e)=>{
-									// get values and update link
-									let anchorid = document.getElementById(fields[0].id).value;
-									if (anchorid && savedRange) {
-										//restore the range (so the anchor is inserted at the correct position in the text editor)
-										var frag = savedRange.createContextualFragment(`<a title='#${anchorid}' class='internal_anchor' id='${anchorid}' ><i class='fa fa-anchor' aria-hidden='true'></i></a>`);
-										savedRange.insertNode(frag);
-									}
-								});
-								
-							}
-
-							else if (command=='floatleft') {
-								var active_image = this_editor.querySelector('.rich_image_active');
-								if (active_image!==null) {
-									active_image.classList.add('pull-left');
-									active_image.classList.remove('rich_image_active','pull-right');
-
-									// do the same for parent figure if active_image captioned
-									if (active_image.parentElement.tagName == 'FIGURE') {
-										active_image.parentElement.classList.add('pull-left');
-										active_image.parentElement.classList.remove('pull-right');
-									}
+								&:last-of-type {
+									border-top-right-radius: 0.5rem;
+									border-bottom-right-radius: 0.5rem;
 								}
-								else {
-									alert('No image selected');
+
+
+								& > * {
+									pointer-events: none;
 								}
 							}
 
-							else if (command=='edit_image_props') {
-								
-								var active_image = this_editor.querySelector('.rich_image_active');
-								
-								if (active_image!==null) {
+							hr {
+								height: 2em;
+								width: 1px;
+								background-color: var(--border-color);
+								margin: 0;
+								padding: 0;
+							}
+						}
+
+						.gui_editor_control_bar {
+							display: flex;
+							gap: 0.75rem;
+							align-items: center;
+							padding: 0 0.75rem;
+							position: sticky;
+							top: 4.5rem;
+							background-color: var(--background-color);
+							z-index: 1;
+							border-radius: 0.5rem;
+
+							hr {
+								height: 1em;
+								width: 1px;
+								background-color: currentColor;
+								margin: 0;
+							}
+
+							select {
+								background-color: transparent;
+								color: currentColor;
+								border: 0px solid transparent;
+								padding: 0.5rem 0.25rem;
+								min-width: 8rem;
+
+								&, &::picker(select) {
+									appearance: base-select;
+								}
+
+								option {
+									display: grid;
+									grid-template-columns: [icon] auto [content] 1fr [mark] auto;
+									color: black;
 									
-									// get current image props
-									let alt = active_image.alt;
-									let title = active_image.title;
-
-									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-
-									const fields = [
-										{
-											type: "input",
-											id: `alt_text_for_${uniq}`,
-											label: "Alt Text",
-											value: alt,
-											helpText: "Alternative text for the visually impaired, will also display when the browser cannot render the image.",
-										},
-										{
-											type: "input",
-											id: `title_for_${uniq}`,
-											label: "Image Title",
-											value: title,
-											helpText: "Title will appear in a tooltip on hover of the image. It can also be used to provide a broader description than the alt text.",
-										},
-									];
-
-									window.live_editor = this_editor;
-									const modal = createModal(fields);
-									modal.addEventListener("modalFormAdd", (e)=>{
-										// set to image
-										let new_alt = document.getElementById(fields[0].id).value;
-										let new_title = document.getElementById(fields[1].id).value;
-										active_image.alt = new_alt;
-										active_image.title = new_title;
-										active_image.classList.remove('rich_image_active');
-										
-										// push updated content to textarea
-										active_image.closest('.control').querySelector('textarea').value = active_image.closest('.editor').innerHTML;
-									});
+									&::checkmark {
+										grid-area: 1 / mark;
+									}
 								}
-								else {
-									alert('No image selected');
+
+								option[value="unknown"]:not(:checked) {
+									display: none;
 								}
 							}
 
-							else if (command=='edit_image_attribution') {
-								var active_image = this_editor.querySelector('.rich_image_active');
-								if (active_image!==null) {
+							.fa.fa-bold, .fa.fa-italic, .fa.fa-underline, .fa.fa-link, .fa.fa-puzzle-piece, .fa.fa-anchor {
+								border-radius: 0.5rem;
+								padding: 0.5rem;
 
-									// check data attributes if present to load into modal
-									let author = active_image.dataset.author ? active_image.dataset.author : "";
-									let source = active_image.dataset.source ? active_image.dataset.source : "";
-									let license = active_image.dataset.license ? active_image.dataset.license : "";
-									let licenselink = active_image.dataset.licenselink ? active_image.dataset.licenselink : "";
+								&.active {
+									background-color: color-mix(in srgb, currentcolor 100%, black 90%);
+									color: color-mix(in srgb, currentcolor 100%, white 90%);
+								}
 
-									let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
+								&:not(.active):hover {
+									background-color: color-mix(in srgb, currentcolor 100%, black 50%);
+									color: color-mix(in srgb, currentcolor 100%, white 90%);
+								}
+							}
 
-									const fields = [
-										{
-											type: "input",
-											id: `image_author_for_${uniq}`,
-											label: "Image Author",
-											value: author,
-										},
-										{
-											type: "input",
-											id: `image_source_for_${uniq}`,
-											label: "Image Source",
-											value: source,
-										},
-										{
-											type: "input",
-											id: `license_name_for_${uniq}`,
-											label: "License Name",
-											value: license,
-										},
-										{
-											type: "input",
-											id: `license_link_for_${uniq}`,
-											label: "License Link",
-											value: licenselink,
-											helpText: "Enter full link including https://",
-										},
-									];
+							.dropdown:has(input:checked) .dropdown-menu {
+								display: block;
 
-									window.live_editor = this_editor;
-									const modal = createModal(fields);
-									modal.addEventListener("modalFormAdd", (e)=>{
-										// get new values for information
-										let new_author = document.getElementById(fields[0].id).value;
-										let new_source = document.getElementById(fields[1].id).value;
-										let new_license = document.getElementById(fields[2].id).value;
-										let new_licenselink = document.getElementById(fields[3].id).value;
-										
-										// update image dataset
-										active_image.dataset.author = new_author;
-										active_image.dataset.source = new_source
-										active_image.dataset.license = new_license
-										active_image.dataset.licenselink = new_licenselink
+								.dropdown-trigger {
+									padding: 0.5rem;
 
-										// will be used to determine if there will be captions
-										let new_data = [new_author, new_source, new_license, new_licenselink];
+									&:hover {
+										background-color: color-mix(in srgb, currentcolor 100%, black 50%);
+										color: color-mix(in srgb, currentcolor 100%, white 90%);
+									}
+								}
+							}
 
-										function allEmpty(array) {
-											for (const item of array) {
-												if (item!="") return false;
-											}
+							.dropdown-wrapper {
+								--width: 2.5rem;
+
+								&.insert-options {
+									--width: 6rem;
+								}
+								
+								position: relative;
+								min-height: 1.5rem;
+								min-width: var(--width);
+								border-radius: 0.5rem;
+								padding: 0.5rem;
+
+								&:hover {
+									background-color: color-mix(in srgb, currentcolor 100%, black 50%);
+									color: color-mix(in srgb, currentcolor 100%, white 90%);
+								}
+
+								& > * {
+									position: absolute;
+									top: 0rem;
+									left: 0rem;
+								}
+
+								&.text-style > * {
+									position: absolute;
+									top: 0.25rem;
+									left: 0.25rem;
+								}
+
+								div {
+									display: flex;
+									justify-content: space-between;
+									width: var(--width);
+									padding-right: 0.5rem;
+									align-items: center;
+								}
+
+								&.insert-options div {
+									padding-left: 0.5rem;
+								}
+
+								select {
+									opacity: 0;
+									min-width: var(--width);
+									max-width: var(--width);
+									height: 1.75rem;
+									padding: 0;
+
+									&::picker(select) {
+										top: calc(anchor(bottom) + 1px);
+									}
+
+									option::checkmark {
+										display: none;
+									}
+								}
+
+								&.text-style select::picker(select) {
+									right: anchor(right);
+								}
+							}
+
+							.justifytype[disabled] {
+								cursor: not-allowed;
+								opacity: 0.5;
+							}
+						}
+
+						.editor_seperator {
+							margin-bottom: 0.5rem;
+							margin-top: 0.25rem;
+							background-color: var(--border-color);
+							height: 1px;
+							position: sticky;
+							top: 7rem;
+							z-index: 2;
+						}
+
+						.gui_editor {
+							padding: 0 0.75rem;
+							padding-bottom: 0.75rem;
+
+							& > div {
+								outline: 0px transparent;
+
+								p.is-editor-empty:first-child::before {
+									content: attr(data-placeholder);
+									float: left;
+									height: 0;
+									pointer-events: none;
+									opacity: 0.5;
+								}
+
+								/* some default css styles */
+								h1 {
+									font-size: 2.5rem;
+								}
+								h2 {
+									font-size: 2.25rem;
+								}
+								h3 {
+									font-size: 2rem;
+								}
+								h4 {
+									font-size: 1.75rem;
+								}
+								h5 {
+									font-size: 1.5rem;
+								}
+								h6 {
+									font-size: 1.25rem;
+								}
+								ul {
+									list-style: disc;
+								}
+								ul, ol {
+									padding-left: 1.5rem;
+								}
+								blockquote {
+									border-left: 3px solid color-mix(in srgb, currentcolor 100%, black 90%);
+									padding-left: 0.5rem;
+								}
+								u {
+									text-decoration: underline
+								}
+								iframe, img {
+									border: 5px solid grey;
+								}
+
+								img.rich_image {
+									max-width: 20rem;
+
+									&.pull-left {
+										float: left;
+									}
+
+									&.pull-right {
+										float: right;
+									}
+								}
+
+								a.internal_anchor {
+									font-weight: 900;
+									font-family: "Font Awesome 5 Free";
+									-webkit-font-smoothing: antialiased;
+									display: inline-block;
+									font-style: normal;
+									font-variant: normal;
+									text-rendering: auto;
+									line-height: 1;
+
+									&:before {
+										content: "\f13d";
+									}
+								}
+							}
+						}
+					}
+				</style>
+				<div class="link-bubble-bar">
+					<div>
+						<i class='fa fa-external-link'></i>
+						<span>Toggle Target</span>
+					</div>
+					<hr>
+					<div>
+						<i class='fa fa-unlink'></i>
+						<span>Unlink</span>
+					</div>
+				</div>
+				<div class="image-bubble-bar">
+					<div>
+						<i class='fa fa-align-left'></i>
+						<span>Float Left</span>
+					</div>
+					<hr>
+					<div>
+						<i class='fa fa-align-center'></i>
+						<span>Clear Float</span>
+					</div>
+					<hr>
+					<div>
+						<i class='fa fa-align-right'></i>
+						<span>Float Right</span>
+					</div>
+				</div>
+				<div class="gui_editor_control_bar">
+					<i class="fa fa-rotate-left"></i>
+					<i class="fa fa-rotate-right"></i>
+					<hr>
+					<select class="linetype">
+						<option value="paragraph"><i class="fa fa-align-justify"></i>Paragraph</option>
+						<option value="heading1"><i class="fa fa-heading"></i>Heading 1</option>
+						<option value="heading2"><i class="fa fa-heading"></i>Heading 2</option>
+						<option value="heading3"><i class="fa fa-heading"></i>Heading 3</option>
+						<option value="heading4"><i class="fa fa-heading"></i>Heading 4</option>
+						<option value="bulletlist"><i class="fa fa-list-ul"></i>Bullet List</option>
+						<option value="orderedlist"><i class="fa fa-list-ol"></i>Numbered List</option>
+						<option value="quote"><i class="fa fa-quote-left"></i>Quote</option>
+						<option value="code"><i class="fa fa-code"></i>Code Block</option>
+						<option value="unknown"><i class="fa fa-question"></i>Unknown</option>
+					</select>
+					<hr>
+					<div style="display: flex; gap: 0.25rem; align-items: center;">
+						<i class="fa fa-bold"></i>
+						<i class="fa fa-italic"></i>
+						<i class="fa fa-underline"></i>
+						<i class='fa fa-puzzle-piece'></i>
+						<i class='fa fa-link'></i>
+						<i class='fa fa-anchor'></i>
+						<div class="text-style dropdown-wrapper">
+							<div>
+								<i class="fa fa-font"></i>
+								<i class="fa fa-angle-down"></i>
+							</div>
+							<select>
+								<?php
+								//FUTURE: implement these
+								/*
+									<option value="lowercase"><i class="fa fa-question"></i>Lowercase</option>
+									<option value="uppercase"><i class="fa fa-question"></i>Uppercase</option>
+									<option value="capitalize"><i class="fa fa-question"></i>Capitalize</option>
+								*/
+								?>
+								<option value="strikethrough"><i class="fa fa-strikethrough"></i>Strikethrough</option>
+								<option value="subscript"><i class="fa fa-compress"></i>Subscript</option>
+								<option value="superscript"><i class="fa fa-superscript"></i>Superscript</option>
+								<option value="unknown" selected style="display: none;">unknown</option>
+							</select>
+						</div>
+						<hr>
+						<div class="insert-options dropdown-wrapper ">
+							<div>
+								<i class="fa fa-plus"></i>
+								<span>Insert</span>
+								<i class="fa fa-angle-down"></i>
+							</div>
+							<select>
+								<option value="hr"><i class="fa fa-minus"></i>Horizontal Rule</option>
+								<option value="image"><i class="fa fa-image"></i>Image</option>
+								<option value="youtube"><i class="fa fa-video"></i>Youtube</option>
+								<!-- <option value="table"><i class="fa fa-table"></i>Table</option> -->
+								<option value="unknown" selected style="display: none;">unknown</option>
+							</select>
+						</div>
+						<hr>
+					</div>
+					<select class="justifytype">
+						<option value="left"><i class="fa fa-align-left"></i>Left Align</option>
+						<option value="center"><i class="fa fa-align-center"></i>Center Align</option>
+						<option value="right"><i class="fa fa-align-right"></i>Right Align</option>
+					</select>
+				</div>
+				<hr class="editor_seperator">
+				<div class="gui_editor"></div>
+				<textarea style="display: none;" id='<?php echo $this->id; ?>' <?php echo $this->get_rendered_name(); ?> data-repeatableindex="{{replace_with_index}}"><?php echo $this->default; ?></textarea>
+				<script type="module">
+					import { Editor } from 'https://esm.sh/@tiptap/core'
+					import StarterKit from 'https://esm.sh/@tiptap/starter-kit'
+					import Placeholder from 'https://esm.sh/@tiptap/extension-placeholder'
+					import Underline from 'https://esm.sh/@tiptap/extension-underline'
+					import Superscript from 'https://esm.sh/@tiptap/extension-superscript'
+					import Subscript from 'https://esm.sh/@tiptap/extension-subscript'
+					//import TextStyle from 'https://esm.sh/@tiptap/extension-text-style'
+					import Link from 'https://esm.sh/@tiptap/extension-link'
+					import Youtube from 'https://esm.sh/@tiptap/extension-youtube'
+					import Image from 'https://esm.sh/@tiptap/extension-image'
+					import {openMediaSelector} from "/core/js/media_selector.js"
+					import TextAlign from 'https://esm.sh/@tiptap/extension-text-align'
+					import Paragraph from 'https://esm.sh/@tiptap/extension-paragraph'
+					import Heading from 'https://esm.sh/@tiptap/extension-heading'
+					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu'
+					
+					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->get_rendered_name(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
+					const editorElement = editorWrapperRoot.querySelector('.gui_editor');
+					const editorControlBar = editorWrapperRoot.querySelector(".gui_editor_control_bar");
+					const editorSubmitElement = editorWrapperRoot.querySelector(`[<?php echo $this->get_rendered_name(); ?>]`);
+					const editorLinetypeSelect = editorControlBar.querySelector(".linetype");
+
+					const classExtension = {
+						addAttributes() {
+							return {
+								...this.parent?.(),
+								class: {
+									default: null,
+									renderHTML: attributes => {
+										return attributes.class ? { class: attributes.class } : {};
+									},
+								},
+							}
+						},
+					};
+
+					const idExtension = {
+						addAttributes() {
+							return {
+								...this.parent?.(),
+								id: {
+									default: null,
+									renderHTML: attributes => {
+										return attributes.id ? { id: attributes.id } : {};
+									},
+								},
+							}
+						},
+					};
+
+					const editorInstance = new Editor({
+						element: editorElement,
+						extensions: [
+							StarterKit.configure({
+								paragraph: false,
+								heading: false,
+							}),
+							Paragraph.extend(classExtension),
+							Heading.extend(classExtension),
+							Placeholder.configure({
+								placeholder: `<?php echo $this->placeholder; ?>`,
+							}),
+							Underline,
+							Superscript,
+							Subscript,
+							//TextStyle.configure({ mergeNestedSpanStyles: true }),
+							Link.configure({
+								openOnClick: false,
+								autolink: true,
+								defaultProtocol: 'https',
+								protocols: ['http', 'https'],
+								HTMLAttributes: {
+									rel: null,
+									target: null,
+								},
+								isAllowedUri: (url, ctx) => {
+									try {
+										//only possible by code
+										if (url==null) {
 											return true;
 										}
 
-										let hasFigure = active_image.parentElement.nodeName==="FIGURE";
-										let hasCaptions = !allEmpty(new_data);
-
-										function createFigure() {
-											let image = active_image;
-											let figure = document.createElement('FIGURE');
-											figure.classList.add('rich_image_figure');
-											
-											// deal with pull left and right
-											if (image.classList.contains('pull-right')) { 
-												figure.classList.add('pull-right');
-											}
-											if (image.classList.contains('pull-left')) {
-												figure.classList.add('pull-left');
-											}
-
-											active_image.replaceWith(figure);
-											figure.appendChild(image);
+										// construct URL
+										let parsedUrl;
+										if(url.startsWith("/") || url.startsWith("#")) {
+											parsedUrl = new URL(`${ctx.defaultProtocol}://${window.location.hostname}${url}`);
+										} else {
+											parsedUrl = url.includes(':') ? new URL(url) : new URL(`${ctx.defaultProtocol}://${url}`);
 										}
 
-										function removeFigure() {
-											let figure = active_image.parentElement;
-											let image = active_image;
-											figure.replaceWith(image);
+										// use default validation
+										if (!ctx.defaultValidate(parsedUrl.href)) {
+											console.log("url failed 1", url);
+											return false
 										}
 
-										function addCaptions() {
+										// disallowed protocols
+										const disallowedProtocols = ['ftp', 'file', 'mailto']
+										const protocol = parsedUrl.protocol.replace(':', '')
 
-											let figure = active_image.parentElement;
-
-											function appendFigcaptionToFigure(label, content, figure) {
-												let figCaption = document.createElement('FIGCAPTION');
-												let uniq = label.replace(/\s+/g, '_').toLowerCase();
-												let div = `<div class="image_${uniq}"><span class="attrib_label">${label}:&nbsp;</span><span class="attrib_value">${content}</span></div>`;
-												figCaption.innerHTML = div; 
-												console.log(figCaption);
-												figure.appendChild(figCaption);
-											} 
-
-											// create only needed captions
-											if (new_author) {
-												appendFigcaptionToFigure(`Photo By`, new_author, figure);
-											}
-											if (new_source) {
-												appendFigcaptionToFigure(`Source`, new_source, figure);
-											}
-											if (new_license || new_licenselink) {
-
-												function makeLinkHTML(href, content) {
-													return `<a href="${href}">${content}</a>`;
-												}
-
-												// sort out whether a link should/shouldn't be included
-												let new_content = "";
-												if (new_licenselink && new_license) {
-													new_content = makeLinkHTML(new_licenselink, new_license);
-												} 
-												else if (new_licenselink && !new_license) {
-													new_content = makeLinkHTML(new_licenselink, new_licenselink);
-												}
-												else if (!new_licenselink && new_license) {
-													new_content = new_license;
-												}
-
-												appendFigcaptionToFigure(`License`, new_content, figure);
-											}
+										if (disallowedProtocols.includes(protocol)) {
+											console.log("url failed 2", url);
+											return false
 										}
 
-										// logical schema for when to add/rem figure and captions
-										if (!hasFigure && hasCaptions) {
-											createFigure();
-											addCaptions();
+										// only allow protocols specified in ctx.protocols
+										const allowedProtocols = ctx.protocols.map(p => (typeof p === 'string' ? p : p.scheme))
+
+										if (!allowedProtocols.includes(protocol)) {
+											console.log("url failed 3", url);
+											return false
 										}
-										else if (hasFigure && hasCaptions) {
-											removeFigure();
-											createFigure();
-											addCaptions();
-										} 
-										else if (hasFigure && !hasCaptions) {
-											removeFigure();
-										}
-										else if (!hasFigure && !hasCaptions) {
-											// all is well, do nothing
+
+										// all checks have passed
+										return true
+									} catch(e) {
+										console.log(e);
+										console.log("url failed 4");
+										return false
+									}
+								},
+							}).extend(idExtension),
+							Youtube,
+							Image.extend(classExtension),
+							TextAlign.configure({
+								types: ['heading', 'paragraph'],
+							}),
+							BubbleMenu.configure({
+								pluginKey: "linkBubbleBar",
+								element: editorWrapperRoot.querySelector('.link-bubble-bar'),
+								shouldShow: ({ editor, view, state, oldState, from, to }) => {
+									return editor.isActive('link')/*  && !editor.getAttributes('link').class.contains("internal_anchor") */;
+								},
+							}),
+							BubbleMenu.configure({
+								pluginKey: "imageBubbleBar",
+								element: editorWrapperRoot.querySelector('.image-bubble-bar'),
+								shouldShow: ({ editor, view, state, oldState, from, to }) => {
+									return editor.isActive('image');
+								},
+							}),
+						],
+						content: `<?php echo $this->default; ?>`,
+					});
+
+					console.log(editorInstance);
+
+					//saving
+					function updateEditorSave() {
+						editorSubmitElement.innerHTML = editorInstance.getHTML();
+					}
+
+					editorWrapperRoot.addEventListener("keyup", (e)=>{
+						updateEditorSave();
+					});
+
+					//dialog creation code
+
+					//takes a js object and converts it to a form field
+					function renderField(field) {
+						let html = `<div class="field">`;
+							if(field.label) {
+								html+=`<label class="label">${field.label}</label>`;
+							}
+							switch (field.type) {
+								case "input":
+									html+=`<input id="${field.id}" ${field.pattern ? `pattern="${field.pattern}"` : ""} class="input" type="text" value="${field.value}">`;
+									break;
+
+								case "select":
+									html+=`<div class="select"><select style="width: 100%;" id="${field.id}">`;
+										field.options.forEach((option)=>{
+											html+=`<option ${option.value==field.value ? "selected" : ""} value="${option.value}">${option.text}</option>`;
+										});
+									html+=`</select></div>`;
+									break;
+
+								default:
+									html+=`<p>INVALID FIELD TYPE!!!`;
+									break;
+							}
+							if(field.helpText) {
+								html+=`<p class='help'>${field.helpText}</p>`;
+							}
+						html += `</div>`;
+
+						return html;
+					}
+
+					//creates a sane modal from fields provided, returns a modal. listen to custom events modalFormAdd, and modalFormCancel
+					function createModal(fields=[]) {
+						// create and show modal based on desired user inputs
+						let modal = document.createElement('div');
+						// modal.id = "add_info_modal_for_<?php echo $this->name;?>";
+						modal.classList = "modal is-active";
+						let modal_html = `
+							<div class="modal-background"></div>
+							<div class="modal-content">
+								<div class="box">
+						`;
+						fields.forEach((field)=>{
+							modal_html+=renderField(field);
+						})
+						modal_html += `
+									<button class="button is-primary" data-modal-action="add">Add</button>
+									<button class="button is-warning" data-modal-action="cancel">Cancel</button>
+									
+								</div>
+							</div>						
+						`;
+
+						modal.innerHTML = modal_html;
+						document.body.appendChild(modal);
+
+						// make first modal input focus
+						let first_input = modal.querySelector('input');
+						if (first_input) {
+							first_input.focus();
+						}
+
+						// listener for modal
+						modal.addEventListener('click', function(e){
+							e.preventDefault();
+
+							function closeModal() {
+								modal = e.target.closest('.modal.is-active');
+								parent = modal.parentNode;
+								parent.removeChild(modal);
+							}
+
+							switch (e.target.dataset.modalAction) {
+								
+								case "add":
+									let validity = true;
+									modal.querySelectorAll("input, select").forEach((el)=>{
+										if(el.validity.valid==false) {
+											validity = false;
 										}
 									});
-									
-								}
-								else {
-									alert('No image selected');
-								}
-							}
 
-							else if (command=='floatright') {
-								var active_image = this_editor.querySelector('.rich_image_active');
-								if (active_image!==null) {
-									active_image.classList.add('pull-right');
-									active_image.classList.remove('rich_image_active','pull-left');
-
-									// do the same for parent figure if active_image captioned
-									if (active_image.parentElement.tagName == 'FIGURE') {
-										active_image.parentElement.classList.add('pull-right');
-										active_image.parentElement.classList.remove('pull-left');
+									if(validity==false) {
+										alert("Invalid Field Entry!");
+										return;
 									}
 
-								}
-								else {
-									alert('No image selected');
-								}
+									modal.dispatchEvent(new CustomEvent("modalFormAdd", { target: modal }));
+									closeModal();
+									break;
+
+								case "cancel":
+									modal.dispatchEvent(new CustomEvent("modalFormCancel", { target: modal }));
+									closeModal();
+									break;
 							}
 
-							else if (command=='floatclear') {
-								var active_image = this_editor.querySelector('.rich_image_active');
-								if (active_image!==null) {
-									active_image.classList.remove('pull-left','pull-right');
-									active_image.classList.remove('rich_image_active');
+						});
 
-									// do the same for parent figure if active_image captioned
-									if (active_image.parentElement.tagName == 'FIGURE') {
-										active_image.parentElement.classList.remove('pull-left', 'pull-right');
+						return modal;
+					}
+
+					//gui updating
+					function updateLineTypeSelect() {
+						/*
+							tiptap isActive method is junk, half the time it lies to you
+							so we use the underlying ProseMirror state api
+						*/
+						
+						const from = editorInstance.state.selection.$from;
+
+						switch (from.parent.type.name) {
+							case "paragraph":
+								if(from.node(-1).type.name=="listItem") {
+									switch (from.node(-2).type.name) {
+										case "bulletList":
+											editorLinetypeSelect.value = "bulletlist";
+											break;
+										case "orderedList":
+											editorLinetypeSelect.value = "orderedlist";
+											break;
+										default:
+											console.log("issue figuring out list type in selector");
+											editorLinetypeSelect.value = "unknown";
+											break;
 									}
+								} else if(from.node(-1).type.name=="blockquote") {
+									editorLinetypeSelect.value = "quote";
+								} else {
+									editorLinetypeSelect.value = "paragraph";
 								}
-								else {
-									alert('No image selected');
+								break;
+							case "heading":
+								switch (from.parent.attrs.level) {
+									case 1:
+										editorLinetypeSelect.value = "heading1";
+										break;
+									case 2:
+										editorLinetypeSelect.value = "heading2";
+										break;
+									case 3:
+										editorLinetypeSelect.value = "heading3";
+										break;
+									case 4:
+										editorLinetypeSelect.value = "heading4";
+										break;
+									default:
+										console.log("issue figuring out heading type in selector");
+										editorLinetypeSelect.value = "unknown";
+										break;
 								}
+								break;
+							case "codeBlock":
+								editorLinetypeSelect.value = "code";
+								break;
+							default:
+								console.log("issue figuring out element in type selector: ", from.parent.type.name);
+								editorLinetypeSelect.value = "unknown";
+								break;
+						}
+					}
+
+					function updateTextStylingOptions() {
+						if(editorInstance.isActive('bold') && !editorControlBar.querySelector(".fa.fa-bold").classList.contains("active")) {
+							editorControlBar.querySelector(".fa.fa-bold").classList.add("active");
+						} else if(!editorInstance.isActive('bold') && editorControlBar.querySelector(".fa.fa-bold").classList.contains("active")) {
+							editorControlBar.querySelector(".fa.fa-bold").classList.remove("active");
+						}
+
+						if(editorInstance.isActive('italic') && !editorControlBar.querySelector(".fa.fa-italic").classList.contains("active")) {
+							editorControlBar.querySelector(".fa.fa-italic").classList.add("active");
+						} else if(!editorInstance.isActive('italic') && editorControlBar.querySelector(".fa.fa-italic").classList.contains("active")) {
+							editorControlBar.querySelector(".fa.fa-italic").classList.remove("active");
+						}
+
+						if(editorInstance.isActive('underline') && !editorControlBar.querySelector(".fa.fa-underline").classList.contains("active")) {
+							editorControlBar.querySelector(".fa.fa-underline").classList.add("active");
+						} else if(!editorInstance.isActive('underline') && editorControlBar.querySelector(".fa.fa-underline").classList.contains("active")) {
+							editorControlBar.querySelector(".fa.fa-underline").classList.remove("active");
+						}
+					}
+
+					function updatejustifytype() {
+						const justifyTypeSelect = editorWrapperRoot.querySelector(".justifytype");
+
+						const from = editorInstance.state.selection.$from;
+						const nodeType = from.parent.type.name;
+
+						if(nodeType!="paragraph" && nodeType!="heading" && !justifyTypeSelect.hasAttribute("disabled")) {
+							justifyTypeSelect.setAttribute("disabled", "");
+						} else if(justifyTypeSelect.hasAttribute("disabled")) {
+							justifyTypeSelect.removeAttribute("disabled");
+						}
+
+						switch (from.parent.attrs.textAlign) {
+							case "left":
+								justifyTypeSelect.value="left";
+								break;
+							case "center":
+								justifyTypeSelect.value="center";
+								break;
+							case "right":
+								justifyTypeSelect.value="right";
+								break;
+							default:
+								//console.log("unable to figure out text align, assuming left", from.parent.attrs.textAlign);
+								justifyTypeSelect.value="left";
+								break;
+						}
+					}
+
+					function updateGuiToolBar() {
+						updateLineTypeSelect();
+						updateTextStylingOptions();
+						updatejustifytype();
+					}
+
+					editorElement.addEventListener("keydown", (e)=>{
+						updateGuiToolBar();
+					});
+
+					editorElement.addEventListener("click", (e)=>{
+						updateGuiToolBar();
+					});
+
+					//buttons
+					editorWrapperRoot.querySelector(".fa.fa-rotate-left").addEventListener("click", (e)=>{
+						editorInstance.commands.undo();
+						updateEditorSave();
+					});
+
+					editorWrapperRoot.querySelector(".fa.fa-rotate-right").addEventListener("click", (e)=>{
+						editorInstance.commands.redo();
+						updateEditorSave();
+					});
+
+					editorLinetypeSelect.addEventListener("change", (e)=>{
+						//console.log(e.target.value);
+
+						//editor.chain().focus().toggleHeading({ level: 1 }).run()
+						switch (e.target.value) {
+							case "paragraph":
+								editorInstance.chain().focus().setParagraph().run();
+								break;
+							case "heading1":
+								editorInstance.chain().focus().setHeading({ level: 1 }).run();
+								break;
+							case "heading2":
+								editorInstance.chain().focus().setHeading({ level: 2 }).run();
+								break;
+							case "heading3":
+								editorInstance.chain().focus().setHeading({ level: 3 }).run();
+								break;
+							case "heading4":
+								editorInstance.chain().focus().setHeading({ level: 4 }).run();
+								break;
+							case "bulletlist":
+								//no set method
+								if(!editorInstance.isActive('bulletList')) {
+									editorInstance.chain().focus().toggleBulletList().run();
+								}
+								break;
+							case "orderedlist":
+								//no set method
+								if(!editorInstance.isActive('orderedList')) {
+									editorInstance.chain().focus().toggleOrderedList().run();
+								}
+								break;
+							case "quote":
+								editorInstance.chain().focus().setBlockquote().run();
+								break;
+							case "code":
+								editorInstance.chain().focus().setCodeBlock().run()
+								break;
+							default:
+								console.log("unknown linetype selected");
+						}
+
+						updateEditorSave();
+					});
+
+					editorWrapperRoot.querySelector(".fa.fa-bold").addEventListener("click", (e)=>{
+						editorInstance.chain().focus().toggleBold().run();
+
+						updateEditorSave();
+					});
+
+					editorWrapperRoot.querySelector(".fa.fa-italic").addEventListener("click", (e)=>{
+						editorInstance.chain().focus().toggleItalic().run();
+
+						updateEditorSave();
+					});
+
+					editorWrapperRoot.querySelector(".fa.fa-underline").addEventListener("click", (e)=>{
+						editorInstance.chain().focus().toggleUnderline().run();
+
+						updateEditorSave();
+					});
+
+					editorWrapperRoot.querySelector(".fa.fa-link").addEventListener("click", (e)=>{
+						const fields = [
+							{
+								type: "input",
+								id: "a_url",
+								label: "URL",
+								pattern: `https?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?`,
+								value: "",
+							},
+							{
+								type: "input",
+								id: "a_text",
+								label: "Display Text",
+								value: "",
+							},
+							{
+								type: "input",
+								id: "a_class",
+								label: "Class",
+								value: "",
+							},
+							{
+								type: "select",
+								id: "a_target",
+								label: "Open in",
+								value: "",
+								options: [
+									{
+										value: "",
+										text: "Current Window",
+									},
+									{
+										value: "_blank",
+										text: "New Window/Tab",
+									}
+								],
 							}
-							
-							else if (command=='img') {
+						];
+
+						const modal = createModal(fields);
+						modal.addEventListener("modalFormAdd", (e)=>{
+							editorInstance.chain().focus().insertContent({
+								type: 'text',
+								text: document.getElementById(fields[1].id).value,
+								marks: [
+									{
+										type: 'link',
+										attrs: {
+											href: document.getElementById(fields[0].id).value,
+											target: document.getElementById(fields[3].id).value=="_blank" ? "_blank" : null,
+											class: document.getElementById(fields[2].id).value!="" ? document.getElementById(fields[2].id).value : null,
+										},
+									},
+								],
+							}).run();
+
+							updateEditorSave();
+						});
+					});
+
+					editorWrapperRoot.querySelector(".fa.fa-anchor").addEventListener("click", (e)=>{
+						const fields = [
+							{
+								type: "input",
+								id: "anchor_id",
+								label: "ID",
+								value: "",
+							},
+						];
+
+						const modal = createModal(fields);
+						modal.addEventListener("modalFormAdd", (e)=>{
+							editorInstance.chain().focus().insertContent({
+								type: 'text',
+								text: "​", //need to make tiptap happy
+								marks: [
+									{
+										type: 'link',
+										attrs: {
+											id: `${document.getElementById(fields[0].id).value}`,
+											target: null,
+											href: "#", //need to make tiptap happy
+											class: "internal_anchor",
+										},
+									},
+								],
+							}).run();
+
+							updateEditorSave();
+						});
+					});
+
+					editorWrapperRoot.querySelector(".fa.fa-puzzle-piece").addEventListener("click", (e)=>{
+						console.log("azdd clazz");
+
+						const fields = [
+							{
+								type: "input",
+								id: "class",
+								label: "Class",
+								value: "",
+							},
+						];
+
+						const modal = createModal(fields);
+						modal.addEventListener("modalFormAdd", (e)=>{
+							console.log("form add", document.getElementById(fields[0].id).value);
+
+							const from = editorInstance.state.selection.$from;
+							console.log(from);
+
+							const currentClasses = from.parent.attrs.class || "";
+							const newClass = document.getElementById(fields[0].id).value;
+							const updatedClass = currentClasses ? `${currentClasses} ${newClass}`.trim() : newClass;
+
+							const depth = from.depth;
+
+							// The position of the parent node
+							const parentPos = from.before(depth);
+
+							// Now you can use parentPos with setNodeMarkup
+							const tr = editorInstance.state.tr.setNodeMarkup(parentPos, null, {
+								...from.parent.attrs,
+								class: updatedClass
+							});
+							editorInstance.view.dispatch(tr);
+
+							updateEditorSave();
+						});
+					});
+
+					editorWrapperRoot.querySelector(".text-style.dropdown-wrapper select").addEventListener("change", (e)=>{
+						switch (e.target.value) {
+							/* case "lowercase":
+								console.log("unimplemented");
+								break;
+							case "uppercase":
+								console.log("unimplemented");
+								break;
+							case "capitalize":
+								console.log("unimplemented");
+								break; */
+							case "strikethrough":
+								editorInstance.chain().focus().setStrike().run();
+								break;
+							case "subscript":
+								editorInstance.chain().focus().setSubscript().run();
+								break;
+							case "superscript":
+								editorInstance.chain().focus().setSuperscript().run();
+								break;
+							default:
+								console.log("unknown text style chosen");
+						}
+
+						updateEditorSave();
+
+						if(e.target.value!="unknown") {
+							e.target.closest("select").value="unknown";
+						}
+					});
+
+					editorWrapperRoot.querySelector(".insert-options.dropdown-wrapper select").addEventListener("change", (e)=>{
+						switch (e.target.value) {
+							case "hr":
+								editorInstance.chain().focus().setHorizontalRule().run();
+								break;
+							case "image":
 								// get variables for openMediaSelector()
 								let elementId = "<?php echo $this->id; ?>";
-								let imagesPerPage = <?php echo $this->images_per_page ?? 50;?>;
-								let mimetypes = <?php echo json_encode($this->mimetypes); ?>;
-								let tags = <?php echo json_encode($this->tags);?>;
+								let imagesPerPage = 50;
+								let mimetypes = null;
+								let tags = null;
 								let listingEndpoint = '<?php echo Config::uripath();?>/image/list_images';
 								
 								// set up rich editor variables
@@ -674,308 +1033,107 @@ class Field_Rich extends Field {
 								const mediaSelector = openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint);
 								
 								mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
-									const url = mediaE.detail.url + "/web";
-									const imageMarkup = `<img alt="${mediaE.detail.alt}" title="${mediaE.detail.title}" class="rich_image" data-mediaId="${mediaE.detail.mediaId}" data-size="web" src="${url}"/>`;
-									
-									// focus back on the editor and insert the HTML at the saved position
-									lastEditor.focus();
-									selected.collapse(saved[0], saved[1]);
-									document.execCommand('insertHTML', false, imageMarkup);
+									editorInstance.chain().focus().setImage({
+										src: mediaE.detail.url + "/web",
+										alt: mediaE.detail.alt,
+										title: mediaE.detail.title,
+										class: "rich_image",
+									}).run();
+
+									updateEditorSave();
 								});
-							}
 
-							else if (command=='toggle_external_link') {
-								let this_sel = document.getSelection(); 
-								let this_parent = this_sel.focusNode.parentElement;
-								if (this_parent && this_parent.nodeName=="A") {
-									// caret inside anchor!
-									if (this_parent.target=="_blank") {
-										this_parent.target="_self";
-									}
-									else {
-										this_parent.target="_blank";
-									}
-								}
-							}
 
-							else if (command == 'ul' || command == 'ol') {
-								if (command=='ol') {
-									document.execCommand('insertorderedlist', false, command);
-								}
-								else {
-									document.execCommand('insertunorderedlist', false, command);
-								}
-							}
-							else if (command == 'addclass') {
-								
-								// get parent model to potentially use later
-								let parent = window.getSelection().focusNode.parentNode;
-
-								let uniq = ("<?php echo $this->name;?>").replace(/\s+/g, '_');		// for ids
-
+								break;
+							case "youtube":
+								//https://www.youtube.com/watch?v=dQw4w9WgXcQ
 								const fields = [
 									{
 										type: "input",
-										id: `new_class_for_${uniq}`,
-										label: "Add Class",
+										id: "url",
+										label: "Video Url",
 										value: "",
-										helpText: "Must be alphanumeric with no spaces or will not be added.",
 									},
 								];
-								
-								window.live_editor = this_editor;
+
 								const modal = createModal(fields);
 								modal.addEventListener("modalFormAdd", (e)=>{
-									// add class
-									let new_class_name = document.getElementById(fields[0].id).value;
-									var modal = event.target.closest('.modal');
-									if (new_class_name) {
-										parent.classList.add(new_class_name);
-									}
-								});
+									//console.log("form add", document.getElementById(fields[0].id).value);
 
-							}
-
-							else if (command=="removeFormat") {
-								// remove all inline style from all elements and
-								// then do default remove formatting
-								let editor_els = this_editor.querySelectorAll('*');
-								editor_els.forEach(el => {
-									el.removeAttribute('style');
-								});
-								document.execCommand(command, false, null);
-							}
-
-							else document.execCommand(command, false, null);
-
-							// force update of editor contents
-							let markup = this_editor.innerHTML;
-							this_textarea.value = markup;
-						}
-					});
-
-
-					document.addEventListener('paste',function(e){
-						if (e.target.classList.contains('editor')) {
-							// remove styles on paste
-							let found_image = false;
-							pasteEvent.preventDefault();
-							//console.log((pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items);
-							let items = (pasteEvent.clipboardData || pasteEvents.originalEvent.clipboardData).items;
-							for (var i = 0; i < items.length; i++) {
-								// Skip content if not image
-								if (items[i].type.indexOf("image") == -1) continue;
-								// Retrieve image on clipboard as blob
-								let blob = items[i].getAsFile();
-								var reader = new FileReader();
-								reader.onload = function(event) {
-									//let pasted_img = new Image;
-									//pasted_img.src = event.target.result;
-									let img_markup = `<img class="pasted rich_image" src="${event.target.result}"/>`;
-									document.execCommand("insertHTML", false, img_markup);
-								};
-								reader.readAsDataURL(blob);
-								found_image = true;
-							}
-							
-							if (!found_image) {
-								console.log('not image - cleaning paste');
-								if (pasteEvent.clipboardData.types.includes('text/html')) {
-									var text = pasteEvent.clipboardData.getData("text/html");
-									text = text.replace(/style="[^"]*"/gi,"");
-									document.execCommand("insertHTML", false, text);
-								}
-								else if (pasteEvent.clipboardData.types.includes('text/plain')) {
-									// attempt plaintext paste
-									var text = pasteEvent.clipboardData.getData("text/plain");
-									document.execCommand("insertText", false, text);
-								}
-								else {
-									alert('Unknown content type pasted');
-								}
-							}
-						}
-					});
-
-					// set global flag to ensure event listeners only added once
-					window.editor_code_already_exists = true;
-				}
-
-				//takes a js object and converts it to a form field
-				function renderField(field) {
-					let html = `<div class="field">`;
-						if(field.label) {
-							html+=`<label class="label">${field.label}</label>`;
-						}
-						switch (field.type) {
-							case "input":
-								html+=`<input id="${field.id}" ${field.pattern ? `pattern="${field.pattern}"` : ""} class="input" type="text" value="${field.value}">`;
-								break;
-
-							case "select":
-								html+=`<div class="select"><select style="width: 100%;" id="${field.id}">`;
-									field.options.forEach((option)=>{
-										html+=`<option ${option.value==field.value ? "selected" : ""} value="${option.value}">${option.text}</option>`;
+									editorInstance.commands.setYoutubeVideo({
+										src: document.getElementById(fields[0].id).value,
 									});
-								html+=`</select></div>`;
-								break;
 
-							default:
-								html+=`<p>INVALID FIELD TYPE!!!`;
-								break;
-						}
-						if(field.helpText) {
-							html+=`<p class='help'>${field.helpText}</p>`;
-						}
-					html += `</div>`;
-
-					return html;
-				}
-
-				//creates a sane modal from fields provided, returns a modal. listen to custom events modalFormAdd, and modalFormCancel
-				function createModal(fields=[]) {
-					// create and show modal based on desired user inputs
-					let modal = document.createElement('div');
-					// modal.id = "add_info_modal_for_<?php echo $this->name;?>";
-					modal.classList = "modal is-active";
-					let modal_html = `
-						<div class="modal-background"></div>
-						<div class="modal-content">
-							<div class="box">
-					`;
-					fields.forEach((field)=>{
-						modal_html+=renderField(field);
-					})
-					modal_html += `
-								<button class="button is-primary" data-modal-action="add">Add</button>
-								<button class="button is-warning" data-modal-action="cancel">Cancel</button>
-								
-							</div>
-						</div>						
-					`;
-
-					modal.innerHTML = modal_html;
-					document.body.appendChild(modal);
-
-					// make first modal input focus
-					let first_input = modal.querySelector('input');
-					if (first_input) {
-						first_input.focus();
-					}
-
-					// listener for modal
-					modal.addEventListener('click', function(e){
-						e.preventDefault();
-
-						function closeModal() {
-							modal = e.target.closest('.modal.is-active');
-							parent = modal.parentNode;
-							parent.removeChild(modal);	
-							// update editor raw textarea with changes
-							let markup = window.live_editor.innerHTML;
-							window.live_editor.closest('.control').querySelector('textarea').value = markup;
-						}
-
-						switch (e.target.dataset.modalAction) {
-							
-							case "add":
-								let validity = true;
-								modal.querySelectorAll("input, select").forEach((el)=>{
-									if(el.validity.valid==false) {
-										validity = false;
-									}
+									updateEditorSave();
 								});
-
-								if(validity==false) {
-									alert("Invalid Field Entry!");
-									return;
-								}
-
-								modal.dispatchEvent(new CustomEvent("modalFormAdd", { target: modal }));
-								closeModal();
 								break;
-
-							case "cancel":
-								modal.dispatchEvent(new CustomEvent("modalFormCancel", { target: modal }));
-								closeModal();
+							case "table":
+								console.log("implement me");
 								break;
+							default:
+								console.log("unknown text style chosen");
 						}
 
+						updateEditorSave();
+
+						if(e.target.value!="unknown") {
+							e.target.closest("select").value="unknown";
+						}
 					});
 
-					return modal;
-				}
-			//});
-		</script>
-		<?php
-		if (!Config::debug()) {
-			echo "<style>.editor_raw {display:none;}</style>";
-		}
-		$required="";
-		if ($this->required) {$required=" required ";}
-		echo "<div class='field {$required} editorfieldwrapper'>";
-			echo "<label class='label'>{$this->label}</label>";
-			echo "<div class='control'>";
-				?>
-				<!-- toolbar -->
-				<div class='hbcms_editor_toolbar' id='editor_toolbar_for_<?php echo $this->name; ?>'>
-					<a class='editor_button' href="#" data-command='h1' data-tooltip="Heading 1">H1</a>
-					<a class='editor_button' href="#" data-command='h2' data-tooltip="Heading 2">H2</a>
-					<a class='editor_button' href="#" data-command='h3' data-tooltip="Heading 3">H3</a>
-					<a class='editor_button' href="#" data-command='h4' data-tooltip="Heading 4">H4</a>
-					<a class='editor_button' href="#" data-command='p' data-tooltip="Paragraph">P</a>
-					<a class='editor_button' href="#" data-command='ul' data-tooltip="Unordered List">UL</a>
-					<a class='editor_button' href="#" data-command='ol' data-tooltip="Numbered List">OL</a>
-					<a class='editor_button' href="#" data-command='bold' data-tooltip="Bold"><i class="fa fa-bold"></i></a>
-					<a class='editor_button' href="#" data-command='em' data-tooltip="Italics"><i class="fa fa-italic"></i></a>
-					<a class='editor_button' href="#" data-command='small' data-tooltip="Small"><i class="fa fa-compress"></i></a>
-					<a class='editor_button' href="#" data-command='underline' data-tooltip="Underline"><i class="fa fa-underline"></i></a>
-					<a class='editor_button' href="#" data-command='addclass' data-tooltip="Add Class">Cls+</a>
-					<a class='editor_button' href="#" data-command='img' data-tooltip="Image"><i class="fa fa-images"></i></a>
-					<a class='editor_button' href="#" data-command='undo' data-tooltip="Undo"><i class='fa fa-undo'></i></a>
-					<a class='editor_button' href="#" data-command='createlink' data-tooltip="Create Link"><i class='fa fa-link'></i></a>
-					<a class='editor_button' href="#" data-command='unlink' data-tooltip="Delete Link"><i class='fa fa-unlink'></i></a>
-					<a class='editor_button' href="#" data-command='createanchor' data-tooltip="Add Anchor"><i class='fa fa-anchor'></i></a>
-					<a class='editor_button' href="#" data-command='toggle_external_link' title='Toggle external link' data-tooltip="Toggle External Link"><i class='fa fa-external-link'></i></a>
-					<a class='editor_button' href="#" data-command='justifyLeft' data-tooltip="Justify Left"><i class='fa fa-align-left'></i></a>
-					<a class='editor_button' href="#" data-command='superscript' data-tooltip="Super Script"><i class='fa fa-superscript'></i></a>
-					<a class='editor_button' href="#" data-command='removeFormat' data-tooltip="Remove Formating"><i class='fa fa-broom'></i></a>
-					<a class='editor_button image_selected' href='#' data-command='floatleft' data-tooltip="Float Left">FL</a>
-					<a class='editor_button image_selected' href='#' data-command='floatright' data-tooltip="Float Right">FR</a>
-					<a class='editor_button image_selected' href='#' data-command='floatclear' data-tooltip="Clear Float">FC</a>
-					<a class='editor_button image_selected' href='#' data-command='edit_image_props' data-tooltip="Image Atrributes">IMG ALT/TITLE</a>
-					<a class='editor_button image_selected' href='#' data-command='edit_image_attribution' data-tooltip="Image Author">IMG ATTRIB</a>
-					<a class='editor_button toggle_editor_raw' href="#" data-command='none' data-tooltip="Code View"><i class='fa fa-edit'></i></a>
-				</div>
-				<?php
-				echo "<div class='editor content' contentEditable='true' id='editor_for_{$this->name}'>{$this->default}</div>";
-				echo "<h6 class='editor_raw'>Raw Markup</h6>";
-				echo "<textarea value='' maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input editor_raw' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()}>{$this->default}</textarea>";
-			echo "</div>";
-			if ($this->description) {
-				echo "<p class='help'>" . $this->description . "</p>";
-			}
-		echo "</div>";
-	}
+					editorWrapperRoot.querySelector(".justifytype").addEventListener("change", (e)=>{
+						switch (e.target.value) {
+							case "left":
+								editorInstance.chain().focus().setTextAlign('left').run();
+								//maybe just unset instead?
+								//editorinstance.chain().focus().unsetTextAlign().run();
+								break;
+							case "center":
+								editorInstance.chain().focus().setTextAlign('center').run();
+								break;
+							case "right":
+								editorInstance.chain().focus().setTextAlign('right').run();
+								break;
+							default:
+								console.log("unknown aligntype selected");
+						}
 
-	public function set_from_submit() {
-		$value = Input::getvar($this->name, $this->filter);
-		if (is_string($value)||is_numeric($value)) {
-			// strip empty tags / nonsense made by ol/ul creation
-			// they are illegal html ;) but they are
-			// produced by UL/OL creation in contenteditable
-			$value = str_replace("<p></p>","",$value);
-			$value = str_replace("<p><ul>","<ul>",$value);
-			$value = str_replace("</ul></p>","</ul>",$value);
-			$this->default = $value;
-		}
+						updateEditorSave();
+					});
+
+					// bubbles controls
+					editorWrapperRoot.addEventListener("click", (e)=>{
+						if(e.target.matches(".link-bubble-bar div:has(.fa.fa-unlink)")) {
+							editorInstance.chain().focus().unsetLink().run();
+						} else if(e.target.matches(".link-bubble-bar div:has(.fa.fa-external-link)")) {
+							let newTabTarget = editorInstance.getAttributes('link').target=="_blank";
+							editorInstance.chain().extendMarkRange("link").updateAttributes('link', { target: newTabTarget ? null : "_blank" }).run();
+						} else if(e.target.matches(".image-bubble-bar div:has(.fa.fa-align-left)")) {
+							let classes = editorInstance.getAttributes('image').class;
+							classes = classes.replace("pull-left", "");
+							classes = classes.replace("pull-right", "");
+							editorInstance.chain().updateAttributes('image', { class : `${classes} pull-left`}).run();
+						} else if(e.target.matches(".image-bubble-bar div:has(.fa.fa-align-right)")) {
+							let classes = editorInstance.getAttributes('image').class;
+							classes = classes.replace("pull-left", "");
+							classes = classes.replace("pull-right", "");
+							editorInstance.chain().updateAttributes('image', { class : `${classes} pull-right`}).run();
+						} else if(e.target.matches(".image-bubble-bar div:has(.fa.fa-align-center)")) {
+							let classes = editorInstance.getAttributes('image').class;
+							classes = classes.replace("pull-left", "");
+							classes = classes.replace("pull-right", "");
+							editorInstance.chain().updateAttributes('image', { class : `${classes}`}).run();
+						}
+					});
+				</script>
+				<div style="clear: both;"></div>
+			</section>
+		<?php
 	}
 
 	public function load_from_config($config) {
 		parent::load_from_config($config);
-		
-		//this space is inbetween the the p tags specifically to prevent the set_from_submit stripping out the default p
-		$this->default = $config->default ?? '<p> </p>';
+
 	}
 
 	public function validate() {
