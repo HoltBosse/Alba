@@ -111,10 +111,10 @@ class Field_Repeatable extends Field {
 			var markup = window['repeatable_form_template_<?php echo $this->form->id;?>'].markup;
 			var repeat_count = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>').querySelectorAll('div.repeatable').length;
 			// insert index if required
-			markup = markup.replace(/{{replace_with_index}}/g, repeat_count.toString());
+			markup = markup.replaceAll(/{{replace_with_index}}/g, repeat_count.toString());
 			// insert unique id if required (image / slimselect js need unique ids for script)
 			var unique_id_suffix = '_' + Math.random().toString(36).substr(2, 9);
-			markup = markup.replace(/{{repeatable_id_suffix}}/g, unique_id_suffix);
+			markup = markup.replaceAll(/{{repeatable_id_suffix}}/g, unique_id_suffix);
 			// create and insert node with markup
 			var new_node = document.createRange().createContextualFragment(markup);
 			var this_repeater = document.getElementById('repeated_forms_container_<?php echo $this->form->id;?>');
