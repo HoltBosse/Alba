@@ -294,5 +294,6 @@ legend {
   }
 }
 @view-transition {
+  /* biome-ignore lint: not solving now */
   navigation: auto;
 }
