@@ -111,6 +111,22 @@ class Field_Select extends Field {
 		endif;
 	}
 
+	public function get_form_editor_visibility() {
+		if(get_class($this)=="Field_Select") {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function get_form_editor_display() {
+		return "<div class='select is-link'>
+			<select style='width: 100%;'>
+				<option>Select</option>
+			</select>
+		</div>";
+	}
+
 	public function get_friendly_value($helpful_info) {
 		return $this->default;
 	}
