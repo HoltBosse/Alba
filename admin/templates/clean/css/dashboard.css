@@ -293,4 +293,6 @@ legend {
     gap: 3rem;
   }
 }
-
+@view-transition {
+  navigation: auto;
+}
