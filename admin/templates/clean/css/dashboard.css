@@ -293,4 +293,7 @@ legend {
     gap: 3rem;
   }
 }
-
+@view-transition {
+  /* biome-ignore lint: not solving now */
+  navigation: auto;
+}
