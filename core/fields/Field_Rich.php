@@ -446,6 +446,12 @@ class Field_Rich extends Field {
 						},
 					};
 
+					function stripClassAttributes(html) {
+						const doc = new DOMParser().parseFromString(html, 'text/html');
+						doc.querySelectorAll('[class]').forEach(el => el.removeAttribute('class'));
+						return doc.body.innerHTML;
+					}
+
 					const editorInstance = new Editor({
 						element: editorElement,
 						extensions: [
@@ -538,6 +544,9 @@ class Field_Rich extends Field {
 								},
 							}),
 						],
+						editorProps: {
+							transformPastedHTML: html => stripClassAttributes(html),
+						},
 						content: `<?php echo $this->default; ?>`,
 					});
 
