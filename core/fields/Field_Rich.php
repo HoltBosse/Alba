@@ -447,9 +447,9 @@ class Field_Rich extends Field {
 					};
 
 					function stripClassAttributes(html) {
-						const doc = new DOMParser().parseFromString(html, 'text/html')
-						doc.querySelectorAll('[class]').forEach(el => el.removeAttribute('class'))
-						return doc.body.innerHTML
+						const doc = new DOMParser().parseFromString(html, 'text/html');
+						doc.querySelectorAll('[class]').forEach(el => el.removeAttribute('class'));
+						return doc.body.innerHTML;
 					}
 
 					const editorInstance = new Editor({
