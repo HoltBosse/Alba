@@ -452,6 +452,56 @@ class Field_Rich extends Field {
 						return doc.body.innerHTML;
 					}
 
+					const allowedLinkProtocols = ['http', 'https', 'mailto'];
+					const defaultProtocol = 'https';
+					function isAllowedUri(url, ctx) {
+						try {
+							//only possible by code
+							if (url==null) {
+								return true;
+							}
+
+							// construct URL
+							let parsedUrl;
+							if(url.startsWith("/") || url.startsWith("#")) {
+								parsedUrl = new URL(`${ctx.defaultProtocol}://${window.location.hostname}${url}`);
+							} else {
+								parsedUrl = url.includes(':') ? new URL(url) : new URL(`${ctx.defaultProtocol}://${url}`);
+							}
+
+							// use default validation
+							if (!ctx.defaultValidate(parsedUrl.href)) {
+								console.log("url failed 1", url);
+								return false
+							}
+
+							const protocol = parsedUrl.protocol.replace(':', '');
+							// only allow protocols specified in ctx.protocols
+							const allowedProtocols = ctx.protocols.map(p => (typeof p === 'string' ? p : p.scheme))
+
+							if (!allowedProtocols.includes(protocol)) {
+								console.log("url failed 3", url);
+								return false
+							}
+
+							// all checks have passed
+							return true
+						} catch(e) {
+							console.log(e);
+							console.log("url failed 4");
+							return false
+						}
+					}
+					function makeCtx() {
+						return {
+							defaultProtocol: defaultProtocol,
+							protocols: allowedLinkProtocols,
+							defaultValidate: (url)=>{
+								return true; //fake???
+							}
+						}
+					}
+
 					const editorInstance = new Editor({
 						element: editorElement,
 						extensions: [
@@ -471,58 +521,13 @@ class Field_Rich extends Field {
 							Link.configure({
 								openOnClick: false,
 								autolink: true,
-								defaultProtocol: 'https',
-								protocols: ['http', 'https'],
+								defaultProtocol: defaultProtocol,
+								protocols: allowedLinkProtocols,
 								HTMLAttributes: {
 									rel: null,
 									target: null,
 								},
-								isAllowedUri: (url, ctx) => {
-									try {
-										//only possible by code
-										if (url==null) {
-											return true;
-										}
-
-										// construct URL
-										let parsedUrl;
-										if(url.startsWith("/") || url.startsWith("#")) {
-											parsedUrl = new URL(`${ctx.defaultProtocol}://${window.location.hostname}${url}`);
-										} else {
-											parsedUrl = url.includes(':') ? new URL(url) : new URL(`${ctx.defaultProtocol}://${url}`);
-										}
-
-										// use default validation
-										if (!ctx.defaultValidate(parsedUrl.href)) {
-											console.log("url failed 1", url);
-											return false
-										}
-
-										// disallowed protocols
-										const disallowedProtocols = ['ftp', 'file', 'mailto']
-										const protocol = parsedUrl.protocol.replace(':', '')
-
-										if (disallowedProtocols.includes(protocol)) {
-											console.log("url failed 2", url);
-											return false
-										}
-
-										// only allow protocols specified in ctx.protocols
-										const allowedProtocols = ctx.protocols.map(p => (typeof p === 'string' ? p : p.scheme))
-
-										if (!allowedProtocols.includes(protocol)) {
-											console.log("url failed 3", url);
-											return false
-										}
-
-										// all checks have passed
-										return true
-									} catch(e) {
-										console.log(e);
-										console.log("url failed 4");
-										return false
-									}
-								},
+								isAllowedUri: (url, ctx) => isAllowedUri(url, ctx),
 							}).extend(idExtension),
 							Youtube,
 							Image.extend(classExtension),
@@ -868,7 +873,6 @@ class Field_Rich extends Field {
 								type: "input",
 								id: "a_url",
 								label: "URL",
-								pattern: `https?:\/\/(?:(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)(?:\.(?:[a-zA-Z\u00a1-\uffff0-9]+-?)*[a-zA-Z\u00a1-\uffff0-9]+)*(?:\.(?:[a-zA-Z\u00a1-\uffff]{2,}))(?::\d{2,5})?(?:\/[^\s]*)?`,
 								value: "",
 							},
 							{
@@ -902,6 +906,20 @@ class Field_Rich extends Field {
 						];
 
 						const modal = createModal(fields);
+						modal.querySelector("#a_url").addEventListener("input", (e)=>{
+							let validStatus = false;
+							try {
+								validStatus = isAllowedUri(e.target.value, makeCtx());
+							} catch(e) {
+								//do nothing
+							}
+
+							if(validStatus!==true) {
+								e.target.setCustomValidity('invalid url');
+							} else {
+								e.target.setCustomValidity('');
+							}
+						});
 						modal.addEventListener("modalFormAdd", (e)=>{
 							editorInstance.chain().focus().insertContent({
 								type: 'text',
