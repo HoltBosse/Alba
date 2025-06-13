@@ -15,6 +15,8 @@ if(sizeof($segments)>0 && !is_dir(CMSPATH . "/admin/controllers/" . $segments[0]
 		<?php
 			require_once(CMSPATH . "/admin/templates/clean/headlibraries.php");
 		?>
+
+		<!--CMSHEAD-->
 		
 		<?php Hook::execute_hook_actions('add_to_head'); ?>
 	</head>

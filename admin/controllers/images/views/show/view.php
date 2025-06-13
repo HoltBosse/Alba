@@ -154,6 +154,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <?php else: ?>
 	<script>window.autoclose = false;</script>
 <?php endif; ?>
+<?php CMS::Instance()->head_entries[] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1/dist/cropper.min.css"/>'; ?>
 <script type="module">
 	import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/core/js/image_uploading.js";
 	import {loadImgEditor} from "/core/js/image_editing.js";
