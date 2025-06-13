@@ -80,9 +80,8 @@ class Field_Image extends Field {
 		echo "<hr class='image_field_hr image_field_bottom'>";
 
 
+		CMS::Instance()->head_entries[] = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1/dist/cropper.min.css"/>';
 		?>
-
-		
 
 		<script type="module">
 		import {addImageUploadDialog} from "/core/js/image_uploading.js";

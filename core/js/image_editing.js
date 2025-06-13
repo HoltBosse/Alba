@@ -1,3 +1,5 @@
+import Cropper from "https://cdn.jsdelivr.net/npm/cropperjs@1/dist/cropper.esm.js";
+
 export function loadImgEditor(id) {
     return new Promise(resolve => {
         const markup = `
