@@ -638,6 +638,17 @@ final class CMS {
 				// save page contents to CMS
 				$this->page_contents = ob_get_contents();
 				ob_end_clean(); // clear and stop buffering
+
+				//add head entries
+				$cms_head = "";
+				foreach ($this->head_entries as $he) {
+					$cms_head .= $he;
+				}
+				if(!str_contains($this->page_contents, "<!--CMSHEAD-->")) {
+					throw new Exception("Failed to Load Head");
+				}
+				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
+
 				// perform content filtering / plugins on CMS::page_contents;
 				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
 				if(Config::dev_banner() ?? null) {
