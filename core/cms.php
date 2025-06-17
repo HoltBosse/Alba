@@ -818,11 +818,10 @@ spl_autoload_register(function($class_name)
 	if (!file_exists($path)) {
 		// last ditch check if class in user_classes
 		$path = CMSPATH . "/user_classes/" . $class_name . ".php";
-		if (!file_exists($path)) {
-			CMS::Instance()->show_error('Failed to autoload class: ' . $class_name);
-		}
 	}
-    require_once $path;
+	if(file_exists($path)) {
+		require_once $path;
+	}
 });
 
 
