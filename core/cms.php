@@ -535,11 +535,6 @@ final class CMS {
 			exit();
 		}
 
-		// override debug if chosen
-		if (Configuration::get_configuration_value('general_options','debug')) {
-			Config::$debug = true;
-		} 
-
 		// determine front-end template
 		$default_template = Template::get_default_template();
 		$template = $default_template->folder;

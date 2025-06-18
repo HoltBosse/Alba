@@ -96,16 +96,6 @@
 			"default":15
 		},
 		{
-			"name":"debug",
-			"id":"debug",
-			"type":"Checkbox",
-			"label":"Show Debug Info",
-			"required":false,
-			"description":"Override main configuration debug setting - does not affect error reporting, only shows CMS debug output.",
-			"filter":"INT",
-			"default":0
-		},
-		{
 			"type":"Tab",
 			"mode":"tabend"
 		},
