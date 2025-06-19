@@ -19,16 +19,17 @@ else {
 }
 
 $required_details_obj = json_decode(file_get_contents(CMSPATH . '/admin/controllers/redirects/views/edit/required_fields_form.json'));
-foreach($required_details_obj->fields as $field) {
-	if($field->name == "state") {
-		foreach($custom_fields->states as $state) {
-			$field->select_options[] = (object) [
-				"value"=>$state->state,
-				"text"=>$state->name,
-			];
-		}
-	}
+
+$domains = [$_SERVER["HTTP_HOST"]];
+if(Config::domains()) {
+	$domains = Config::domains();
 }
+$domains = array_map(function($str) {
+	return (object) ["text"=>$str, "value"=>$str];
+}, $domains);
+
+$required_details_obj->fields[3]->select_options = $domains;
+$required_details_obj->fields[3]->default = $_SERVER["HTTP_HOST"];
 
 // prep forms
 $required_details_form = new Form($required_details_obj);
@@ -49,14 +50,15 @@ if ($required_details_form->is_submitted()) {
 		$new_url = $required_details_form->get_field_by_name('new_url')->default;
 		$updated_by = CMS::Instance()->user->id;
 		$header = $required_details_form->get_field_by_name('header')->default;
+		$domain = $required_details_form->get_field_by_name('domain')->default;
 
 		if ($new_content) {
-			$params = [$state,$note,$old_url,$new_url,$updated_by,$header];
-			$saved = DB::exec("INSERT INTO `redirects` (`state`,note,old_url,new_url,updated_by,header) VALUES (?,?,?,?,?,?)", $params);
+			$params = [$state,$note,$old_url,$new_url,$updated_by,$header,$domain];
+			$saved = DB::exec("INSERT INTO `redirects` (`state`,note,old_url,new_url,updated_by,header,domain) VALUES (?,?,?,?,?,?,?)", $params);
 		}
 		else {
-			$params = [$state,$note,$old_url,$new_url,$updated_by,$header,$redirect_id];
-			$saved = DB::exec("UPDATE `redirects` SET `state`=?, note=?, old_url=?, new_url=?, updated_by=?, header=? WHERE id=?", $params);
+			$params = [$state,$note,$old_url,$new_url,$updated_by,$header,$domain,$redirect_id];
+			$saved = DB::exec("UPDATE `redirects` SET `state`=?, note=?, old_url=?, new_url=?, updated_by=?, header=?, domain=? WHERE id=?", $params);
 		}
 	
 		if ($saved) {
@@ -87,5 +89,6 @@ else {
 		$required_details_form->get_field_by_name('note')->default = $redirect->note;
 		$required_details_form->get_field_by_name('old_url')->default = $redirect->old_url;
 		$required_details_form->get_field_by_name('new_url')->default = $redirect->new_url;
+		$required_details_form->get_field_by_name('domain')->default = $redirect->domain;
 	}
 }

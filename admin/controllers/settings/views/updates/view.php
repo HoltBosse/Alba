@@ -59,7 +59,7 @@ if ($redirects_table_ok) {
 	show_message ('Redirects Table','Redirects table OK.','is-success');
 }
 else {
-	show_message ('Redirects Table','Redirects table created.','is-warning');
+	show_message ('Redirects Table','Redirects table created and/or updated.','is-warning');
 }
 
 if ($user_actions_table_ok) {

@@ -98,6 +98,14 @@ if (!$redirects_table_ok) {
 	");
 }
 
+$redirects_domain_ok = DB::fetchAll("show columns FROM `redirects` LIKE 'domain'");
+if(!$redirects_domain_ok) {
+	$redirects_table_ok = false;
+
+	DB::exec("ALTER TABLE `redirects` ADD `domain` text NOT NULL;");
+	DB::exec("UPDATE `redirects` SET `domain`=?", $_SERVER["HTTP_HOST"]);
+}
+
 // ensure user_actions table exists
 $user_actions_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'user_actions' LIMIT 1");
 if (!$user_actions_table_ok) {
