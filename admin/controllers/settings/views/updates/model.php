@@ -12,7 +12,14 @@ $page_options_ok = DB::fetchAll("show columns FROM `pages` LIKE 'page_options'")
 if (!$page_options_ok) {
 	// add column
 	DB::exec("ALTER TABLE `pages` ADD `page_options` text NOT NULL COMMENT 'seo and og settings';");
-	$fixed_ok = true;
+}
+
+$page_domain_ok = DB::fetchAll("show columns FROM `pages` LIKE 'domain'");
+if(!$page_domain_ok) {
+	$page_options_ok = false;
+
+	DB::exec("ALTER TABLE `pages` ADD `domain` text NOT NULL;");
+	DB::exec("UPDATE `pages` SET `domain`=?", $_SERVER["HTTP_HOST"]);
 }
 
 $plugins_table_ok = DB::fetchAll("SELECT * FROM information_schema.tables WHERE table_name = 'plugins' LIMIT 1;");;
@@ -55,10 +62,6 @@ $tag_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE 
 if (!$tag_category_ok) {
 	DB::exec("ALTER TABLE tags ADD COLUMN `category` int(11) DEFAULT 0");
 }
-/* $content_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'content' AND COLUMN_NAME = 'category'");
-if (!$content_category_ok) {
-	DB::exec("ALTER TABLE content ADD COLUMN `category` int(11) DEFAULT 0");
-} */
 
 // ensure custom_fields col exist in category and tags tables
 $custom_fields_category_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'categories' AND COLUMN_NAME = 'custom_fields'");

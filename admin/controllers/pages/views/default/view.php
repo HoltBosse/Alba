@@ -27,6 +27,11 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		<thead>
 			<th>Status</th>
 			<th>Title</th>
+			<?php
+				if(Config::domains()) {
+					echo "<th>Domain</th>";
+				}
+			?>
 			<th>URL</th>
 			<th>Template</th>
 			<th>ID</th>
@@ -67,14 +72,24 @@ defined('CMSPATH') or die; // prevent unauthorized access
 					}
 					?>
 				</td>
+
+				<?php
+					if(Config::domains()) {
+						echo "<td class='unimportant'>$page->domain</td>";
+					}
+				?>
+
 				<td>
 					<?php
 						$pageInstance = new Page();
-						$pageInstance->load_from_id($page->id);	
+						$pageInstance->load_from_id($page->id);
+						$url = $pageInstance->get_url();
+						if($page->domain!=$_SERVER["HTTP_HOST"]) {
+							$url = "https://" . $page->domain . $url;
+						}
 					?>
-					<a style="color: var(--bulma-table-color);" target="_blank" class='unimportant' href="<?php echo $pageInstance->get_url(); ?>"><?php echo $page->alias; ?></a>
+					<a style="color: var(--bulma-table-color);" target="_blank" class='unimportant' href="<?php echo $url; ?>"><?php echo $page->alias; ?></a>
 				</td>
-			
 				
 				<td class='unimportant'>
 					<span class=''><?php echo  get_template_title($page->template, $all_templates); ?></span>

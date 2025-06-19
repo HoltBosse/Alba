@@ -661,15 +661,15 @@ final class CMS {
 				if (sizeof($this->uri_segments)==0) {
 					// TODO: work with user selected HOME page
 					$alias = 'home';
-					$page = DB::fetch("SELECT * FROM pages WHERE parent=-1 AND alias='home' AND state>0");
+					$page = DB::fetch("SELECT * FROM pages WHERE parent=-1 AND alias='home' AND state>0 AND domain=?", $_SERVER["HTTP_HOST"]);
 				}
 				else {
 					$parent = -1; // start with root
 					$this->uri_path_segments = [];
 					while ($this->uri_segments) {
 						$result = DB::fetch(
-							"SELECT * FROM pages WHERE parent=? AND alias=? AND state > 0",
-							[$parent, $this->uri_segments[0]]
+							"SELECT * FROM pages WHERE parent=? AND alias=? AND state > 0 AND domain=?",
+							[$parent, $this->uri_segments[0], $_SERVER["HTTP_HOST"]]
 						);
 						if ($result) {
 							// found possible alias, will check for deeper match on next loop - if any
@@ -691,7 +691,7 @@ final class CMS {
 					// magic alias of 'home' used for now - todo: make configurable via config option in future
 					// home page has to have a controller and alias of home and at root of pages and published
 					$alias = 'home'; // see magic alias comment above for this and query below
-					$page = DB::fetch("SELECT * FROM pages WHERE content_type>0 AND parent=-1 AND alias='home' AND state>0");
+					$page = DB::fetch("SELECT * FROM pages WHERE content_type>0 AND parent=-1 AND alias='home' AND state>0 AND domain=?", $_SERVER["HTTP_HOST"]);
 					if (!$page) {
 						// have params, but no page found and/or home has no controller to consume params
 						$this->raise_404();
