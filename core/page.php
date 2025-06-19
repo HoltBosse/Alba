@@ -16,6 +16,7 @@ class Page {
 	public $view_configuration;
 	public $page_options; // json string from db / or serialized from form submission
 	public $page_options_form;
+	public $domain;
 
 	public function __construct() {
 		$this->id = 0;
@@ -31,6 +32,7 @@ class Page {
 		$this->view_configuration = false;
 		$this->page_options_form = new Form(CMSPATH . "/admin/" . "/controllers/pages/page_options.json"); // cmspath + admin, as ADMINPATH not available on front-end
 		$this->page_options = null;
+		$this->domain = $_SERVER["HTTP_HOST"];
 	}
 
 	public function get_url() {
@@ -96,7 +98,7 @@ class Page {
 	public static function get_all_pages_by_depth($parent=-1, $depth=-1) {
 		$depth = $depth+1;
 		$result=[];
-		$children = DB::fetchAll("select * from pages where state>-1 and parent=?", [$parent]);
+		$children = DB::fetchAll("SELECT * FROM pages WHERE state>-1 AND parent=? ORDER BY domain", [$parent]);
 		foreach ($children as $child) {
 			$child->depth = $depth;
 			$result[] = $child;
@@ -147,6 +149,8 @@ class Page {
 		
 		$this->id = Input::getvar('id','NUM');
 
+		$this->domain = Input::getvar("domain", "RAW");
+
 		$this->page_options_form->set_from_submit();
 		return true;
 	}
@@ -167,6 +171,7 @@ class Page {
 			$this->view_configuration = $result->content_view_configuration;
 			$this->page_options = $result->page_options;
 			$this->page_options_form->deserialize_json($this->page_options); // json from db pulled into form object in page
+			$this->domain = $result->domain;
 			return true;
 		}
 		else {
@@ -207,7 +212,7 @@ class Page {
 			]);
 			// update
 			$result = DB::exec(
-				"UPDATE pages SET state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=? WHERE id=?",
+				"UPDATE pages SET state=?, title=?, alias=?, content_type=?, content_view=?, parent=?, template=?, page_options=?, content_view_configuration=?, domain=? WHERE id=?",
 				[
 					$this->state, 
 					$this->title, 
@@ -218,7 +223,8 @@ class Page {
 					$this->template_id,
 					$this->page_options,
 					$this->view_configuration,
-					$this->id
+					$this->domain,
+					$this->id,
 				]
 			);
 			if ($result) {
@@ -233,7 +239,7 @@ class Page {
 			// insert new
 			try {
 				$result = DB::exec(
-					"INSERT INTO pages (state, title, alias, content_type, content_view, parent, template, page_options, content_view_configuration) VALUES (?,?,?,?,?,?,?,?,?)",
+					"INSERT INTO pages (state, title, alias, content_type, content_view, parent, template, page_options, content_view_configuration, domain) VALUES (?,?,?,?,?,?,?,?,?,?)",
 					[
 						$this->state, 
 						$this->title, 
@@ -243,7 +249,8 @@ class Page {
 						$this->parent,
 						$this->template_id,
 						$this->page_options,
-						$this->view_configuration
+						$this->view_configuration,
+						$this->domain,
 					]
 				);	
 			}

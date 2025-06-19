@@ -71,7 +71,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		<label class="label">Parent Page</label>
 		<div class="control has-icons-left has-icons-right">
 			<div class="select">
-				<select id="parent" name="parent">
+				<select id="parent" name="parent" style="width:100%;">
 					<option value="-1">None</option>
 					<?php $all_pages = Page::get_all_pages();?>
 					<?php foreach ($all_pages as $a_page):?>
@@ -94,6 +94,42 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		</div>
 	<!-- <p class="help is-success">This username is available</p> -->
 	</div>
+
+	<?php
+		if(!Config::domains()) {
+			?>
+				<style>
+					.field:has([name="domain"]) {
+						display: none;
+					}
+				</style>
+			<?php
+		}
+
+		$domains = [$_SERVER["HTTP_HOST"]];
+		if(Config::domains()) {
+			$domains = Config::domains();
+		}
+		$domains = array_map(function($str) {
+			return (object) ["text"=>$str, "value"=>$str];
+		}, $domains);
+
+		$aliasField = new Field_Select();
+		$aliasField->load_from_config((object) [
+			"name"=>"domain",
+			"id"=>"domain",
+			"type"=>"Select",
+			"label"=>"Site",
+			"required"=>true,
+			"filter"=>"RAW",
+            "icon_status"=>true,
+            "icon_parent_class"=>"has-icons-left",
+            "icon_markup"=> "<span class='icon is-small is-left'><i class='fas fa-sitemap'></i></span>",
+			"select_options"=>$domains,
+			"default"=>$page->domain,
+		]);
+		$aliasField->display();
+	?>
 
 	<div class="field">
 		<label class="label">Template</label>

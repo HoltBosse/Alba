@@ -13,12 +13,31 @@ if (!$success) {
 
 if(Input::getvar("id")==0) {
 	$new_page = true;
-	$existing_page = DB::fetch("SELECT * FROM pages WHERE alias=? AND parent=?", [$page->alias, $page->parent]);
+	$existing_page = DB::fetch("SELECT * FROM pages WHERE alias=? AND parent=? AND domain=?", [$page->alias, $page->parent, $page->domain]);
 	if($existing_page) {
 		CMS::Instance()->queue_message('Page already exists (user created)','danger',Config::uripath().'/admin/pages');
 	} elseif(file_exists(CMSPATH . "/core/controllers/{$page->alias}/controller.php")) {
 		//read https://www.php.net/manual/en/function.clearstatcache.php - if the file is found to exist, and then later deleted, will need to clear the cache
 		CMS::Instance()->queue_message('Page already exists (core)','danger',Config::uripath().'/admin/pages');
+	}
+}
+
+if(Input::getvar("id")!=0) {
+	$existingPage = new Page();
+	$existingPage->load_from_id(Input::getvar("id"));
+
+	if($existingPage->domain!=$page->domain) {
+		$aliasAlreadyExistForDomain = DB::fetch("SELECT * FROM pages WHERE alias=? AND domain=?", [$page->alias, $page->domain]);
+		if($aliasAlreadyExistForDomain) {
+			CMS::Instance()->queue_message('Page already exists for this domain','danger',Config::uripath().'/admin/pages');
+		}
+	}
+}
+
+if($page->parent!=-1) {
+	$parentPageDomain = DB::fetch("SELECT * FROM pages WHERE id=?", $page->parent)->domain;
+	if($parentPageDomain!=$page->domain) {
+		CMS::Instance()->queue_message('Parent page not on the same domain','danger',Config::uripath().'/admin/pages');
 	}
 }
 

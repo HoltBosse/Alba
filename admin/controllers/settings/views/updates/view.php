@@ -24,7 +24,7 @@ if ($page_options_ok) {
 	show_message ('Pages Table','Pages table OK.','is-success');
 }
 else {
-	show_message ('Pages Table','Missing pages page_options column - FIXED.','is-warning');
+	show_message ('Pages Table','Added missing columns','is-warning');
 }
 
 if ($plugins_table_ok) {
@@ -39,13 +39,6 @@ if ($tags_table_ok) {
 }
 else {
 	show_message ('Tags Table Parent Column','Tags table updated.','is-warning');
-}
-
-if ($content_category_ok) {
-	show_message ('Content Table Category Column','Content table OK.','is-success');
-}
-else {
-	show_message ('Tags Table Category Column','Content table updated.','is-warning');
 }
 
 if ($tag_category_ok) {
