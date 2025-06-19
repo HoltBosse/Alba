@@ -9,7 +9,17 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<h1 class='title'>Editing Redirect</h1>
 <?php endif; ?>
 
-
+<?php
+	if(!Config::domains()) {
+		?>
+			<style>
+				.field:has([name="domain"]) {
+					display: none;
+				}
+			</style>
+		<?php
+	}
+?>
 
 <hr>
 
