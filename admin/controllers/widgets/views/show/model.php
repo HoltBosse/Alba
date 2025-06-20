@@ -60,6 +60,12 @@ if($_POST["widget_type"]) {
 	$params[] = $_POST["widget_type"];
 }
 
+if($_POST["page"]) {
+	$query .= " AND ((FIND_IN_SET(?, w.page_list) AND w.position_control=0) OR (NOT FIND_IN_SET(?, w.page_list) AND w.position_control=1))";
+	$params[] = $_POST["page"];
+	$params[] = $_POST["page"];
+}
+
 $query .= ' ORDER BY id DESC';
 
 $all_widgets = DB::fetchAll($query, $params);
