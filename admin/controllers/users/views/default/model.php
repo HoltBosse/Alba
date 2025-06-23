@@ -56,3 +56,10 @@ if ($coretags) {
 $all_users = $user_search->exec();
 $user_count = $user_search->get_count();
 
+$states = NULL;
+if(file_exists(CMSPATH . "/custom_user_fields.json")) {
+	$formObject = json_decode(file_get_contents(CMSPATH . "/custom_user_fields.json"));
+	if($formObject->states) {
+		$states = $formObject->states;
+	}
+}

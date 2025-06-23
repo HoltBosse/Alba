@@ -37,6 +37,14 @@ defined('CMSPATH') or die; // prevent unauthorized access
 						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Enabled</option>
 						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Disabled</option>
 						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
+						<?php
+							if($states!==NULL) {
+								foreach($states as $state) {
+									$selected = $filters['state']==$state->state ? "selected" : "";
+									echo "<option $selected value='$state->state'>$state->name</option>";
+								}
+							}
+						?>
 					</select>
 				</div>
 			</div>
@@ -126,7 +134,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<tr class='user_admin_row'>
 				<td>
 					<?php
-						Component::state_toggle($user->id, $user->state, "users", NULL, -1);
+						Component::state_toggle($user->id, $user->state, "users", $states, -1);
 					?>
 				</td>
 				<?php
