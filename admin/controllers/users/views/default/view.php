@@ -125,16 +125,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<?php foreach($all_users as $user):?> 
 			<tr class='user_admin_row'>
 				<td>
-					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $user->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/users/action/toggle' name='id[]' value='<?php echo $user->id; ?>'>
-						<?php 
-						if ($user->state==1) { 
-							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-						}
-						else {
-							echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-						} ?>
-					</button>
+					<?php
+						Component::state_toggle($user->id, $user->state, "users", NULL, -1);
+					?>
 				</td>
 				<?php
 					if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {

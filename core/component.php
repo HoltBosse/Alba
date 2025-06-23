@@ -280,4 +280,122 @@ class Component {
             </div>
         <?php
     }
+
+    public static function state_toggle($id, $state, $folder, $states, $type) {
+        ?>
+            <style>
+                .state_button {
+                    padding: 0 !important;
+                }
+
+                .state_button button {
+                    height: 100%;
+                    padding: 1em 1em;
+                    border: 1px solid transparent;
+                    width: 100%;
+                    background-color: #fff;
+                }
+
+                .state_button button:hover {
+                    background-color: #f5f5f5;
+                    cursor: pointer;
+                }
+
+                .state_button hr {
+                    width: 1px;
+                    height: 70%;
+                }
+
+                .state_button .navbar-link:not(.is-arrowless)::after {
+                    right: auto;
+                }
+
+                .state_button .navbar-link:not(.is-arrowless) {
+                    padding-right: 1.5em;
+                }
+
+                .state_button .navbar-item.has-dropdown {
+                    height: 100%;
+                }
+
+                .state_button .navbar-item {
+                    display: flex;
+                    gap: 1em;
+                }
+
+                .state_button .navbar {
+                    z-index: auto;
+                }
+
+                .state_button:hover button.navbar-item:not(:hover) {
+                    background-color: hsl(var(--bulma-navbar-dropdown-item-h),var(--bulma-navbar-dropdown-item-s),calc(var(--bulma-navbar-dropdown-item-background-l) + var(--bulma-navbar-item-background-l-delta))) !important;
+                }
+
+                @media screen and (max-width: 1024px) {
+                    /* disabled on mobile due to bulma lack of support */
+                    .state_button .navbar-item.has-dropdown, .state_button hr {
+                        display: none;
+                    }
+                }
+            </style>
+            <div class="center_state">
+                <input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $id; ?>'/>
+                <div class='<?php echo $states===NULL ? "" : "button state_button";?>'>
+                    <button <?php if($state==0 || $state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/" . $folder . "/action/toggle' name='id[]' value='$id'"; } else { echo "style='pointer-events: none;'"; } ?> class="<?php echo $states===NULL ? "button" : "";?>">
+                        <?php 
+                            if ($state==1) { 
+                                echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
+                            }
+                            elseif ($state==0) {
+                                echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
+                            } else {
+                                foreach($states as $stateDetails) {
+                                    if($state==$stateDetails->state) {
+                                        echo "<i style='color:$stateDetails->color' class='fas fa-times-circle' aria-hidden='true'></i>";
+                                        $ok = true;
+                                    }
+                                }
+                                if(!$ok) {
+                                    echo "<i class='fas fa-times-circle' aria-hidden='true'></i>"; //default grey color if state not found
+                                }
+                            }
+                        ?>
+                    </button>
+                    <?php if($states!==NULL) { ?>
+                        <hr>
+                        <div class="navbar navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link"></a>
+                            <div class="navbar-dropdown">
+                                <form action='<?php echo Config::uripath();?>/admin/<?php echo $folder; ?>/action/togglestate' method="post">
+                                    <input type='hidden' name='content_type' value='<?= $type;?>'/>
+                                    <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $id; ?>'/>
+                                    <button type='submit' formaction='<?php echo Config::uripath();?>/admin/<?php echo $folder; ?>/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
+                                        <i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
+                                    </button>
+                                </form>
+                                <form action='<?php echo Config::uripath();?>/admin/<?php echo $folder; ?>/action/togglestate' method="post">
+                                    <input type='hidden' name='content_type' value='<?= $type;?>'/>
+                                    <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $id; ?>'/>
+                                    <button type='submit' formaction='<?php echo Config::uripath();?>/admin/<?php echo $folder; ?>/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
+                                        <i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
+                                    </button>
+                                </form>
+                                
+                                <hr class="dropdown-divider">
+                                <?php foreach($states as $stateDetails) { ?>
+                                    <form action='<?php echo Config::uripath();?>/admin/<?php echo $folder; ?>/action/togglestate' method="post">
+                                        <input type='hidden' name='content_type' value='<?= $type;?>'/>
+                                        <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $id; ?>'/>
+                                        <button type='submit' formaction='<?php echo Config::uripath();?>/admin/<?php echo $folder; ?>/action/togglestate' name='togglestate[]' value='<?php echo $stateDetails->state; ?>' class="navbar-item">
+                                            <i style="color:<?php echo $stateDetails->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $stateDetails->name; ?>
+                                        </button>
+                                    </form>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        <?php
+    }
 }
