@@ -166,7 +166,7 @@ final class CMS {
 			<meta property="og:url" content="<?php echo  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>" />
 			<meta name="description" content="<?php echo $og_description; ?>">
 			<?php if ($og_image):?>
-				<?php $og_image_dimensions = DB::fetch('SELECT width,height FROM mediaWHERE id=?', $og_image);?>
+				<?php $og_image_dimensions = DB::fetch('SELECT width,height FROM media WHERE id=?', $og_image);?>
 				<meta property="og:image" content="<?php echo $this->protocol . $this->domain . Config::uripath() . "/image/" . $og_image ; ?>/web" />
 				<meta property="og:image:width" content="<?php echo $og_image_dimensions->width ; ?>" />
 				<meta property="og:image:height" content="<?php echo $og_image_dimensions->height ; ?>" />
