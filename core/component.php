@@ -349,6 +349,7 @@ class Component {
                             elseif ($state==0) {
                                 echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
                             } else {
+                                $ok = false;
                                 foreach($states as $stateDetails) {
                                     if($state==$stateDetails->state) {
                                         echo "<i style='color:$stateDetails->color' class='fas fa-times-circle' aria-hidden='true'></i>";
