@@ -62,16 +62,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			?>
 			<tr class='tag_admin_row'>
 				<td>
-					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $tag->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/tags/action/toggle' name='id[]' value='<?php echo $tag->id; ?>'>
-						<?php 
-						if ($tag->state==1) { 
-							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-						}
-						else {
-							echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-						} ?>
-					</button>
+					<?php
+						Component::state_toggle($tag->id, $tag->state, "tags", NULL, -1);
+					?>
 				</td>
 				<td>
 					<?php

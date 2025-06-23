@@ -103,53 +103,6 @@ table.dragging .before_after_wrap {
 	opacity:1;
 }
 
-/* state button css */
-.state_button {
-	padding: 0 !important;
-}
-
-.state_button button {
-	height: 100%;
-	padding: 1em 1em;
-	border: 1px solid transparent;
-	width: 100%;
-	background-color: #fff;
-}
-
-.state_button button:hover {
-	background-color: #f5f5f5;
-    cursor: pointer;
-}
-
-.state_button hr {
-	width: 1px;
-	height: 70%;
-}
-
-.state_button .navbar-link:not(.is-arrowless)::after {
-	right: auto;
-}
-
-.state_button .navbar-link:not(.is-arrowless) {
-	padding-right: 1.5em;
-}
-
-.state_button .navbar-item.has-dropdown {
-	height: 100%;
-}
-
-.state_button .navbar-item {
-	display: flex;
-	gap: 1em;
-}
-
-@media screen and (max-width: 1024px) {
-	/* disabled on mobile due to bulma lack of support */
-	.state_button .navbar-item.has-dropdown, .state_button hr {
-		display: none;
-	}
-}
-
 td.limitwidth {
     max-width: 50ch;
     overflow: hidden;

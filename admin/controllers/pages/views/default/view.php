@@ -40,16 +40,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			<?php foreach($all_pages as $page):?>
 			<tr class='page_admin_row'>
 				<td>
-					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $page->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/pages/action/toggle' name='id[]' value='<?php echo $page->id; ?>'>
-						<?php 
-						if ($page->state==1) { 
-							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-						}
-						else {
-							echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-						} ?>
-					</button>
+					<?php
+						Component::state_toggle($page->id, $page->state, "pages", NULL, -1);
+					?>
 				</td>
 				<td>
 					<?php

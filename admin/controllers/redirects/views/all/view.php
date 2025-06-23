@@ -100,63 +100,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				<?php CMS::Instance()->listing_content_id = $redirect_item->id; ?>
 				<tr id='row_id_<?php echo $redirect_item->id;?>' data-itemid="<?php echo $redirect_item->id;?>" data-ordering="<?php echo $redirect_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
-					<div class="center_state">
-						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $redirect_item->id; ?>'/>
-						<div class='button state_button'>
-							<button <?php if($redirect_item->state==0 || $redirect_item->state==1) { echo "type='submit' formaction='" . Config::uripath() . "/admin/redirects/action/toggle' name='id[]' value='$redirect_item->id'"; } else { echo "style='pointer-events: none;'"; } ?>>
-								<?php 
-									if ($redirect_item->state==1) { 
-										echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-									}
-									elseif ($redirect_item->state==0) {
-										echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-									} else {
-										foreach($custom_fields->states as $state) {
-											if($redirect_item->state==$state->state) {
-												echo "<i style='color:$state->color' class='fas fa-times-circle' aria-hidden='true'></i>";
-												$ok = true;
-											}
-										}
-										if(!$ok) {
-											echo "<i class='fas fa-times-circle' aria-hidden='true'></i>"; //default grey color if state not found
-										}
-									}
-								?>
-							</button>
-							<hr>
-							<div class="navbar-item has-dropdown is-hoverable">
-								<a class="navbar-link"></a>
-								<div class="navbar-dropdown">
-									<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
-										<input type='hidden' name='content_type' value='<?= $redirect_item->content_type;?>'/>
-										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $redirect_item->id; ?>'/>
-										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='0' class="navbar-item">
-											<i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
-										</button>
-									</form>
-									<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
-										<input type='hidden' name='content_type' value='<?= $redirect_item->content_type;?>'/>
-										<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $redirect_item->id; ?>'/>
-										<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='1' class="navbar-item">
-											<i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
-										</button>
-									</form>
-									
-									<hr class="dropdown-divider">
-									<?php foreach($custom_fields->states as $state) { ?>
-										<form action='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' method="post">
-											<input type='hidden' name='content_type' value='<?= $redirect_item->content_type;?>'/>
-											<input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $redirect_item->id; ?>'/>
-											<button type='submit' formaction='<?php echo Config::uripath();?>/admin/redirects/action/togglestate' name='togglestate[]' value='<?php echo $state->state; ?>' class="navbar-item">
-												<i style="color:<?php echo $state->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $state->name; ?>
-											</button>
-										</form>
-									<?php } ?>
-									
-								</div>
-							</div>
-						</div>
-						</div>
+						<?php
+							Component::state_toggle($redirect_item->id, $redirect_item->state, "redirects", NULL, -1);
+						?>
 					</td>
 					<?php
 						if(property_exists("Admin_Config", "show_ids_in_tables") ? Admin_Config::$show_ids_in_tables : false) {

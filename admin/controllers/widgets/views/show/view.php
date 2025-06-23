@@ -56,16 +56,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		<?php foreach ($all_widgets as $widget):?>
 			<tr class='widget_admin_row'>
 				<td>
-					<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $widget->id; ?>'/>
-					<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/widgets/action/toggle' name='id[]' value='<?php echo $widget->id; ?>'>
-						<?php 
-						if ($widget->state==1) { 
-							echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-						}
-						else {
-							echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-						} ?>
-					</button>
+					<?php
+						Component::state_toggle($widget->id, $widget->state, "widgets", NULL, -1);
+					?>
 				</td>
 				<td><a href="<?php echo Config::uripath(); ?>/admin/widgets/edit/<?php echo $widget->id;?>"><?php echo $widget->title; ?></a></td>
 				<td><?php echo Widget::get_widget_type_title($widget->type); ?></td>

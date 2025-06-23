@@ -88,18 +88,9 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
-					<div class="center_state">
-						<input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $content_item->id; ?>'/>
-						<button class='button' type='submit' formaction='<?php echo Config::uripath();?>/admin/categories/action/toggle' name='id[]' value='<?php echo $content_item->id; ?>'>
-							<?php
-							if ($content_item->state==1) {
-								echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
-							}
-							else {
-								echo '<i class="state0 fas fa-times-circle" aria-hidden="true"></i>';
-							} ?>
-						</button>
-						</div>
+						<?php
+							Component::state_toggle($content_item->id, $content_item->state, "categories", NULL, -1);
+						?>
 					</td>
 					<td>
 						<?php $title_prefix="";
