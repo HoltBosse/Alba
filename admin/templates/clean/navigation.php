@@ -34,11 +34,7 @@ $navigation = [
         "type"=>"addition_menu",
         "menu"=>[
             "label"=>"content",
-            "links"=>array_merge(
-                DB::fetchAll("SELECT title, CONCAT('/admin/content/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
-                ["hr"=>"hr"],
-                ["check flat tables"=>"/admin/content/check"],
-            )
+            "links"=>DB::fetchAll("SELECT title, CONCAT('/admin/content/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
         ]
     ],
     "widgets"=>[
