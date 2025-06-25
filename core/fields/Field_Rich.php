@@ -396,21 +396,22 @@ class Field_Rich extends Field {
 				<div class="gui_editor"></div>
 				<textarea style="display: none;" id='<?php echo $this->id; ?>' <?php echo $this->get_rendered_name(); ?> data-repeatableindex="{{replace_with_index}}"><?php echo $this->default; ?></textarea>
 				<script type="module">
-					import { Editor } from 'https://esm.sh/@tiptap/core@2.14.0'
-					import StarterKit from 'https://esm.sh/@tiptap/starter-kit@2.14.0'
-					import Placeholder from 'https://esm.sh/@tiptap/extension-placeholder@2.14.0'
-					import Underline from 'https://esm.sh/@tiptap/extension-underline@2.14.0'
-					import Superscript from 'https://esm.sh/@tiptap/extension-superscript@2.14.0'
-					import Subscript from 'https://esm.sh/@tiptap/extension-subscript@2.14.0'
-					//import TextStyle from 'https://esm.sh/@tiptap/extension-text-style@2.14.0'
-					import Link from 'https://esm.sh/@tiptap/extension-link@2.14.0'
-					import Youtube from 'https://esm.sh/@tiptap/extension-youtube@2.14.0'
-					import Image from 'https://esm.sh/@tiptap/extension-image@2.14.0'
+					import { Editor } from 'https://esm.sh/@tiptap/core@2.22.3'
+					import StarterKit from 'https://esm.sh/@tiptap/starter-kit@2.22.3'
+					import Placeholder from 'https://esm.sh/@tiptap/extension-placeholder@2.22.3'
+					import Underline from 'https://esm.sh/@tiptap/extension-underline@2.22.3'
+					import Superscript from 'https://esm.sh/@tiptap/extension-superscript@2.22.3'
+					import Subscript from 'https://esm.sh/@tiptap/extension-subscript@2.22.3'
+					//import TextStyle from 'https://esm.sh/@tiptap/extension-text-style@2.22.3'
+					import Link from 'https://esm.sh/@tiptap/extension-link@2.22.3'
+					import Youtube from 'https://esm.sh/@tiptap/extension-youtube@2.22.3'
+					import Image from 'https://esm.sh/@tiptap/extension-image@2.22.3'
 					import {openMediaSelector} from "/core/js/media_selector.js"
-					import TextAlign from 'https://esm.sh/@tiptap/extension-text-align@2.14.0'
-					import Paragraph from 'https://esm.sh/@tiptap/extension-paragraph@2.14.0'
-					import Heading from 'https://esm.sh/@tiptap/extension-heading@2.14.0'
-					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu@2.14.0'
+					import TextAlign from 'https://esm.sh/@tiptap/extension-text-align@2.22.3'
+					import Paragraph from 'https://esm.sh/@tiptap/extension-paragraph@2.22.3'
+					import Heading from 'https://esm.sh/@tiptap/extension-heading@2.22.3'
+					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu@2.22.3'
+					import FileHandler from 'https://esm.sh/@tiptap/extension-file-handler@2.22.3'
 					
 					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->get_rendered_name(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
 					const editorElement = editorWrapperRoot.querySelector('.gui_editor');
@@ -548,6 +549,15 @@ class Field_Rich extends Field {
 									return editor.isActive('image');
 								},
 							}),
+							FileHandler.configure({
+								allowedMimeTypes: <?php echo json_encode(array_keys(File::$image_types)); ?>,
+								onPaste: (editor, files, htmlContent) => {
+									console.log("hi form image paste");
+								},
+								onDrop: (editor, files, pos) => {
+									console.log("hi form image drop");
+								},
+							})
 						],
 						editorProps: {
 							transformPastedHTML: html => stripClassAttributes(html),
