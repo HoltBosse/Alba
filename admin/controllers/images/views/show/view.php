@@ -4,7 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <?php if (!$filter=='upload'):?>
 
-<h1 class='title sticky'>
+<h1 class='title sticky' style="background-color: var(--bulma-body-background-color);">
 	All Images
 
 	<!-- tag operation toolbar -->
@@ -67,20 +67,23 @@ defined('CMSPATH') or die; // prevent unauthorized access
 </section>
 
 <?php if (!$filter=='upload'):?>
-	<p>Available Tags</p>
-	<?php
-	//CMS::pprint_r ($image_tags);
-	?>
-	<div id="top_tags" class="field is-grouped is-grouped-multiline">
-		<?php foreach ($image_tags as $tag):?>
-		<div class="control">
-			<div data-title="<?php echo Input::stringHtmlSafe($tag->title);?>" data-id="<?php echo $tag->id;?>" class="tags has-addons">
-				<a href='#' class='tag_filter tag is-link is-light is-info'><?php echo Input::stringHtmlSafe($tag->title);?></a>
-				<a class="tag_add tag is-add is-primary">+</a>
+	<div class="tags_menu_options">
+		<p>Available Tags</p>
+		<?php
+		//CMS::pprint_r ($image_tags);
+		?>
+		<div id="top_tags" class="field is-grouped is-grouped-multiline">
+			<?php foreach ($image_tags as $tag):?>
+			<div class="control">
+				<div data-title="<?php echo Input::stringHtmlSafe($tag->title);?>" data-id="<?php echo $tag->id;?>" class="tags has-addons">
+					<a href='#' class='tag_filter tag is-link is-light is-info'><?php echo Input::stringHtmlSafe($tag->title);?></a>
+					<a class="tag_add tag is-add is-primary">+</a>
+				</div>
 			</div>
+			<?php endforeach; ?>
 		</div>
-		<?php endforeach; ?>
 	</div>
+	<br>
 
 	<div id='rename_image_modal' class="modal">
 	<div class="modal-background"></div>

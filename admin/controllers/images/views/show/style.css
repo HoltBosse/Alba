@@ -117,3 +117,22 @@ dialog::backdrop {
 		rgba(0, 0, 0, 0.3) 20px
 	); */
 }
+
+.tags_menu_options {
+	padding: 0.5rem 0;
+	background-color: var(--bulma-body-background-color);
+}
+
+@media only screen and (min-width: 1024px) {
+	.tags_menu_options {
+		position: sticky;
+		top: 4rem;
+		z-index: 2;
+	}
+}
+
+@media only screen and (max-width: 1024px) {
+	h1.title.sticky {
+		position: relative;
+	}
+}
