@@ -22,13 +22,13 @@ document.getElementById('top_tags')?.addEventListener('click',(e)=> {
 		
 	}
 	if (e.target.classList.contains('tag_add')) {
-		ids = get_selected_ids();
-		tag_id = e.target.closest('.tags').dataset.id;
-		tag_title = e.target.closest('.tags').querySelector("a.tag_filter").innerHTML;
+		const ids = get_selected_ids();
+		const tag_id = e.target.closest('.tags').dataset.id;
+		const tag_title = e.target.closest('.tags').querySelector("a.tag_filter").innerHTML;
 		if (ids.length>0) {
 			// do ajax call to /admin/images/api
 			// action: tag, media ids: ids, tag id: tag_id
-			api_data = {"action":"tag_media","id_list":ids,"tag_id":tag_id};
+			const api_data = {"action":"tag_media","id_list":ids,"tag_id":tag_id};
 			const formData = new FormData();
 			for (const [key, value] of Object.entries(api_data)) {
 				formData.append(key, value);
@@ -38,11 +38,13 @@ document.getElementById('top_tags')?.addEventListener('click',(e)=> {
 				method: "POST",
 				body: formData,
 			}).then(response=>response.json()).then((response)=>{
+				console.log(response);
 				response.tagged.forEach(item => {
 					add_tag_to_media_item (tag_id, tag_title, item);
 				});
 				console.log(response); 
-			}).catch(()=>{
+			}).catch((e)=>{
+				console.log(e);
 				console.log("error");
 			});
 		}
@@ -58,10 +60,10 @@ if (all_images) {
 	all_images.addEventListener('click',(e)=> {
 		e.preventDefault();
 		if (e.target.classList.contains('is-delete')) {
-			tag_id = e.target.closest('.tags').dataset.id;
-			media_id = e.target.closest('.all_images_image_container').dataset.id;
+			const tag_id = e.target.closest('.tags').dataset.id;
+			const media_id = e.target.closest('.all_images_image_container').dataset.id;
 			console.log('deleting tag ',tag_id,' from image id ',media_id);
-			api_data = {"action":"untag_media","id_list":[media_id],"tag_id":tag_id};
+			const api_data = {"action":"untag_media","id_list":[media_id],"tag_id":tag_id};
 			const formData = new FormData();
 			for (const [key, value] of Object.entries(api_data)) {
 				formData.append(key, value);
@@ -75,7 +77,8 @@ if (all_images) {
 					untag_media_item (tag_id, item);
 				});
 				console.log(response);
-			}).catch(()=>{
+			}).catch((e)=>{
+				console.log(e);
 				console.log("error");
 			});
 		}
@@ -85,9 +88,9 @@ if (all_images) {
 // called by 'tag_add' click handler
 function add_tag_to_media_item (tag_id, tag_title, item_id) {
 	console.log(tag_title);
-	item = document.getElementById(`media_item_id_${item_id.toString()}`);
-	tags_container = item.querySelector('.image_tags');
-	new_markup = `
+	const item = document.getElementById(`media_item_id_${item_id.toString()}`);
+	const tags_container = item.querySelector('.image_tags');
+	const new_markup = `
 	<div class="control">
 		<div data-title="${tag_title}" data-id="${tag_id}" class="tag_id_${tag_id} tags are-small has-addons">
 			<span class="tag is-light is-info">${tag_title}</span>
@@ -101,8 +104,8 @@ function add_tag_to_media_item (tag_id, tag_title, item_id) {
 
 // called by untag click handler
 function untag_media_item (tag_id, item_id) {
-	item = document.getElementById(`media_item_id_${item_id.toString()}`);
-	tag = item.querySelector(`.tag_id_${tag_id.toString()}`);
+	const item = document.getElementById(`media_item_id_${item_id.toString()}`);
+	const tag = item.querySelector(`.tag_id_${tag_id.toString()}`);
 	tag.remove();
 }
 
@@ -113,7 +116,7 @@ function get_selected() {
 }
 
 function get_selected_ids() {
-	thisarray=[];
+	const thisarray=[];
 	const selected = document.querySelectorAll('.all_images_image_container.active');
 	selected.forEach(selimage => {
 		thisarray.push(selimage.dataset.id);
@@ -229,11 +232,11 @@ function clear_selection() {
 function clear_tags() {
 	const ids = get_selected_ids();
 	if (ids.length>0) {
-		sure = window.confirm("Are you sure?");
+		const sure = window.confirm("Are you sure?");
 		if (sure) {
 			// do ajax call to /admin/images/api
 			// action: tag, media ids: ids, tag id: tag_id
-			api_data = {"action":"cleartags_media","id_list":ids};
+			const api_data = {"action":"cleartags_media","id_list":ids};
 			const formData = new FormData();
 			for (const [key, value] of Object.entries(api_data)) {
 				formData.append(key, value);
@@ -245,7 +248,7 @@ function clear_tags() {
 			}).then(response=>response.json()).then((response)=>{
 				response.untagged.forEach(item => {
 					//clear_tags_media_item (tag_id, tag_title, item);
-					media_item_container = document.getElementById(`media_item_id_${item.toString()}`);
+					const media_item_container = document.getElementById(`media_item_id_${item.toString()}`);
 					media_item_container.querySelector('.image_tags').innerHTML="";
 				});
 			}).catch(()=>{
@@ -261,11 +264,11 @@ function clear_tags() {
 function delete_items() {
 	const ids = get_selected_ids();
 	if (ids.length>0) {
-		sure = window.confirm("Are you sure?");
+		const sure = window.confirm("Are you sure?");
 		if (sure) {
 			// do ajax call to /admin/images/api
 			// action: tag, media ids: ids, tag id: tag_id
-			api_data = {"action":"delete_media","id_list":ids};
+			const api_data = {"action":"delete_media","id_list":ids};
 			const formData = new FormData();
 			for (const [key, value] of Object.entries(api_data)) {
 				formData.append(key, value);
@@ -277,7 +280,7 @@ function delete_items() {
 			}).then(response=>response.json()).then((response)=>{
 				response.untagged.forEach(item => {
 					//clear media_item 
-					media_item_container = document.getElementById(`media_item_id_${item.toString()}`);
+					const media_item_container = document.getElementById(`media_item_id_${item.toString()}`);
 					media_item_container.closest('.all_images_image_container').innerHTML="";
 				});
 				window.location.reload();
