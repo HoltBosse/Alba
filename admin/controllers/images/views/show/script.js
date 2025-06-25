@@ -116,7 +116,7 @@ function get_selected() {
 }
 
 function get_selected_ids() {
-	let thisarray=[];
+	const thisarray=[];
 	const selected = document.querySelectorAll('.all_images_image_container.active');
 	selected.forEach(selimage => {
 		thisarray.push(selimage.dataset.id);
