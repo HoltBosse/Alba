@@ -50,25 +50,25 @@ function in_group ($group_id, $edit_user) {
 	<h2 class="title">User Tags</h2>
 	<?php
 	$all_user_tags = Tag::get_tags_available_for_content_type(-2); // -2 is user tags
-	
-	echo "<div class='field'>";
-		echo "<label class='label'>Make selection:</label>";
-		echo "<div class='control'>";
-			echo "<div class='select is-multiple'>";
-				echo "<select class='is-multiple' multiple id='usertags' name='tags[]'>";
 
-					foreach ($all_user_tags as $tag) {
-						if ($tag->state>0) {
-							$selected = "";
-							if (in_array($tag->id, $edit_user->tags)) { $selected="selected";}
-							echo "<option {$selected} value='{$tag->id}'>{$tag->title}</option>";
-						}
-					}
-				echo "</select>";
-			echo "</div>";
-		echo "</div>";
-	echo "</div>";
-	echo "<script>new SlimSelect({ select: '#usertags' });</script>"; 
+	$tagSelectOptions = array_map(function($i) {
+		return (object) [
+			"text"=>$i->title,
+			"value"=>$i->id,
+		];
+	}, $all_user_tags);
+
+	$tagSelectField = new Field_Select();
+	$tagSelectField->load_from_config((object) [
+		"name"=>"tags",
+		"id"=>"usertags",
+		"label"=>"Make Selection:",
+		"multiple"=>"true",
+		"slimselect"=>"true",
+		"select_options"=>$tagSelectOptions,
+		"default"=>json_encode($edit_user->tags),
+	]);
+	$tagSelectField->display();
 	?>
 
 	<?php Hook::execute_hook_actions('display_user_fields_form',$edit_user); ?>
