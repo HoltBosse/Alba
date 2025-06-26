@@ -92,18 +92,27 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			</div>
 		</div>
 
-		<div class='field' id='content_search_tags_wrap'>
-			<label class="label">Tagged</label>
-			<div class='control'>
-				<div class="select">
-					<select id="content_search_tags" name="coretags[]" form="searchform" multiple>
-						<?php foreach ($applicable_tags as $t):?>
-							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=Input::stringHtmlSafe($t->title)?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-			</div>
-		</div>
+		<?php
+			$tagFieldOptions = array_map(Function($i) {
+				return (object) [
+					"text"=>$i->title,
+					"value"=>$i->id,
+				];
+			}, $applicable_tags);
+
+			$tagField = new Field_Select();
+			$tagField->load_from_config((object) [
+				"name"=>"coretags",
+				"id"=>"content_search_tags",
+				"label"=>"Tagged",
+				"multiple"=>"true",
+				"slimselect"=>"true",
+				"form"=>"searchform",
+				"select_options"=>$tagFieldOptions,
+				"default"=>json_encode($coretags),
+			]);
+			$tagField->display();
+		?>
 
 		<?php Hook::execute_hook_actions('render_custom_content_search_filters', $content_type_filter); ?>
 		
