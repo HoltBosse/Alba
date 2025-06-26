@@ -90,6 +90,13 @@ input.mm_url {
 div .ss-main :is(.ss-multi-selected, .ss-single-selected) {
 	min-height:35px; /* get slim select to match bulma input field heights */
 }
+.ss-main .ss-values .ss-value .ss-value-delete {
+	border-left: 0px solid transparent !important;
+}
+.ss-content .ss-list .ss-option:hover {
+	color: var(--ss-bg-color) !important;
+    background-color: var(--ss-primary-color) !important;
+}
 
 .notification {
 	transform: translateY(1rem);

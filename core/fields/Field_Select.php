@@ -27,7 +27,7 @@ class Field_Select extends Field {
 			echo "<label class='label'>" . $this->label . "</label>";
 			echo "<div class='control'>";
 				echo "<div class='" . ($this->slimselect ? "slimselect_select" : ($this->multiple ? " is-multiple select" : " select")) . "'>";
-					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} {$this->get_rendered_form()} " . ($this->multiple ? "multiple" : false) . ">";
+					echo "<select {$required} id='{$this->id}' {$this->get_rendered_name($this->multiple)} {$this->get_rendered_form()} " . 'data-repeatableindex="{{replace_with_index}}"' . ($this->multiple ? "multiple" : false) . ">";
 						if ($this->required || $this->placeholder) {
 							$placeholder = $this->placeholder ?? $this->label;
 							echo "<option value='' >{$placeholder}</option>";
@@ -71,41 +71,40 @@ class Field_Select extends Field {
 		}
 		if($this->slimselect):
 		?>
-			<script>
-				try {
-					document.currentScript.parentNode.querySelector(`#<?php echo $this->id; ?>`).slimselect = new SlimSelect({
-						select: document.currentScript.parentNode.querySelector(`#<?php echo $this->id; ?>`),
-						<?php if($this->slimselect_ajax): ?>
-						searchingText: 'Searching...',
-						ajax: function (search, callback) {
-							if (search.length < <?php echo $this->slimselect_ajax_minchar; ?>) {
-								callback('Please enter at least <?php echo $this->slimselect_ajax_minchar; ?> characters')
-								return
-							}
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.12.0/slimselect.min.css"/>
+			<script type="module">
+				import SlimSelect from 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.12.0/slimselect.es.js';
+				console.log(`[<?php echo $this->get_rendered_name(); ?>][data-repeatableindex="{{replace_with_index}}"]`);
+				console.log(document.currentScript);
 
-							fetch('<?php echo Config::uripath() . $this->slimselect_ajax_url; ?>?searchterm=' + encodeURI(search))
-							.then(function (response) {
-								return response.json()
-							})
-							.then(function (json) {
-								let data = [];
-								json.data.forEach((item)=>{
-									data.push({text: item.text, value: item.value})
-								});
+				document.querySelector(`[<?php echo $this->get_rendered_name($this->multiple); ?>][data-repeatableindex="{{replace_with_index}}"]`).slimselect = new SlimSelect({
+					select: document.querySelector(`[<?php echo $this->get_rendered_name($this->multiple); ?>][data-repeatableindex="{{replace_with_index}}"]`),
+					<?php if($this->slimselect_ajax): ?>
+					events: {
+						search: (search, currentData) => {
+							return new Promise((resolve, reject) => {
+								if (search.length < <?php echo $this->slimselect_ajax_minchar; ?>) {
+									return reject('Please enter at least <?php echo $this->slimselect_ajax_minchar; ?> characters');
+								}
 
-								//console.log(data);
-								callback(data);
-							})
-							.catch(function(error) {
-								callback(false)
-							})
-						}
-						<?php endif; ?>
-					});
-				} catch(e) {
-					console.log(e);
-					alert("SlimSelect is not present!");
-				}
+								fetch('<?php echo Config::uripath() . $this->slimselect_ajax_url; ?>?searchterm=' + encodeURI(search)).then(function (response) {
+									return response.json()
+								}).then(function (json) {
+									let data = [];
+									json.data.forEach((item)=>{
+										data.push({text: item.text, value: item.value})
+									});
+
+									//console.log(data);
+									resolve(data);
+								}).catch(function(error) {
+									return reject('Error searching');
+								})
+							});
+						},
+					},
+					<?php endif; ?>
+				});
 			</script>
 		<?php
 		endif;

@@ -9,9 +9,9 @@
     ::-webkit-resizer { background-color: rgb(255 255 255 / 20%);}
 
     /* slimselect */
-    .ss-main .ss-multi-selected, .ss-main .ss-single-selected, .ss-content, .ss-search input {
+    .ss-main .ss-multi-selected, .ss-main .ss-single-selected, .ss-content, .ss-search input, .ss-option, .ss-main {
         background-color: var(--bulma-body-background-color) !important;
-        color: hsl(var(--bulma-input-h),var(--bulma-input-s),var(--bulma-input-color-l));
+        color: var(--bulma-body-color) !important;
     }
     .ss-content .ss-list .ss-option.ss-disabled {
         /* TODO: fixme */
