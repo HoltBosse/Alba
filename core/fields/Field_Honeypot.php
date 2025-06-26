@@ -17,7 +17,7 @@ class Field_Honeypot extends Field {
 		// position: take up no space in document flow
 		// clipPath: sneaky invisible method that might hide from most bots
 		?>
-		<input required placeholder="Important information" type='text' tabindex="-1" autocomplete="<?php echo $this->autocomplete;?>" id='<?php echo $this->id;?>' <?php echo $this->get_rendered_name();?> value=' '/>
+		<input required placeholder="Important information" type='text' tabindex="-1" autocomplete="<?php echo $this->autocomplete;?>" id='<?php echo $this->id;?>' <?php echo $this->get_rendered_name();?> <?php echo $this->get_rendered_form(); ?> value=' '/>
 		<script>
 			let hp = document.getElementById('<?php echo $this->id;?>') ?? null;
 			if (hp) {

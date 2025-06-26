@@ -35,7 +35,7 @@ class Field_PickerOrdered extends Field {
                 
                 <hr>
                 <h5 class="title"><?php echo $this->label;?></h5>
-				<input type='hidden' value='<?php echo $this->default;?>' <?php echo "{$required} id='{$this->id}' {$this->get_rendered_name()}";?>>
+				<input type='hidden' value='<?php echo $this->default;?>' <?php echo "{$required} id='{$this->id}' {$this->get_rendered_name()} {$this->get_rendered_form()}";?>>
                 <div class='twocol_picker' id='twocol_picker_<?php echo $this->id;?>' >
                     <div class='twocol_picker_left'>
                         <h4 class='is-title title is-4'>All Items</h4>

@@ -158,7 +158,7 @@ class Field_Parsedown extends Field {
 				</div>
 				<div class="pd_content_header_row">
 					<div class="pd_tab_content write_content active">
-						<textarea class="input pd_parsedown_content" placeholder='<?php echo $this->placeholder; ?>' <?php echo $this->get_rendered_name(); ?> ><?php echo $this->default; ?></textarea>
+						<textarea class="input pd_parsedown_content" placeholder='<?php echo $this->placeholder; ?>' <?php echo $this->get_rendered_name(); ?> <?php echo $this->get_rendered_form(); ?> ><?php echo $this->default; ?></textarea>
 					</div>
 					<div class="pd_tab_content preview_content">
 						<p>Content Preview Loading...</p>

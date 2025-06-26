@@ -50,7 +50,7 @@ class Field_Text extends Field {
 				//explictly using htmlspecialchars here instead of Input::stringHtmlSafe because this is for attribute handling while the latter method is for in elements
 				//for older php versions that convert only double quotes, we want to match modern php
 				$value = htmlspecialchars($this->default, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
-				echo "<input type='{$this->input_type}' value='{$value}' placeholder='{$placeholder}' {$minmax} {$pattern} {$step} {$this->get_rendered_name()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
+				echo "<input type='{$this->input_type}' value='{$value}' placeholder='{$placeholder}' {$minmax} {$pattern} {$step} {$this->get_rendered_name()} {$this->get_rendered_form()} maxlength={$this->maxlength} minlength={$this->minlength} class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' >";
 				echo $this->icon_status ? $this->icon_markup : false;
 			echo "</div>";
 			if ($this->description) {
