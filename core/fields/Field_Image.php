@@ -86,7 +86,7 @@ class Field_Image extends Field {
 		?>
 
 		<script type="module">
-		import {addImageUploadDialog} from "/core/js/image_uploading.js";
+		import {addImageUploadDialog} from "/core/js/image_uploading.js?v=1";
 		import {loadImgEditor} from "/core/js/image_editing.js";
 		import {openMediaSelector} from "/core/js/media_selector.js";
 

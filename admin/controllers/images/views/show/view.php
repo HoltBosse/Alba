@@ -164,7 +164,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	}
 ?>
 <script type="module">
-	import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/core/js/image_uploading.js";
+	import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/core/js/image_uploading.js?v=1";
 	import {loadImgEditor} from "/core/js/image_editing.js";
 
 	window.load_img_editor = loadImgEditor;

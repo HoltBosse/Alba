@@ -1,3 +1,5 @@
+import SlimSelect from 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.12.0/slimselect.es.js'; //WHEN UPDATING, CHANGE CSS AS WELL
+
 const validImageTypes = {
 	"image/png": true,
 	"image/webp": true,
@@ -87,6 +89,7 @@ function doUpload(e) {
 		const id = `img_id_${i}`;
 		markup = `
             <div class='upload_field'>
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.12.0/slimselect.min.css"/>
                 <div class='upload_preview'>
                     <img id='${id}' src=''>
                 </div>
