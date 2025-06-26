@@ -50,42 +50,49 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			</div>
 		</div>
 
-		
+		<?php
+			$groupFieldOptions = array_map(Function($i) {
+				return (object) [
+					"text"=>$i->display,
+					"value"=>$i->id,
+				];
+			}, $all_groups);
 
-		<div class='field'>
-			<label class="label">Group</label>
-			<div class='control'>
-				<div class="select">
-					<select id="user_search_groups" name="groups[]" form="searchform">
-						<option value=''>Select Group</option>
-						<?php foreach ($all_groups as $g):?>
-							<option <?php if (in_array($g->id,$groups)) { echo " selected "; }?> value='<?=$g->id?>'><?=$g->display?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-			</div>
-		</div>
+			$groupField = new Field_Select();
+			$groupField->load_from_config((object) [
+				"name"=>"groups",
+				"id"=>"user_search_groups",
+				"label"=>"Group",
+				"multiple"=>"true",
+				"slimselect"=>"true",
+				"form"=>"searchform",
+				"select_options"=>$groupFieldOptions,
+				"default"=>json_encode($groups),
+			]);
+			$groupField->display();
 
-		<div class='field' id='content_search_tags_wrap'>
-			<label class="label">Tagged</label>
-			<div class='control'>
-				<div class="select">
-					<select id="content_search_tags" name="coretags[]" form="searchform" multiple>
-						<?php foreach ($applicable_tags as $t):?>
-							<option <?php if (in_array($t->id, $coretags)) { echo " selected "; }?> value='<?=$t->id?>'><?=Input::stringHtmlSafe($t->title)?></option>
-						<?php endforeach; ?>
-					</select>
-				</div>
-			</div>
-		</div>
-		<script>
-		new SlimSelect({
-			select:'#content_search_tags'
-		});
-		new SlimSelect({
-			select:'#user_search_groups'
-		});
-		</script>
+
+
+			$tagFieldOptions = array_map(Function($i) {
+				return (object) [
+					"text"=>$i->title,
+					"value"=>$i->id,
+				];
+			}, $applicable_tags);
+
+			$tagField = new Field_Select();
+			$tagField->load_from_config((object) [
+				"name"=>"coretags",
+				"id"=>"content_search_tags",
+				"label"=>"Tagged",
+				"multiple"=>"true",
+				"slimselect"=>"true",
+				"form"=>"searchform",
+				"select_options"=>$tagFieldOptions,
+				"default"=>json_encode($coretags),
+			]);
+			$tagField->display();
+		?>
 
 		<?php Hook::execute_hook_actions('render_custom_user_search_filters'); ?>
 		

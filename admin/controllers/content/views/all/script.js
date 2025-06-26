@@ -1,7 +1,3 @@
-new SlimSelect({
-    select:'#content_search_tags'
-});
-
 window.addEventListener("load", ()=>{
     document.addEventListener("click", (e)=>{
         if(e.target.classList.contains("orderablerow")) {
