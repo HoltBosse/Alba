@@ -21,7 +21,7 @@ class Field_Pageselector extends Field {
 								$checked = " checked ";
 							}
 						}
-						echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='{$page->id}'>";
+						echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} {$this->get_rendered_form()} value='{$page->id}'>";
 						for ($n=0; $n<$page->depth; $n++) {
 							echo " - ";
 						}
@@ -38,7 +38,7 @@ class Field_Pageselector extends Field {
 				<label class='label' for='<?php echo $this->id;?>'><?php echo $this->label; ?></label>
 				<div class="control">
     				<div class="select">
-						<select class='select' <?php echo $this->get_rendered_name(true);?>>
+						<select class='select' <?php echo $this->get_rendered_name(true);?> <?php echo $this->get_rendered_form(); ?>>
 							<?php foreach ($all_pages as $page):?>
 								<?php 
 								$selected = "";

@@ -26,7 +26,7 @@ class Field_ContentTypeselector extends Field {
 					$checked = " checked ";
 				}
 				echo "<label class='checkbox'>";
-					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='-1'>";
+					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} {$this->get_rendered_form()} value='-1'>";
 				echo "Media/Images</label>";
 				echo "<hr>";
 			}
@@ -36,7 +36,7 @@ class Field_ContentTypeselector extends Field {
 					$checked = " checked ";
 				}
 				echo "<label class='checkbox'>";
-					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='-2'>";
+					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} {$this->get_rendered_form()} value='-2'>";
 				echo "Users</label>";
 				echo "<hr>";
 			}
@@ -47,7 +47,7 @@ class Field_ContentTypeselector extends Field {
 					if ($this->default && in_array($type->id, $this->default)) {
 						$checked = " checked ";
 					}
-					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} value='{$type->id}'>";
+					echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} {$this->get_rendered_form()} value='{$type->id}'>";
 					echo $type->title;
 				echo "</label>";
 			}

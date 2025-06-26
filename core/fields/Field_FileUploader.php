@@ -78,7 +78,7 @@ class Field_FileUploader extends Field {
 				}				
 				
 				$value = Input::stringHtmlSafe($this->default);
-				echo "<input type='{$this->input_type}' value='{$value}' accept='{$accept_string}' {$multiple} {$this->name} {$required} id='{$this->id}' >";
+				echo "<input type='{$this->input_type}' value='{$value}' accept='{$accept_string}' {$multiple} {$this->name} {$this->get_rendered_form()} {$required} id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";

@@ -394,7 +394,7 @@ class Field_Rich extends Field {
 				</div>
 				<hr class="editor_seperator">
 				<div class="gui_editor"></div>
-				<textarea style="display: none;" id='<?php echo $this->id; ?>' <?php echo $this->get_rendered_name(); ?> data-repeatableindex="{{replace_with_index}}"><?php echo $this->default; ?></textarea>
+				<textarea style="display: none;" id='<?php echo $this->id; ?>' <?php echo $this->get_rendered_name(); ?> <?php echo $this->get_rendered_form(); ?> data-repeatableindex="{{replace_with_index}}"><?php echo $this->default; ?></textarea>
 				<script type="module">
 					import { Editor } from 'https://esm.sh/@tiptap/core@2.14.0'
 					import StarterKit from 'https://esm.sh/@tiptap/starter-kit@2.14.0'

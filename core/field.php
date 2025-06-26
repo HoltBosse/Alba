@@ -22,6 +22,7 @@ class Field {
 	public $save;
 	public $placeholder;
 	public $nowrap;
+	public $form;
 	public $index; // used to determine POST/GET array index in repeatables
 
 	public function display() {
@@ -43,6 +44,14 @@ class Field {
 		}
 		$rendered_name .=  '" ';
 		return $rendered_name;
+	}
+
+	public function get_rendered_form() {
+		if($this->form) {
+			return "form='$this->form'";
+		}
+
+		return "";
 	}
 
 	public function validate() {
@@ -119,5 +128,6 @@ class Field {
 		$this->placeholder = $config->placeholder ?? "";
 		$this->logic = $config->logic ?? '';
 		$this->nowrap = $config->nowrap;
+		$this->form = $config->form;
 	}
 }

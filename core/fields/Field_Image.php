@@ -68,7 +68,7 @@ class Field_Image extends Field {
 		//href='{$this->upload_endpoint}'
 		echo "<button type='button' id='trigger_image_upload_{$this->id}' class='button btn is-info is-light upload_new_image_button'>Upload New Image</a>";
 		echo "<button type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";	
-		echo "<input oninvalid='this.setCustomValidity(\"A valid image is required\")' style='position:absolute; width:0px; opacity:0;' value='{$this->default}' {$required} id='{$this->id}' {$this->get_rendered_name()}>";
+		echo "<input oninvalid='this.setCustomValidity(\"A valid image is required\")' style='position:absolute; width:0px; opacity:0;' value='{$this->default}' {$required} id='{$this->id}' {$this->get_rendered_name()} {$this->get_rendered_form()}>";
 		
 		
 		
