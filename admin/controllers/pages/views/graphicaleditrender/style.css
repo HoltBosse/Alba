@@ -1,0 +1,12 @@
+/* prefix ALL styles here with graphicaledit as to not cause conflicts */
+.graphicaledit_newwidget {
+    display: flex;
+    justify-content: center;
+
+    span {
+        border: 1px solid;
+        border-radius: 2rem;
+        white-space: pre;
+        cursor: pointer;
+    }
+}
