@@ -17,7 +17,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap <?php if (!$new_widget) { echo " hidden ";}?>'>
 	<div class='flex'>
-		<?php $required_details_form->display_front_end(); ?>
+		<?php $required_details_form->display(); ?>
 	</div>
 </div>
 
@@ -25,7 +25,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <h5 class='title'>Options</h5>
 
 <?php 
-$widget_options_form->display_front_end();
+$widget_options_form->display();
 $widget->render_custom_backend();
 ?>
 <style>
@@ -37,7 +37,7 @@ $widget->render_custom_backend();
 <p class='help'>Choose a default template position and pages where this widget will appear.</p>
 <br>
 <div class='flex'>
-	<?php $position_options_form->display_front_end(); ?>
+	<?php $position_options_form->display(); ?>
 </div>
 
 <hr>

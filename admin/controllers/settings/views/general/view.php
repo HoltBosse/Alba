@@ -11,7 +11,7 @@ Component::addon_page_title("General Options");
 <form method="POST">
 	<?php
 	//CMS::pprint_r ($general_options_form);
-	$general_options_form->display_front_end();
+	$general_options_form->display();
 	?>
 	<br><br>
 	<button class='btn button is-success' type='submit'>Save</button>

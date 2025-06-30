@@ -93,10 +93,10 @@ class Category {
 
 	public function save($required_details_form, $custom_fields_form = "") {
 		// update this object with submitted and validated form info
-		$this->title = $required_details_form->get_field_by_name('title')->default;
-		$this->state = $required_details_form->get_field_by_name('state')->default;
-		$this->parent = $required_details_form->get_field_by_name('parent')->default; 
-		$this->content_type = $required_details_form->get_field_by_name('content_type')->default; 
+		$this->title = $required_details_form->getFieldByName('title')->default;
+		$this->state = $required_details_form->getFieldByName('state')->default;
+		$this->parent = $required_details_form->getFieldByName('parent')->default; 
+		$this->content_type = $required_details_form->getFieldByName('content_type')->default; 
 		$this->custom_fields = $custom_fields_form ? json_encode($custom_fields_form) : "";
 
 		if ($this->id) {

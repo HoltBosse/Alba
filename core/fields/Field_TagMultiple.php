@@ -30,8 +30,8 @@ class Field_TagMultiple extends Field_Select {
 		return $title;
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->multiple = $config->multiple ?? true;
 		$this->slimselect = $config->slimselect ?? true;

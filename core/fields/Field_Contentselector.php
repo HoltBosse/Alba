@@ -8,7 +8,7 @@ class Field_Contentselector extends Field_Select {
 	public $order_by_field;
 	public $order_by_direction;
 
-	public function get_friendly_value($helpful_info) {
+	public function getFriendlyValue($helpful_info) {
 		// content_type already checked for being numeric in load_from_config function
 		$content_type = $this->content_type ?? $helpful_info->content_type;
 		$table_name = Content::get_table_name_for_content_type($content_type);
@@ -36,8 +36,8 @@ class Field_Contentselector extends Field_Select {
 		}
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? false;
 		$this->list_unpublished = $config->list_unpublished ?? false;

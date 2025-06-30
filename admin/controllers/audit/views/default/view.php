@@ -11,7 +11,7 @@ Component::addon_page_title("Audit Log");
 <br>
 
 <form>
-	<?php $search_form->display_front_end(); ?>
+	<?php $search_form->display(); ?>
 </form>
 
 <br>

@@ -45,15 +45,15 @@ if ($custom_fields_form) {
 }
 
 // check if submitted or show defaults/data from db
-if ($required_details_form->is_submitted()) {
+if ($required_details_form->isSubmitted()) {
 
 	//echo "<h1>Submitted Content!</h1>";
 
 	// update forms with submitted values
-	$required_details_form->set_from_submit();
+	$required_details_form->setFromSubmit();
 
 	if ($custom_fields_form) {
-		$custom_fields_form->set_from_submit();
+		$custom_fields_form->setFromSubmit();
 	}
 
 	// validate
@@ -81,23 +81,23 @@ if ($required_details_form->is_submitted()) {
 else {
 	// set defaults if needed
 	if (!$new_cat) {
-		$required_details_form->get_field_by_name('state')->default = $cat->state;
-		$required_details_form->get_field_by_name('title')->default = $cat->title;
-		$required_details_form->get_field_by_name('parent')->default = $cat->parent;
-		$required_details_form->get_field_by_name('parent')->content_type = $cat->content_type;
-		$required_details_form->get_field_by_name('parent')->self_id = $cat->id; // set self_id so don't show in dropdown
-		$required_details_form->get_field_by_name('content_type')->default = $cat->content_type;
+		$required_details_form->getFieldByName('state')->default = $cat->state;
+		$required_details_form->getFieldByName('title')->default = $cat->title;
+		$required_details_form->getFieldByName('parent')->default = $cat->parent;
+		$required_details_form->getFieldByName('parent')->content_type = $cat->content_type;
+		$required_details_form->getFieldByName('parent')->self_id = $cat->id; // set self_id so don't show in dropdown
+		$required_details_form->getFieldByName('content_type')->default = $cat->content_type;
 
 		if ($custom_fields_form) {
 			if ($cat->custom_fields) {
-				$custom_fields_form->deserialize_json($cat->custom_fields);
+				$custom_fields_form->deserializeJson($cat->custom_fields);
 			}
 		}
 	}
 	else {
 		// always know for new cat what content type is
-		$required_details_form->get_field_by_name('parent')->content_type = $cat->content_type;
-		$required_details_form->get_field_by_name('content_type')->default = $cat->content_type;
+		$required_details_form->getFieldByName('parent')->content_type = $cat->content_type;
+		$required_details_form->getFieldByName('content_type')->default = $cat->content_type;
 	}
 	//CMS::pprint_r ($required_details_form);
 	foreach ($content_form->fields as $content_field) {
