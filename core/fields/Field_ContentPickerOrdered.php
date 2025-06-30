@@ -9,8 +9,8 @@ class Field_ContentPickerOrdered extends Field_PickerOrdered {
 	public $searchable;
 	public $empty_string;
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? 1; // default to articles if not provided
 		$this->tags = $config->tags ?? [];
@@ -76,7 +76,7 @@ class Field_ContentPickerOrdered extends Field_PickerOrdered {
 	}
 
 	public function validate() {
-		if ($this->is_missing()) {
+		if ($this->isMissing()) {
 			return false;
 		}
 		return true;

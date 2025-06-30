@@ -21,7 +21,7 @@ $rightContent = "<a href='$exportUrl' class='button'>Export All</a>";
 Component::addon_page_title($titleText, null, $rightContent);
 
 echo "<form>";
-    $searchFieldsForm->display_front_end();
+    $searchFieldsForm->display();
 echo "</form>";
 
 if($countResults > 0) {
@@ -55,21 +55,21 @@ if($countResults > 0) {
     echo "<div class='form_submissions_wrapper'>";
         echo "<div class='form_submissions_row header'>";
             foreach($headerFields as $header) {
-                $field = $currentSelectedForm->get_field_by_name($header);
+                $field = $currentSelectedForm->getFieldByName($header);
                 $displayLabel = $field->label ?? $header;
                 echo "<div>$displayLabel</div>";
             }
         echo "</div>";
         foreach($results as $row) {
-            $currentSelectedForm->deserialize_json($row->data);
+            $currentSelectedForm->deserializeJson($row->data);
             $data = json_decode($row->data);
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
             
             echo "<div class='form_submissions_row'>";
                 foreach($headerFields as $header) {
                     echo "<div>";
-                        $field = $currentSelectedForm->get_field_by_name($header);
-                        echo $field->get_friendly_value([]);
+                        $field = $currentSelectedForm->getFieldByName($header);
+                        echo $field->getFriendlyValue([]);
                         //echo Input::stringHtmlSafe($normalizedFields[$header]);
                     echo "</div>";
                 }

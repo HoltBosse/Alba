@@ -19,13 +19,13 @@ $custom_field_error = false; // only set to true if any errors occur during cust
 
 $custom_user_fields_form = file_exists(CMSPATH . "/custom_user_fields.json") ? new Form(CMSPATH . "/custom_user_fields.json") : null;
 if ($custom_user_fields_form) {
-	$submitted = $custom_user_fields_form->is_submitted(); 
+	$submitted = $custom_user_fields_form->isSubmitted(); 
 	$valid = $custom_user_fields_form->validate();
 	if (!$submitted || !$valid) {
 		CMS::Instance()->queue_message('Invalid additional details form','danger',Config::uripath().'/admin/users');
 	}
 	else {
-		$custom_user_fields_form->set_from_submit();
+		$custom_user_fields_form->setFromSubmit();
 		foreach ($custom_user_fields_form->fields as $field) {
 			// insert field info
 			if (isset($field->save)) {

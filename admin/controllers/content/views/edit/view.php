@@ -25,13 +25,13 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap '>
 	<div class='flex'>
-		<?php $required_details_form->display_front_end(); ?>
+		<?php $required_details_form->display(); ?>
 	</div>
 </div>
 
 <hr>
 
-<?php $content_form->display_front_end(); ?>
+<?php $content_form->display(); ?>
 
 <hr>
 

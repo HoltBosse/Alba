@@ -22,10 +22,10 @@ function in_group ($group_id, $edit_user) {
 	<?php endif; ?>
 
 	<?php
-		$core_user_fields_form->display_front_end();
+		$core_user_fields_form->display();
 
 		if ($custom_user_fields_form) {
-			$custom_user_fields_form->display_front_end();
+			$custom_user_fields_form->display();
 		}
 	?>
 
@@ -59,7 +59,7 @@ function in_group ($group_id, $edit_user) {
 	}, $all_user_tags);
 
 	$tagSelectField = new Field_Select();
-	$tagSelectField->load_from_config((object) [
+	$tagSelectField->loadFromConfig((object) [
 		"name"=>"tags",
 		"id"=>"usertags",
 		"label"=>"Make Selection:",

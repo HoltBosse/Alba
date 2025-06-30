@@ -5,8 +5,8 @@ class Field_Category extends Field_Select {
 
 	public $self_id;
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? 1;
 	}

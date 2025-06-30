@@ -13,7 +13,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <form method="POST" action="">
 
 <div class='flex'>
-	<?php $required_details_form->display_front_end(); ?>
+	<?php $required_details_form->display(); ?>
 </div>
 
 <hr>

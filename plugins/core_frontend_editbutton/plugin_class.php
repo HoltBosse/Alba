@@ -130,7 +130,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
 
             foreach ($widget->options as $option) {
                 //echo "$key => $value\n";
-                $field = $form->get_field_by_name($option->name);
+                $field = $form->getFieldByName($option->name);
                 if ($field) {
                     $field->default = $option->value;
                 }
@@ -153,7 +153,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                     <input type='hidden' name='cfe_widget_fields_submit' value='true'>
                     <input type='hidden' name='cfe_widgetid' value='$widgetid'>
             ";
-                    $form->display_front_end();
+                    $form->display();
             echo "
                     <button class='button is-success'>Submit</button>
                 </form>
@@ -176,7 +176,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
             $widget->load($widgetid);
             $form = new Form($widget->form_data);
 
-            $form->set_from_submit();
+            $form->setFromSubmit();
 
             $options = [];
             foreach ($form->fields as $option) {
@@ -221,7 +221,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 // NEW uses json forms
                 $options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
                 // set options form values from json stored in view_configuration
-                $options_form->deserialize_json($page->view_configuration);
+                $options_form->deserializeJson($page->view_configuration);
 
                 echo "<html data-theme='light'>";
                 require_once(CMSPATH . "/admin/templates/clean/headlibraries.php");
@@ -237,7 +237,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                         <input type='hidden' name='cfe_controller_fields_submit' value='true'>
                         <input type='hidden' name='cfe_pageid' value='$pageid'>
                 ";
-                    $options_form->display_front_end();
+                    $options_form->display();
                 echo "
                         <button class='button is-success'>Submit</button>
                     </form>
@@ -267,7 +267,7 @@ class Plugin_core_frontend_editbutton extends Plugin {
                 $view_loc = Content::get_view_location($page->view);
 
                 $options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
-                $options_form->set_from_submit();
+                $options_form->setFromSubmit();
                 $page->view_configuration = json_encode($options_form);
 
                 $page->save();

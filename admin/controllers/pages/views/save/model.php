@@ -51,7 +51,7 @@ if ($page->content_type && $page->view) {
 	$content_loc = Content::get_content_location($page->content_type);
 	$view_loc = Content::get_view_location($page->view);
 	$options_form = new Form(CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options_form.json");
-	$options_form->set_from_submit();
+	$options_form->setFromSubmit();
 	$is_valid = $options_form->validate();
 	if (!$is_valid) {
 		CMS::Instance()->queue_message('Page creation/update failed - invalid view options form','danger',Config::uripath().'/admin/pages');

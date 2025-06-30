@@ -38,7 +38,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <form method='post' style="margin-bottom: 0;">
 	<?php
-		$searchForm->display_front_end();
+		$searchForm->display();
 	?>
 </form>
 

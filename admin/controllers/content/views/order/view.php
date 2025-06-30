@@ -73,12 +73,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
                                 $propname = "{$content_list_field->name}"; 
                                 $classname = "Field_" . $content_list_field->type;
                                 $curfield = new $classname();
-                                $curfield->load_from_config($named_custom_fields[$propname]); // load config - useful for some fields
+                                $curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
                                 $curfield->default = $i->$propname; // set temp field value to current stored value
                                 // TODO: pass precalc array of table names for content types to aid in performance of lookups 
                                 // some fields will currently parse json config files to determine tables to query for friendly values
                                 // PER row/field. not ideal. ESPECIALLY IMPORTANT FOR ORDER VIEW SINCE ALL CONTENT ITEMS SHOWN
-                                echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
+                                echo $curfield->getFriendlyValue($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
                             }
                             else {
                                 echo $i->{$content_list_field->name}; // field contents from DB

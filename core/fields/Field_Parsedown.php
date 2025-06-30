@@ -158,7 +158,7 @@ class Field_Parsedown extends Field {
 				</div>
 				<div class="pd_content_header_row">
 					<div class="pd_tab_content write_content active">
-						<textarea class="input pd_parsedown_content" placeholder='<?php echo $this->placeholder; ?>' <?php echo $this->get_rendered_name(); ?> <?php echo $this->get_rendered_form(); ?> ><?php echo $this->default; ?></textarea>
+						<textarea class="input pd_parsedown_content" placeholder='<?php echo $this->placeholder; ?>' <?php echo $this->getRenderedName(); ?> <?php echo $this->getRenderedForm(); ?> ><?php echo $this->default; ?></textarea>
 					</div>
 					<div class="pd_tab_content preview_content">
 						<p>Content Preview Loading...</p>
@@ -530,8 +530,8 @@ class Field_Parsedown extends Field {
 		<?php
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 		
 		$this->parsedownapi = $config->parsedownapi ?? "/api/parsedown";
 		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (defined("ADMINPATH") ? "/admin/images/uploadv2" : null);

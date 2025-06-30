@@ -44,7 +44,7 @@ class Field_FileUploader extends Field {
 		if ($this->required) {$required=" required ";}
 		if ($this->multiple) {$multiple="multiple='true'";}
 		//$name = "{$this->name}[]";		// makes name an array whether multiple=true/false, replaces get_rendered_name() function which may break repeatable form functionality
-		$this->name = $this->get_rendered_name($this->multiple);
+		$this->name = $this->getRenderedName($this->multiple);
 		if (!strpos($this->name, "[]")) {
 			$this->name = substr_replace($this->name, "[]", -2, 0);
 		}
@@ -78,7 +78,7 @@ class Field_FileUploader extends Field {
 				}				
 				
 				$value = Input::stringHtmlSafe($this->default);
-				echo "<input type='{$this->input_type}' value='{$value}' accept='{$accept_string}' {$multiple} {$this->name} {$this->get_rendered_form()} {$required} id='{$this->id}' >";
+				echo "<input type='{$this->input_type}' value='{$value}' accept='{$accept_string}' {$multiple} {$this->name} {$this->getRenderedForm()} {$required} id='{$this->id}' >";
 			echo "</div>";
 			if ($this->description) {
 				echo "<p class='help'>" . $this->description . "</p>";
@@ -144,8 +144,8 @@ class Field_FileUploader extends Field {
 		<?php
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->multiple = $config->multiple ?? "";
 		$this->mime_type = $config->mime_type ?? [];

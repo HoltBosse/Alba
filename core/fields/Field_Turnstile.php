@@ -17,7 +17,7 @@ class Field_Turnstile extends Field {
 	public function validate() {
 		
 		$this->default = Input::getvar('cf-turnstile-response',"RAW",false);
-		if ($this->is_missing()) {
+		if ($this->isMissing()) {
 			CMS::log("turnstile field failed validation due to missing check");
 			return false;
 		}
@@ -53,8 +53,8 @@ class Field_Turnstile extends Field {
 		}
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->filter = $config->filter ?? 'RAW';
 	}

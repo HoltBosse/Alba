@@ -53,7 +53,7 @@ class Page {
 	}
 
 	public function get_page_option_value($option_name) {
-		$field = $this->page_options_form->get_field_by_name($option_name);
+		$field = $this->page_options_form->getFieldByName($option_name);
 		if ($field) {
 			return $field->default;
 		}
@@ -63,7 +63,7 @@ class Page {
 	}
 
 	public function set_page_option_value($option_name, $value) {
-		$field = $this->page_options_form->get_field_by_name($option_name);
+		$field = $this->page_options_form->getFieldByName($option_name);
 		if ($field) {
 			$field->default = $value;
 			return true;
@@ -142,7 +142,7 @@ class Page {
 		$this->view_configuration = Input::getvar('view_options','ARRAYTOJSON');
 		// TODO: load from options_form
 		// e.g. $options_form = new Form(form location);
-		// $options_form->set_from_submit();
+		// $options_form->setFromSubmit();
 		// validate
 		// jsonify
 		// save as $this->view_configuration
@@ -151,7 +151,7 @@ class Page {
 
 		$this->domain = Input::getvar("domain", "RAW");
 
-		$this->page_options_form->set_from_submit();
+		$this->page_options_form->setFromSubmit();
 		return true;
 	}
 
@@ -170,7 +170,7 @@ class Page {
 			$this->view = $result->content_view;
 			$this->view_configuration = $result->content_view_configuration;
 			$this->page_options = $result->page_options;
-			$this->page_options_form->deserialize_json($this->page_options); // json from db pulled into form object in page
+			$this->page_options_form->deserializeJson($this->page_options); // json from db pulled into form object in page
 			$this->domain = $result->domain;
 			return true;
 		}
@@ -195,7 +195,7 @@ class Page {
 			$this->view = $result->content_view;
 			$this->view_configuration = $result->content_view_configuration;
 			$this->page_options = $result->page_options;
-			$this->page_options_form->deserialize_json($this->page_options); // json from db pulled into form object in page
+			$this->page_options_form->deserializeJson($this->page_options); // json from db pulled into form object in page
 			return true;
 		}
 		else {

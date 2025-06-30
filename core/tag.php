@@ -18,11 +18,6 @@ class Tag {
 	public $custom_fields;
 	public $contenttypes;
 
-	public function show_admin_form() {
-		$this->form = new Form();
-		$this->form->load_json(CMSPATH . "/tags/");
-	}
-
 	public function load($id) {
 		$info = DB::fetch('select * from tags where id=?', [$id]);
 		$this->id = $info->id;
@@ -107,17 +102,17 @@ class Tag {
 
 	public function save($required_details_form, $custom_fields_form = "") {
 		// update this object with submitted and validated form info
-		$this->title = $required_details_form->get_field_by_name('title')->default;
-		$this->state = $required_details_form->get_field_by_name('state')->default;
-		$this->note = $required_details_form->get_field_by_name('note')->default;
-		$this->alias = $required_details_form->get_field_by_name('alias')->default;
-		$this->filter = $required_details_form->get_field_by_name('filter')->default;
-		$this->image = $required_details_form->get_field_by_name('image')->default;
-		$this->description = $required_details_form->get_field_by_name('description')->default;
-		$this->public = $required_details_form->get_field_by_name('public')->default;
-		$this->contenttypes = $required_details_form->get_field_by_name('contenttypes')->default;
-		$this->parent = $required_details_form->get_field_by_name('parent')->default;
-		$this->category = $required_details_form->get_field_by_name('category')->default;
+		$this->title = $required_details_form->getFieldByName('title')->default;
+		$this->state = $required_details_form->getFieldByName('state')->default;
+		$this->note = $required_details_form->getFieldByName('note')->default;
+		$this->alias = $required_details_form->getFieldByName('alias')->default;
+		$this->filter = $required_details_form->getFieldByName('filter')->default;
+		$this->image = $required_details_form->getFieldByName('image')->default;
+		$this->description = $required_details_form->getFieldByName('description')->default;
+		$this->public = $required_details_form->getFieldByName('public')->default;
+		$this->contenttypes = $required_details_form->getFieldByName('contenttypes')->default;
+		$this->parent = $required_details_form->getFieldByName('parent')->default;
+		$this->category = $required_details_form->getFieldByName('category')->default;
 		$this->custom_fields = $custom_fields_form ? json_encode($custom_fields_form) : "";
 
 		if ($this->parent=="0"||$this->parent=="") {
