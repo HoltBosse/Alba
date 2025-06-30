@@ -14,7 +14,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 <h5 class='is-5 title'>Plugin Options</h5>
 
 <?php 
-$plugin_options_form->display_front_end();
+$plugin_options_form->display();
 
 ?>
 <style>

@@ -28,8 +28,8 @@ $searchFormObject->fields[] = (object) [
 ];
 $searchForm = new Form($searchFormObject);
 
-if($searchForm->is_submitted()) {
-	$searchForm->set_from_submit();
+if($searchForm->isSubmitted()) {
+	$searchForm->setFromSubmit();
 }
 
 $widget_type_title="";

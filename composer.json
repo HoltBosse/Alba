@@ -17,6 +17,7 @@
     "require": {
         "phpmailer/phpmailer": "6.5.1",
         "erusev/parsedown": "^1.7",
-        "holtbosse/db": "^1.0"
+        "holtbosse/db": "^1.0",
+        "holtbosse/form": "^1.0"
     }
 }

@@ -45,22 +45,22 @@ $query = "SELECT * FROM form_submissions WHERE 1";
 $queryWhereFilters = "";
 $params = [];
 
-if($searchFieldsForm->is_submitted()) {
-    $searchFieldsForm->set_from_submit();
+if($searchFieldsForm->isSubmitted()) {
+    $searchFieldsForm->setFromSubmit();
 
-    if($searchFieldsForm->get_field_by_name("form")->default) {
+    if($searchFieldsForm->getFieldByName("form")->default) {
         $queryWhereFilters .= " AND form_id=?";
-        $params[] = $searchFieldsForm->get_field_by_name("form")->default;
+        $params[] = $searchFieldsForm->getFieldByName("form")->default;
     }
 
-    if($searchFieldsForm->get_field_by_name("start")->default) {
+    if($searchFieldsForm->getFieldByName("start")->default) {
         $queryWhereFilters .= " AND created >= ?";
-        $params[] = $searchFieldsForm->get_field_by_name("start")->default;
+        $params[] = $searchFieldsForm->getFieldByName("start")->default;
     }
 
-    if($searchFieldsForm->get_field_by_name("end")->default) {
+    if($searchFieldsForm->getFieldByName("end")->default) {
         $queryWhereFilters .= " AND created <= ?";
-        $params[] = $searchFieldsForm->get_field_by_name("end")->default;
+        $params[] = $searchFieldsForm->getFieldByName("end")->default;
     }
 } else {
     $queryWhereFilters .= " AND form_id=?";
@@ -106,13 +106,13 @@ if($_GET["exportcsv"]) {
     foreach($results as $row) {
         $buffer = [];
         foreach($headerFields as $header) {
-            $currentSelectedForm->deserialize_json($row->data);
-            $field = $currentSelectedForm->get_field_by_name($header);
+            $currentSelectedForm->deserializeJson($row->data);
+            $field = $currentSelectedForm->getFieldByName($header);
 
             $data = json_decode($row->data);
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
             //$value = $normalizedFields[$header];
-            $value = $field->get_friendly_value((object)["return_in_text_form"=>true]);
+            $value = $field->getFriendlyValue((object)["return_in_text_form"=>true]);
             $value = str_replace(",", ".", ($value));
             $value = str_replace("\n", " ", ($value));
             $value = str_replace("\r", " ", ($value));

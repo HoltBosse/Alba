@@ -16,8 +16,8 @@ $search_form_object->fields[] = (object) [
 ];
 $search_form = new Form($search_form_object);
 
-if($search_form->is_submitted()) {
-    $search_form->set_from_submit();
+if($search_form->isSubmitted()) {
+    $search_form->setFromSubmit();
 }
 
 $actionClasses = glob(CMSPATH . "/core/actions/*.php");
@@ -34,20 +34,20 @@ $count_select = "SELECT count(*) AS count FROM user_actions";
 
 $data_where = " WHERE `type` IN ({$actionTypesString})";
 
-if($search_form->is_submitted()) {
-    if($search_form->get_field_by_name("fieldtype")->default) {
+if($search_form->isSubmitted()) {
+    if($search_form->getFieldByName("fieldtype")->default) {
         $data_where .= " AND `type`=?";
-        $params[] = $search_form->get_field_by_name("fieldtype")->default;
+        $params[] = $search_form->getFieldByName("fieldtype")->default;
     }
 
-    if($search_form->get_field_by_name("start")->default) {
+    if($search_form->getFieldByName("start")->default) {
         $data_where .= " AND date>=?";
-        $params[] = $search_form->get_field_by_name("start")->default;
+        $params[] = $search_form->getFieldByName("start")->default;
     }
 
-    if($search_form->get_field_by_name("end")->default) {
+    if($search_form->getFieldByName("end")->default) {
         $data_where .= " AND date<=?";
-        $params[] = $search_form->get_field_by_name("end")->default;
+        $params[] = $search_form->getFieldByName("end")->default;
     }
 }
 

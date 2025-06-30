@@ -229,23 +229,23 @@ class Content {
 		}
 		
 		// update this object with submitted and validated form info
-		$this->title = trim($required_details_form->get_field_by_name('title')->default);
-		$this->state = $required_details_form->get_field_by_name('state')->default;
-		$this->note = $required_details_form->get_field_by_name('note')->default;
-		$this->alias = $required_details_form->get_field_by_name('alias')->default;
+		$this->title = trim($required_details_form->getFieldByName('title')->default);
+		$this->state = $required_details_form->getFieldByName('state')->default;
+		$this->note = $required_details_form->getFieldByName('note')->default;
+		$this->alias = $required_details_form->getFieldByName('alias')->default;
 		if (!$this->alias) {
 			$this->alias = Input::stringURLSafe($this->title);
 		}
-		$this->start = $required_details_form->get_field_by_name('start')->default;
-		$this->end = $required_details_form->get_field_by_name('end')->default;
+		$this->start = $required_details_form->getFieldByName('start')->default;
+		$this->end = $required_details_form->getFieldByName('end')->default;
 		$this->updated_by = CMS::Instance()->user->id;
-		$this->tags = $required_details_form->get_field_by_name('tags')->default; 
-		$this->category = $required_details_form->get_field_by_name('category')->default; 
+		$this->tags = $required_details_form->getFieldByName('tags')->default; 
+		$this->category = $required_details_form->getFieldByName('category')->default; 
 
 		// ensure alias is unique for content_type - will use id for existing content, random 4 digit number otherwise
 		$this->make_alias_unique();
 
-		if(strlen($this->alias)>$required_details_form->get_field_by_name('alias')->maxlength) {
+		if(strlen($this->alias)>$required_details_form->getFieldByName('alias')->maxlength) {
 			CMS::Instance()->queue_message('Auto generated alias too long','danger', $_SERVER['HTTP_REFERER']);
 			die;
 		}

@@ -58,17 +58,17 @@ foreach($required_details_obj->fields as $field) {
 $required_details_form = new Form($required_details_obj);
 $content_form = new Form ($custom_fields);
 // set content_type for tag field based on content type of new/editing content
-$tags_field = $required_details_form->get_field_by_name('tags');
+$tags_field = $required_details_form->getFieldByName('tags');
 $tags_field->content_type = $content->content_type;
 
 // check if submitted or show defaults/data from db
-if ($required_details_form->is_submitted()) {
+if ($required_details_form->isSubmitted()) {
 
 	//echo "<h1>Submitted Content!</h1>"; exit(0);
 
 	// update forms with submitted values
-	$required_details_form->set_from_submit();
-	$content_form->set_from_submit();
+	$required_details_form->setFromSubmit();
+	$content_form->setFromSubmit();
 
 	// validate
 	if ($required_details_form->validate() && $content_form->validate()) {
@@ -120,16 +120,16 @@ if ($required_details_form->is_submitted()) {
 }
 else {
 	// set category field content_type based on current new/edited content type
-	$required_details_form->get_field_by_name('category')->content_type = $content->content_type;
+	$required_details_form->getFieldByName('category')->content_type = $content->content_type;
 	// set defaults if needed
 	if (!$new_content) {
-		$required_details_form->get_field_by_name('state')->default = $content->state;
-		$required_details_form->get_field_by_name('title')->default = $content->title;
-		$required_details_form->get_field_by_name('alias')->default = $content->alias;
-		$required_details_form->get_field_by_name('note')->default = $content->note;
-		$required_details_form->get_field_by_name('start')->default = $content->start;
-		$required_details_form->get_field_by_name('end')->default = $content->end;
-		$required_details_form->get_field_by_name('category')->default = $content->category;
+		$required_details_form->getFieldByName('state')->default = $content->state;
+		$required_details_form->getFieldByName('title')->default = $content->title;
+		$required_details_form->getFieldByName('alias')->default = $content->alias;
+		$required_details_form->getFieldByName('note')->default = $content->note;
+		$required_details_form->getFieldByName('start')->default = $content->start;
+		$required_details_form->getFieldByName('end')->default = $content->end;
+		$required_details_form->getFieldByName('category')->default = $content->category;
 		
 		// load tags
 		$tag_id_array=[]; // $content->tags is array of tag objects returned from Tag::get_tags_for_content function
@@ -137,7 +137,7 @@ else {
 			$tag_id_array[] = $t->id;
 		}
 		// TagMultiple field expects a json array of integers
-		$required_details_form->get_field_by_name('tags')->default = json_encode($tag_id_array); 
+		$required_details_form->getFieldByName('tags')->default = json_encode($tag_id_array); 
 	}
 	// set content form TODO
 	if(!$new_content) {

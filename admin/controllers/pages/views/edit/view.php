@@ -28,7 +28,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		//for better or for worse, currently these two fields are saved in the db htmlspecialchars encoded :/ - so we decode it here before passing to text field which re encodes
 
 		$titleField = new Field_Text();
-		$titleField->load_from_config((object) [
+		$titleField->loadFromConfig((object) [
 			"name"=>"title",
 			"id"=>"title",
 			"type"=>"Text",
@@ -47,7 +47,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		$titleField->display();
 
 		$aliasField = new Field_Text();
-		$aliasField->load_from_config((object) [
+		$aliasField->loadFromConfig((object) [
 			"name"=>"alias",
 			"id"=>"alias",
 			"type"=>"Text",
@@ -115,7 +115,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 		}, $domains);
 
 		$aliasField = new Field_Select();
-		$aliasField->load_from_config((object) [
+		$aliasField->loadFromConfig((object) [
 			"name"=>"domain",
 			"id"=>"domain",
 			"type"=>"Select",
@@ -160,7 +160,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 	<hr>
 	<?php //CMS::pprint_r ($page); ?>
 	<div class=''>
-		<?php $page->page_options_form->display_front_end(); ?>
+		<?php $page->page_options_form->display(); ?>
 	</div>
 </div>
 
@@ -239,8 +239,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 				if (is_file($options_form_filepath)) {
 					$options_form = new Form($options_form_filepath);
 					// set options form values from json stored in view_configuration
-					$options_form->deserialize_json($page->view_configuration);
-					$options_form->display_front_end();
+					$options_form->deserializeJson($page->view_configuration);
+					$options_form->display();
 				}
 				else {
 					echo "<p>No options for this view.</p>";

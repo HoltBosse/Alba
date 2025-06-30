@@ -26,12 +26,12 @@ if ($custom_fields_form) {
 }
 
 // check if submitted or show defaults/data from db
-if ($required_details_form->is_submitted()) {
+if ($required_details_form->isSubmitted()) {
 
 	// update forms with submitted values
-	$required_details_form->set_from_submit();
+	$required_details_form->setFromSubmit();
 	if ($custom_fields_form) {
-		$custom_fields_form->set_from_submit();
+		$custom_fields_form->setFromSubmit();
 	}
 
 	// validate
@@ -60,21 +60,21 @@ if ($required_details_form->is_submitted()) {
 else {
 	// set defaults if needed
 	if (!$new_tag) {
-		$required_details_form->get_field_by_name('state')->default = $tag->state;
-		$required_details_form->get_field_by_name('title')->default = $tag->title;
-		$required_details_form->get_field_by_name('alias')->default = $tag->alias;
-		$required_details_form->get_field_by_name('note')->default = $tag->note;
-		$required_details_form->get_field_by_name('image')->default = $tag->image;
-		$required_details_form->get_field_by_name('filter')->default = $tag->filter;
-		$required_details_form->get_field_by_name('description')->default = $tag->description;
-		$required_details_form->get_field_by_name('public')->default = $tag->public;
-		$required_details_form->get_field_by_name('contenttypes')->default = $tag->contenttypes;
-		$required_details_form->get_field_by_name('parent')->default = $tag->parent;
-		$required_details_form->get_field_by_name('category')->default = $tag->category;
+		$required_details_form->getFieldByName('state')->default = $tag->state;
+		$required_details_form->getFieldByName('title')->default = $tag->title;
+		$required_details_form->getFieldByName('alias')->default = $tag->alias;
+		$required_details_form->getFieldByName('note')->default = $tag->note;
+		$required_details_form->getFieldByName('image')->default = $tag->image;
+		$required_details_form->getFieldByName('filter')->default = $tag->filter;
+		$required_details_form->getFieldByName('description')->default = $tag->description;
+		$required_details_form->getFieldByName('public')->default = $tag->public;
+		$required_details_form->getFieldByName('contenttypes')->default = $tag->contenttypes;
+		$required_details_form->getFieldByName('parent')->default = $tag->parent;
+		$required_details_form->getFieldByName('category')->default = $tag->category;
 
 		if ($custom_fields_form) {
 			if ($tag->custom_fields) {
-				$custom_fields_form->deserialize_json($tag->custom_fields);
+				$custom_fields_form->deserializeJson($tag->custom_fields);
 			}
 		}
 	}

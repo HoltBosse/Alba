@@ -4,7 +4,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 class Field_Rich extends Field {
 
 	public function display() {
-		//$this->get_rendered_name()
+		//$this->getRenderedName()
 		//$this->name
 
 		?>
@@ -394,7 +394,7 @@ class Field_Rich extends Field {
 				</div>
 				<hr class="editor_seperator">
 				<div class="gui_editor"></div>
-				<textarea style="display: none;" id='<?php echo $this->id; ?>' <?php echo $this->get_rendered_name(); ?> <?php echo $this->get_rendered_form(); ?> data-repeatableindex="{{replace_with_index}}"><?php echo $this->default; ?></textarea>
+				<textarea style="display: none;" id='<?php echo $this->id; ?>' <?php echo $this->getRenderedName(); ?> <?php echo $this->getRenderedForm(); ?> data-repeatableindex="{{replace_with_index}}"><?php echo $this->default; ?></textarea>
 				<script type="module">
 					import { Editor } from 'https://esm.sh/@tiptap/core@2.14.0'
 					import StarterKit from 'https://esm.sh/@tiptap/starter-kit@2.14.0'
@@ -412,10 +412,10 @@ class Field_Rich extends Field {
 					import Heading from 'https://esm.sh/@tiptap/extension-heading@2.14.0'
 					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu@2.14.0'
 					
-					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->get_rendered_name(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
+					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
 					const editorElement = editorWrapperRoot.querySelector('.gui_editor');
 					const editorControlBar = editorWrapperRoot.querySelector(".gui_editor_control_bar");
-					const editorSubmitElement = editorWrapperRoot.querySelector(`[<?php echo $this->get_rendered_name(); ?>]`);
+					const editorSubmitElement = editorWrapperRoot.querySelector(`[<?php echo $this->getRenderedName(); ?>]`);
 					const editorLinetypeSelect = editorControlBar.querySelector(".linetype");
 
 					const classExtension = {
@@ -1162,14 +1162,14 @@ class Field_Rich extends Field {
 		<?php
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 	}
 
 	public function validate() {
 		// TODO: enhance validation
-		if ($this->is_missing()) {
+		if ($this->isMissing()) {
 			return false;
 		}
 		return true;

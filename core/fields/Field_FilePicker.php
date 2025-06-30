@@ -6,8 +6,8 @@ class Field_FilePicker extends Field_Select {
 	public $root_folder;
 	public $mode;
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->root_folder = $config->root_folder ? CMSPATH . "/" . $config->root_folder : CMSPATH;
 		$this->mode = $config->mode ?: "file";

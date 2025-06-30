@@ -35,22 +35,22 @@ $required_details_obj->fields[3]->default = $_SERVER["HTTP_HOST"];
 $required_details_form = new Form($required_details_obj);
 
 // check if submitted or show defaults/data from db
-if ($required_details_form->is_submitted()) {
+if ($required_details_form->isSubmitted()) {
 
 	// update forms with submitted values
-	$required_details_form->set_from_submit();
+	$required_details_form->setFromSubmit();
 
 	// validate
 	if ($required_details_form->validate()) {
 		// forms are valid, save info
 		
-		$state = $required_details_form->get_field_by_name('state')->default;
-		$note = $required_details_form->get_field_by_name('note')->default;
-		$old_url = $required_details_form->get_field_by_name('old_url')->default;
-		$new_url = $required_details_form->get_field_by_name('new_url')->default;
+		$state = $required_details_form->getFieldByName('state')->default;
+		$note = $required_details_form->getFieldByName('note')->default;
+		$old_url = $required_details_form->getFieldByName('old_url')->default;
+		$new_url = $required_details_form->getFieldByName('new_url')->default;
 		$updated_by = CMS::Instance()->user->id;
-		$header = $required_details_form->get_field_by_name('header')->default;
-		$domain = $required_details_form->get_field_by_name('domain')->default;
+		$header = $required_details_form->getFieldByName('header')->default;
+		$domain = $required_details_form->getFieldByName('domain')->default;
 
 		if ($new_content) {
 			$params = [$state,$note,$old_url,$new_url,$updated_by,$header,$domain];
@@ -85,10 +85,10 @@ if ($required_details_form->is_submitted()) {
 else {
 	// set defaults if needed
 	if (!$new_content) {
-		$required_details_form->get_field_by_name('state')->default = $redirect->state;
-		$required_details_form->get_field_by_name('note')->default = $redirect->note;
-		$required_details_form->get_field_by_name('old_url')->default = $redirect->old_url;
-		$required_details_form->get_field_by_name('new_url')->default = $redirect->new_url;
-		$required_details_form->get_field_by_name('domain')->default = $redirect->domain;
+		$required_details_form->getFieldByName('state')->default = $redirect->state;
+		$required_details_form->getFieldByName('note')->default = $redirect->note;
+		$required_details_form->getFieldByName('old_url')->default = $redirect->old_url;
+		$required_details_form->getFieldByName('new_url')->default = $redirect->new_url;
+		$required_details_form->getFieldByName('domain')->default = $redirect->domain;
 	}
 }

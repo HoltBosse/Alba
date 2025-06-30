@@ -38,12 +38,12 @@ $widget_options_form = new Form($widget->form_data);
 //$widget_options_form->load_json(CMSPATH . '/widgets/' . $widget->type->location . '/widget_config.json');
 
 // check if submitted or show defaults/data from db
-if ($required_details_form->is_submitted()) {
+if ($required_details_form->isSubmitted()) {
 
 	// update forms with submitted values
-	$required_details_form->set_from_submit();
-	$widget_options_form->set_from_submit();
-	$position_options_form->set_from_submit();
+	$required_details_form->setFromSubmit();
+	$widget_options_form->setFromSubmit();
+	$position_options_form->setFromSubmit();
 
 	/* CMS::pprint_r ($_POST);
 	CMS::pprint_r ($position_options_form);
@@ -62,14 +62,14 @@ if ($required_details_form->is_submitted()) {
 else {
 	// set defaults if needed
 	if (!$new_widget) {
-		$required_details_form->get_field_by_name('state')->default = $widget->state;
-		$required_details_form->get_field_by_name('title')->default = $widget->title;
-		$required_details_form->get_field_by_name('note')->default = $widget->note;
+		$required_details_form->getFieldByName('state')->default = $widget->state;
+		$required_details_form->getFieldByName('title')->default = $widget->title;
+		$required_details_form->getFieldByName('note')->default = $widget->note;
 		// set options from json in db
 		
 		foreach ($widget->options as $option) {
 			//echo "$key => $value\n";
-			$field = $widget_options_form->get_field_by_name($option->name);
+			$field = $widget_options_form->getFieldByName($option->name);
 			if ($field) {
 				$field->default = $option->value;
 			}
@@ -78,9 +78,14 @@ else {
 			}
 		}
 		// set position defaults
-		$position_options_form->get_field_by_name('position_control')->default = $widget->position_control;
-		$position_options_form->get_field_by_name('global_position')->default = $widget->global_position;
-		$position_options_form->get_field_by_name('position_pages')->set_value( $widget->page_list);
+		$position_options_form->getFieldByName('position_control')->default = $widget->position_control;
+		$position_options_form->getFieldByName('global_position')->default = $widget->global_position;
+
+		$position_page_field_default = $widget->page_list;
+		if (!is_array($widget->page_list)) {
+			$position_page_field_default = explode(',',$widget->page_list);
+		}
+		$position_options_form->getFieldByName('position_pages')->default = $position_page_field_default;
 	}
 	
 }

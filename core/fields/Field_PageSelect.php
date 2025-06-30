@@ -3,8 +3,8 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 class Field_PageSelect extends Field_Select {
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$page_array = [];
 		foreach(Page::get_all_pages_by_depth() as $page) {

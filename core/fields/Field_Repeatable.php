@@ -39,7 +39,7 @@ class Field_Repeatable extends Field {
 				// load form
 				$repeatable_form = new Form(CMSPATH . ($repeatable_form_data->form_path ?? $this->form_path), true); // second parameter is boolean for repeatable or not
 				foreach (($repeatable_form_data->fields ?? $repeatable_form_data->value) as $field_info) {
-					$field = $repeatable_form->get_field_by_name($field_info->name);
+					$field = $repeatable_form->getFieldByName($field_info->name);
 					if ($field) {
 						//CMS::pprint_r ($field_info);
 						$field->default = $field_info->default ?? $field_info->value;
@@ -52,7 +52,7 @@ class Field_Repeatable extends Field {
 					<button type='button' onclick='move_repeatable_down(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>v</button>
 					<?php
 						ob_start();
-						$repeatable_form->display_front_end();
+						$repeatable_form->display();
 						$rform_contents = ob_get_contents();
 						ob_end_clean();
 						$rform_contents = str_replace("{{repeatable_id_suffix}}", uniqid(), $rform_contents);
@@ -97,7 +97,7 @@ class Field_Repeatable extends Field {
 			<button type='button' onclick='move_repeatable_up(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>^</button>
 			<button type='button' onclick='move_repeatable_down(this.closest(".repeatable"));' class='button btn pull-right is-info remove_repeater'>v</button>
 			<?php
-			$this->form->display_front_end(true); // pass true here to let form know it's for template/repeatable
+			$this->form->display(true); // pass true here to let form know it's for template/repeatable
 			echo "</div>";
 			$repeatable_template->markup = ob_get_contents();
 			ob_end_clean(); // end temp buffering without outputting any of the form to browser / existing buffer
@@ -160,13 +160,13 @@ class Field_Repeatable extends Field {
 		// loop over this submitted repeatable and make sub-form for each element
 		for ($n=0; $n<$repeat_count; $n++) {
 			$repeatable_form = new Form(CMSPATH . $this->form_path, true);
-			$repeatable_form->form_path = $this->form_path;
+			$repeatable_form->formPath = $this->form_path;
 			// get info for field
 			foreach ($repeatable_form->fields as $field) {
-				$field->set_from_submit_repeatable($n);
+				$field->setFromSubmit_repeatable($n);
 			}
 			foreach ($repeatable_form->fields as $field) {
-				$repeatable_form->set_field_required_based_on_logic($field);
+				$repeatable_form->setFieldRequiredBasedOnLogic($field);
 			}
 			$forms[] = $repeatable_form;
 		}

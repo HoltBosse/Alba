@@ -23,10 +23,10 @@ $required_details_form = new Form(CMSPATH . '/admin/controllers/tags/views/edit/
 
 
 // check if submitted or show defaults/data from db
-if ($required_details_form->is_submitted()) {
+if ($required_details_form->isSubmitted()) {
 
 	// update forms with submitted values
-	$required_details_form->set_from_submit();
+	$required_details_form->setFromSubmit();
 
 
 	// validate
@@ -48,14 +48,14 @@ if ($required_details_form->is_submitted()) {
 else {
 	// set defaults if needed
 	if (!$new_tag) {
-		$required_details_form->get_field_by_name('state')->default = $tag->state;
-		$required_details_form->get_field_by_name('title')->default = $tag->title;
-		$required_details_form->get_field_by_name('alias')->default = $tag->alias;
-		$required_details_form->get_field_by_name('note')->default = $tag->note;
-		$required_details_form->get_field_by_name('filter')->default = $tag->filter;
-		$required_details_form->get_field_by_name('description')->default = $tag->description;
-		$required_details_form->get_field_by_name('public')->default = $tag->public;
-		$required_details_form->get_field_by_name('contenttypes')->default = $tag->contenttypes;
+		$required_details_form->getFieldByName('state')->default = $tag->state;
+		$required_details_form->getFieldByName('title')->default = $tag->title;
+		$required_details_form->getFieldByName('alias')->default = $tag->alias;
+		$required_details_form->getFieldByName('note')->default = $tag->note;
+		$required_details_form->getFieldByName('filter')->default = $tag->filter;
+		$required_details_form->getFieldByName('description')->default = $tag->description;
+		$required_details_form->getFieldByName('public')->default = $tag->public;
+		$required_details_form->getFieldByName('contenttypes')->default = $tag->contenttypes;
 	}
 	
 }

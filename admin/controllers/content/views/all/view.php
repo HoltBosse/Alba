@@ -101,7 +101,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			}, $applicable_tags);
 
 			$tagField = new Field_Select();
-			$tagField->load_from_config((object) [
+			$tagField->loadFromConfig((object) [
 				"name"=>"coretags",
 				"id"=>"content_search_tags",
 				"label"=>"Tagged",
@@ -231,12 +231,12 @@ defined('CMSPATH') or die; // prevent unauthorized access
 								$propname = "{$content_list_field->name}"; 
 								$classname = "Field_" . $content_list_field->type;
 								$curfield = new $classname();
-								$curfield->load_from_config($named_custom_fields[$propname]); // load config - useful for some fields
+								$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
 								$curfield->default = $content_item->$propname; // set temp field value to current stored value
 								// TODO: pass precalc array of table names for content types to aid in performance of lookups 
 								// some fields will currently parse json config files to determine tables to query for friendly values
 								// PER row/field. not ideal.
-								echo $curfield->get_friendly_value($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
+								echo $curfield->getFriendlyValue($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
 								?></td>
 						<?php endforeach; ?>
 					<?php endif; ?>

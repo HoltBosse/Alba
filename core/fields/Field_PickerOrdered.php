@@ -35,7 +35,7 @@ class Field_PickerOrdered extends Field {
                 
                 <hr>
                 <h5 class="title"><?php echo $this->label;?></h5>
-				<input type='hidden' value='<?php echo $this->default;?>' <?php echo "{$required} id='{$this->id}' {$this->get_rendered_name()} {$this->get_rendered_form()}";?>>
+				<input type='hidden' value='<?php echo $this->default;?>' <?php echo "{$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}";?>>
                 <div class='twocol_picker' id='twocol_picker_<?php echo $this->id;?>' >
                     <div class='twocol_picker_left'>
                         <h4 class='is-title title is-4'>All Items</h4>
@@ -263,8 +263,8 @@ class Field_PickerOrdered extends Field {
 
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 		
 		$this->filter = $config->filter ?? 'CSVINT';
 		$this->type = $config->type ?? 'error!!!';
@@ -273,7 +273,7 @@ class Field_PickerOrdered extends Field {
 	}
 
 	public function validate() {
-		if ($this->is_missing()) {
+		if ($this->isMissing()) {
 			return false;
 		}
 		return true;

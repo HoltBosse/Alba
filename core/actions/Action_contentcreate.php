@@ -75,15 +75,15 @@ class Action_contentcreate extends Actions {
                 $afterFieldInstance = new $classname();
 
                 $fieldTypeLookup[$field]->default = $item->before;
-                $beforeFieldInstance->load_from_config($fieldTypeLookup[$field]);
+                $beforeFieldInstance->loadFromConfig($fieldTypeLookup[$field]);
                 $fieldTypeLookup[$field]->default = $item->after;
-                $afterFieldInstance->load_from_config($fieldTypeLookup[$field]);
+                $afterFieldInstance->loadFromConfig($fieldTypeLookup[$field]);
 
                 echo "
                     <tr>
                         <td>$field</td>
-                        <td>{$beforeFieldInstance->get_friendly_value([])}</td>
-                        <td>{$afterFieldInstance->get_friendly_value([])}</td>
+                        <td>{$beforeFieldInstance->getFriendlyValue([])}</td>
+                        <td>{$afterFieldInstance->getFriendlyValue([])}</td>
                     </tr>
                 ";
             }

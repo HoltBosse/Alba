@@ -18,10 +18,10 @@ else {
 $plugin_options_form = new Form(CMSPATH . '/plugins/' . $plugin->location . '/plugin_config.json');
 
 // check if submitted or show defaults/data from db
-if ($plugin_options_form->is_submitted()) {
+if ($plugin_options_form->isSubmitted()) {
 
 	// update forms with submitted values
-	$plugin_options_form->set_from_submit();
+	$plugin_options_form->setFromSubmit();
 
 	/* CMS::pprint_r ($_POST);
 	CMS::pprint_r ($position_options_form);
@@ -40,7 +40,7 @@ else {
 	// set defaults if needed
 	foreach ($plugin->options as $option) {
 		//echo "$key => $value\n";
-		$field = $plugin_options_form->get_field_by_name($option->name);
+		$field = $plugin_options_form->getFieldByName($option->name);
 		if ($field) {
 			$field->default = $option->value;
 		}

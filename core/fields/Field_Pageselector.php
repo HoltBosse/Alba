@@ -21,7 +21,7 @@ class Field_Pageselector extends Field {
 								$checked = " checked ";
 							}
 						}
-						echo "<input {$checked} type='checkbox' {$this->get_rendered_name(true)} {$this->get_rendered_form()} value='{$page->id}'>";
+						echo "<input {$checked} type='checkbox' {$this->getRenderedName(true)} {$this->getRenderedForm()} value='{$page->id}'>";
 						for ($n=0; $n<$page->depth; $n++) {
 							echo " - ";
 						}
@@ -38,7 +38,7 @@ class Field_Pageselector extends Field {
 				<label class='label' for='<?php echo $this->id;?>'><?php echo $this->label; ?></label>
 				<div class="control">
     				<div class="select">
-						<select class='select' <?php echo $this->get_rendered_name(true);?> <?php echo $this->get_rendered_form(); ?>>
+						<select class='select' <?php echo $this->getRenderedName(true);?> <?php echo $this->getRenderedForm(); ?>>
 							<?php foreach ($all_pages as $page):?>
 								<?php 
 								$selected = "";
@@ -78,15 +78,6 @@ class Field_Pageselector extends Field {
 		}
 	}
 
-	public function set_value($value) {
-		if (is_array($value)) {
-			$this->default = $value;
-		}
-		else {
-			$this->default = explode(',',$value);
-		}
-	}
-
 	public function load_from_config($config) {
 		parent::load_from_config($config);
 		
@@ -96,7 +87,7 @@ class Field_Pageselector extends Field {
 
 	public function validate() {
 		// TODO: enhance validation
-		if ($this->is_missing()) {
+		if ($this->isMissing()) {
 			return false;
 		}
 		return true;

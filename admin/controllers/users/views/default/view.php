@@ -59,7 +59,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			}, $all_groups);
 
 			$groupField = new Field_Select();
-			$groupField->load_from_config((object) [
+			$groupField->loadFromConfig((object) [
 				"name"=>"groups",
 				"id"=>"user_search_groups",
 				"label"=>"Group",
@@ -81,7 +81,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 			}, $applicable_tags);
 
 			$tagField = new Field_Select();
-			$tagField->load_from_config((object) [
+			$tagField->loadFromConfig((object) [
 				"name"=>"coretags",
 				"id"=>"content_search_tags",
 				"label"=>"Tagged",

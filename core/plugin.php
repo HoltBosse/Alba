@@ -51,11 +51,6 @@ class Plugin {
 		return DB::fetch("select title from plugins where id=?", [$id])->title;
 	}
 
-	public function show_admin_form() {
-		$this->form = new Form();
-		$this->form->load_json(CMSPATH . "/plugins/");
-	}
-
 	public function load($id) {
 		$info = DB::fetch('SELECT * FROM plugins WHERE id=' . $id);
 		$this->id = $info->id;

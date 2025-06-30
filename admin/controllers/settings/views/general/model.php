@@ -15,7 +15,7 @@ $submitted = Input::getvar('form_general_options');
 
 if ($submitted) {
 	// update form with submitted values
-	$general_options_form->set_from_submit();
+	$general_options_form->setFromSubmit();
 	// create new config object based on updated form and save
 	$general_options_config = new Configuration($general_options_form); 
 	

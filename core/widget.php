@@ -86,13 +86,6 @@ class Widget {
 		return false;
 	}
 
-	
-
-	public function show_admin_form() {
-		$this->form = new Form();
-		$this->form->load_json(CMSPATH . "/widgets/");
-	}
-
 	public function render_custom_backend() {
 		return false;
 	}
@@ -145,9 +138,9 @@ class Widget {
 		if (Input::getvar("http_referer_form") && Input::getvar("http_referer_form") != $_SERVER["HTTP_REFERER"]){
 			$redirect_url = Input::getvar("http_referer_form");
 		}
-		$this->title = $required_details_form->get_field_by_name('title')->default;
-		$this->state = $required_details_form->get_field_by_name('state')->default;
-		$this->note = $required_details_form->get_field_by_name('note')->default;
+		$this->title = $required_details_form->getFieldByName('title')->default;
+		$this->state = $required_details_form->getFieldByName('state')->default;
+		$this->note = $required_details_form->getFieldByName('note')->default;
 		$this->options = [];
 		foreach ($widget_options_form->fields as $option) {
 			$obj = new stdClass();
@@ -157,9 +150,9 @@ class Widget {
 			$this->options[] = $obj;
 		}
 		// get position options fields
-		$this->position_control = $position_options_form->get_field_by_name('position_control')->default;
-		$this->global_position = $position_options_form->get_field_by_name('global_position')->default;
-		$this->page_list = $position_options_form->get_field_by_name('position_pages')->default;
+		$this->position_control = $position_options_form->getFieldByName('position_control')->default;
+		$this->global_position = $position_options_form->getFieldByName('global_position')->default;
+		$this->page_list = $position_options_form->getFieldByName('position_pages')->default;
 
 		if (method_exists($this, 'custom_save')) {
 			// if child of widget class has custom save (for example it doesn't use cms forms)

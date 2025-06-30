@@ -28,7 +28,7 @@ defined('CMSPATH') or die; // prevent unauthorized access
 
 <div class=' '>
 	<div class='flex'>
-		<?php $required_details_form->display_front_end(); ?>
+		<?php $required_details_form->display(); ?>
 	</div>
 </div>
 

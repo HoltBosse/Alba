@@ -66,8 +66,8 @@ class Field_Tab extends Field {
 
 
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 		
 		$this->tabs = $config->tabs ?? $this->tabs;
 		$this->mode = $config->mode ?? "tabs";

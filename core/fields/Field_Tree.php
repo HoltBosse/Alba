@@ -54,7 +54,7 @@ class Field_Tree extends Field {
 			$required="";
 			$decoded_default = html_entity_decode ($this->default);
 			if ($this->required) {$required=" required ";}
-			echo "<input type='hidden' value='{$decoded_default}' class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->get_rendered_name()} {$this->get_rendered_form()}>";	
+			echo "<input type='hidden' value='{$decoded_default}' class='filter_{$this->filter} input' {$required} type='text' id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}>";	
 		echo "</div>";
 		?>
 		<script>
@@ -391,8 +391,8 @@ class Field_Tree extends Field {
 		<?php
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 		
 		$this->sql = $config->sql ?? 'SELECT id AS value, title AS text FROM pages WHERE state=1';
 		$this->dataset = DB::fetchAll($this->sql);
@@ -401,7 +401,7 @@ class Field_Tree extends Field {
 
 	public function validate() {
 		// TODO: enhance validation
-		if ($this->is_missing()) {
+		if ($this->isMissing()) {
 			return false;
 		}
 		return true;

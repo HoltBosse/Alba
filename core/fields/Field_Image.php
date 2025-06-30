@@ -68,7 +68,7 @@ class Field_Image extends Field {
 		//href='{$this->upload_endpoint}'
 		echo "<button type='button' id='trigger_image_upload_{$this->id}' class='button btn is-info is-light upload_new_image_button'>Upload New Image</a>";
 		echo "<button type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";	
-		echo "<input oninvalid='this.setCustomValidity(\"A valid image is required\")' style='position:absolute; width:0px; opacity:0;' value='{$this->default}' {$required} id='{$this->id}' {$this->get_rendered_name()} {$this->get_rendered_form()}>";
+		echo "<input oninvalid='this.setCustomValidity(\"A valid image is required\")' style='position:absolute; width:0px; opacity:0;' value='{$this->default}' {$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}>";
 		
 		
 		
@@ -169,7 +169,7 @@ class Field_Image extends Field {
 	<?php
 	} // end display
 
-	public function get_friendly_value($helpful_info) {
+	public function getFriendlyValue($helpful_info) {
 		if($helpful_info && $helpful_info->return_in_text_form==true) {
 			return "https://" . $_SERVER["HTTP_HOST"] . "/image/" . $this->default;
 		} else {
@@ -184,8 +184,8 @@ class Field_Image extends Field {
 	}
 
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 		
 		$this->coltype = $config->coltype ?? '';
 		$this->mimetypes = $config->mimetypes ?? null;
@@ -196,7 +196,7 @@ class Field_Image extends Field {
 	}
 
 	public function validate() {
-		if ($this->is_missing()) {
+		if ($this->isMissing()) {
 			return false;
 		}
 		return true;

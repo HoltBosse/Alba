@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "509dd55557a372777c3cd5ff3b4752a8",
+    "content-hash": "70764a83477e35a71a021e1319d93d83",
     "packages": [
         {
             "name": "erusev/parsedown",
@@ -91,6 +91,40 @@
             "time": "2025-05-29T18:52:46+00:00"
         },
         {
+            "name": "holtbosse/form",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/HoltBosse/form.git",
+                "reference": "b80592c292a3ca725ea456ff2099946169860cd7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/HoltBosse/form/zipball/b80592c292a3ca725ea456ff2099946169860cd7",
+                "reference": "b80592c292a3ca725ea456ff2099946169860cd7",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HoltBosse\\Form\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "library for creating forms from json and php",
+            "support": {
+                "issues": "https://github.com/HoltBosse/form/issues",
+                "source": "https://github.com/HoltBosse/form/tree/1.0.0"
+            },
+            "time": "2025-06-30T05:12:27+00:00"
+        },
+        {
             "name": "phpmailer/phpmailer",
             "version": "v6.5.1",
             "source": {
@@ -172,16 +206,16 @@
     "packages-dev": [
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.11",
+            "version": "1.12.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733"
+                "reference": "3a6e423c076ab39dfedc307e2ac627ef579db162"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
-                "reference": "0d1fc20a962a91be578bcfe7cf939e6e1a2ff733",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/3a6e423c076ab39dfedc307e2ac627ef579db162",
+                "reference": "3a6e423c076ab39dfedc307e2ac627ef579db162",
                 "shasum": ""
             },
             "require": {
@@ -226,15 +260,15 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-17T14:08:01+00:00"
+            "time": "2025-05-21T20:51:45+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
