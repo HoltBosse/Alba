@@ -89,3 +89,10 @@ if ($messages_table_ok) {
 else {
 	show_message ('Messages Table','Messages table created.','is-warning');
 }
+
+if($content_table_ordering_ok) {
+	show_message ('Content Table(s)','Content Ordering OK.','is-success');
+}
+else {
+	show_message ('Messages Table','Updated ordering of content tables','is-warning');
+}

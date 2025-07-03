@@ -170,3 +170,38 @@ if (!$messages_table_ok) {
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 	");
 }
+
+$content_table_ordering_ok = true;
+$contentTypes = Content::get_all_content_types();
+foreach($contentTypes as $type) {
+	$tableName = Content::get_table_name_for_content_type($type->id);
+
+	$orderingOk = DB::fetchAll(
+		"SELECT `ordering`, COUNT(`ordering`) AS ordering_count
+		FROM `$tableName`
+		GROUP BY `ordering`
+		HAVING COUNT(`ordering`) > 1"
+	);
+
+	if(sizeof($orderingOk)>0) {
+		$content_table_ordering_ok = false;
+	}
+}
+
+
+if(!$content_table_ordering_ok) {
+	foreach($contentTypes as $type) {
+		$tableName = Content::get_table_name_for_content_type($type->id);
+
+		DB::exec("SET @manualorderingrow := 0;");
+		DB::exec(
+			"UPDATE `$tableName` cbh
+			JOIN (
+				SELECT id, (@manualordering := @manualordering + 1) AS new_ordering
+				FROM `$tableName`
+				ORDER BY ordering, id
+			) ordered_items ON cbh.id = ordered_items.id
+			SET cbh.ordering = ordered_items.new_ordering;"
+		);
+	}
+}

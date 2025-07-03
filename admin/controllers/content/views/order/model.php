@@ -14,24 +14,6 @@ if (!is_numeric($content_type)) {
     CMS::show_error('Invalid content type');
 }
 
-function clean_ordering($table_name) {
-	// fix table that hasn't been manually ordered at all previously
-	// guarantees unique sensible ordering
-	// 1 based, not 0 based
-	$sql = "
-	UPDATE `$table_name`
-	JOIN (
-		SELECT id,
-		ROW_NUMBER() OVER (ORDER BY ordering, id) AS new_ordering
-		FROM `$table_name`
-	) AS ordered_items
-	ON `$table_name`.id = ordered_items.id
-	SET `$table_name`.ordering = ordered_items.new_ordering;
-	";
-	
-	DB::exec($sql);
-}
-
 $location = Content::get_content_location($content_type);
 $custom_fields = JSON::load_obj_from_file(CMSPATH . '/controllers/' . $location . '/custom_fields.json');
 $content_list_fields = [];
@@ -58,5 +40,4 @@ if (property_exists($custom_fields,'list')) {
 
 // TODO: limit to $content_list_fields + needed for ordering view (id,ordering,title)
 $content_table = Content::get_table_name_for_content_type($content_type);
-clean_ordering($content_table); // ensure correct ordering pre-manipulation
 $all_content = DB::fetchAll("SELECT * FROM $content_table ORDER BY ordering ASC, id ASC");
