@@ -54,9 +54,6 @@ if (CMS::Instance()->uri_segments) {
 			if (isset ($blog_content_item->og_description)) {
 				CMS::Instance()->page->set_page_option_value('og_description', $blog_content_item->og_description);
 			}
-			if (isset ($blog_content_item->og_keywords)) {
-				CMS::Instance()->page->set_page_option_value('og_keywords', $blog_content_item->og_keywords);
-			}
 		}
 	}
 }

@@ -156,11 +156,9 @@ final class CMS {
 			<?php 
 			$og_title = $this->page->get_page_option_value("og_title") ? $this->page->get_page_option_value("og_title") : $this->page->title; 
 			$og_image = $this->page->get_page_option_value("og_image") ? $this->page->get_page_option_value("og_image") : null; 
-			$og_keywords = $this->page->get_page_option_value("og_keywords") ? $this->page->get_page_option_value("og_keywords") : null; 
 			$og_description = $this->page->get_page_option_value("og_description") ? $this->page->get_page_option_value("og_description") : null; 
 			?>
 			<meta property="og:title" content="<?php echo $og_title; ?>" />
-			<meta property="og:keywords" content="<?php echo $og_keywords; ?>" />
 			<meta property="og:description" content="<?php echo $og_description; ?>" />
 			<meta property="og:type" content="website" />
 			<meta property="og:url" content="<?php echo  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>" />
