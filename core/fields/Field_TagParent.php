@@ -1,33 +1,11 @@
 <?php
 defined('CMSPATH') or die; // prevent unauthorized access
 
-class Field_TagParent extends Field_Select {
+class Field_TagParent extends Field_TagSingle {
 
 	public function loadFromConfig($config) {
 		parent::loadFromConfig($config);
 
-		$this->content_type = $config->content_type ?? false;
-
-		if ($this->content_type) {
-			$tags = Content::get_applicable_tags ($this->content_type);
-		}
-		else {
-			//$tags = Tag::get_all_tags ();
-			$tags = Tag::get_all_tags_by_depth();
-		}
-
-		$this->select_options = [];
-		foreach($tags as $tag) {
-			$tag_title_prefix = "";
-			for ($n=0; $n<$tag->depth; $n++) {
-				$tag_title_prefix .= " - ";
-			}
-
-			$this->select_options[] = (object) [
-				"text"=>"$tag_title_prefix $tag->title",
-				"value"=>$tag->id,
-			];
-		}
 		array_unshift(
 			$this->select_options,
 			(object) [
