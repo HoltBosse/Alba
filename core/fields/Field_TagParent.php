@@ -20,7 +20,7 @@ class Field_TagParent extends Field_Select {
 		foreach($tags as $tag) {
 			$tag_title_prefix = "";
 			for ($n=0; $n<$tag->depth; $n++) {
-				$tag_title_prefix .= "&nbsp-&nbsp";
+				$tag_title_prefix .= " - ";
 			}
 
 			$this->select_options[] = (object) [
