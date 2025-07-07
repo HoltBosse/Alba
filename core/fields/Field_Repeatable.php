@@ -146,7 +146,7 @@ class Field_Repeatable extends Field {
 
 	}
 
-	public function set_from_submit() {
+	public function setFromSubmit() {
 		// create base repeatable form
 		$forms=[];
 		$repeatable_form = new Form(CMSPATH . $this->form_path, true); // must be true / repeatable
@@ -163,7 +163,7 @@ class Field_Repeatable extends Field {
 			$repeatable_form->formPath = $this->form_path;
 			// get info for field
 			foreach ($repeatable_form->fields as $field) {
-				$field->setFromSubmit_repeatable($n);
+				$field->setFromSubmitRepeatable($n);
 			}
 			foreach ($repeatable_form->fields as $field) {
 				$repeatable_form->setFieldRequiredBasedOnLogic($field);
@@ -181,8 +181,8 @@ class Field_Repeatable extends Field {
 	}
 
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 		
 		$this->type = 'Repeatable';
 		$this->form_path = $config->form_path ?? false;
