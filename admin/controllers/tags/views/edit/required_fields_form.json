@@ -98,7 +98,8 @@
 			"type": "TagParent",
 			"required": false,
 			"filter": "INT",
-			"default": "0"
+			"default": "0",
+			"slimselect": true
 		},
 		{
 			"label": "Description",
