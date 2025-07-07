@@ -67,7 +67,7 @@ class Field_Pageselector extends Field {
 		}
 	}
 
-	public function set_from_submit() {
+	public function setFromSubmit() {
 		// override default field function
 		$value = Input::getvar($this->name, $this->filter);
 		if (is_array($value)) {
@@ -78,8 +78,8 @@ class Field_Pageselector extends Field {
 		}
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 		
 		$this->filter = $config->filter ?? 'ARRAYOFINT';
 		$this->multiple = $config->multiple ?? true;

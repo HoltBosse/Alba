@@ -57,7 +57,7 @@ class Field_ContentTypeselector extends Field {
 		echo "</div>";
 	}
 
-	public function set_from_submit() {
+	public function setFromSubmit() {
 		// override default field function
 		$value = Input::getvar($this->name, $this->filter);
 		if ($value||is_numeric($value)) {
@@ -68,8 +68,8 @@ class Field_ContentTypeselector extends Field {
 		}
 	}
 
-	public function load_from_config($config) {
-		parent::load_from_config($config);
+	public function loadFromConfig($config) {
+		parent::loadFromConfig($config);
 
 		$this->showmedia = $config->showmedia ?? true;
 		$this->showusers = $config->showusers ?? false;

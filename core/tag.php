@@ -19,7 +19,7 @@ class Tag {
 	public $contenttypes;
 
 	public function load($id) {
-		$info = DB::fetch('select * from tags where id=?', [$id]);
+		$info = DB::fetch('SELECT * FROM tags WHERE id=?', [$id]);
 		$this->id = $info->id;
 		$this->title = $info->title;
 		$this->state = $info->state;
@@ -32,8 +32,7 @@ class Tag {
 		$this->parent = $info->parent;
 		$this->category = $info->category;
 		$this->custom_fields = $info->custom_fields;
-		//$result = DB::fetchAll("select content_type_id from tag_content_type where tag_id=?", [$this->id));
-		$this->contenttypes = DB::fetchAll("select content_type_id from tag_content_type where tag_id=?", $this->id. ["mode"=>PDO::FETCH_COLUMN]);
+		$this->contenttypes = DB::fetchAll("SELECT content_type_id FROM tag_content_type WHERE tag_id=?", $this->id, ["mode"=>PDO::FETCH_COLUMN]);
 
 	}
 
@@ -144,7 +143,7 @@ class Tag {
 			// reach here, parent is valid or empty
 			
 			// update
-			$query = "update tags set state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=?, custom_fields=? where id=?";
+			$query = "UPDATE tags SET state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=?, custom_fields=? WHERE id=?";
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
 			}
@@ -156,11 +155,11 @@ class Tag {
 			if ($result) {
 				// clear any content types applicable to this tag from tag_content_type
 				
-				DB::exec("delete from tag_content_type where tag_id=?", [$this->id]);
+				DB::exec("DELETE FROM tag_content_type WHERE tag_id=?", [$this->id]);
 				
 				// insert new tag content_type relationships if required
 				foreach ($this->contenttypes as $contenttype) {
-					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', [$this->id, $contenttype]);
+					DB::exec('INSERT INTO tag_content_type (tag_id,content_type_id) VALUES (?,?)', [$this->id, $contenttype]);
 				}
 				Hook::execute_hook_actions('on_tag_save', $this);
 				return true;	
@@ -172,7 +171,7 @@ class Tag {
 		}
 		else {
 			// new
-			$query = "insert into tags (state,public,title,alias,note,filter,description,image,parent,category,custom_fields) values(?,?,?,?,?,?,?,?,?,?,?)";
+			$query = "INSERT INTO tags (state,public,title,alias,note,filter,description,image,parent,category,custom_fields) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 			
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
@@ -186,7 +185,7 @@ class Tag {
 				// insert new tag content_type relationships if required
 				$new_id = DB::getLastInsertedId();
 				foreach ($this->contenttypes as $contenttype) {
-					DB::exec('insert into tag_content_type (tag_id,content_type_id) values (?,?)', [$new_id, $contenttype]);
+					DB::exec('INSERT INTO tag_content_type (tag_id,content_type_id) VALUES (?,?)', [$new_id, $contenttype]);
 				}
 				$this->id = $new_id;
 
