@@ -1,6 +1,8 @@
 <?php
 namespace HoltBosse\Alba;
 
+use InvalidArgumentException;
+
 Class DotEnv {
     protected $path;
 

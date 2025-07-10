@@ -1,0 +1,21 @@
+name: phpstan
+
+on: [push]
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set env
+        run: echo "alba_installer_skip_configuration=true" >> $GITHUB_ENV
+
+      - uses: php-actions/composer@v6
+
+      - name: PHPStan Static Analysis
+        uses: php-actions/phpstan@v3
+        with:
+          version: '^1.10'
+          php_version: 8.0
