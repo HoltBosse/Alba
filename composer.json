@@ -1,23 +1,20 @@
 {
-    "scripts": {
-        "post-install-cmd": [
-            "if ! test -f config.php; then cp configTESTBACKUP.php config.php; fi",
-            "if ! test -f admin/admin_config.php; then cp configADMINTESTBACKUP.php admin/admin_config.php; fi",
-            "if ! test -f htaccess.txt; then cp htaccess.txt .htaccess; fi",
-            "if ! test -f htaccess.txt; then cp .htaccess ./admin/.htaccess; fi",
-            "if test -f installer/installer.php; then php installer/installer.php; fi"
-        ],
-        "albatests": [
-            "vendor/bin/phpstan analyse"
-        ]
-    },
-    "require-dev": {
-        "phpstan/phpstan": "^1.10"
+    "name": "holtbosse/alba",
+    "description": "Basic developer oriented CMS system",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "HoltBosse\\Alba\\": "src/"
+        }
     },
     "require": {
-        "phpmailer/phpmailer": "6.5.1",
+        "phpmailer/phpmailer": "^6.10",
         "erusev/parsedown": "^1.7",
         "holtbosse/db": "^1.0",
         "holtbosse/form": "^1.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1"
     }
 }
