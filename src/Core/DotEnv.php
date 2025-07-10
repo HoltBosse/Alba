@@ -1,5 +1,5 @@
 <?php
-namespace HoltBosse\Alba;
+namespace HoltBosse\Alba\Core;
 
 use InvalidArgumentException;
 
