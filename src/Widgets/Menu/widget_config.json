@@ -1,0 +1,8 @@
+{
+	"title":"Menu Structure",
+	"location":"menu",
+	"id":"widget_menu_options",
+	"description":"Create and display a menu from all available pages on your site.",
+	"fields":[
+	]
+}

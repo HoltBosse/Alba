@@ -1,0 +1,15 @@
+{
+	"id":"simple_article_options",
+	"fields":[
+		{
+			"name": "content_id",
+			"id": "content_id",
+			"type": "ContentSelector",
+			"label": "Choose Article",
+			"required": false,
+			"description": "",
+			"filter": "NUMBER",
+			"content_type":1
+		}
+	]
+}

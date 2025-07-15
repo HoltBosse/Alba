@@ -1,0 +1,19 @@
+{
+	"title":"Front End Edit Button",
+	"location":"core_frontend_editbutton",
+	"id":"frontend_editbutton_options",
+    "description":"adds front end edit button for specified user groups when logged in",
+    "version":"1.0",
+    "author":"AJ",
+    "website":"https://alba.holtbosse.com",
+	"fields":[
+		{
+			"type":"UserGroupsMultiple",
+			"id":"access",
+			"name":"access",
+			"label":"Limit Access To",
+			"default":"",
+			"filter":"ARRAYOFINT"
+		}
+	]
+}

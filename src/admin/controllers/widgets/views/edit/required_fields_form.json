@@ -1,0 +1,38 @@
+{
+	"id": "required_widget_fields",
+	"fields": [
+		{
+			"label":"Widget Title",
+			"name":"title",
+			"id":"title",
+			"type":"Text",
+			"required":true,
+			"filter":"STRING",
+			"maxlength":255
+		},
+		{
+			"label":"Note",
+			"name":"note",
+			"id":"note",
+			"type":"Text",
+			"required":false,
+			"filter":"STRING",
+			"maxlength":255,
+			"description":"Not required, but may be useful.",
+			"default":""
+		},
+		{
+			"name": "state",
+			"id": "state",
+			"type": "Select",
+			"label": "Widget State",
+			"description": "Choose to show widget or not globally.",
+			"filter": "NUMBER",
+			"default":1,
+			"select_options":[
+				{"value":1,"text":"Published"},
+				{"value":0,"text":"Unpublished"}
+			]
+		}
+	]
+}

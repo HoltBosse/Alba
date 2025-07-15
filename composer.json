@@ -12,7 +12,7 @@
         "phpmailer/phpmailer": "^6.10",
         "erusev/parsedown": "^1.7",
         "holtbosse/db": "^1.0",
-        "holtbosse/form": "^1.0"
+        "holtbosse/form": "^1.2"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.1"

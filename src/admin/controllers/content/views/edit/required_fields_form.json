@@ -1,0 +1,91 @@
+{
+	"id": "required_content_fields",
+	"fields": [
+		{
+			"label":"Content Title",
+			"name":"title",
+			"id":"title",
+			"type":"Text",
+			"required":true,
+			"maxlength":255,
+			"coltype":"VARCHAR (255)"
+		},
+		{
+			"label":"URL Friendly",
+			"name":"alias",
+			"id":"alias",
+			"type":"Text",
+			"filter":"ALIAS",
+			"maxlength":255,
+			"description":"",
+			"coltype":"VARCHAR (255)"
+		},
+		{
+			"label":"Tags",
+			"name":"tags",
+			"id":"tags",
+			"type":"TagMultiple",
+			"required":false,
+			"filter":"ARRAYOFINT",
+			"coltype":"varchar (255)"
+		},
+		{
+			"name": "category",
+			"id": "category",
+			"type": "Category",
+			"content_type":1,
+			"label": "Category",
+			"filter": "NUMBER",
+			"default":0,
+			"coltype":"int default(0)",
+			"slimselect": true
+		},
+		{
+			"label":"Note",
+			"name":"note",
+			"id":"note",
+			"type":"Text",
+			"required":false,
+			"maxlength":255,
+			"description":"Not required, but may be useful.",
+			"default":"",
+			"coltype":"varchar (255)"
+		},
+		{
+			"name": "state",
+			"id": "state",
+			"type": "Select",
+			"label": "Content State",
+			"description": "Choose to show content or not globally.",
+			"filter": "NUMBER",
+			"default":1,
+			"select_options":[
+				{"value":1,"text":"Published"},
+				{"value":0,"text":"Unpublished"}
+			],
+			"coltype":"tinyint NOT NULL DEFAULT '1'"
+		},
+		{
+			"label":"Start",
+			"name":"start",
+			"id":"start",
+			"type":"Text",
+			"required":false,
+			"filter":"STRING",
+			"maxlength":255,
+			"input_type":"date",
+			"coltype":"timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP"
+		},
+		{
+			"label":"End",
+			"name":"end",
+			"id":"end",
+			"type":"Text",
+			"required":false,
+			"filter":"STRING",
+			"maxlength":255,
+			"input_type":"date",
+			"coltype":"timestamp NULL"
+		}
+	]
+}

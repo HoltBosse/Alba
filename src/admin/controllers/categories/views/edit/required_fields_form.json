@@ -1,0 +1,44 @@
+{
+	"id": "required_content_fields",
+	"fields": [
+		{
+			"label":"Category Title",
+			"name":"title",
+			"id":"title",
+			"type":"Text",
+			"required":true,
+			"maxlength":64
+		},
+		{
+			"label":"Content Type",
+			"name":"content_type",
+			"id":"content_type",
+			"type":"Text",
+			"required":true,
+			"filter":"NUMBER",
+			"default":1,
+			"attribute_list":"hidden"
+		},
+		{
+			"name": "parent",
+			"id": "parent",
+			"type": "Category",
+			"content_type":1,
+			"label": "Parent",
+			"filter": "NUMBER",
+			"default":0
+		},
+		{
+			"name": "state",
+			"id": "state",
+			"type": "Select",
+			"label": "Category State",
+			"filter": "NUMBER",
+			"default":1,
+			"select_options":[
+				{"value":1,"text":"Published"},
+				{"value":0,"text":"Unpublished"}
+			]
+		}
+	]
+}

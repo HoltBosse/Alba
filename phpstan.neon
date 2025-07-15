@@ -2,3 +2,5 @@ parameters:
 	level: 4
 	paths:
 		- src
+	ignoreErrors:
+		- '#Variable \$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]* might not be defined#'
