@@ -2,6 +2,7 @@
 namespace HoltBosse\Alba\Fields\Parsedown;
 
 Use HoltBosse\Form\Field;
+Use HoltBosse\Alba\Core\CMS;
 
 class Parsedown extends Field {
 	public $imageapi;
@@ -536,11 +537,11 @@ class Parsedown extends Field {
 		parent::loadFromConfig($config);
 		
 		$this->parsedownapi = $config->parsedownapi ?? "/api/parsedown";
-		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (defined("ADMINPATH") ? "/admin/images/uploadv2" : null);
+		$this->imageapi = property_exists($config, "imageapi") ? $config->imageapi : (CMS::Instance()->isAdmin() ? "/admin/images/uploadv2" : null);
 		/*
 			if the property exists, use it even if null(disabled)
 			else fallback to:
-				if in adminpath use admin image uploader
+				if in admin use admin image uploader
 				else null(disabled)
 		*/
 	}

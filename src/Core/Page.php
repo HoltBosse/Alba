@@ -33,7 +33,7 @@ class Page {
 		$this->content_type = null;
 		$this->view = null;
 		$this->view_configuration = false;
-		$this->page_options_form = new Form(realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json")); // cmspath + admin, as ADMINPATH not available on front-end
+		$this->page_options_form = new Form(realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json"));
 		$this->page_options = null;
 		$this->domain = $_SERVER["HTTP_HOST"];
 	}

@@ -114,13 +114,13 @@ class Content {
 				if ($this->id) {
 					// add id to alias to make unique for existing content item
 					$this->alias = $this->alias . "-" . $this->id;
-					if (defined("ADMINPATH")) {
+					if (CMS::Instance()->isAdmin()) {
 						CMS::Instance()->queue_message('Added content id as suffix to "URL Friendly" field to ensure uniqueness.','warning');
 					}
 				}
 				else {
 					$this->alias = $this->alias . "-" . uniqid();
-					if (defined("ADMINPATH")) {
+					if (CMS::Instance()->isAdmin()) {
 						CMS::Instance()->queue_message('Added random suffix to "URL Friendly" field to ensure uniqueness.','warning');
 					}
 				}

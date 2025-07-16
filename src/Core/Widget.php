@@ -76,7 +76,7 @@ class Widget {
 	}
 
 	public function render_edit() {
-		if (CMS::Instance()->user->is_member_of(1) && !defined("ADMINPATH")) { ?>
+		if (CMS::Instance()->user->is_member_of(1) && !CMS::Instance()->isAdmin()) { ?>
 			<div class='front_end_edit_wrap' >
 				<a style='' target="_blank" href='/admin/widgets/edit/<?php echo $this->id;?>'>EDIT &ldquo;<?= Input::stringHtmlSafe($this->title); ?>&rdquo;</a>
 			</div>
