@@ -182,14 +182,13 @@ class Component {
         //render the nav
         foreach($navigation as $label=>$config) {
             //setting this explicitly to null to solve the following warning spam: Undefined array key "$key" in $filepath
-            //todo[workaj]: fix admin config
-            //if (Access::can_access(Admin_Config::$access[$label] ?? null)) {
+            if (Access::can_access(Access::getAdminAccessRule($label) ?? null)) {
                 if($config["type"]=="addition_menu") {
                     Component::render_admin_nav_menu($config["menu"]);
                 } elseif($config["type"]=="addition_link") {
                     Component::render_admin_nav_link($config["link"]);
                 }
-            //}
+            }
         }
     }
 

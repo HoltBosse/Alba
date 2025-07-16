@@ -684,14 +684,13 @@ final class CMS {
 		} else {
 			if ($this->isAdmin()) {
 				//check the users access rights
-				//todo[workaj]: fix admin config access
-				/*if (!Access::can_access(Admin_Config::$access[$this->uri_segments[0]])) {
+				if (!Access::can_access(Access::getAdminAccessRule($this->uri_segments[0] ?? ""))) {
 					if(CMS::Instance()->user && CMS::Instance()->user->groups && (CMS::Instance()->user->is_member_of(1) || CMS::Instance()->user->is_member_of(2))) {
 						$this->queue_message('You do not have access to this page','danger', $_ENV["uripath"] . "/admin");
 					} else {
 						$this->queue_message('You do not have access to this page','danger', $_ENV["uripath"] . "/");
 					}
-				}*/
+				}
 
 				ob_start();
 				$template = $this->get_admin_template();
