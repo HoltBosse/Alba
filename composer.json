@@ -8,6 +8,7 @@
             "HoltBosse\\Alba\\": "src/"
         }
     },
+    "bin": ["bin/alba"],
     "require": {
         "phpmailer/phpmailer": "^6.10",
         "erusev/parsedown": "^1.7",
