@@ -36,6 +36,10 @@ final class CMS {
 		"js"=>__DIR__ . "/../corecontrollers/js",
 	];
 
+	private static $adminControllersRegistry = [
+		//loaded in __construct()
+	];
+
 	private static $fakeFilesRegistry = [
 		"sitemap.xml"=>__DIR__ . "/../fakefiles/sitemap.xml.php",
 	];
@@ -73,6 +77,28 @@ final class CMS {
 			return self::$coreControllersRegistry[$controllerName];
 		}
 		return null;
+	}
+
+	public static function registerAdminController(string $controllerName, string $controllerPath): bool {
+		if (!isset(self::$adminControllersRegistry[$controllerName])) {
+			self::$adminControllersRegistry[$controllerName] = $controllerPath;
+
+			return true;
+		}
+		return false;
+	}
+
+	public static function registerAdminControllerOverride(string $controllerName, string $controllerPath): void {
+		self::$adminControllersRegistry[$controllerName] = $controllerPath;
+	}
+
+	public static function registerAdminControllerDir(string $adminControllerDirPath): void {
+		foreach(glob($adminControllerDirPath . '/*') as $file) {
+			CMS::registerAdminController(
+				basename($file, '.php'),
+				$file
+			);
+		}
 	}
 
 	public static function registerFakeFile(string $fileName, string $filePath): bool {
@@ -310,6 +336,9 @@ final class CMS {
 			$this->need_session=false; // don't need session for image api
 		}
 
+		//load admin controllers
+		CMS::registerAdminControllerDir(__DIR__ . "/../admin/controllers");
+
 		//load Form Fields
 		$formPackageFormFields = [
 			"Antispam", "Checkbox", "Honeypot", "Html", "Text", "Select", "Textarea"
@@ -515,7 +544,7 @@ final class CMS {
 		if ($controllerName) {
 			ob_start();
 				if($this->isAdmin()) {
-					include_once(__DIR__ . "/../admin/controllers/" . $controllerName . "/controller.php");
+					include_once(self::$adminControllersRegistry[$controllerName] . "/controller.php");
 				} else {
 					include_once(Content::getContentControllerPath($controllerName) . "/controller.php");
 				}
