@@ -176,37 +176,6 @@ class Component {
     }
 
     public static function render_admin_nav($navigation, $enable_overrides=true) {
-        //apply overrides from admin config if applicable
-        if($enable_overrides) {
-            // @phpstan-ignore-next-line
-            $overrides = property_exists('Admin_Config',"navigation") ? Admin_Config::$navigation : [];
-            $addons = [];
-
-            foreach($overrides as $label=>$override) {
-                switch ($override["type"]) {
-                    case "disable":
-                        unset($navigation[$label]);
-                        break;
-                    case "override_menu":
-                        $override["type"] = "addition_menu";
-                        $navigation[$label] = $override;
-                        break;
-                    case "override_link":
-                        $override["type"] = "addition_link";
-                        $navigation[$label] = $override;
-                        break;
-                    case "addition_menu":
-                        $addons[$label] = $override;
-                        break;
-                    case "addition_link":
-                        $addons[$label] = $override;
-                        break;
-                }
-            }
-
-            $navigation = array_merge($navigation, $addons);
-        }
-
         //plugin hook if the config isnt powerful enough
         $navigation = Hook::execute_hook_filters('render_admin_nav', $navigation);
 

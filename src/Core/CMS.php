@@ -809,7 +809,6 @@ final class CMS {
 
 				// create full page cache if needed
 				// only if no messages in queue and user is not logged in and not a core controller and not debugging currently
-				//todo[workaj]: fix caching
 				// @phpstan-ignore-next-line
 				if ( $_ENV["debugwarnings"]!=="true" && $_ENV["debug"]!=="true" && $_ENV["cache_enabled"]==="true" && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
