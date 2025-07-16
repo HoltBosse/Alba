@@ -10,17 +10,18 @@ class Cache {
     }
 
     public function ignore($request, $type=null) {
-        // @phpstan-ignore-next-line
-        foreach (Config::$caching['ignore'] as $partial_path) {
-            if (strpos($request, $partial_path)===0) {
-                // ignore
-                if ($type==='url') {
-                    // output nice message for full URL cache situation
-                    echo "<!-- Alba cache IGNORE -->\n";
+        if(isset($_ENV["cache_ignore"])) {
+            foreach (explode(",", $_ENV["cache_ignore"]) as $partial_path) {
+                if (strpos($request, $partial_path)===0) {
+                    // ignore
+                    if ($type==='url') {
+                        // output nice message for full URL cache situation
+                        echo "<!-- Alba cache IGNORE -->\n";
+                    }
+                    return true;
                 }
-                return true;
             }
-        } 
+        }
     }
 
     private function gen_cache_filename($identifier, $type) {
@@ -44,8 +45,11 @@ class Cache {
         if (file_exists($fullpath)) {
             $curtime = time();
             $filetime = filemtime($fullpath);
-            // @phpstan-ignore-next-line
-            $file_stale_time = $filetime + (Config::$caching['time'] * 60);
+            $config_time = 30;
+            if(isset($_ENV["cache_time"]) && is_numeric($_ENV["cache_time"])) {
+                $config_time = (double) $_ENV["cache_time"];
+            }
+            $file_stale_time = $filetime + ($config_time * 60);
             // @phpstan-ignore-next-line
             if ($filetime && is_numeric($file_stale_time)) {
                 if ($file_stale_time > $curtime) {
