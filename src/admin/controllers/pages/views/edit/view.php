@@ -244,6 +244,12 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 				//include_once (CMSPATH . "/controllers/" . $content_loc . "/views/" . $view_loc . "/options.php");
 				// NEW uses json forms
 				$options_form_filepath = Content::getContentControllerPath($content_loc) . "/views/" . $view_loc . "/options_form.json";
+				if(!file_exists($options_form_filepath)) {
+					$template = new Template((int) $page->template_id);
+					$templatepath = Template::getTemplatePath($template->folder);
+					$controller_folder = DB::fetch("SELECT * FROM content_types WHERE id=?", (int) $page->content_type)->controller_location;
+					$options_form_filepath = $templatepath . "/overrides/" . $controller_folder . "/" . $view_loc . "/options_form.json";
+				}
 				if (is_file($options_form_filepath)) {
 					$options_form = new Form($options_form_filepath);
 					// set options form values from json stored in view_configuration

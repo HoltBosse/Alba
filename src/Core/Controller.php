@@ -22,7 +22,7 @@ class Controller {
 		$template_folder = $CMS->page->template->folder;
 		$controller_folder = $CMS->page->controller;
         if(!CMS::Instance()->isAdmin()) {
-            $controller_path = Template::getTemplatePath($controller_folder);
+            $controller_path = Template::getTemplatePath($template_folder);
             $potential_override_model = $controller_path . "/overrides/" . $controller_folder . "/" . $this->view . "/model.php";
             $potential_override_view = $controller_path . "/overrides/" . $controller_folder . "/" . $this->view . "/view.php";
         }
@@ -33,15 +33,17 @@ class Controller {
 		} else {
 			// no override model/view, load default
 			$view_path = $this->path . "/views/" . $this->view;
-			//CMS::pprint_r ($view_path);
-			if (file_exists ($view_path)) {
-				if (is_dir($view_path)) {
-					// TODO: check for included files existing too
-					require ($view_path . "/model.php");
-					require ($view_path . "/view.php");
-				}
+			
+			if(!file_exists($view_path) && !CMS::Instance()->isAdmin()) {
+				$controller_path = Template::getTemplatePath($template_folder);
+				$view_path = $controller_path . "/overrides/" . $controller_folder . "/" . $this->view;
 			}
-			else {
+
+			if (file_exists ($view_path) && is_dir($view_path)) {
+				// TODO: check for included files existing too
+				require ($view_path . "/model.php");
+				require ($view_path . "/view.php");
+			} else {
 				throw new Exception("View folder {$this->view} doesn't exist for controller at " . $this->path);
 			}
 		}

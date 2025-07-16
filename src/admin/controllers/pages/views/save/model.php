@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Content, Page};
+Use HoltBosse\Alba\Core\{CMS, Content, Page, Template};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
 
@@ -53,7 +53,14 @@ die;
 if ($page->content_type && $page->view) {
 	$content_loc = Content::get_content_location($page->content_type);
 	$view_loc = Content::get_view_location($page->view);
-	$options_form = new Form(Content::getContentControllerPath($content_loc) . "/views/" . $view_loc . "/options_form.json");
+	$options_json_filepath = Content::getContentControllerPath($content_loc) . "/views/" . $view_loc . "/options_form.json";
+	if(!file_exists($options_json_filepath)) {
+		$template = new Template((int) $page->template_id);
+		$templatepath = Template::getTemplatePath($template->folder);
+		$controller_folder = DB::fetch("SELECT * FROM content_types WHERE id=?", (int) $page->content_type)->controller_location;
+		$options_json_filepath = $templatepath . "/overrides/" . $controller_folder . "/" . $view_loc . "/options_form.json";
+	}
+	$options_form = new Form($options_json_filepath);
 	$options_form->setFromSubmit();
 	$is_valid = $options_form->validate();
 	if (!$is_valid) {
