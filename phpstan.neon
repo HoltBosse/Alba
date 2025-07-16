@@ -2,5 +2,6 @@ parameters:
 	level: 4
 	paths:
 		- src
+		- bin
 	ignoreErrors:
 		- '#Variable \$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]* might not be defined#'
