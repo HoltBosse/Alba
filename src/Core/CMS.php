@@ -59,6 +59,15 @@ final class CMS {
 		return false;
 	}
 
+	public static function registerCoreControllerDir(string $coreControllerDirPath): void {
+		foreach(glob($coreControllerDirPath . '/*') as $file) {
+			CMS::registerCoreController(
+				basename($file, '.php'),
+				$file
+			);
+		}
+	}
+
 	public static function getCoreControllerPath(string $controllerName): ?string {
 		if (isset(self::$coreControllersRegistry[$controllerName])) {
 			return self::$coreControllersRegistry[$controllerName];

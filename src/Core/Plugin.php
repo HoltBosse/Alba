@@ -61,6 +61,16 @@ class Plugin {
 		return false;
 	}
 
+	public static function registerPluginDir(string $pluginDirPath, string $pluginClassBase): void {
+		foreach(glob($pluginDirPath . '/*') as $file) {
+			Plugin::registerPlugin(
+				basename($file, '.php'),
+				$file,
+				$pluginClassBase . basename($file, '.php') . "\\" . basename($file, '.php')
+			);
+		}
+	}
+
 	public static function getPluginPath(string $pluginName): ?string {
 		if (isset(self::$pluginRegistry[$pluginName])) {
 			return realpath(self::$pluginRegistry[$pluginName]['path']);

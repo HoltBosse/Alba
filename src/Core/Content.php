@@ -57,6 +57,15 @@ class Content {
 		return false;
 	}
 
+	public static function registerContentControllerDir(string $contentControllerDirPath): void {
+		foreach(glob($contentControllerDirPath . '/*') as $file) {
+			Content::registerContentController(
+				basename($file, '.php'),
+				$file
+			);
+		}
+	}
+
 	public static function getContentControllerPath(string $contentName): ?string {
 		if (isset(self::$controllerRegistry[$contentName])) {
 			return realpath(self::$controllerRegistry[$contentName]);

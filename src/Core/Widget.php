@@ -45,6 +45,16 @@ class Widget {
 		return false;
 	}
 
+	public static function registerWidgetDir(string $widgetDirPath, string $widgetClassBase): void {
+		foreach(glob($widgetDirPath . '/*') as $file) {
+			Widget::registerWidget(
+				basename($file, '.php'),
+				$file,
+				$widgetClassBase . basename($file, '.php') . "\\" . basename($file, '.php')
+			);
+		}
+	}
+
 	public static function getWidgetPath(string $widgetName): ?string {
 		if (isset(self::$widgetRegistry[$widgetName])) {
 			return realpath(self::$widgetRegistry[$widgetName]['path']);

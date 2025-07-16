@@ -50,6 +50,15 @@ class Template {
 		return false;
 	}
 
+	public static function registerTemplateDir(string $templateDirPath): void {
+		foreach(glob($templateDirPath . '/*') as $file) {
+			Template::registerTemplate(
+				basename($file, '.php'),
+				$file
+			);
+		}
+	}
+
 	public static function getTemplatePath(string $templateName, bool $adminTemplate=false): ?string {
 		if ($adminTemplate) {
 			if (isset(self::$adminTemplateRegistry[$templateName])) {
