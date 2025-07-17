@@ -7,12 +7,11 @@ A PHP/MySQL based Content Management System. Designed with developer flexibility
 * PHP 8.0 + (with mod_rewrite)
 * MySQL/MariaDB 5.0+
 
-Native PHP zip + 'fopen' PHP function availablity required for automatic updates.
-
 ## Installation
-1. Download .zip and extract into working directory
-2. run `composer install`
-3. Follow prompts in terminal
+1. create project with composer
+2. require this package and install
+3. run `./vendor/bin/alba`
+4. Follow prompts in terminal
 
 That's it, now browse to /admin to start. See [wiki](https://github.com/HoltBosse/Alba/wiki) for more info.
 
@@ -20,7 +19,7 @@ That's it, now browse to /admin to start. See [wiki](https://github.com/HoltBoss
 
 ### PHPSTAN test command
 
-`composer albatest`
+`./vendor/bin/phpstan`
 
 ### Biomejs testing
 

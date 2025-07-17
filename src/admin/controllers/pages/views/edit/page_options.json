@@ -1,0 +1,68 @@
+{
+	"id":"page_options",
+	"fields":[
+		{
+			"type":"Html",
+			"html":"<h4 class='title is-4 is-heading'>Access</h4>",
+			"save": false
+		},
+		{
+			"type":"UserGroupsMultiple",
+			"id":"access",
+			"name":"access",
+			"label":"Limit Access To",
+			"default":"",
+			"filter":"ARRAYOFINT"
+		},
+		{
+			"type":"Html",
+			"html":"<h4 class='title is-4 is-heading'>SEO / Social</h4><p>If the page content is a collection or has no SEO/Opengraph entries of its own, then these values will be used. It's best to set them here just to be safe.</p><br>",
+			"save": false
+		},
+		{
+			"name":"og_description",
+			"id":"og_description",
+			"type":"Textarea",
+			"label":"Opengraph / Search Engine Description",
+			"required":false,
+			"default":"",
+			"description":"Description used for social sharing and SEO.",
+			"maxlength":1024,
+			"minlength":3,
+			"filter":"STRING"
+		},
+		{
+			"name":"seo_keywords",
+			"id":"seo_keywords",
+			"type":"Textarea",
+			"label":"SEO Keywords",
+			"required":false,
+			"default":"",
+			"description":"Keywords and phrases used for SEO - separate entries with a comma.",
+			"maxlength":255,
+			"minlength":3,
+			"filter":"STRING"
+		},
+		{
+			"name":"og_title",
+			"id":"og_title",
+			"type":"Text",
+			"label":"Opengraph Title",
+			"required":false,
+			"default":"",
+			"description":"Used for social sharing - leave blank to use page title",
+			"maxlength":255,
+			"minlength":3,
+			"filter":"STRING"
+		},
+		{
+			"name": "og_image",
+			"id": "og_image",
+			"type": "Image",
+			"label": "Opengraph Image",
+			"required": false,
+			"description": "Image used for social sharing",
+			"filter": "NUM"
+		}
+	]
+}

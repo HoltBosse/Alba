@@ -1,0 +1,316 @@
+#!/usr/bin/env php
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if(php_sapi_name()!=="cli") {
+    echo "NOT RUNNING IN CLI, QUITING!!!\n";
+    die;
+}
+
+//autoloader
+include($_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php');
+
+Use Symfony\Component\Dotenv\Dotenv;
+Use HoltBosse\DB\DB;
+
+echo "Alba Project Creator \n";
+
+$installPath = readline("Enter project root or [" . getcwd() . "] for default: ");
+
+if($installPath==="") {
+    $installPath = getcwd();
+}
+
+if(!file_exists($installPath)) {
+    echo "invalid path [$installPath] - exiting!!!";
+    die;
+}
+
+echo "\n";
+
+if(file_exists($installPath . "/../.env")) {
+    $envPath = realpath($installPath . "/../.env");
+
+    echo "found .env: $envPath\n";
+    echo "loading... \n";
+
+    try {
+        $dotenv = new Dotenv();
+        $dotenv->load($envPath);
+    } catch (Exception $e) {
+        echo $e->getMessage() . "\n";
+        die;
+    }
+
+    echo "Loaded .env \n";
+} else {
+    $env = [
+        "dbhost" => 'localhost',
+        "dbname" => null,
+        "dbuser" => null,
+        "dbpass" => null,
+        "dbchar" => 'utf8mb4',
+        "sitename" => null,
+        "uripath" => "",
+        "debug" => "false",
+        "debugwarnings" => "false",
+        "domain" => 'auto',
+        "admintemplate" => 'clean',
+        "frontendlogin" => "false",
+        "dev_banner" => "false",
+    ];
+
+    echo "starting env creation \n";
+
+    foreach($env as $k => $v) {
+        $default = "";
+        if($v!==null) {
+            $nicev = $v;
+
+            if($v==="") {
+                $nicev = "empty";
+            }
+
+            $default = " [$nicev] for default";
+        }
+
+        $input = readline("Enter configuration option '$k'$default: ");
+
+        if($input==="") {
+            $env[$k] = $v;
+        } elseif(str_contains($input ?? "", " ")) {
+            $env[$k] = "\"$input\"";
+        } else {
+            $env[$k] = $input;
+        }
+    }
+
+    echo "\n";
+    echo "writing .env \n";
+
+    $envPath = realpath($installPath . "/..") . "/.env";
+    
+    $fileData = "";
+
+    foreach($env as $k=>$v) {
+        $fileData = $fileData . "$k=$v" . PHP_EOL;
+    }
+
+    file_put_contents($envPath, $fileData);
+
+    echo "attempting to load .env \n";
+
+    try {
+        $dotenv = new Dotenv();
+        $dotenv->load($envPath);
+    } catch (Exception $e) {
+        echo $e->getMessage() . "\n";
+        die;
+    }
+
+    echo "completed & loaded env \n";
+}
+
+echo "\n";
+
+echo "checking db connection \n";
+
+$dsn = "mysql:host=" . $_ENV["dbhost"] . ";dbname=" . $_ENV["dbname"] . ";charset=" . $_ENV["dbchar"];
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+try {
+    $pdo = new PDO($dsn, $_ENV["dbuser"], $_ENV["dbpass"], $options);
+} catch (\PDOException $e) {
+    echo $e->getMessage() . "\n";
+    die;
+}
+
+echo "check passsed \n";
+
+echo "\n";
+
+echo "connecting to database \n";
+
+DB::createInstance(
+    "mysql:host=" . $_ENV["dbhost"] .";dbname=" . $_ENV["dbname"] .";charset=" . $_ENV["dbchar"],
+    $_ENV["dbuser"],
+    $_ENV["dbpass"]
+);
+
+echo "connected \n";
+
+echo "\n";
+
+$sqlFiles = glob(__DIR__ . "/sql/mariadb/*.sql");
+foreach($sqlFiles as $file) {
+    $tableName = explode(".", basename($file))[0];
+
+    $tableStatus = DB::fetch("SELECT count(*) AS c FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?", [$tableName, $_ENV["dbname"]])->c;
+
+    if($tableStatus) {
+        echo "table $tableName is already installed, skipping \n";
+    } else {
+        echo "installing $tableName\n";
+        DB::exec(file_get_contents($file));
+        echo "installed \n";
+    }
+}
+
+echo "table install done \n";
+
+echo "\n";
+
+if(DB::fetch("SELECT count(*) AS c FROM groups")->c == 0) {
+    DB::exec("INSERT INTO `groups` (value, display) VALUES ('admin','Administrators')");
+    DB::exec("INSERT INTO `groups` (value, display) VALUES ('editor','Contributors')");
+    echo "groups installed \n";
+} else {
+    echo "groups already installed\n";
+}
+
+if(DB::fetch("SELECT count(*) AS c FROM templates")->c == 0) {
+    DB::exec("INSERT INTO templates (is_default, title, folder, description) VALUES (1,'basic','basic','A very simple template to get you started.')");
+    echo "templates installed\n";
+} else {
+    echo "templates already installed\n";
+}
+
+if(DB::fetch("SELECT count(*) AS c FROM content_types")->c == 0) {
+    DB::exec("INSERT INTO content_types (title, controller_location, description, state) VALUES ('Basic Article','basic_article','A simple HTML content item with a WYSIWYG editor.',1)");
+    echo "content_types installed\n";
+} else {
+    echo "content_types already installed\n";
+}
+
+if(DB::fetch("SELECT count(*) AS c FROM content_views")->c == 0) {
+    DB::exec("INSERT INTO content_views (content_type_id, title, location) VALUES (1,'Single Article','single')");
+    DB::exec("INSERT INTO content_views (content_type_id, title, location) VALUES (1,'Blog','blog')");
+    echo "content_views installed\n";
+} else {
+    echo "content_views already installed\n";
+}
+
+if(DB::fetch("SELECT count(*) AS c FROM pages")->c == 0) {
+    DB::exec(
+        "INSERT INTO pages (title, alias, content_type, parent, template, page_options) VALUES (?,?,?,?,?,?)",
+        [
+            "My Home Page",
+            "home",
+            -1,
+            -1,
+            0,
+            ""
+        ]
+    );
+
+    echo "home page created\n";
+} else {
+    echo "pages already exist\n";
+}
+
+echo "\n";
+
+if(DB::fetch("SELECT count(*) as c FROM users")->c == 0) {
+    $user = [
+        "username"=>null,
+        "email"=>null,
+        "password"=>null,
+    ];
+
+    echo "Admin User Configurator \n";
+
+    foreach($user as $k=>$v) {
+        $user[$k] = readline("Enter [$k]: ");
+    }
+
+    $hash = password_hash($user["password"], PASSWORD_DEFAULT);
+	DB::exec(
+        "INSERT INTO users (username, email, password, state) VALUES (?,?,?,1)",
+        [
+            $user["username"],
+            $user["email"],
+            $hash,
+        ]
+    );
+
+    $userId = DB::getLastInsertedId();
+    $adminGroupId = DB::fetch("SELECT id FROM `groups` WHERE value='admin'")->id;
+
+    DB::exec(
+        "INSERT INTO user_groups (user_id, group_id) VALUES (?,?)",
+        [
+            $userId,
+            $adminGroupId,
+        ]
+    );
+
+    echo "inserted user\n";
+} else {
+    echo "user already added to database \n";
+}
+
+echo "\n";
+
+if(!file_exists($installPath . "/index.php")) {
+    file_put_contents($installPath . "/index.php", file_get_contents(__DIR__ . "/datafiles/index.php"));
+
+    echo "created index.php \n";
+    echo "\n";
+}
+
+if(!file_exists($installPath . "/images")) {
+    mkdir($installPath . "/images");
+    mkdir($installPath . "/images/processed");
+
+    echo "created images directory \n";
+    echo "\n";
+}
+
+if(!file_exists($installPath . "/.htaccess")) {
+    file_put_contents($installPath . "/.htaccess", file_get_contents(__DIR__ . "/datafiles/.htaccess"));
+
+    echo "created .htaccess \n";
+    echo "\n";
+}
+
+if(!file_exists($installPath . "/src/controllers")) {
+    mkdir($installPath . "/src/controllers");
+
+    echo "created controllers directory in src \n";
+    echo "\n";
+}
+
+if(!file_exists($installPath . "/src/corecontrollers")) {
+    mkdir($installPath . "/src/corecontrollers");
+
+    echo "created corecontrollers directory in src \n";
+    echo "\n";
+}
+
+if(!file_exists($installPath . "/src/Plugins")) {
+    mkdir($installPath . "/src/Plugins");
+
+    echo "created plugins directory in src \n";
+    echo "\n";
+}
+
+if(!file_exists($installPath . "/src/templatess")) {
+    mkdir($installPath . "/src/templates");
+
+    echo "created templates directory in src \n";
+    echo "\n";
+}
+
+if(!file_exists($installPath . "/src/Widgets")) {
+    mkdir($installPath . "/src/Widgets");
+
+    echo "created Widgets directory in src \n";
+    echo "\n";
+}
+
+echo "installer completed \n";
