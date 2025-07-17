@@ -9,7 +9,7 @@
     ::-webkit-resizer { background-color: rgb(255 255 255 / 20%);}
 
     /* slimselect */
-    .ss-main .ss-multi-selected, .ss-main .ss-single-selected, .ss-content, .ss-search input, .ss-option, .ss-main {
+    .ss-main .ss-multi-selected, .ss-main .ss-single-selected, .ss-content, .ss-search input, .ss-option:not(.ss-selected), .ss-main {
         background-color: var(--bulma-body-background-color) !important;
         color: var(--bulma-body-color) !important;
     }
