@@ -25,7 +25,7 @@
 			"description":"Used for SEO purposes.",
 			"maxlength":255,
 			"minlength":0,
-			"filter":"STRING",
+			"filter":"RAW",
 			"default":""
 		},
 		{
