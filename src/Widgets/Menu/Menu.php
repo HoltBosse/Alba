@@ -42,7 +42,7 @@ class Menu extends Widget {
 							<?php for ($n=0; $n<$page->depth; $n++) {
 								echo "&nbsp;-&nbsp;";
 							}
-							echo "<span class='page_title'>" . $page->title . "</span>"; ?>
+							echo "<span class='page_title'>" . Input::stringHtmlSafe($page->title) . "</span>"; ?>
 						</label>
 					<?php endforeach; ?>
 					<button type='button' class='button btn is-success' id='menu_desiger_add_pages'>Add</button>
@@ -124,7 +124,9 @@ class Menu extends Widget {
 		<?php } ?>
 		</script>
 
-		<script src='<?php echo $_ENV["uripath"];?>/admin/js/menu_widget_admin.js'></script>
+		<script>
+			<?php echo file_get_contents(__DIR__ . "/menu_widget_admin.js"); ?>
+		</script>
 		<?php
 	}
 
