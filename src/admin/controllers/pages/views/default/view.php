@@ -80,11 +80,12 @@ Use HoltBosse\Form\{Input};
 						$pageInstance = new Page();
 						$pageInstance->load_from_id($page->id);
 						$url = $pageInstance->get_url();
+						$displayUrl = $url;
 						if($page->domain!=$_SERVER["HTTP_HOST"]) {
 							$url = "https://" . $page->domain . $url;
 						}
 					?>
-					<a style="color: var(--bulma-table-color);" target="_blank" class='unimportant' href="<?php echo $url; ?>"><?php echo $page->alias; ?></a>
+					<a style="color: var(--bulma-table-color);" target="_blank" class='unimportant' href="<?php echo $url; ?>"><?php echo $displayUrl; ?></a>
 				</td>
 				
 				<td class='unimportant'>
