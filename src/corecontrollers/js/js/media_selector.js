@@ -120,7 +120,7 @@ export function openMediaSelector(elementId, imagesPerPage, mimetypes, tags, lis
     });
 
     // search handler
-    mediaSelector.querySelector('#trigger_media_selector_search').addEventListener('click', (e) => {
+    mediaSelector.querySelector('#trigger_media_selector_search').addEventListener('click', () => {
         const searchtext = mediaSelector.querySelector('#media_selector_modal_search').value;
         curMediaPage = 1;
         curMediaSearchtext = searchtext ?? null;
@@ -148,7 +148,7 @@ export function openMediaSelector(elementId, imagesPerPage, mimetypes, tags, lis
     });
     
     // handle clear
-    mediaSelector.querySelector('#clear_media_selector_search').addEventListener('click', (e) => {
+    mediaSelector.querySelector('#clear_media_selector_search').addEventListener('click', () => {
         mediaSelector.querySelector('#media_selector_modal_search').value = "";
         curMediaSearchtext = null;
         curMediaPage = 1;
@@ -156,12 +156,12 @@ export function openMediaSelector(elementId, imagesPerPage, mimetypes, tags, lis
     });
     
     // handle pages
-    mediaSelector.querySelector('#next_page').addEventListener('click', (e) => {
+    mediaSelector.querySelector('#next_page').addEventListener('click', () => {
         curMediaPage++;
         fetchImages(curMediaSearchtext, curMediaPage, imagesPerPage, mimetypes, listingEndpoint, tags, mediaSelector); // updated to include current page
     });
     
-    mediaSelector.querySelector('#prev_page').addEventListener('click', (e) => {
+    mediaSelector.querySelector('#prev_page').addEventListener('click', () => {
         curMediaPage--;
         if (curMediaPage == 0) {
             curMediaPage = 1;

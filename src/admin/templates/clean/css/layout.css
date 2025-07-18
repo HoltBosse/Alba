@@ -225,7 +225,7 @@ div.field.hidden {
 			}
 			.tree_field_node_drop {
 				display:inline-block;
-				color:white;
+				/* color:white; */
 				margin:0.5rem; 
 				padding:0.5rem; 
 				/* background:#bdb;  */
@@ -235,7 +235,7 @@ div.field.hidden {
 			}
 			.before_after_node_drop {
 				display:inline-block;
-				color:white;
+				/* color:white; */
 				margin:0.5rem; 
 				padding:0.5rem; 
 				/* background:#edb;  */
@@ -373,7 +373,7 @@ select[data-ssid] {
 div:has(> .autogrowingtextarea) {
 	display: inline-grid;
 	vertical-align: top;
-	align-items: center;
+	/* align-items: center; */
 	position: relative;
 	width: 100%;
 	align-items: stretch;

@@ -190,6 +190,7 @@ function crop_image() {
 	}
 }
 
+// biome-ignore lint: not solving now
 function rename_image_action() {
 	// called by onclick of update button in modal
 	const selected = get_selected();

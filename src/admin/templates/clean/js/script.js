@@ -52,11 +52,12 @@ auto_filters.forEach(auto_filter => {
 });
 
 /* TOGGLE ADMIN PANELS */
-
+// biome-ignore lint: not solving now
 function hide(el) {
 	el.style.display = "none";
 }
 
+// biome-ignore lint: not solving now
 function show(el, value) {
 	el.style.display = value;
 }
@@ -103,6 +104,7 @@ function getTabIndex(el) {
 	return [...el.parentElement.children].indexOf(el);	
 }
 
+// biome-ignore lint: not solving now
 function deactivateAllTabs() {
 	alltabs = document.querySelectorAll('.tabs li, .tab-content')
 	alltabs.forEach((tab) => {
@@ -174,7 +176,7 @@ lazyTargets.forEach(lazyload);
 
 const hamburger = document.querySelector("a.navbar-burger.burger");
 if(hamburger) {
-	hamburger.addEventListener("click", (e)=>{
+	hamburger.addEventListener("click", ()=>{
 		document.getElementById("navbarBasicExample").classList.toggle("active");
 	});
 }
