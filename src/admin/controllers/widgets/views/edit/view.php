@@ -43,6 +43,10 @@ $widget->render_custom_backend();
 	<?php $position_options_form->display(); ?>
 </div>
 
+<script>
+	<?php echo file_get_contents(__DIR__ . "/script.js"); ?>
+</script>
+
 <hr>
 <?php Component::create_fixed_control_bar(); ?>
 </form>

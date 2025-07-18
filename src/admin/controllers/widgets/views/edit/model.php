@@ -49,10 +49,63 @@ if ($required_details_form->isSubmitted()) {
 	$widget_options_form->setFromSubmit();
 	$position_options_form->setFromSubmit();
 
-	/* CMS::pprint_r ($_POST);
-	CMS::pprint_r ($position_options_form);
-	exit(0); */
+	$pageSelectorType = $position_options_form->getFieldByName("position_control")->default;
+	$pageFilters = $position_options_form->getFieldByName("position_pages")->default;
+	$templatePosition = $position_options_form->getFieldByName("global_position")->default;
 
+	//assume 0 by default
+	$pagesToCheck = $pageFilters;
+	if($pageSelectorType==1) {
+		$allPages = array_column(Page::get_all_pages(), "id");
+
+		$pagesToCheck = array_filter($allPages, function($input) use ($pageFilters) {
+			if(in_array($input, $pageFilters)) {
+				return false;
+			}
+
+			return true;
+		});
+	} elseif($pageSelectorType!=0) {
+		//2 or any other future option, do nothing
+		$pagesToCheck = [];
+	}
+
+	//we can get null back....
+	$pagesToCheck = array_filter($pagesToCheck, function($input) {
+		if(!is_numeric($input)) {
+			return false;
+		}
+
+		return true;
+	});
+
+	$pagesToCheck = array_values($pagesToCheck); //reindex
+
+	if(sizeof($pagesToCheck)>0) {
+		$pagesToCheckSqlString = implode(",", $pagesToCheck);
+
+		$params = [];
+		$widgetOverrideCheck = "";
+		if(is_numeric($widget->id)) {
+			$widgetOverrideCheck = " AND NOT FIND_IN_SET(?, widgets)";
+			$params[] = $widget->id;
+		}
+
+		$hasOverrides = DB::fetchAll(
+			"SELECT *
+			FROM page_widget_overrides
+			WHERE page_id IN ($pagesToCheckSqlString)
+			AND widgets IS NOT NULL
+			AND widgets !=''
+			$widgetOverrideCheck",
+			$params
+		);
+
+		if(sizeof($hasOverrides)>0) {
+			CMS::Instance()->queue_message('One or more of the selected pages and position has widget overrides, not adding on those page(s)!','warning',);	
+		}
+	}
+	
 	// validate
 	if ($required_details_form->validate() && $widget_options_form->validate() && $position_options_form->validate()) {
 		// forms are valid, save info

@@ -80,7 +80,7 @@ class Page {
 		$parent=$id;
 		$depth = 0;
 		while (!$parent_root) {
-			$result = DB::fetch("select parent,alias from pages where id=?", [$parent]);
+			$result = DB::fetch("SELECT parent,alias FROM pages WHERE id=?", [$parent]);
 			$parent = $result->parent;
 			$depth++;
 			if ($parent=="-1") {
@@ -92,7 +92,7 @@ class Page {
 
 	// $pdo->prepare($sql)->execute([$name, $id]);
 	public static function get_all_pages() {
-		$result = DB::fetchAll("select * from pages where state>-1");
+		$result = DB::fetchAll("SELECT * FROM pages WHERE state>-1");
 		return $result;
 	}
 
