@@ -299,7 +299,7 @@ if(!file_exists($installPath . "/src/Plugins")) {
     echo "\n";
 }
 
-if(!file_exists($installPath . "/src/templatess")) {
+if(!file_exists($installPath . "/src/templates")) {
     mkdir($installPath . "/src/templates");
 
     echo "created templates directory in src \n";
