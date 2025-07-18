@@ -6,13 +6,12 @@
 			"id": "position_control",
 			"type": "Select",
 			"label": "Position Control",
-			"description": "Per-page option will ignore any position or pages previously set in this section.",
 			"filter": "NUMBER",
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"On all pages except"},
 				{"value":0,"text":"Only on these pages"},
-				{"value":2,"text":"Choose position per-page"}
+				{"value":2,"text":"Page widget overrides only"}
 			]
 		},
 		{
@@ -30,7 +29,16 @@
 			"label": "Template Position",
 			"required":true,
 			"filter": "STRING",
-			"default":""
+			"default":"",
+			"logic":[
+				[
+					{
+						"field": "position_control",
+						"test": "!=",
+						"value": 2
+					}
+				]
+			]
 		}
 	]
 }
