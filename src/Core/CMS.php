@@ -140,6 +140,10 @@ final class CMS {
 		ob_end_clean ();ob_end_clean ();
 		// check if we need to redirect this page
 		$relative_url = rtrim(CMS::Instance()->request, '/');
+		if(CMS::Instance()->isAdmin()) {
+			$relative_url = "/admin" . $relative_url;
+		}
+
 		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=? AND domain=?", [$relative_url, $_SERVER["HTTP_HOST"]]);
 		if ($valid_redirect) {
 			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
