@@ -254,6 +254,16 @@ function toggle_override(e) {
 // handle other clicks such as tag delete, override toggle etc
 document.getElementById('template_layout_container').addEventListener('click',(e)=> {
     if (e.target.classList.contains('addoverride')) {
+        console.log(e.target);
+        window.cur_position_tag_wrap = e.target.parentNode.querySelector('.override_tags_wrap');
+        console.log(window.cur_position_tag_wrap);
+
+        e.target.parentNode.querySelectorAll('.position_tag_wrap').forEach((el)=>{
+            el.querySelectorAll("[data-widgetid]").forEach((widget)=>{
+                add_widget_to_override_list (widget.dataset.widgetid, widget.querySelector("span").innerText);
+            });
+        });
+        
         toggle_override(e);
     }
     if (e.target.classList.contains('removeoverride')) {
