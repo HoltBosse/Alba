@@ -154,7 +154,7 @@ function doUpload(e) {
 		return;
 	})
 
-	document.getElementById('image_upload_form').addEventListener('submit',function(e){
+	document.getElementById('image_upload_form').addEventListener('submit',(e)=>{
 		// passed browser checks for fields (alt/title etc) - we'll check those again
 		// server side
 		// don't actually submit
@@ -216,7 +216,6 @@ function doUpload(e) {
 				upload_el.parentElement.querySelector(".selected_image_wrap").classList.add("active");
 				upload_el.setCustomValidity('');
 
-				// biome-ignore lint: not solving now
 				delete window.image_upload_el;
 			} else {
 				window.location.reload();

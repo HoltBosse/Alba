@@ -1,4 +1,3 @@
-// biome-ignore lint: not solving now
 const nanoid=(t=21)=>{let e="",r=crypto.getRandomValues(new Uint8Array(t));while(t--){const n=63&r[t];e+=n<36?n.toString(36):n<62?(n-26).toString(36).toUpperCase():n<63?"_":"-"}return e};
 
 function find_node_in_tree(node, id) {
@@ -9,7 +8,6 @@ function find_node_in_tree(node, id) {
     if (node.id==id) {
         //console.log ('FOUND!');
         return node;
-    // biome-ignore lint: not solving now
     } else {
         for (let n=0; n<node.children.length; n++) {
             found = find_node_in_tree(node.children[n], id);
@@ -114,7 +112,7 @@ function delete_node (node) {
 
 // handle add page button click
 
-document.getElementById('menu_desiger_add_pages').addEventListener('click',(e)=> {
+document.getElementById('menu_desiger_add_pages').addEventListener('click',()=> {
     // clicked add pages
     // get all pages to add
     const checked = document.querySelectorAll('#menu_designer_page_listing input:checked');
@@ -135,7 +133,7 @@ document.getElementById('menu_desiger_add_pages').addEventListener('click',(e)=>
     }
 });
 
-document.getElementById('menu_desiger_add_link').addEventListener('click',(e)=> {
+document.getElementById('menu_desiger_add_link').addEventListener('click',()=> {
     const link_text = document.getElementById('link_text').value;
     const link_url = document.getElementById('link_url').value;
     const newtab = document.getElementById('link_newtab').checked;
@@ -160,7 +158,7 @@ document.getElementById('menu_desiger_add_link').addEventListener('click',(e)=> 
     }
 });
 
-document.getElementById('menu_desiger_add_heading').addEventListener('click',(e)=> {
+document.getElementById('menu_desiger_add_heading').addEventListener('click',()=> {
     const heading_text = document.getElementById('heading_text').value;
     if (!heading_text) {
         alert('Heading text cannot be empty');
@@ -180,7 +178,7 @@ document.getElementById('menu_desiger_add_heading').addEventListener('click',(e)
         render_menu_designer();
     }
 });
-document.getElementById('menu_desiger_edit_heading').addEventListener('click',(e)=> {
+document.getElementById('menu_desiger_edit_heading').addEventListener('click',()=> {
     const heading_text = document.getElementById('heading_text').value;
     if (!heading_text) {
         alert('Heading text cannot be empty');
@@ -197,7 +195,7 @@ document.getElementById('menu_desiger_edit_heading').addEventListener('click',(e
     }
 });
 
-document.getElementById('menu_desiger_edit_link').addEventListener('click',(e)=> {
+document.getElementById('menu_desiger_edit_link').addEventListener('click',()=> {
     const link_text = document.getElementById('link_text').value;
     const link_url = document.getElementById('link_url').value;
     const link_newtab = document.getElementById('link_newtab').checked;
@@ -267,12 +265,14 @@ document.getElementById('menu_designer_tree').addEventListener('click',(e)=> {
 
 // drag drop functions
 
+// biome-ignore lint: not solving now
 function md_dragstart_handler(ev) {
     // Add the target element's id to the data transfer object
     ev.dataTransfer.setData("application/my-app", ev.target.id);
     ev.dataTransfer.effectAllowed = "move";
     window.menu_designer_dragging_id = ev.target.id;
 }
+// biome-ignore lint: not solving now
 function md_dragover_handler(ev) {
     ev.preventDefault();
     const newnode_el = document.getElementById(window.menu_designer_dragging_id);
@@ -314,6 +314,7 @@ function md_dragover_handler(ev) {
         }
     }
 }
+// biome-ignore lint: not solving now
 function md_dragleave_handler(ev) {
     ev.preventDefault();
     //ev.dataTransfer.dropEffect = "move";
@@ -322,15 +323,16 @@ function md_dragleave_handler(ev) {
     el.classList.remove('insertafter');
     el.classList.remove('insertinside');
 }
+// biome-ignore lint: not solving now
 function md_drop_handler(ev) { 
     ev.preventDefault();
     ev.stopPropagation();
     // Get the id of the target and add the moved element to the target's DOM
     const node_id = ev.dataTransfer.getData("application/my-app");
 
-    const newnode_el = document.getElementById(node_id);
+    //const newnode_el = document.getElementById(node_id);
     const sibling_el = ev.target.closest('.menu_node');
-    const parent_el = sibling_el.parentNode.closest('.menu_node');
+    //const parent_el = sibling_el.parentNode.closest('.menu_node');
 
     const source_node = find_node_in_tree(menu_designer_config, node_id);
     const dest_node = find_node_in_tree(menu_designer_config, ev.target.closest('.menu_node').id);  

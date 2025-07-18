@@ -1,11 +1,9 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
 	"formatter": {
 		"enabled": false
 	},
-	"organizeImports": {
-    	"enabled": false
-	},
+	"assist": { "actions": { "source": { "organizeImports": "off" } } },
 	"linter": {
 		"rules": {
 			"suspicious": {
@@ -13,10 +11,10 @@
 			},
 			"complexity": {
 				"noForEach": "off"
+			},
+			"style": {
+				"noDescendingSpecificity": "off"
 			}
 		}
-	},
-	"files": {
-		"ignore": ["core/controllers/**", "phpmyadmin/**"]
 	}
 }
