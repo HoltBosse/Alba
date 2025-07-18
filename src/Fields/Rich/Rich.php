@@ -168,7 +168,7 @@ class Rich extends Field {
 						return doc.body.innerHTML;
 					}
 
-					const allowedLinkProtocols = ['http', 'https', 'mailto'];
+					const allowedLinkProtocols = ['http', 'https', 'mailto', 'tel'];
 					const defaultProtocol = 'https';
 					function isAllowedUri(url, ctx) {
 						try {
