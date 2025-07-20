@@ -25,7 +25,7 @@ class Repeatable extends Field {
 		}
 
 		// get example repeatable for js rendering
-		$this->form = new Form(__DIR__ . $this->form_path, true); 
+		$this->form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true); 
 		// loop over existing data and render
 		$this->forms = [];
 
@@ -40,7 +40,7 @@ class Repeatable extends Field {
 		if ($saved_data) {
 			foreach ($saved_data as $repeatable_index=>$repeatable_form_data) {
 				// load form
-				$repeatable_form = new Form(__DIR__ . ($repeatable_form_data->form_path ?? $this->form_path), true); // second parameter is boolean for repeatable or not
+				$repeatable_form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true); // second parameter is boolean for repeatable or not
 				foreach (($repeatable_form_data->fields ?? $repeatable_form_data->value) as $field_info) {
 					$field = $repeatable_form->getFieldByName($field_info->name);
 					if ($field) {
@@ -152,7 +152,7 @@ class Repeatable extends Field {
 	public function setFromSubmit() {
 		// create base repeatable form
 		$forms=[];
-		$repeatable_form = new Form(__DIR__ . $this->form_path, true); // must be true / repeatable
+		$repeatable_form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true); // must be true / repeatable
 		$form_arr = Input::getvar('form_' . $repeatable_form->id, 'ARRAYRAW');
 		if (is_array($form_arr)) {
 			$repeat_count = sizeof ($form_arr);
@@ -162,7 +162,7 @@ class Repeatable extends Field {
 		}
 		// loop over this submitted repeatable and make sub-form for each element
 		for ($n=0; $n<$repeat_count; $n++) {
-			$repeatable_form = new Form(__DIR__ . $this->form_path, true);
+			$repeatable_form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true);
 			$repeatable_form->formPath = $this->form_path;
 			// get info for field
 			foreach ($repeatable_form->fields as $field) {
