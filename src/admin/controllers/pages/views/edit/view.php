@@ -29,7 +29,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap'>		
-<div class='fields-horizontal'>
+<div class='fields-horizontal core-page-fields'>
 	<?php
 		//for better or for worse, currently these two fields are saved in the db htmlspecialchars encoded :/ - so we decode it here before passing to text field which re encodes
 
@@ -73,33 +73,41 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 		$aliasField->display();
 	?>
 
-	<div class="field">
-		<label class="label">Parent Page</label>
-		<div class="control has-icons-left has-icons-right">
-			<div class="select">
-				<select id="parent" name="parent" style="width:100%;">
-					<option value="-1">None</option>
-					<?php $all_pages = Page::get_all_pages();?>
-					<?php foreach ($all_pages as $a_page):?>
-						<?php
-							// skip if self!
-							if ($a_page->id==$page->id) {continue;}
-						?>
-						<option 
-							<?php if ($page->parent == $a_page->id) { echo " selected ";}?>
-							value="<?php echo $a_page->id;?>" >
-								<?php $depth = Page:: get_page_depth($a_page->id); for ($n=0; $n<$depth; $n++) { echo " - ";}?>
-								<?php echo $a_page->title;?>
-						</option>
-					<?php endforeach; ?>
-				</select>
-				<span class="icon is-small is-left">
-					<i class="fas fa-project-diagram"></i>
-				</span>
-			</div>
-		</div>
-	<!-- <p class="help is-success">This username is available</p> -->
-	</div>
+	<?php
+		$pageCache = [];
+		$allPages = Page::get_all_pages_by_depth();
+		$pageOptions = [];
+
+		foreach($allPages as $pageInstance) {
+			$pageCache[$pageInstance->id] = $pageInstance;
+
+			$currentPage = $pageInstance;
+			$title = $pageInstance->title;
+
+			while($currentPage->parent!=-1) {
+				$title = $pageCache[$currentPage->parent]->title . " > " . $title;
+				$currentPage = $pageCache[$currentPage->parent];
+			}
+
+			$pageOptions[] = (object) [
+				"text" => $title,
+				"value" => $pageInstance->id,
+			];
+		}
+
+		$parentField = new Field_Select();
+		$parentField->loadFromConfig((object) [
+			"name"=>"parent",
+			"id"=>"parent",
+			"type"=>"Select",
+			"label"=>"Parent Page",
+			"required"=>true,
+			"filter"=>"RAW",
+			"select_options"=>$pageOptions,
+			"default"=>$pageInstance->parent,
+		]);
+		$parentField->display();
+	?>
 
 	<?php
 		if(!isset($_ENV["domains"])) {
@@ -107,6 +115,14 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 				<style>
 					.field:has([name="domain"]) {
 						display: none;
+					}
+				</style>
+			<?php
+		} else {
+			?>
+				<style>
+					.fields-horizontal.core-page-fields {
+						grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 					}
 				</style>
 			<?php
