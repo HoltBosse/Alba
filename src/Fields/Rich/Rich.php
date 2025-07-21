@@ -10,6 +10,7 @@ class Rich extends Field {
 		//$this->name
 
 		?>
+			<label for="<?php echo $this->id; ?>" class="label"><?php echo $this->label; ?></label>
 			<section class="editor_root_node">
 				<style>
 					<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
