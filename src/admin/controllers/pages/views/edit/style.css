@@ -158,3 +158,24 @@ div.preview {
 	max-height:100vh;
 	opacity:1;
 } */
+
+.fields-horizontal.core-page-fields {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+
+	& > * {
+		max-width:100%;
+		width: 100%;
+
+		select {
+			width: 100%;
+			max-width: 100%;
+		}
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.fields-horizontal.core-page-fields {
+		grid-template-columns: 1fr !important;
+	}
+}
