@@ -1,6 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Content, Tag, Image};
+Use HoltBosse\Form\Input;
 
 // default view is blog listing
 // if single blog entry detected, single.php view is loaded
@@ -38,7 +39,7 @@ Use HoltBosse\Alba\Core\{CMS, Content, Tag, Image};
 					$thumb = $img = new Image($blog->og_image);
 					$thumb->render('thumb','thumb square pull-right');
 				}
-				echo $blog->og_description; ?>
+				echo Input::stringHtmlSafe($blog->og_description); ?>
 				</p>
 			<?php endif; ?>
 			<?php 
