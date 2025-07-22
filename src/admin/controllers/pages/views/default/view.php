@@ -71,7 +71,7 @@ Use HoltBosse\Form\{Input};
 
 				<?php
 					if(isset($_ENV["domains"])) {
-						echo "<td class='unimportant'>$page->domain</td>";
+						echo "<td class='unimportant'>{$domainLookup[$page->domain]}</td>";
 					}
 				?>
 
@@ -82,7 +82,7 @@ Use HoltBosse\Form\{Input};
 						$url = $pageInstance->get_url();
 						$displayUrl = $url;
 						if($page->domain!=$_SERVER["HTTP_HOST"]) {
-							$url = "https://" . $page->domain . $url;
+							$url = "https://" . $domainLookup[$page->domain] . $url;
 						}
 					?>
 					<a style="color: var(--bulma-table-color);" target="_blank" class='unimportant' href="<?php echo $url; ?>"><?php echo $displayUrl; ?></a>

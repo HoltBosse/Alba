@@ -98,3 +98,9 @@ if($content_table_ordering_ok) {
 else {
 	show_message ('Messages Table','Updated ordering of content tables','is-warning');
 }
+
+if(sizeof($page_domains_ok)>0 || sizeof($redirect_domains_ok)>0) {
+	show_message ('Pages and/or Redirects Table','Updated domains to index based','is-warning');
+} else {
+	show_message ('Pages and/or Redirects Table','domain column ok','is-success');
+}

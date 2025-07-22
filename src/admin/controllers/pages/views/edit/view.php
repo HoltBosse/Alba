@@ -134,9 +134,14 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 		if(isset($_ENV["domains"])) {
 			$domains = explode(",", $_ENV["domains"]);
 		}
-		$domains = array_map(function($str) {
-			return (object) ["text"=>$str, "value"=>$str];
-		}, $domains);
+		$domainOptions = [];
+		foreach($domains as $index=>$domain) {
+			$domainOptions[] = (object) [
+				"value"=>$index,
+				"text"=>$domain,
+			];
+		}
+
 
 		$aliasField = new Field_Select();
 		$aliasField->loadFromConfig((object) [
@@ -149,7 +154,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
             "icon_status"=>true,
             "icon_parent_class"=>"has-icons-left",
             "icon_markup"=> "<span class='icon is-small is-left'><i class='fas fa-sitemap'></i></span>",
-			"select_options"=>$domains,
+			"select_options"=>$domainOptions,
 			"default"=>$page->domain,
 		]);
 		$aliasField->display();

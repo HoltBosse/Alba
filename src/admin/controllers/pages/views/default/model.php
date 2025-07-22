@@ -29,3 +29,8 @@ function get_template_title($page_template_id, $all_templates) {
 	return "Default (" . $default_template->title . ")";
 	//return "Error - Unknown Template";
 }
+
+$domainLookup = [$_SERVER["HTTP_HOST"]];
+if(isset($_ENV["domains"])) {
+	$domainLookup = explode(",", $_ENV["domains"]);
+}

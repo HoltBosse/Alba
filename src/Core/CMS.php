@@ -144,13 +144,14 @@ final class CMS {
 			$relative_url = "/admin" . $relative_url;
 		}
 
-		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=? AND domain=?", [$relative_url, $_SERVER["HTTP_HOST"]]);
+		$domainIndex = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=? AND domain=?", [$relative_url, $domainIndex]);
 		if ($valid_redirect) {
 			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
 		} else {
 			// handle redirect/404 capturing
 			if ($_ENV["capture_404s"]==="true") {
-				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=?', $relative_url)->id ?? false;
+				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=? and domain=?', [$relative_url, $domainIndex])->id ?? false;
 				if ($existing_redirect_id) {
 					// increment hit for 404
 					DB::exec('UPDATE redirects SET hits=hits+1 WHERE id=?', $existing_redirect_id);
@@ -167,7 +168,7 @@ final class CMS {
 					if (!$ignore_file && !$ignore_request) {
 						// create new redirect
 						$user_id_int = CMS::Instance()->user->id ? CMS::Instance()->user->id : 0;
-						$params = [$relative_url, $_SERVER['HTTP_REFERER'], $user_id_int , $user_id_int, $_SERVER["HTTP_HOST"]];
+						$params = [$relative_url, $_SERVER['HTTP_REFERER'], $user_id_int , $user_id_int, $domainIndex];
 						DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits, domain) VALUES(0,?,?,?,?,"auto",1,?)', $params);
 					}
 				}
@@ -577,6 +578,19 @@ final class CMS {
 		return $dev_banner;
 	}
 
+	public static function getDomainIndex(string $domain) {
+		$domains = [$_SERVER["HTTP_HOST"]];
+		if(isset($_ENV["domains"])) {
+			$domains = explode(",", $_ENV["domains"]);
+		}
+
+		$index = array_search($domain, $domains);
+		if($index===false) {
+			throw new Exception("Could not resolve domain name");
+		}
+
+		return $index;
+	}
 
 	public function render() {
 		// main entry point for CMS after object is instantiated
@@ -727,11 +741,12 @@ final class CMS {
 				// passing remaining unmatched segments as segments array
 				$alias = false; // default 
 				$page = false;
+				$domainIndex = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 				
 				if (sizeof($this->uri_segments)==0) {
 					// TODO: work with user selected HOME page
 					$alias = 'home';
-					$page = DB::fetch("SELECT * FROM pages WHERE parent=-1 AND alias='home' AND state>0 AND domain=?", $_SERVER["HTTP_HOST"]);
+					$page = DB::fetch("SELECT * FROM pages WHERE parent=-1 AND alias='home' AND state>0 AND domain=?", $domainIndex);
 				}
 				else {
 					$parent = -1; // start with root
@@ -739,7 +754,7 @@ final class CMS {
 					while ($this->uri_segments) {
 						$result = DB::fetch(
 							"SELECT * FROM pages WHERE parent=? AND alias=? AND state > 0 AND domain=?",
-							[$parent, $this->uri_segments[0], $_SERVER["HTTP_HOST"]]
+							[$parent, $this->uri_segments[0], $domainIndex]
 						);
 						if ($result) {
 							// found possible alias, will check for deeper match on next loop - if any
@@ -761,7 +776,7 @@ final class CMS {
 					// magic alias of 'home' used for now - todo: make configurable via config option in future
 					// home page has to have a controller and alias of home and at root of pages and published
 					$alias = 'home'; // see magic alias comment above for this and query below
-					$page = DB::fetch("SELECT * FROM pages WHERE content_type>0 AND parent=-1 AND alias='home' AND state>0 AND domain=?", $_SERVER["HTTP_HOST"]);
+					$page = DB::fetch("SELECT * FROM pages WHERE content_type>0 AND parent=-1 AND alias='home' AND state>0 AND domain=?", $domainIndex);
 					if (!$page) {
 						// have params, but no page found and/or home has no controller to consume params
 						$this->raise_404();
