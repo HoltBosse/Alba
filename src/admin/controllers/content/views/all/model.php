@@ -5,7 +5,7 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 
 $segments = CMS::Instance()->uri_segments;
-$search = Input::getvar('search','TEXT',null);
+$search = Input::getvar('search','RAW',null);
 $filters = Input::tuplesToAssoc( Input::getvar('filters','RAW',null) );
 // make sure coretags getvar returns empty array PHP 8+ in_array required haystack to be array
 $coretags = Input::getvar('coretags','ARRAYOFINT',[]);
