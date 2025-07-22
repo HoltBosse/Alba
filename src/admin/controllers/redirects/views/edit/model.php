@@ -28,12 +28,16 @@ $domains = [$_SERVER["HTTP_HOST"]];
 if(isset($_ENV["domains"])) {
 	$domains = explode(",", $_ENV["domains"]);
 }
-$domains = array_map(function($str) {
-	return (object) ["text"=>$str, "value"=>$str];
-}, $domains);
+$domainOptions = [];
+foreach($domains as $index=>$domain) {
+	$domainOptions[] = (object) [
+		"value"=>$index,
+		"text"=>$domain,
+	];
+}
 
-$required_details_obj->fields[3]->select_options = $domains;
-$required_details_obj->fields[3]->default = $_SERVER["HTTP_HOST"];
+$required_details_obj->fields[3]->select_options = $domainOptions;
+$required_details_obj->fields[3]->default = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
 // prep forms
 $required_details_form = new Form($required_details_obj);

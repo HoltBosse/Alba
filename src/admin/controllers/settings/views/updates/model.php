@@ -21,7 +21,7 @@ if(!$page_domain_ok) {
 	$page_options_ok = false;
 
 	DB::exec("ALTER TABLE `pages` ADD `domain` text NOT NULL;");
-	DB::exec("UPDATE `pages` SET `domain`=?", $_SERVER["HTTP_HOST"]);
+	DB::exec("UPDATE `pages` SET `domain`=?", CMS::getDomainIndex($_SERVER["HTTP_HOST"]));
 }
 
 $plugins_table_ok = DB::fetchAll("SELECT * FROM information_schema.tables WHERE table_name = 'plugins' LIMIT 1;");;
@@ -105,7 +105,7 @@ if(!$redirects_domain_ok) {
 	$redirects_table_ok = false;
 
 	DB::exec("ALTER TABLE `redirects` ADD `domain` text NOT NULL;");
-	DB::exec("UPDATE `redirects` SET `domain`=?", $_SERVER["HTTP_HOST"]);
+	DB::exec("UPDATE `redirects` SET `domain`=?", CMS::getDomainIndex($_SERVER["HTTP_HOST"]));
 }
 
 // ensure user_actions table exists
@@ -204,6 +204,28 @@ if(!$content_table_ordering_ok) {
 				ORDER BY ordering, id
 			) ordered_items ON cbh.id = ordered_items.id
 			SET cbh.ordering = ordered_items.new_ordering;"
+		);
+	}
+}
+
+$page_domains_ok = DB::fetchall("SELECT DISTINCT domain FROM pages WHERE domain NOT REGEXP '^[0-9]+$'");
+
+if(sizeof($page_domains_ok)>0) {
+	foreach($page_domains_ok as $item) {
+		DB::exec(
+			"UPDATE pages SET domain=? WHERE domain=?",
+			[CMS::getDomainIndex($item->domain), $item->domain]
+		);
+	}
+}
+
+$redirect_domains_ok = DB::fetchall("SELECT DISTINCT domain FROM redirects WHERE domain NOT REGEXP '^[0-9]+$'");
+
+if(sizeof($redirect_domains_ok)>0) {
+	foreach($redirect_domains_ok as $item) {
+		DB::exec(
+			"UPDATE redirects SET domain=? WHERE domain=?",
+			[CMS::getDomainIndex($item->domain), $item->domain]
 		);
 	}
 }

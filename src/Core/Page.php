@@ -35,7 +35,7 @@ class Page {
 		$this->view_configuration = false;
 		$this->page_options_form = new Form(realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json"));
 		$this->page_options = null;
-		$this->domain = $_SERVER["HTTP_HOST"];
+		$this->domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 	}
 
 	public function get_url() {
