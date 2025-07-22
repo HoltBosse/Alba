@@ -95,6 +95,8 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 			];
 		}
 
+		$pageOptions = array_merge([(object) ["text"=>"None", "value"=>-1]], $pageOptions);
+
 		$parentField = new Field_Select();
 		$parentField->loadFromConfig((object) [
 			"name"=>"parent",
@@ -104,7 +106,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 			"required"=>true,
 			"filter"=>"RAW",
 			"select_options"=>$pageOptions,
-			"default"=>$pageInstance->parent,
+			"default"=>($page->parent ? $page->parent : -1),
 		]);
 		$parentField->display();
 	?>
