@@ -63,6 +63,16 @@
 			"required": false,
 			"description": "Image used for social sharing",
 			"filter": "NUM"
+		},
+		{
+			"name": "og_image_position",
+			"id": "og_image_position",
+			"type": "ImagePosition",
+			"label": "Opengraph Image Position",
+			"fieldname": "og_image",
+			"required": false,
+			"description": "Focal point of image where applicable",
+			"filter": "RAW"
 		}
 	]
 }

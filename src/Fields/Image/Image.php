@@ -2,7 +2,7 @@
 namespace HoltBosse\Alba\Fields\Image;
 
 Use HoltBosse\Form\Field;
-Use HoltBosse\Alba\Core\{CMS, File, Image as CmsImage};
+Use HoltBosse\Alba\Core\{CMS, File, Image as CmsImage, Hook};
 Use HoltBosse\DB\DB;
 
 class Image extends Field {
@@ -67,11 +67,15 @@ class Image extends Field {
 		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img alt='$previewalt' title='$previewtitle' style='max-width: 20rem; max-height: 20rem;' src='$previewsrc' id='image_selector_chosen_preview_{$this->id}'?></div>";
 		
 
-		echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
-		echo "<button type='button' id='trigger_image_crop_{$this->id}' class='button btn is-primary'>Crop Image</button>";
-		//href='{$this->upload_endpoint}'
-		echo "<button type='button' id='trigger_image_upload_{$this->id}' class='button btn is-info is-light upload_new_image_button'>Upload New Image</a>";
-		echo "<button type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";	
+		echo "<div style='display: flex; gap: 0.25rem; flex-wrap: wrap;'>";
+			ob_start();
+				echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
+				echo "<button type='button' id='trigger_image_crop_{$this->id}' class='button btn is-primary'>Crop Image</button>";
+				echo "<button type='button' id='trigger_image_upload_{$this->id}' class='button btn is-info is-light upload_new_image_button'>Upload New Image</button>";
+			$imageButtons = ob_get_clean();
+			echo Hook::execute_hook_filters('render_image_field_buttons', $imageButtons, $this);
+			echo "<button id='trigger_image_clear_{$this->id}' type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";
+		echo "</div>";
 		echo "<input oninvalid='this.setCustomValidity(\"A valid image is required\")' style='position:absolute; width:0px; opacity:0;' value='{$this->default}' {$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}>";
 		
 		

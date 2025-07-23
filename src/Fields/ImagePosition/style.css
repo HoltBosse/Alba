@@ -1,0 +1,47 @@
+.imagepositiondialog {
+    border-radius: 1rem;
+    background-color: var(--bulma-body-background-color);
+    border: 0px solid transparent;
+
+    &::backdrop {
+        background: rgba(0,0,0,0.8);
+    }
+
+    .imagepositiondialogwrapper {
+        position: relative;
+        max-width: 90vw;
+        max-height: 90vh;
+
+        img {
+            max-width: 60vw;
+            max-height: 60vh;
+        }
+
+        .imagepositiondialogclose {
+            position: absolute;
+            top: 0rem;
+            right: 0rem;
+            cursor: pointer;
+            color: var(--bulma-body-color);
+        }
+
+        .image-focal-point-wrapper {
+            position: relative;
+
+            .image-focal-point-target {
+                position: absolute;
+                font-size: 3rem;
+                margin-left: -0.75rem;
+                margin-top: -0.75rem;
+                line-height: 0.5;
+                top: 0%;
+                left: 0%;
+                cursor: pointer;
+                filter: drop-shadow(#fdfdfdaa 1px 1px 1px)
+                        drop-shadow(#fdfdfdaa -1px 1px 1px)
+                        drop-shadow(#fdfdfdaa 1px -1px 1px)
+                        drop-shadow(#fdfdfdaa -1px -1px 1px);
+            }
+        }
+    }
+}
