@@ -47,7 +47,6 @@ if (CMS::Instance()->uri_segments) {
 			CMS::Instance()->page->title = $blog_content_item->title; // set page title - this is working now
 			// TODO: add seo/OG fields to blog item and update page header for cms render_head function
 			// override page->form options values with og data from this content item
-			//CMS::pprint_r ($blog_content_item);
 			if (isset ($blog_content_item->og_title)) {
 				CMS::Instance()->page->set_page_option_value('og_title', $blog_content_item->og_title);
 			}
