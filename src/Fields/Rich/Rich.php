@@ -585,6 +585,8 @@ class Rich extends Field {
 					});
 
 					editorWrapperRoot.querySelector(".fa.fa-link").addEventListener("click", (e)=>{
+						const selectedText = editorInstance.state.doc.textBetween(editorInstance.state.selection.from, editorInstance.state.selection.to, '\n');
+						
 						const fields = [
 							{
 								type: "input",
@@ -596,7 +598,7 @@ class Rich extends Field {
 								type: "input",
 								id: "a_text",
 								label: "Display Text",
-								value: "",
+								value: selectedText ?? "",
 							},
 							{
 								type: "input",
