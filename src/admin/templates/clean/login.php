@@ -20,13 +20,13 @@ if ($resetemail) {
 		$link = $domain_url . "admin/?resetkey=" . $key;
 		$markup = "
 		<h5>Hi {$reset_user->username}</h5>
-		<p>A password reset has been request on " . $_ENV["sitename"]() . "</p>
+		<p>A password reset has been request on " . $_ENV["sitename"] . "</p>
 		<p>Click <a target='_blank' href='{$link}'>here</a> to choose a new password.</p>
 		<p>If you did not initiate this request, please ignore this email.</p>
 		";
 		$mail = new Mail();	
-		$mail->addAddress($resetemail,$_ENV["sitename"]() . " - User");
-		$mail->subject = 'Reset Email for ' . $_ENV["sitename"]();
+		$mail->addAddress($resetemail,$_ENV["sitename"] . " - User");
+		$mail->subject = 'Reset Email for ' . $_ENV["sitename"];
 		$mail->html = $markup;
 		$mail->send();
 	}
