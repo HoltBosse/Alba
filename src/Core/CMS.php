@@ -150,7 +150,7 @@ final class CMS {
 			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
 		} else {
 			// handle redirect/404 capturing
-			if ($_ENV["capture_404s"]==="true") {
+			if ($_ENV["capture_404s"]!=="false") {
 				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=? and domain=?', [$relative_url, $domainIndex])->id ?? false;
 				if ($existing_redirect_id) {
 					// increment hit for 404
