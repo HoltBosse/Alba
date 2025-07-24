@@ -322,7 +322,8 @@ div.field.hidden {
 	padding:0.5rem;
 }
 .media_selector_selection span {
-	pointer-events:none;
+	max-height: 4rem;
+	overflow: auto;
 	width:100%;background:rgba(0,0,0,0.9);
 	padding:0.5rem;
 	color:white;
