@@ -4,7 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, Hook, Configuration, Component};
 Use HoltBosse\Form\Input;
 
 $segments = CMS::Instance()->uri_segments;
-if(sizeof($segments)>0 && !is_dir(__DIR__ . "/../../controllers/" . $segments[0])) {
+if(sizeof($segments)>0 && !CMS::isAdminController($segments[0])) {
 	CMS::raise_404();
 }
 ?>

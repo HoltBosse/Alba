@@ -101,6 +101,10 @@ final class CMS {
 		}
 	}
 
+	public static function isAdminController(string $controllerName): bool {
+		return isset(self::$adminControllersRegistry[$controllerName]);
+	}
+
 	public static function registerFakeFile(string $fileName, string $filePath): bool {
 		if (!isset(self::$fakeFilesRegistry[$fileName])) {
 			self::$fakeFilesRegistry[$fileName] = $filePath;
