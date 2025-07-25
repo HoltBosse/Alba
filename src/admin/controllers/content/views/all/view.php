@@ -156,7 +156,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 		Component::addon_button_toolbar($addonButtonGroupArgs, $leftContent);
 	?>
 
-	<table class='table'>
+	<table class='table can-have-ids'>
 		<thead>
 			<tr>
 				<th>State</th>

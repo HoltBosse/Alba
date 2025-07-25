@@ -82,11 +82,6 @@ Use HoltBosse\DB\DB;
 		<thead>
 			<tr>
 				<th>State</th>
-				<?php
-					if($_ENV["admin_show_ids_in_tables"]==="true") {
-						echo "<th>Id</th>";
-					}
-				?>
 				<th>Source</th>
 				<th>Destination</th>
 				<th>Referer</th>
@@ -108,13 +103,6 @@ Use HoltBosse\DB\DB;
 							Component::state_toggle($redirect_item->id, $redirect_item->state, "redirects", NULL, -1);
 						?>
 					</td>
-					<?php
-						if($_ENV["admin_show_ids_in_tables"]==="true") {
-							echo "<td>$redirect_item->id</td>";
-						}
-					?>
-
-					
 					<td class='limitwidth'><a href='<?php echo $_ENV["uripath"]; ?>/admin/redirects/edit/<?php echo $redirect_item->id;?>/'><?php echo $redirect_item->old_url; ?></a></td>
 					<td class='limitwidth'><?php echo $redirect_item->new_url; ?></td>
 					<td class='limitwidth unimportant'><?php echo $redirect_item->referer; ?></td>

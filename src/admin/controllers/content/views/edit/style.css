@@ -4,7 +4,6 @@ div.flex > .form_contain#required_content_fields {
     gap: 0.5rem 2rem;
     width: 100%;
     
-    padding: 0 1.5rem;
     padding-bottom: 2rem;
 
     select {

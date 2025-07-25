@@ -10,6 +10,20 @@
         echo file_get_contents(__DIR__ . "/css/dashboard.css");
         echo file_get_contents(__DIR__ . "/css/layout.css");
         echo file_get_contents(__DIR__ . "/css/darkmode.css");
+
+        if($_ENV["admin_show_ids_in_tables"]==="true") {
+            echo "
+                @media screen and (max-width: 1023px) {
+                    table.table.can-have-ids th:nth-of-type(3), table.table.can-have-ids td:nth-of-type(3) {
+                        display: block;
+                        width: 100%;
+                    }
+                    table.table.can-have-ids th:nth-of-type(2), table.table.can-have-ids td:nth-of-type(2) {
+                        width: unset;
+                    }
+                }
+            ";
+        }
     ?>
 </style>
 
