@@ -123,7 +123,7 @@ class Rich extends Field {
 					import Link from 'https://esm.sh/@tiptap/extension-link@2.14.0'
 					import Youtube from 'https://esm.sh/@tiptap/extension-youtube@2.14.0'
 					import Image from 'https://esm.sh/@tiptap/extension-image@2.14.0'
-					import {openMediaSelector} from "/js/media_selector.js"
+					import {openMediaSelector} from "/js/media_selector.js?v=2"
 					import TextAlign from 'https://esm.sh/@tiptap/extension-text-align@2.14.0'
 					import Paragraph from 'https://esm.sh/@tiptap/extension-paragraph@2.14.0'
 					import Heading from 'https://esm.sh/@tiptap/extension-heading@2.14.0'
