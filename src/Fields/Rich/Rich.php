@@ -283,6 +283,10 @@ class Rich extends Field {
 						updateEditorSave();
 					});
 
+					editorWrapperRoot.addEventListener("paste", (e)=>{
+						updateEditorSave();
+					});
+
 					//dialog creation code
 
 					//takes a js object and converts it to a form field
