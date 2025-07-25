@@ -64,10 +64,10 @@ export function openMediaSelector(elementId, imagesPerPage, mimetypes, tags, lis
     mediaSelector.classList.add(`media_selector_for_${elementId}`);
     mediaSelector.innerHTML =`
     <div class='media_selector_modal' style='position:fixed;width:100vw;height:100vh;background:black;padding:1em;left:0;top:0;z-index:99;'>
-        <div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px;'>
+        <div style='display:flex; gap:1rem; margin:2rem; position:sticky; top:0px; flex-wrap: wrap;'>
             <button style="right: 1rem;" id='media_selector_modal_close' class="modal-close is-large" aria-label="close"></button>
             <h1 style='color:white;'>Click image or search: </h1>
-            <div class='form-group' style='display:flex; gap:2rem;'>
+            <div class='form-group' style='display:flex; gap:2rem; flex-wrap: wrap;'>
                 <input id='media_selector_modal_search'/>
                 <button class='button btn is-small is-primary' type='button' id='trigger_media_selector_search'>Search</button>
                 <button class='button btn is-small' type='button' id='clear_media_selector_search'>Clear</button>

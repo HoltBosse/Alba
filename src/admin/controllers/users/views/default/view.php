@@ -125,7 +125,7 @@ Use HoltBosse\Form\Input;
 		$addonButtonGroupArgs = ["user_operations", "users", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]];
 		Component::addon_button_toolbar($addonButtonGroupArgs);
 	?>
-	<table id='all_users_table' class="table">
+	<table id='all_users_table can-have-ids' class="table">
 		<thead>
 			<th>Status</th>
 			<?php

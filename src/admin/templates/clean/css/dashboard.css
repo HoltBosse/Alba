@@ -22,6 +22,7 @@ h1 span.subheading {
 
 .flex, #required_content_fields {
   display:flex;
+  flex-wrap: wrap;
 }
 .flex.gap, #required_content_fields {
   gap:2rem;
@@ -254,23 +255,15 @@ legend {
   #configtabs ul li a {
     border-radius: 4px;
   }
-  #all_users_table tr,
-  #all_pages_table tr,
   table.table tr {
     display: flex;
   }
-  #all_users_table th, #all_users_table td,
-  #all_pages_table th, #all_pages_table td,
   table.table th, table.table td {
     display: none;
   }
-  #all_users_table th:nth-of-type(1), #all_users_table th:nth-of-type(2), #all_users_table td:nth-of-type(1), #all_users_table td:nth-of-type(2),
-  #all_pages_table th:nth-of-type(1), #all_pages_table th:nth-of-type(2), #all_pages_table th:nth-of-type(4), #all_pages_table td:nth-of-type(1), #all_pages_table td:nth-of-type(2), #all_pages_table td:nth-of-type(4),
   table.table th:nth-of-type(1), table.table th:nth-of-type(2), table.table td:nth-of-type(1), table.table td:nth-of-type(2) {
     display: block;
   }
-  #all_users_table th:nth-of-type(2), #all_users_table td:nth-of-type(2),
-  #all_pages_table th:nth-of-type(4), #all_pages_table td:nth-of-type(4),
   table.table th:nth-of-type(2), table.table td:nth-of-type(2) {
     width: 100%;
   }

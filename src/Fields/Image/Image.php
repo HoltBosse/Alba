@@ -96,7 +96,7 @@ class Image extends Field {
 		<script type="module">
 		import {addImageUploadDialog} from "/js/image_uploading.js?v=1";
 		import {loadImgEditor} from "/js/image_editing.js";
-		import {openMediaSelector} from "/js/media_selector.js";
+		import {openMediaSelector} from "/js/media_selector.js?v=2";
 
 		
 		document.getElementById("trigger_image_crop_<?php echo $this->id; ?>").addEventListener("click", (e)=>{

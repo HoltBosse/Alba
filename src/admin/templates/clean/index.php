@@ -21,69 +21,64 @@ if(sizeof($segments)>0 && !CMS::isAdminController($segments[0])) {
 		<?php Hook::execute_hook_actions('add_to_head'); ?>
 	</head>
 	<body>
+		<nav class="navbar container" role="navigation" aria-label="main navigation">
+			<div class="navbar-brand">
+				<a class="navbar-item" href="<?php echo $_ENV["uripath"];?>/admin/">
+				<?php 
+				$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
+				if ($logo_image_id) {
+					$logo_src = $_ENV["uripath"] . "/image/" . $logo_image_id;
+				}
+				else {
+					$logo_src = $_ENV["uripath"] . "/admin/templates/clean/alba_logo.webp";
+				}
+				?>
+				<img src="<?php echo $logo_src;?>" >
+				</a>
 
-			<nav class="navbar container" role="navigation" aria-label="main navigation">
-				<div class="navbar-brand">
-					<a class="navbar-item" href="<?php echo $_ENV["uripath"];?>/admin/">
-					<?php 
-					$logo_image_id = Configuration::get_configuration_value('general_options','admin_logo');
-					if ($logo_image_id) {
-						$logo_src = $_ENV["uripath"] . "/image/" . $logo_image_id;
-					}
-					else {
-						$logo_src = $_ENV["uripath"] . "/admin/templates/clean/alba_logo.webp";
-					}
+				<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				<span aria-hidden="true"></span>
+				</a>
+			</div>
+
+			<div id="navbarBasicExample" class="navbar-menu">
+				<div class="navbar-start">
+					<?php
+						require_once(__DIR__ . "/navigation.php");
+						Component::render_admin_nav($navigation);
 					?>
-					<img src="<?php echo $logo_src;?>" >
-					</a>
-
-					<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-					<span aria-hidden="true"></span>
-					<span aria-hidden="true"></span>
-					<span aria-hidden="true"></span>
-					</a>
 				</div>
 
-				<div id="navbarBasicExample" class="navbar-menu">
-					<div class="navbar-start">
-						<?php
-							require_once("navigation.php");
-							Component::render_admin_nav($navigation);
-						?>
-					
-					</div>
-
-					<div class="navbar-end">
-					<div class="navbar-item">
-						<div class="buttons">
-						<a target="_blank" href="<?php echo $_ENV["uripath"];?>/" class="button is-default">
-							Front-End
-						</a>
-						<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo $_ENV["uripath"];?>/admin/logout" class="button is-light">
-							Log Out <?php echo Input::stringHtmlSafe(CMS::Instance()->user->username); ?>
-						</a>
-						</div>
-					</div>
+				<div class="navbar-end">
+				<div class="navbar-item">
+					<div class="buttons">
+					<a target="_blank" href="<?php echo $_ENV["uripath"];?>/" class="button is-default">
+						Front-End
+					</a>
+					<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo $_ENV["uripath"];?>/admin/logout" class="button is-light">
+						Log Out <?php echo Input::stringHtmlSafe(CMS::Instance()->user->username); ?>
+					</a>
 					</div>
 				</div>
-			</nav>
-		
+				</div>
+			</div>
+		</nav>
+		<main id="main">
+			<div class="container">
 
-
-    <section id="main">
-      	<div class="container">
-
-			<?php CMS::Instance()->display_messages();?>
-		
-			<?php CMS::Instance()->render_controller();?>
-		</div>
-    </section>
-	<script>
-		<?php
-			echo file_get_contents(__DIR__ . "/js/script.js");
-		?>
-	</script>
-</body>
+				<?php CMS::Instance()->display_messages();?>
+			
+				<?php CMS::Instance()->render_controller();?>
+			</div>
+		</main>
+		<script>
+			<?php
+				echo file_get_contents(__DIR__ . "/js/script.js");
+			?>
+		</script>
+	</body>
 </html>
 
 

@@ -1,4 +1,4 @@
 div.flex {display:flex; flex-wrap:wrap;}
-div.flex > * {padding-left:2rem; padding-bottom:2rem;}
+div.flex > * {padding-bottom:2rem;}
 /* div.flex > div:first-child {padding-left:0;} */
 div.flex > * {min-width:2rem;}
