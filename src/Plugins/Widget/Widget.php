@@ -20,14 +20,14 @@ class Widget extends Plugin {
             $widget_markup = ""; // default to blank string
             $widget_snippet = $matches[0][$n];
             $widget_id = $matches[1][$n];
-            $widget = DB::fetch('select * from widgets where id=? and state>0',$widget_id);
+            $widget = DB::fetch('SELECT * FROM widgets WHERE id=? AND state>0',$widget_id);
             // if widget loaded correctly
             if ($widget) {
                 // create widget obj
                 $type_info = CmsWidget::get_widget_type($widget->type);
-                $widget_class_name = "Widget_" . $type_info->location;
+                $widget_class_name = CmsWidget::getWidgetClass($type_info->location);
                 $widget_of_type = new $widget_class_name();
-                $widget_of_type->load ($widget->id);
+                $widget_of_type->load($widget->id);
                 // output widget into buffer and store
                 ob_start();
                 $widget_of_type->internal_render();
