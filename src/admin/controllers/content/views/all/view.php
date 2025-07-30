@@ -2,7 +2,7 @@
 
 Use HoltBosse\Alba\Core\{CMS, JSON, Controller, Configuration, Content, Component, Hook, Tag, User};
 Use HoltBosse\DB\DB;
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 
 ?>
@@ -234,7 +234,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 						<?php foreach ($content_list_fields as $content_list_field):?>
 							<td><?php 
 								$propname = "{$content_list_field->name}"; 
-								$classname = "Field_" . $content_list_field->type;
+								$classname = Form::getFieldClass($content_list_field->type);
 								$curfield = new $classname();
 								$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
 								$curfield->default = $content_item->$propname; // set temp field value to current stored value
