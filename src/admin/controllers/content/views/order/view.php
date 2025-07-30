@@ -1,7 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Content, Component};
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 
 ?>
 
@@ -74,7 +74,7 @@ Use HoltBosse\Form\Input;
                             // TODO: make per-content type json config value - allow for flexibility?
                             if (sizeof($all_content) < 500) {
                                 $propname = "{$content_list_field->name}"; 
-                                $classname = "Field_" . $content_list_field->type;
+                                $classname = Form::getFieldClass($content_list_field->type);
                                 $curfield = new $classname();
                                 $curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
                                 $curfield->default = $i->$propname; // set temp field value to current stored value
