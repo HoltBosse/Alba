@@ -107,6 +107,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 			"filter"=>"RAW",
 			"select_options"=>$pageOptions,
 			"default"=>($page->parent ? $page->parent : -1),
+			"slimselect"=>true,
 		]);
 		$parentField->display();
 	?>
