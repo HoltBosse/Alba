@@ -195,7 +195,7 @@ if(!$content_table_ordering_ok) {
 	foreach($contentTypes as $type) {
 		$tableName = Content::get_table_name_for_content_type($type->id);
 
-		DB::exec("SET @manualorderingrow := 0;");
+		DB::exec("SET @manualordering := 0;");
 		DB::exec(
 			"UPDATE `$tableName` cbh
 			JOIN (
