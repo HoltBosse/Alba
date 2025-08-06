@@ -139,6 +139,51 @@ test('registers built-in form fields and loads content required fields config wi
     expect(count($form->fields))->toBe(6);
 });
 
+test('registers built-in form fields and loads widget required fields config without exceptions', function () {
+    // Call the CMS method to register built-in form fields
+    CMS::registerBuiltInFormFields();
+    
+    // Load the widget required fields form configuration
+    $widgetRequiredFieldsConfigPath = __DIR__ . '/../../src/admin/controllers/widgets/views/edit/required_fields_form.json';
+    
+    // Assert that the file exists
+    expect(file_exists($widgetRequiredFieldsConfigPath))->toBeTrue();
+    
+    // This should not throw any exceptions - the form should load successfully
+    $form = new Form($widgetRequiredFieldsConfigPath);
+    
+    // Verify the form was loaded correctly
+    expect($form)->toBeInstanceOf(Form::class);
+    expect($form->id)->toBe('required_widget_fields');
+    
+    // Verify key fields were loaded and configured correctly
+    expect($form->fieldExists('title'))->toBeTrue();
+    $titleField = $form->getFieldByName('title');
+    expect($titleField->type)->toBe('Text');
+    expect($titleField->label)->toBe('Widget Title');
+    expect($titleField->required)->toBeTrue();
+    expect($titleField->filter)->toBe('STRING');
+    expect($titleField->maxlength)->toBe(255);
+    
+    expect($form->fieldExists('note'))->toBeTrue();
+    $noteField = $form->getFieldByName('note');
+    expect($noteField->type)->toBe('Text');
+    expect($noteField->label)->toBe('Note');
+    expect($noteField->required)->toBeFalse();
+    expect($noteField->filter)->toBe('STRING');
+    expect($noteField->maxlength)->toBe(255);
+    
+    expect($form->fieldExists('state'))->toBeTrue();
+    $stateField = $form->getFieldByName('state');
+    expect($stateField->type)->toBe('Select');
+    expect($stateField->label)->toBe('Widget State');
+    expect($stateField->filter)->toBe('NUMBER');
+    expect($stateField->default)->toBe(1);
+    
+    // Verify the form has the expected number of fields
+    expect(count($form->fields))->toBe(3);
+});
+
 test('form field registration allows field creation from config', function () {
     // Call the CMS method to register built-in form fields
     CMS::registerBuiltInFormFields();
