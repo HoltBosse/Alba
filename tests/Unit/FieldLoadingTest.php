@@ -51,6 +51,94 @@ test('registers built-in form fields and loads MENU widget config without except
     expect(count($menuForm->fields))->toBe(0);
 });
 
+test('registers built-in form fields and loads controller basic article config without exceptions', function () {
+    // Call the CMS method to register built-in form fields
+    CMS::registerBuiltInFormFields();
+    
+    // Load the basic_article controller custom_fields.json file into a Form class
+    $basicArticleConfigPath = __DIR__ . '/../../src/controllers/basic_article/custom_fields.json';
+    
+    // Assert that the file exists
+    expect(file_exists($basicArticleConfigPath))->toBeTrue();
+    
+    // This should not throw any exceptions - the form should load successfully
+    $form = new Form($basicArticleConfigPath);
+    
+    // Verify the form was loaded correctly
+    expect($form)->toBeInstanceOf(Form::class);
+    expect($form->id)->toBe('basic_html');
+    
+    // Verify some key fields were loaded and configured correctly
+    expect($form->fieldExists('markup'))->toBeTrue();
+    $markupField = $form->getFieldByName('markup');
+    expect($markupField->type)->toBe('Rich');
+    expect($markupField->label)->toBe('Content');
+    expect($markupField->required)->toBeTrue();
+    expect($markupField->filter)->toBe('RAW');
+    
+    expect($form->fieldExists('og_description'))->toBeTrue();
+    $ogDescField = $form->getFieldByName('og_description');
+    expect($ogDescField->type)->toBe('Textarea');
+    expect($ogDescField->label)->toBe('Opengraph / Search Engine Description');
+    expect($ogDescField->required)->toBeFalse();
+    
+    expect($form->fieldExists('og_image'))->toBeTrue();
+    $ogImageField = $form->getFieldByName('og_image');
+    expect($ogImageField->type)->toBe('Image');
+    expect($ogImageField->label)->toBe('Opengraph Image');
+    expect($ogImageField->required)->toBeFalse();
+    
+    // Verify the form has the expected number of fields
+    expect(count($form->fields))->toBe(7);
+});
+
+test('registers built-in form fields and loads content required fields config without exceptions', function () {
+    // Call the CMS method to register built-in form fields
+    CMS::registerBuiltInFormFields();
+    
+    // Load the content required fields form configuration
+    $requiredFieldsConfigPath = __DIR__ . '/../../src/admin/controllers/content/views/edit/required_fields_form.json';
+    
+    // Assert that the file exists
+    expect(file_exists($requiredFieldsConfigPath))->toBeTrue();
+
+    // Remove the category and tags field to prevent database errors during testing
+    $requiredFieldsConfig = json_decode(file_get_contents($requiredFieldsConfigPath));
+    unset($requiredFieldsConfig->fields[2]);
+    unset($requiredFieldsConfig->fields[3]);
+    print_r($requiredFieldsConfig);
+    
+    // This should not throw any exceptions - the form should load successfully
+    $form = new Form($requiredFieldsConfig);
+    
+    // Verify the form was loaded correctly
+    expect($form)->toBeInstanceOf(Form::class);
+    expect($form->id)->toBe('required_content_fields');
+    
+    // Verify key fields were loaded and configured correctly
+    expect($form->fieldExists('title'))->toBeTrue();
+    $titleField = $form->getFieldByName('title');
+    expect($titleField->type)->toBe('Text');
+    expect($titleField->label)->toBe('Content Title');
+    expect($titleField->required)->toBeTrue();
+    expect($titleField->maxlength)->toBe(255);
+    
+    expect($form->fieldExists('alias'))->toBeTrue();
+    $aliasField = $form->getFieldByName('alias');
+    expect($aliasField->type)->toBe('Text');
+    expect($aliasField->label)->toBe('URL Friendly');
+    expect($aliasField->filter)->toBe('ALIAS');
+    
+    expect($form->fieldExists('state'))->toBeTrue();
+    $stateField = $form->getFieldByName('state');
+    expect($stateField->type)->toBe('Select');
+    expect($stateField->label)->toBe('Content State');
+    expect($stateField->filter)->toBe('NUMBER');
+    
+    // Verify the form has the expected number of fields (6 after removing category)
+    expect(count($form->fields))->toBe(6);
+});
+
 test('form field registration allows field creation from config', function () {
     // Call the CMS method to register built-in form fields
     CMS::registerBuiltInFormFields();
