@@ -313,6 +313,32 @@ final class CMS {
 		return preg_split('@/@', parse_url($url, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
 	}
 
+	public static function registerBuiltInFormFields(): void {
+		$formPackageFormFields = [
+			"Antispam", "Checkbox", "Honeypot", "Html", "Text", "Select", "Textarea"
+		];
+		foreach($formPackageFormFields as $formField) {
+			$formFieldClass = "HoltBosse\\Form\\Fields\\" . $formField . "\\" . $formField;
+			if($formField=="Text") {
+				$formFieldClass = "HoltBosse\\Form\\Fields\\Input\\Input";
+			}
+
+			if (class_exists($formFieldClass)) {
+				Form::registerField($formField, $formFieldClass);
+			}
+		}
+
+		foreach(glob(__DIR__ . "/../Fields/*") as $fieldFile) {
+			$fieldName = basename($fieldFile);
+			$fieldClass = "HoltBosse\\Alba\\Fields\\" . $fieldName . "\\" . $fieldName;
+			if (class_exists($fieldClass)) {
+				Form::registerField($fieldName, $fieldClass);
+			} else {
+				CMS::pprint_r("Field class not found: " . $fieldClass); die;
+			}
+		}
+	}
+
 	private function __construct() {
 
 		// setup domain
@@ -349,29 +375,7 @@ final class CMS {
 		CMS::registerAdminControllerDir(__DIR__ . "/../admin/controllers");
 
 		//load Form Fields
-		$formPackageFormFields = [
-			"Antispam", "Checkbox", "Honeypot", "Html", "Text", "Select", "Textarea"
-		];
-		foreach($formPackageFormFields as $formField) {
-			$formFieldClass = "HoltBosse\\Form\\Fields\\" . $formField . "\\" . $formField;
-			if($formField=="Text") {
-				$formFieldClass = "HoltBosse\\Form\\Fields\\Input\\Input";
-			}
-
-			if (class_exists($formFieldClass)) {
-				Form::registerField($formField, $formFieldClass);
-			}
-		}
-
-		foreach(glob(__DIR__ . "/../Fields/*") as $fieldFile) {
-			$fieldName = basename($fieldFile);
-			$fieldClass = "HoltBosse\\Alba\\Fields\\" . $fieldName . "\\" . $fieldName;
-			if (class_exists($fieldClass)) {
-				Form::registerField($fieldName, $fieldClass);
-			} else {
-				CMS::pprint_r("Field class not found: " . $fieldClass); die;
-			}
-		}
+		CMS::registerBuiltInFormFields();
 		
 		// Load plugins
 		$GLOBALS['hooks'] = []; // reset hooks array
