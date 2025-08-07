@@ -62,7 +62,7 @@ jobs:
               echo "Got 200 OK from root page"
               exit 0
             else
-              wget -O - http://127.0.0.1:8080/
+              curl http://127.0.0.1:8080/
               echo "Attempt $i: Got $status, retrying..."
               sleep 3
             fi
