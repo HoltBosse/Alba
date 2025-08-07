@@ -40,6 +40,9 @@ jobs:
           cp .github/files/boottest_composer.json test_site/composer.json
           cp .github/files/boottest_env .env
 
+      - name: Set env
+        run: echo "alba_installer_skip_configuration=true" >> $GITHUB_ENV
+
       - name: install project
         run: |
           cd test_site

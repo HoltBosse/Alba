@@ -17,7 +17,11 @@ Use HoltBosse\DB\DB;
 
 echo "Alba Project Creator \n";
 
-$installPath = readline("Enter project root or [" . getcwd() . "] for default: ");
+if(!isset($_ENV["alba_installer_skip_configuration"])) {
+    $installPath = readline("Enter project root or [" . getcwd() . "] for default: ");
+} else {
+    $installPath = "";
+}
 
 if($installPath==="") {
     $installPath = getcwd();
