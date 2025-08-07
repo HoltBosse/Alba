@@ -42,7 +42,7 @@ jobs:
 
       - name: install project
         run: |
-          cd test_folder
+          cd test_site
           composer install
           ./vendor/bin/alba
 
