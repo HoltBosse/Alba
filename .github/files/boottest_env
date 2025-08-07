@@ -1,0 +1,15 @@
+dbhost=localhost
+dbname=test_db
+dbuser=test_user
+dbpass=test_pass
+dbchar=utf8mb4
+uripath=
+sitename="php test site"
+template=basic
+frontendlogin=false
+domain=auto
+debug=true
+debugwarnings=false
+user_core_controllers=null
+session_length=15
+dev_banner=false

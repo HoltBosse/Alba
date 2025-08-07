@@ -1,0 +1,67 @@
+name: CMS boot test
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+          MYSQL_USER: test_user
+          MYSQL_PASSWORD: test_pass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo, pdo_mysql, mysqli
+          tools: composer
+
+      - name: Create test folder and copy source
+        run: |
+          mkdir test_site
+          cp .github/files/boottest_composer.json test_site/composer.json
+          cp .github/files/boottest_env .env
+
+      - name: install project
+        run: |
+          cd test_folder
+          composer install
+          ./vendor/bin/alba
+
+      - name: Start PHP built-in server in background
+        run: |
+          php -S 127.0.0.1:8080 > server.log 2>&1 &
+          sleep 5
+
+      - name: Curl root page and check for 200
+        run: |
+          for i in {1..5}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/)
+            if [ "$status" -eq 200 ]; then
+              echo "Got 200 OK from root page"
+              exit 0
+            else
+              echo "Attempt $i: Got $status, retrying..."
+              sleep 3
+            fi
+          done
+          echo "Failed to get 200 OK from root page"
+          exit 1

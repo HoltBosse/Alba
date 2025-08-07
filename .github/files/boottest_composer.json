@@ -1,0 +1,19 @@
+{
+    "name": "workaj/albatest",
+    "description": "workaj alba test site",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Workaj\\Albatest\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../"
+        }
+    ],
+    "require": {
+        "holtbosse/alba": "dev-master"
+    }
+}
