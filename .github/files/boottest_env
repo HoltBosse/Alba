@@ -1,4 +1,4 @@
-dbhost=localhost
+dbhost=127.0.0.1
 dbname=test_db
 dbuser=test_user
 dbpass=test_pass
