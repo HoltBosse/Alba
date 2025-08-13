@@ -125,6 +125,7 @@ class User {
 		$this->id = Input::getvar('id','INT');
 		$this->groups = Input::getvar('groups','ARRAYOFINT');
 		$this->tags = Input::getvar('tags','ARRAYOFINT');
+		$this->state = Input::getvar('userstate','INT');
 		return true;
 	}
 
@@ -235,12 +236,12 @@ class User {
 				// no password change
 				try {
 					$result = DB::exec(
-						"UPDATE users SET username=?, email=? WHERE id=?",
-						[$this->username, $this->email, $this->id]
+						"UPDATE users SET username=?, email=?, state=? WHERE id=?",
+						[$this->username, $this->email, $this->state, $this->id]
 					);
 				}
 				catch (PDOException $e) {
-					CMS::Instance()->queue_message('Username and/or email already exists','danger',$_ENV["uripath"].'/admin/users/');
+					//CMS::Instance()->queue_message('Username and/or email already exists','danger',$_ENV["uripath"].'/admin/users/');
 					if ($_ENV["debug"]==="true") {
 						echo "<code>" . $e->getMessage() . "</code>";
 					}
@@ -250,8 +251,8 @@ class User {
 			else {
 				// new password
 				$result = DB::exec(
-					"UPDATE users SET username=?, password=?, email=? WHERE id=?",
-					[$this->username, $this->password, $this->email, $this->id]
+					"UPDATE users SET username=?, password=?, email=?, state=? WHERE id=?",
+					[$this->username, $this->password, $this->email, $this->state, $this->id]
 				);
 			}
 			if ($result) {
