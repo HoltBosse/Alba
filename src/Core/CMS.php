@@ -639,66 +639,16 @@ final class CMS {
 		// if ADMIN but guest, show login
 
 		if ( ($this->isAdmin() && $this->user->username=="guest") || ($this->user->username=="guest" && $_ENV["frontendlogin"]==="true") ) {
-			// check for login attempt
 			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
-			$password = Input::getvar('password','RAW');
-			$login_user = new User();
-			$redirect_path = $_ENV["uripath"] . "/";
-			if ($this->isAdmin()) {
-				$redirect_path = $_ENV["uripath"] . '/admin';
-			}
-
-			// authenticate plugins hook
-
-			$this->user = Hook::execute_hook_filters('authenticate_user', $this->user); 
+        	$password = Input::getvar('password','RAW');
 			
-			if ($this->user->id!==false) {
-				// an authenticate plugin logged the user in!
-				$_SESSION['user_id'] = $this->user->id;
-				if (isset($_SESSION['redirect_url'])) {
-					$redirect_path = $_SESSION['redirect_url'];
-					unset($_SESSION['redirect_url']);
-				}
-				Actions::add_action("userlogin", (object) [
-					"user"=>$this->user->id,
-				], $this->user->id);
-				Hook::execute_hook_actions('user_logged_in'); 
-				$this->queue_message('Welcome ' . Input::stringHtmlSafe($this->user->username), 'success', $redirect_path);
+			$loginResult = Access::handleLogin($email, $password);
+
+			if(sizeof($loginResult)>0) {
+				// login failed, show login form
+				$this->queue_message(...$loginResult);
 			}
 
-			// continue with core login attempt
-
-			if ($password && (!$email)) {
-				// badly formatted email submitted and discarded by php filter
-				$this->queue_message('Invalid email','danger', $redirect_path);
-			}
-			if ($email && $password) {
-				if ($login_user->load_from_email($email)) {
-					if ($login_user->state<1) {
-						$this->queue_message('Incorrect email or password','danger', $redirect_path);
-					}
-					// user exists, check password
-					if ($login_user->check_password($password)) {
-						// logged in!
-						$_SESSION['user_id'] = $login_user->id;
-						if (isset($_SESSION['redirect_url'])) {
-							$redirect_path = $_SESSION['redirect_url'];
-							unset($_SESSION['redirect_url']);
-						}
-						Actions::add_action("userlogin", (object) [
-							"user"=>$login_user->id,
-						], $login_user->id);
-						Hook::execute_hook_actions('user_logged_in'); 
-						$this->queue_message('Welcome ' . Input::stringHtmlSafe($login_user->username), 'success', $redirect_path);
-					}
-					else {
-						$this->queue_message('Incorrect email or password','danger', $redirect_path);
-					}
-				}
-				else {
-					$this->queue_message('Incorrect email or password','danger', $redirect_path);
-				}
-			}
 			if ($this->isAdmin()) {
 				// force switch to admin template login 
 				$template = $this->get_admin_template();
