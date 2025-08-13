@@ -1,6 +1,8 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
+use HoltBosse\Form\Input;
+
 class Access {
     private static $adminAccessRegistry = [
         "" => [1,2],
@@ -51,5 +53,69 @@ class Access {
         }
 
         return false;
+    }
+
+    public static function onLoginSuccess($redirectPath) {
+        $_SESSION['user_id'] = CMS::Instance()->user->id;
+        if (isset($_SESSION['redirect_url'])) {
+            $redirectPath = $_SESSION['redirect_url'];
+            unset($_SESSION['redirect_url']);
+        }
+        Actions::add_action("userlogin", (object) [
+            "user"=>CMS::Instance()->user->id,
+        ], CMS::Instance()->user->id);
+        Hook::execute_hook_actions('user_logged_in');
+
+        return [
+            'Welcome ' . Input::stringHtmlSafe(CMS::Instance()->user->username),
+            'success',
+            $redirectPath
+        ];
+    }
+
+    public static function handleLogin() {
+        // check for login attempt
+        $email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
+        $password = Input::getvar('password','RAW');
+        $loginUser = new User();
+        $redirectPath = $_ENV["uripath"] . "/";
+        if (CMS::Instance()->isAdmin()) {
+            $redirectPath = $_ENV["uripath"] . '/admin';
+        }
+
+        // authenticate plugins hook
+
+        CMS::Instance()->user = Hook::execute_hook_filters('authenticate_user', CMS::Instance()->user); 
+        
+        if (CMS::Instance()->user->id!==false) {
+            return Access::onLoginSuccess($redirectPath);
+        }
+
+        // continue with core login attempt
+
+        if ($password && (!$email)) {
+            // badly formatted email submitted and discarded by php filter
+            return ['Invalid email','danger', $redirectPath];
+        }
+        if ($email && $password) {
+            if ($loginUser->load_from_email($email)) {
+                if ($loginUser->state<1) {
+                    return ['Incorrect email or password','danger', $redirectPath];
+                }
+                // user exists, check password
+                if ($loginUser->check_password($password)) {
+                    // logged in!
+                    CMS::Instance()->user = $loginUser;
+                    
+                    return Access::onLoginSuccess($redirectPath);
+                } else {
+                    return ['Incorrect email or password','danger', $redirectPath];
+                }
+            } else {
+                return ['Incorrect email or password','danger', $redirectPath];
+            }
+        }
+
+        return [];
     }
 }
