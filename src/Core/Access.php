@@ -56,7 +56,7 @@ class Access {
     }
 
     public static function onLoginSuccess($redirectPath) {
-        //check if they need to change there password on first login
+        //check if they need to change their password on first login
         if(CMS::Instance()->user->state==2) {
             return [
                 'Welcome ' . Input::stringHtmlSafe(CMS::Instance()->user->username) . '. Please update your password.',
