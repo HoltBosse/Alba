@@ -73,10 +73,8 @@ class Access {
         ];
     }
 
-    public static function handleLogin() {
+    public static function handleLogin($email, $password) {
         // check for login attempt
-        $email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
-        $password = Input::getvar('password','RAW');
         $loginUser = new User();
         $redirectPath = $_ENV["uripath"] . "/";
         if (CMS::Instance()->isAdmin()) {

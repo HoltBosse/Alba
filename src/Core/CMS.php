@@ -639,7 +639,10 @@ final class CMS {
 		// if ADMIN but guest, show login
 
 		if ( ($this->isAdmin() && $this->user->username=="guest") || ($this->user->username=="guest" && $_ENV["frontendlogin"]==="true") ) {
-			$loginResult = Access::handleLogin();
+			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
+        	$password = Input::getvar('password','RAW');
+			
+			$loginResult = Access::handleLogin($email, $password);
 
 			if(sizeof($loginResult)>0) {
 				// login failed, show login form
