@@ -39,6 +39,7 @@ Use HoltBosse\Form\Input;
 					<select name="filters[2][value]" form="searchform">
 						<option value=''>State</option>
 						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Enabled</option>
+						<option <?php if ($filters['state']==='2') { echo " selected "; }?> value='2'>Enabled - Pwd Reset Req</option>
 						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Disabled</option>
 						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
 						<?php
@@ -145,7 +146,12 @@ Use HoltBosse\Form\Input;
 			<tr class='user_admin_row'>
 				<td>
 					<?php
-						Component::state_toggle($user->id, $user->state, "users", $states, -1);
+						$statesForToggle = $states;
+						if(!is_array($statesForToggle)) {
+							$statesForToggle = [];
+						}
+						$statesForToggle = array_merge([(object) ["state"=>2,"name"=>"Published - Pwd Reset Req", "color"=>"lime"]], $statesForToggle);
+						Component::state_toggle($user->id, $user->state, "users", $statesForToggle, -1);
 					?>
 				</td>
 				<?php

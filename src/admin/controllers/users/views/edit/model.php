@@ -25,6 +25,7 @@ if (sizeof($segments)==3) {
 		//load core user fields form
 		$core_user_fields_form->fields["username"]->default = $edit_user->username;
 		$core_user_fields_form->fields["email"]->default = $edit_user->email;
+		$core_user_fields_form->fields["userstate"]->default = $edit_user->state;
 
 		// load user fields
 		if ($custom_user_fields_form) {

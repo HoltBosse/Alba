@@ -2,6 +2,7 @@
 
 Use HoltBosse\Alba\Core\{CMS, Hook, User, Mail};
 Use HoltBosse\Form\Input;
+Use HoltBosse\DB\DB;
 
 $view = Input::getvar('view','STRING');
 
@@ -71,6 +72,41 @@ if ($resetkey) {
 
 
 // end of reset handling
+
+$updatePassword = Input::getvar('updatepassword','RAW');
+if ($updatePassword) {
+	$view = "newpassword";
+
+	$token = Input::getvar('token','RAW');
+
+	$password1 = Input::getvar('newpassword1','RAW'); 
+	$password2 = Input::getvar('newpassword2','RAW'); 
+	if ($password1 && $password2) {
+		if ($password1 != $password2) {
+			CMS::Instance()->queue_message('Passwords did not match.','danger', $_ENV["uripath"] . "/admin?updatepassword=true&token=" . $token);	
+		} else {
+			// check resetkey matches a valid and current resetkey in user table
+			$reset_user = new User();
+			$reset_user_exists = $reset_user->get_user_by_reset_key($token);
+			if ($reset_user_exists) {
+				// remove resetkey from user, update password and redirect to admin login
+				if (!$reset_user->remove_reset_key()) {
+					CMS::Instance()->queue_message('Error removing reset key.', 'error', $_ENV["uripath"]."/admin");
+				}
+				if ($reset_user->update_password($password1)) {
+					DB::exec("UPDATE `users` SET `state`=1 WHERE `id`=?",[$reset_user->id]);
+
+					CMS::Instance()->queue_message('Password changed for ' . Input::stringHtmlSafe($reset_user->username),'success', $_ENV["uripath"] . '/admin');	
+				} else {
+					CMS::Instance()->queue_message('Unable to reset password. Please contact the system administrator.','danger', $_ENV["uripath"] . "/admin?updatepassword=true&token=" . $token);		
+				}
+			} else {
+				// no matching user for resetkey found or resetkey is outdated
+				CMS::Instance()->queue_message('Invalid reset key or reset key is too old.','danger', $_ENV["uripath"] . "/admin?updatepassword=true&token=" . $token);	
+			}
+		}
+	}
+}
 
 if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
 	$protocol = 'https';
@@ -189,7 +225,14 @@ if ($protocol=="http") {
 
 				</form>
 			<?php elseif ($view=='newpassword'):?>
-				<form class='' submit='<?php echo $_ENV["uripath"] . '/admin?view=newpassword>resetkey=' . $resetkey?>' action='' method="POST">
+				<?php
+					if($updatePassword) {
+						$url = $_ENV["uripath"] . "/admin?updatepassword=true&token=" . Input::getvar('token','RAW');
+					} elseif($resetkey) {
+						$url = $_ENV["uripath"] . '/admin?view=newpassword>resetkey=' . $resetkey;
+					}	
+				?>
+				<form class='' submit='<?php echo $url; ?>' action='' method="POST">
 					<h1 class='title is-1'>Enter New Password</h1>
 
 					<div class='field'>

@@ -56,6 +56,15 @@ class Access {
     }
 
     public static function onLoginSuccess($redirectPath) {
+        //check if they need to change their password on first login
+        if(CMS::Instance()->user->state==2) {
+            return [
+                'Welcome ' . Input::stringHtmlSafe(CMS::Instance()->user->username) . '. Please update your password.',
+                'warning',
+                $_ENV["uripath"] . '/admin?updatepassword=true&token=' . CMS::Instance()->user->generate_reset_key()
+            ];
+        }
+
         $_SESSION['user_id'] = CMS::Instance()->user->id;
         if (isset($_SESSION['redirect_url'])) {
             $redirectPath = $_SESSION['redirect_url'];
@@ -65,6 +74,7 @@ class Access {
             "user"=>CMS::Instance()->user->id,
         ], CMS::Instance()->user->id);
         Hook::execute_hook_actions('user_logged_in');
+
 
         return [
             'Welcome ' . Input::stringHtmlSafe(CMS::Instance()->user->username),

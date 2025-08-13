@@ -31,6 +31,20 @@
             "icon_parent_class": "has-icons-left",
             "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-envelope'></i></span>"
 		},
+		{
+			"name": "userstate",
+			"id": "userstate",
+			"type": "Select",
+			"label": "User State",
+			"filter": "NUMBER",
+			"default":1,
+			"select_options":[
+				{"value":1,"text":"Enabled"},
+				{"value":2,"text":"Enabled - Pwd Reset Req"},
+				{"value":0,"text":"Disabled"}
+			],
+			"slimselect":true
+		},
         {
 			"name":"password",
 			"id":"password",
