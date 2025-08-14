@@ -487,16 +487,11 @@ final class CMS {
 	}
 
 	public function queue_message($msg, $type='success', $redirect=null) {
-		$this->messages->add($type,$msg, $redirect);
+		$this->messages->add(MessageType::from($type), $msg, $redirect);
 	}
 
 	public function display_messages() {
 		$this->messages->display();
-	}
-
-	public function has_messages() {
-		return false;
-		//return ($this->messages->hasMessages());
 	}
 
 	public static function pprint_r ($o) {
