@@ -10,29 +10,15 @@ $view = Input::getvar('view','STRING');
 
 $resetemail = Input::getvar('resetemail','EMAIL');
 if ($resetemail) {
-	$reset_user = new User();
-	$reset_user->load_from_email($resetemail);
+	$resetUser = new User();
+	$resetUser->load_from_email($resetemail);
+	$message = $resetUser->sendResetEmail();
 
-	if ($reset_user->username != 'guest') {
-		$key = $reset_user->generate_reset_key();
-		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-		$domain = $_SERVER['HTTP_HOST'].'/';
-		$domain_url = $protocol.$domain;
-		$link = $domain_url . "admin/?resetkey=" . $key;
-		$markup = "
-		<h5>Hi {$reset_user->username}</h5>
-		<p>A password reset has been request on " . $_ENV["sitename"] . "</p>
-		<p>Click <a target='_blank' href='{$link}'>here</a> to choose a new password.</p>
-		<p>If you did not initiate this request, please ignore this email.</p>
-		";
-		$mail = new Mail();	
-		$mail->addAddress($resetemail,$_ENV["sitename"] . " - User");
-		$mail->subject = 'Reset Email for ' . $_ENV["sitename"];
-		$mail->html = $markup;
-		$mail->send();
+	if($message->hasMessage()) {
+		CMS::Instance()->queue_message(...$message->toQueueMessageArgsArray());
 	}
-	// either sent or not, show same message
-	CMS::Instance()->queue_message('If your email was associated with a user, you should receive a message with further instructions shortly.','success',$_ENV["uripath"] . '/admin');
+
+	die;
 }
 
 $resetkey = Input::getvar('resetkey','RAW'); 
@@ -41,35 +27,18 @@ if ($resetkey) {
 	// check if passwords sent
 	$password1 = Input::getvar('newpassword1','RAW'); 
 	$password2 = Input::getvar('newpassword2','RAW'); 
+
 	if ($password1 && $password2) {
-		if ($password1 != $password2) {
-			CMS::Instance()->queue_message('Passwords did not match.','danger', $_ENV["uripath"] . '/admin?resetkey=' . $resetkey);	
-		}
-		else {
-			// check resetkey matches a valid and current resetkey in user table
-			$reset_user = new User();
-			$reset_user_exists = $reset_user->get_user_by_reset_key ($resetkey);
-			if ($reset_user_exists) {
-				// remove resetkey from user, update password and redirect to admin login
-				if (!$reset_user->remove_reset_key()) {
-					CMS::Instance()->queue_message('Error removing reset key.', 'error', $_ENV["uripath"]."/admin");
-				}
-				if ($reset_user->update_password ($password1)) {
-					CMS::Instance()->queue_message('Password changed for ' . Input::stringHtmlSafe($reset_user->username),'success', $_ENV["uripath"] . '/admin');	
-				}
-				else {
-					CMS::Instance()->queue_message('Unable to reset password. Please contact the system administrator.','danger', $_ENV["uripath"] . '/admin?resetkey=' . $resetkey);		
-				}
-			}
-			else {
-				// no matching user for resetkey found or resetkey is outdated
-				CMS::Instance()->queue_message('Invalid reset key or reset key is too old.','danger', $_ENV["uripath"] . '/admin?resetkey=' . $resetkey);	
-			}
+		$resetUser = new User();
+		$message = $resetUser->resetPassword($password1, $password2, $resetkey);
+
+		if($message->hasMessage()) {
+			CMS::Instance()->queue_message(...$message->toQueueMessageArgsArray());
 		}
 	}
+
 	// just show newpassword view, no passwords sent for key
 }
-
 
 // end of reset handling
 
@@ -80,30 +49,23 @@ if ($updatePassword) {
 	$token = Input::getvar('token','RAW');
 
 	$password1 = Input::getvar('newpassword1','RAW'); 
-	$password2 = Input::getvar('newpassword2','RAW'); 
-	if ($password1 && $password2) {
-		if ($password1 != $password2) {
-			CMS::Instance()->queue_message('Passwords did not match.','danger', $_ENV["uripath"] . "/admin?updatepassword=true&token=" . $token);	
-		} else {
-			// check resetkey matches a valid and current resetkey in user table
-			$reset_user = new User();
-			$reset_user_exists = $reset_user->get_user_by_reset_key($token);
-			if ($reset_user_exists) {
-				// remove resetkey from user, update password and redirect to admin login
-				if (!$reset_user->remove_reset_key()) {
-					CMS::Instance()->queue_message('Error removing reset key.', 'error', $_ENV["uripath"]."/admin");
-				}
-				if ($reset_user->update_password($password1)) {
-					DB::exec("UPDATE `users` SET `state`=1 WHERE `id`=?",[$reset_user->id]);
+	$password2 = Input::getvar('newpassword2','RAW');
 
-					CMS::Instance()->queue_message('Password changed for ' . Input::stringHtmlSafe($reset_user->username),'success', $_ENV["uripath"] . '/admin');	
-				} else {
-					CMS::Instance()->queue_message('Unable to reset password. Please contact the system administrator.','danger', $_ENV["uripath"] . "/admin?updatepassword=true&token=" . $token);		
-				}
-			} else {
-				// no matching user for resetkey found or resetkey is outdated
-				CMS::Instance()->queue_message('Invalid reset key or reset key is too old.','danger', $_ENV["uripath"] . "/admin?updatepassword=true&token=" . $token);	
+	if ($password1 && $password2) {
+		$resetUser = new User();
+		$resetUser->get_user_by_reset_key($token);
+		$message = $resetUser->resetPassword($password1, $password2, $token);
+
+		if($message->success===true) {
+			DB::exec("UPDATE `users` SET `state`=1 WHERE `id`=?",[$resetUser->id]);
+		}
+
+		if($message->hasMessage()) {
+			if($message->success===false && str_contains($message->redirectTo, "resetkey")) {
+				$message->redirectTo = $_ENV["uripath"] . "/admin?updatepassword=true&token=" . $token;
 			}
+
+			CMS::Instance()->queue_message(...$message->toQueueMessageArgsArray());
 		}
 	}
 }

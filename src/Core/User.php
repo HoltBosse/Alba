@@ -195,7 +195,7 @@ class User {
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
 		$ok = DB::exec($query, [$key, $this->id]);
 		if (!$ok) {
-			CMS::Instance()->queue_message('Error creating password reset key for ' . Input::stringHtmlSafe($this->username), 'error', $_ENV["uripath"]."/admin");
+			CMS::Instance()->queue_message('Error creating password reset key for ' . Input::stringHtmlSafe($this->username), 'warning', $_ENV["uripath"]."/admin");
 			// should not get here
 		}
 		return $key;
@@ -221,6 +221,71 @@ class User {
 		}
 		else {
 			return false;
+		}
+	}
+
+	public function sendResetEmail(?string $baseUrl=null): Message {
+		$status = false;
+
+		if(!isset($baseUrl)) {
+			$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+			$domain = $_SERVER['HTTP_HOST'];
+			$domainUrl = $protocol.$domain;
+			$baseUrl = $domainUrl . "/admin";
+		}
+		
+		if ($this->username != 'guest') {
+			$key = $this->generate_reset_key();
+			$link = $baseUrl . "?resetkey=" . $key;
+			$markup = "
+			<h5>Hi {$this->username}</h5>
+			<p>A password reset has been request on " . $_ENV["sitename"] . "</p>
+			<p>Click <a target='_blank' href='{$link}'>here</a> to choose a new password.</p>
+			<p>If you did not initiate this request, please ignore this email.</p>
+			";
+			$mail = new Mail();	
+			$mail->addAddress($this->email, $_ENV["sitename"] . " - User");
+			$mail->subject = 'Reset Email for ' . $_ENV["sitename"];
+			$mail->html = $markup;
+			$mail->send();
+
+			$status = true;
+		}
+
+		// either sent or not, show same message
+		return new Message($status, MessageType::Success, 'If your email was associated with a user, you should receive a message with further instructions shortly.', $baseUrl);
+	}
+
+	public function resetPassword($password1, $password2, $resetkey, $baseUrl=null): Message {
+		if(!isset($baseUrl)) {
+			$baseUrl = "{$_ENV["uripath"]}/admin";
+		}
+
+		if ($password1 && $password2) {
+			if ($password1 != $password2) {
+				return new Message(false, MessageType::Danger, 'Passwords did not match.', $baseUrl . '?resetkey=' . $resetkey);	
+			} else {
+				// check resetkey matches a valid and current resetkey in user table
+				$reset_user = new User();
+				$reset_user_exists = $reset_user->get_user_by_reset_key($resetkey);
+				if ($reset_user_exists) {
+					// remove resetkey from user, update password and redirect to admin login
+					if (!$reset_user->remove_reset_key()) {
+						return new Message(false, MessageType::Danger, 'Error removing reset key.', $baseUrl);
+					}
+					if ($reset_user->update_password($password1)) {
+						return new Message(true, MessageType::Success, 'Password changed for ' . Input::stringHtmlSafe($reset_user->username), $baseUrl);	
+					}
+					else {
+						return new Message(false, MessageType::Danger, 'Unable to reset password. Please contact the system administrator.', $baseUrl. '?resetkey=' . $resetkey);		
+					}
+				} else {
+					// no matching user for resetkey found or resetkey is outdated
+					return new Message('Invalid reset key or reset key is too old.','danger', $_ENV["uripath"] . '/admin?resetkey=' . $resetkey);	
+				}
+			}
+		} else {
+			return new Message(false, MessageType::Danger, "An Error occured, Please contact the system administrator.", $baseUrl);
 		}
 	}
 
