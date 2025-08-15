@@ -55,14 +55,15 @@ class Access {
         return false;
     }
 
-    public static function onLoginSuccess($redirectPath) {
+    public static function onLoginSuccess($redirectPath): Message {
         //check if they need to change their password on first login
         if(CMS::Instance()->user->state==2) {
-            return [
+            return new Message(
+                false,
+                MessageType::Warning,
                 'Welcome ' . Input::stringHtmlSafe(CMS::Instance()->user->username) . '. Please update your password.',
-                'warning',
                 $_ENV["uripath"] . '/admin?updatepassword=true&token=' . CMS::Instance()->user->generate_reset_key()
-            ];
+            );
         }
 
         $_SESSION['user_id'] = CMS::Instance()->user->id;
@@ -76,14 +77,15 @@ class Access {
         Hook::execute_hook_actions('user_logged_in');
 
 
-        return [
+        return new Message(
+            true,
+            MessageType::Success,
             'Welcome ' . Input::stringHtmlSafe(CMS::Instance()->user->username),
-            'success',
             $redirectPath
-        ];
+        );
     }
 
-    public static function handleLogin($email, $password) {
+    public static function handleLogin($email, $password): Message {
         // check for login attempt
         $loginUser = new User();
         $redirectPath = $_ENV["uripath"] . "/";
@@ -103,12 +105,12 @@ class Access {
 
         if ($password && (!$email)) {
             // badly formatted email submitted and discarded by php filter
-            return ['Invalid email','danger', $redirectPath];
+            return new Message(false, MessageType::Danger, 'Invalid email', $redirectPath);
         }
         if ($email && $password) {
             if ($loginUser->load_from_email($email)) {
                 if ($loginUser->state<1) {
-                    return ['Incorrect email or password','danger', $redirectPath];
+                    return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
                 }
                 // user exists, check password
                 if ($loginUser->check_password($password)) {
@@ -117,13 +119,13 @@ class Access {
                     
                     return Access::onLoginSuccess($redirectPath);
                 } else {
-                    return ['Incorrect email or password','danger', $redirectPath];
+                    return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
                 }
             } else {
-                return ['Incorrect email or password','danger', $redirectPath];
+                return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
             }
         }
 
-        return [];
+        return new Message(false, MessageType::Warning);
     }
 }

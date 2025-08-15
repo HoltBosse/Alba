@@ -487,7 +487,11 @@ final class CMS {
 	}
 
 	public function queue_message($msg, $type='success', $redirect=null) {
-		$this->messages->add(MessageType::from($type), $msg, $redirect);
+		if(gettype($type)=="string") {
+			$type = MessageType::from($type);
+		}
+
+		$this->messages->add($type, $msg, $redirect);
 	}
 
 	public function display_messages() {
@@ -639,9 +643,9 @@ final class CMS {
 			
 			$loginResult = Access::handleLogin($email, $password);
 
-			if(sizeof($loginResult)>0) {
+			if($loginResult->hasMessage()) {
 				// login failed, show login form
-				$this->queue_message(...$loginResult);
+				$this->queue_message(...$loginResult->toQueueMessageArgsArray());
 			}
 
 			if ($this->isAdmin()) {
