@@ -13,7 +13,7 @@
 
 ## Commit messages
 
-The project using https://www.conventionalcommits.org/en/v1.0.0/
+The project is using https://www.conventionalcommits.org/en/v1.0.0/
 
 # Files
 
