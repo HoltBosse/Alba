@@ -23,19 +23,24 @@ class Tag {
 
 	public function load($id) {
 		$info = DB::fetch('SELECT * FROM tags WHERE id=?', [$id]);
-		$this->id = $info->id;
-		$this->title = $info->title;
-		$this->state = $info->state;
-		$this->note = $info->note;
-		$this->alias = $info->alias;
-		$this->filter = $info->filter;
-		$this->description = $info->description;
-		$this->image = $info->image;
-		$this->public = $info->public;
-		$this->parent = $info->parent;
-		$this->category = $info->category;
-		$this->custom_fields = $info->custom_fields;
-		$this->contenttypes = DB::fetchAll("SELECT content_type_id FROM tag_content_type WHERE tag_id=?", $this->id, ["mode"=>PDO::FETCH_COLUMN]);
+		if ($info) {
+			$this->id = $info->id;
+			$this->title = $info->title;
+			$this->state = $info->state;
+			$this->note = $info->note;
+			$this->alias = $info->alias;
+			$this->filter = $info->filter;
+			$this->description = $info->description;
+			$this->image = $info->image;
+			$this->public = $info->public;
+			$this->parent = $info->parent;
+			$this->category = $info->category;
+			$this->custom_fields = $info->custom_fields;
+			$this->contenttypes = DB::fetchAll("SELECT content_type_id FROM tag_content_type WHERE tag_id=?", $this->id, ["mode"=>PDO::FETCH_COLUMN]);
+			return true;
+		} else {
+			return false;
+		}
 
 	}
 

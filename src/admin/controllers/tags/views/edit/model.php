@@ -8,7 +8,12 @@ $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$tag_id = $segments[2];
 	$tag = new Tag();
-	$tag->load($tag_id);
+	$tagLoadStatus = $tag->load($tag_id);
+
+	if($tagLoadStatus==false) {
+		CMS::Instance()->queue_message('Failed to load tag id: ' . $tag_id, 'danger',$_ENV["uripath"].'/admin/tags');
+	}
+
 	$new_tag = false;
 }
 elseif(sizeof($segments)==3 && $segments[2]=='new') {
