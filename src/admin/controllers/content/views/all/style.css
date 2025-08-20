@@ -1,5 +1,17 @@
 table.table {
 	width:100%;
+
+    tr {
+        td {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            a.content-link {
+                display: block;
+            }
+        }
+    }
 }
 .position_single_wrap {
 	font-size:70%;

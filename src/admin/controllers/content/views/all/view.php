@@ -221,8 +221,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 						}
 					?>
 					<td>
-						<a href="<?php echo $_ENV["uripath"]; ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo Input::stringHtmlSafe($content_item->title); ?></a>
-						<br>
+						<a class="content-link" href="<?php echo $_ENV["uripath"]; ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo Input::stringHtmlSafe($content_item->title); ?></a>
 						<span class='unimportant'>
 							<?php
 								echo Hook::execute_hook_filters('display_alias_override', $content_item->alias, $content_item);
