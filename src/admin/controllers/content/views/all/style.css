@@ -6,10 +6,6 @@ table.table {
             display: flex;
             flex-direction: column;
             justify-content: center;
-
-            a.content-link {
-                display: block;
-            }
         }
     }
 }
