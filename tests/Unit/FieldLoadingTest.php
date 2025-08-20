@@ -106,7 +106,7 @@ test('registers built-in form fields and loads content required fields config wi
     $requiredFieldsConfig = json_decode(file_get_contents($requiredFieldsConfigPath));
     unset($requiredFieldsConfig->fields[2]);
     unset($requiredFieldsConfig->fields[3]);
-    print_r($requiredFieldsConfig);
+    //print_r($requiredFieldsConfig);
     
     // This should not throw any exceptions - the form should load successfully
     $form = new Form($requiredFieldsConfig);
