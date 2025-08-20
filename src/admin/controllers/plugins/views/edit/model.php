@@ -8,6 +8,11 @@ $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$plugin_id = $segments[2];
 	$plugin_info = DB::fetch('SELECT * FROM plugins WHERE id=?', $plugin_id);
+
+	if(!$plugin_info) {
+		CMS::Instance()->queue_message('Failed to load plugin id: ' . $plugin_id, 'danger',$_ENV["uripath"].'/admin/plugins/show');
+	}
+
 	$plugin_class_name = Plugin::getPluginClass($plugin_info->location);
 	$plugin = new $plugin_class_name($plugin_info);
 }

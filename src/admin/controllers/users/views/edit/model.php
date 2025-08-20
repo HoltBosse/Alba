@@ -20,7 +20,11 @@ $custom_user_fields_form = isset($_ENV["custom_user_fields_file_path"]) ? new Fo
 
 if (sizeof($segments)==3) {
 	if (is_numeric($segments[2])) {
-		$edit_user->load_from_id($segments[2]);
+		$userLoadStatus = $edit_user->load_from_id($segments[2]);
+
+		if($userLoadStatus==false) {
+			CMS::Instance()->queue_message('Failed to load User id: ' . $segments[2], 'danger',$_ENV["uripath"].'/admin/users');
+		}
 
 		//load core user fields form
 		$core_user_fields_form->fields["username"]->default = $edit_user->username;

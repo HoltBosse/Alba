@@ -9,6 +9,12 @@ $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	// edit existing widget id is segment 2
 	$widget_id = $segments[2];
+
+	$widgetExists = DB::fetch('SELECT * FROM widgets WHERE id=?', $widget_id);
+	if(!$widgetExists) {
+		CMS::Instance()->queue_message('Failed to load widget id: ' . $widget_id, 'danger',$_ENV["uripath"].'/admin/widgets/show');
+	}
+
 	// create temp base class widget to get type
 	$temp_widget = new Widget();
 	$temp_widget->load($widget_id);

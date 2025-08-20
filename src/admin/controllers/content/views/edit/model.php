@@ -12,9 +12,18 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	// need to pass content type now as well
 	$content_id = $segments[2];
 	$content_type = $segments[3];
+
+	$contentTypeTableRecord = DB::fetch("SELECT * FROM content_types WHERE id=?", $content_type);
+	if(!$contentTypeTableRecord) {
+		CMS::raise_404();
+	}
 	
 	$content = new Content();
-	$content->load($content_id, $content_type);
+	$contentLoadStatus = $content->load($content_id, $content_type);
+
+	if($contentLoadStatus===false) {
+		CMS::Instance()->queue_message('Failed to load content id: ' . $content_id, 'danger',$_ENV["uripath"].'/admin/content/all/' . $content_type);
+	}
 	$new_content = false;
 
 	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?', [$content_id])->c;
@@ -23,6 +32,12 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
 	$content_type = $segments[3];
 	$content = new Content($content_type);
+
+	$contentTypeTableRecord = DB::fetch("SELECT * FROM content_types WHERE id=?", $content_type);
+	if(!$contentTypeTableRecord) {
+		CMS::raise_404();
+	}
+
 	//$content->type_id = $segments[3]; // passing optional parameter to class constructor above
 	$new_content = true;
 }

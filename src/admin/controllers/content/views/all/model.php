@@ -19,6 +19,11 @@ if (sizeof($segments)>3) {
 	CMS::show_error('Cannot determine content type to show');
 }
 
+$contentTypeTableRecord = DB::fetch("SELECT * FROM content_types WHERE id=?", $content_type_filter);
+if(!$contentTypeTableRecord) {
+	CMS::raise_404();
+}
+
 $cur_page = Input::getvar('page','INT','1');
 
 $all_content_types = Content::get_all_content_types();
