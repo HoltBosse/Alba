@@ -132,6 +132,8 @@ class Rich extends Field {
 					import Heading from 'https://esm.sh/@tiptap/extension-heading@3.2.1'
 					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu@3.2.1'
 					import { Details, DetailsContent, DetailsSummary } from 'https://esm.sh/@tiptap/extension-details@3.2.1'
+					import FileHandler from 'https://esm.sh/@tiptap/extension-file-handler@3.2.1'
+					import {getValidImageTypes, doUpload} from "/js/image_uploading.js?v=2";
 					
 					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
 					const editorElement = editorWrapperRoot.querySelector('.gui_editor');
@@ -278,6 +280,39 @@ class Rich extends Field {
 							}),
 							DetailsSummary,
 							DetailsContent,
+							FileHandler.configure({
+								allowedMimeTypes: getValidImageTypes(),
+								onDrop: (currentEditor, files, pos) => {
+
+									const customDropEvent = new CustomEvent('customUploadImages', {
+										bubbles: false,
+										cancelable: true,
+										detail: {
+											callback: function(data) {
+												console.log("callback triggered");
+												console.log(data);
+
+												data.urls.split(",").forEach(link=>{
+													currentEditor.chain().insertContentAt(pos, {
+														type: 'image',
+														attrs: {
+															src: link + "/web",
+															class: "rich_image",
+														},
+													}).focus().run();
+												});
+
+												updateEditorSave();
+											},
+											files: files,
+										}
+									});
+
+									doUpload(customDropEvent);
+
+									console.log("file dropped");
+								},
+							}),
 						],
 						editorProps: {
 							transformPastedHTML: html => stripClassAttributes(html),

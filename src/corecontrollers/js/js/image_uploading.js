@@ -15,15 +15,37 @@ const webFriendlyBlacklist = {
 	"image/gif": true,
 }
 
+function getValidImageTypes(webFriendly=false) {
+	const imageTypes = [];
+
+	for (const [key, _] of Object.entries(validImageTypes)) {
+		if(webFriendly) {
+			if(!webFriendlyBlacklist[key]) {
+				imageTypes.push(key);
+			}
+		} else {
+			imageTypes.push(key);
+		}
+	}
+
+	return imageTypes;
+}
+
 function doUpload(e) {
 	// check method
 	let myfiles;
 	if (e.type=="drop") {
 		myfiles = e.dataTransfer.files;
+	} else if(e.type=="customUploadImages") {
+		myfiles = e.detail.files;
 	} else {
 		// assume file input 
 		myfiles = e.target.files;
 	}
+
+	//for later
+	const rootEventDetail = e?.detail;
+
 	// RUN THROUGH THE DROPPED FILES + AJAX UPLOAD
 	window.formdata = new FormData();
 
@@ -217,6 +239,8 @@ function doUpload(e) {
 				upload_el.setCustomValidity('');
 
 				delete window.image_upload_el;
+			} else if(rootEventDetail?.callback) {
+				rootEventDetail.callback(data);
 			} else {
 				window.location.reload();
 			}
@@ -323,4 +347,5 @@ export {
 	initInputFileUploaderEventListeners,
 	doUpload,
 	addImageUploadDialog,
+	getValidImageTypes,
 }
