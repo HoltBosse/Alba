@@ -58,6 +58,7 @@ class Rich extends Field {
 						<option value="orderedlist"><i class="fa fa-list-ol"></i>Numbered List</option>
 						<option value="quote"><i class="fa fa-quote-left"></i>Quote</option>
 						<option value="code"><i class="fa fa-code"></i>Code Block</option>
+						<option value="details"><i class="fa fa-caret-down"></i>Dropdown</option>
 						<option value="unknown"><i class="fa fa-question"></i>Unknown</option>
 					</select>
 					<hr>
@@ -130,6 +131,7 @@ class Rich extends Field {
 					import Paragraph from 'https://esm.sh/@tiptap/extension-paragraph@3.2.1'
 					import Heading from 'https://esm.sh/@tiptap/extension-heading@3.2.1'
 					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu@3.2.1'
+					import { Details, DetailsContent, DetailsSummary } from 'https://esm.sh/@tiptap/extension-details@3.2.1'
 					
 					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
 					const editorElement = editorWrapperRoot.querySelector('.gui_editor');
@@ -268,6 +270,14 @@ class Rich extends Field {
 									return editor.isActive('image');
 								},
 							}),
+							Details.configure({
+								persist: true,
+								HTMLAttributes: {
+									class: 'details',
+								},
+							}),
+							DetailsSummary,
+							DetailsContent,
 						],
 						editorProps: {
 							transformPastedHTML: html => stripClassAttributes(html),
@@ -447,6 +457,9 @@ class Rich extends Field {
 							case "codeBlock":
 								editorLinetypeSelect.value = "code";
 								break;
+							case "detailsSummary":
+								editorLinetypeSelect.value = "details";
+								break;
 							default:
 								console.log("issue figuring out element in type selector: ", from.parent.type.name);
 								editorLinetypeSelect.value = "unknown";
@@ -564,7 +577,10 @@ class Rich extends Field {
 								editorInstance.chain().focus().setBlockquote().run();
 								break;
 							case "code":
-								editorInstance.chain().focus().setCodeBlock().run()
+								editorInstance.chain().focus().setCodeBlock().run();
+								break;
+							case "details":
+								editorInstance.chain().focus().setDetails().run();
 								break;
 							default:
 								console.log("unknown linetype selected");
