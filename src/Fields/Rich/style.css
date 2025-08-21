@@ -11,6 +11,7 @@
         border-radius: 0.5rem;
         border: 1px solid var(--border-color);
         display: flex;
+        z-index: 1;
 
         & > div {
             padding: 0.5rem;
