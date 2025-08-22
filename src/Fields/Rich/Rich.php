@@ -135,6 +135,7 @@ class Rich extends Field {
 					import FileHandler from 'https://esm.sh/@tiptap/extension-file-handler@3.2.1'
 					import {getValidImageTypes, doUpload} from "/js/image_uploading.js?v=2"
 					import { findChildrenInRange, mergeAttributes, Node, nodeInputRule, Tracker } from 'https://esm.sh/@tiptap/core@3.2.1'
+					import { Plugin, PluginKey } from 'https://esm.sh/@tiptap/pm@3.2.1/state'
 					
 					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
 					const editorElement = editorWrapperRoot.querySelector('.gui_editor');
@@ -170,7 +171,10 @@ class Rich extends Field {
 						},
 					};
 
-					<?php echo file_get_contents(__DIR__ . "/figure.js"); ?>
+					<?php
+						echo file_get_contents(__DIR__ . "/figure.js");
+						echo file_get_contents(__DIR__ . "/figcaption.js");
+					?>
 
 					function stripClassAttributes(html) {
 						const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -317,6 +321,7 @@ class Rich extends Field {
 								},
 							}),
 							Figure,
+							Figcaption,
 						],
 						editorProps: {
 							transformPastedHTML: html => stripClassAttributes(html),

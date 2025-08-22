@@ -12,7 +12,7 @@ const Figure = Node.create({
 
   group: 'block',
 
-  content: 'inline*',
+  content: 'image figcaption',
 
   draggable: true,
 
@@ -41,17 +41,16 @@ const Figure = Node.create({
     return [
       {
         tag: 'figure',
-        contentElement: 'figcaption',
       },
     ]
   },
 
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: not touching this
   renderHTML({ HTMLAttributes }) {
     return [
       'figure',
       this.options.HTMLAttributes,
-      ['img', mergeAttributes(HTMLAttributes, { draggable: false, contenteditable: false })],
-      ['figcaption', 0],
+      0,
     ]
   },
 
@@ -65,7 +64,12 @@ const Figure = Node.create({
               .insertContent({
                 type: this.name,
                 attrs,
-                content: caption ? [{ type: 'text', text: caption }] : [],
+                content: [
+                  { type: 'image', attrs },
+                  caption
+                    ? { type: 'figcaption', content: caption }
+                    : { type: 'figcaption' },
+                ],
               })
               // set cursor at end of caption field
               .command(({ tr, commands }) => {
