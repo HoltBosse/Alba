@@ -276,7 +276,8 @@ class Rich extends Field {
 								pluginKey: "imageBubbleBar",
 								element: editorWrapperRoot.querySelector('.image-bubble-bar'),
 								shouldShow: ({ editor, view, state, oldState, from, to }) => {
-									return editor.isActive('image');
+									//dont show on images inside a figure
+									return editor.isActive('image') && editor.state.selection.$from.parent.type.name != "figure";
 								},
 							}),
 							Details.configure({
