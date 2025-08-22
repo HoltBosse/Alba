@@ -107,11 +107,18 @@ const Figure = Node.create({
               to: mapResult.position + node.nodeSize,
             }
 
+            // Insert a figure node with image and figcaption children (figcaption must have non-empty text content)
             return commands.insertContentAt(range, {
               type: this.name,
               attrs: {
                 src: node.attrs.src,
+                alt: node.attrs.alt,
+                title: node.attrs.title,
               },
+              content: [
+                { type: 'image', attrs: node.attrs },
+                { type: 'figcaption', content: [ { type: 'paragraph', text: '' } ] },
+              ],
             })
           })
         },

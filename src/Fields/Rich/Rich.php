@@ -42,6 +42,17 @@ class Rich extends Field {
 							<i class='fa fa-align-right'></i>
 							<span>Float Right</span>
 						</div>
+						<hr>
+						<div>
+							<i class='fa fa-image'></i>
+							<span>To Figure</span>
+						</div>
+					</div>
+					<div class="image-figure-unlink-bar">
+						<div>
+							<i class='fa fa-image'></i>
+							<span>UnJoin Figure</span>
+						</div>
 					</div>
 				</div>
 				<div class="gui_editor_control_bar">
@@ -278,6 +289,14 @@ class Rich extends Field {
 								shouldShow: ({ editor, view, state, oldState, from, to }) => {
 									//dont show on images inside a figure
 									return editor.isActive('image') && editor.state.selection.$from.parent.type.name != "figure";
+								},
+							}),
+							BubbleMenu.configure({
+								pluginKey: "imageFigureUnlinkBubbleBar",
+								element: editorWrapperRoot.querySelector(".image-figure-unlink-bar"),
+								shouldShow: ({ editor, view, state, oldState, from, to }) => {
+									//dont show on images inside a figure
+									return editor.isActive('image') && editor.state.selection.$from.parent.type.name == "figure";
 								},
 							}),
 							Details.configure({
@@ -941,6 +960,10 @@ class Rich extends Field {
 							classes = classes.replace("pull-left", "");
 							classes = classes.replace("pull-right", "");
 							editorInstance.chain().updateAttributes('image', { class : `${classes}`}).run();
+						} else if(e.target.matches(".image-bubble-bar div:has(.fa.fa-image)")) {
+							editorInstance.chain().focus().imageToFigure().run()
+						} else if(e.target.matches(".image-figure-unlink-bar div:has(.fa.fa-image)")) {
+							editorInstance.chain().focus().figureToImage().run()
 						}
 					});
 				</script>

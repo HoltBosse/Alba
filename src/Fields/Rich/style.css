@@ -6,7 +6,7 @@
     border: 1px solid var(--border-color);
     position: relative;
 
-    .link-bubble-bar, .image-bubble-bar {
+    .link-bubble-bar, .image-bubble-bar, .image-figure-unlink-bar {
         background-color: var(--background-color);
         border-radius: 0.5rem;
         border: 1px solid var(--border-color);
