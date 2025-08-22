@@ -344,6 +344,34 @@
                     margin: 0.5rem 0;
                 }
             }
+
+            figure {
+                --outline-color: color-mix(in srgb, var(--border-color) 100%, white 50%);
+
+                align-items: start;
+                border: 2px solid var(--outline-color);
+                border-radius: 0.5rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                margin: 1rem 0;
+                padding: 0.5rem;
+                width: fit-content;
+
+                > *:not(figcaption) {
+                    margin: 0;
+                    max-width: 100%;
+                }
+
+                figcaption {
+                    border-radius: 0.5rem;
+                    border: 2px dashed var(--outline-color);
+                    padding: 0.5rem;
+                    text-align: center;
+                    width: 100%;
+                    contain: inline-size;
+                }
+            }
         }
     }
 }

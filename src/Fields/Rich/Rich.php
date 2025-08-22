@@ -133,7 +133,8 @@ class Rich extends Field {
 					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu@3.2.1'
 					import { Details, DetailsContent, DetailsSummary } from 'https://esm.sh/@tiptap/extension-details@3.2.1'
 					import FileHandler from 'https://esm.sh/@tiptap/extension-file-handler@3.2.1'
-					import {getValidImageTypes, doUpload} from "/js/image_uploading.js?v=2";
+					import {getValidImageTypes, doUpload} from "/js/image_uploading.js?v=2"
+					import { findChildrenInRange, mergeAttributes, Node, nodeInputRule, Tracker } from 'https://esm.sh/@tiptap/core@3.2.1'
 					
 					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
 					const editorElement = editorWrapperRoot.querySelector('.gui_editor');
@@ -168,6 +169,8 @@ class Rich extends Field {
 							}
 						},
 					};
+
+					<?php echo file_get_contents(__DIR__ . "/figure.js"); ?>
 
 					function stripClassAttributes(html) {
 						const doc = new DOMParser().parseFromString(html, 'text/html');
@@ -313,6 +316,7 @@ class Rich extends Field {
 									console.log("file dropped");
 								},
 							}),
+							Figure,
 						],
 						editorProps: {
 							transformPastedHTML: html => stripClassAttributes(html),
