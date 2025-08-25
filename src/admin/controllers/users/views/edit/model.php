@@ -55,3 +55,13 @@ if(!$edit_user->email) {
 } else {
 	$core_user_fields_form->fields["password"]->required = false;
 }
+
+$states = NULL;
+if(isset($_ENV["custom_user_fields_file_path"])) {
+	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
+	if($formObject->states) {
+		foreach($formObject->states as $state) {
+			$core_user_fields_form->fields["userstate"]->select_options[] = (object) ["text"=>$state->name,"value"=>$state->state];
+		}
+	}
+}
