@@ -51,6 +51,7 @@ RewriteRule .* index.php [L]
 RedirectMatch 404 composer.json
 RedirectMatch 404 composer.lock
 RedirectMatch 404 /vendor
+RedirectMatch 404 /tests
 RedirectMatch 404 biome.json
 RedirectMatch 404 cmslog.txt
 RedirectMatch 404 phpstan.neon
