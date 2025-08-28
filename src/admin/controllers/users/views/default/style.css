@@ -1,5 +1,19 @@
 table.table {
     width:100%;
+
+    tr {
+        td {
+            div.tags {
+                max-height: 15rem;
+                overflow: auto;
+
+                span.tag {
+                    text-wrap: wrap;
+                    height: auto;
+                }
+            }
+        }
+    }
 }
 .position_single_wrap {
     font-size:70%;
