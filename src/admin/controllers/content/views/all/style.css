@@ -6,6 +6,11 @@ table.table {
             display: flex;
             flex-direction: column;
             justify-content: center;
+
+            span.tag {
+                text-wrap: wrap;
+                height: auto;
+            }
         }
     }
 }
