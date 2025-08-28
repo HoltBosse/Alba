@@ -7,9 +7,14 @@ table.table {
             flex-direction: column;
             justify-content: center;
 
-            span.tag {
-                text-wrap: wrap;
-                height: auto;
+            div.tags {
+                max-height: 15rem;
+                overflow: auto;
+
+                span.tag {
+                    text-wrap: wrap;
+                    height: auto;
+                }
             }
         }
     }
