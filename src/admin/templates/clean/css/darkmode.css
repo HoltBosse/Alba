@@ -1,12 +1,12 @@
 @media (prefers-color-scheme: dark) {
     /* scrollbar */
-    ::-webkit-scrollbar { width: 0.5rem;}
-    ::-webkit-scrollbar-button { background-color: rgb(255 255 255 / 15%); height: 0.5rem; }
-    ::-webkit-scrollbar-track {  background-color: rgb(255 255 255 / 15%);}
-    ::-webkit-scrollbar-track-piece { background-color: rgb(255 255 255 / 5%);}
-    ::-webkit-scrollbar-thumb { height: 50px; background-color: rgb(255 255 255 / 15%); border-radius: 3px;}
-    ::-webkit-scrollbar-corner { background-color: rgb(255 255 255 / 15%);}
-    ::-webkit-resizer { background-color: rgb(255 255 255 / 20%);}
+    html:not([data-theme="light"])::-webkit-scrollbar { width: 0.5rem;}
+    html:not([data-theme="light"])::-webkit-scrollbar-button { background-color: rgb(255 255 255 / 15%); height: 0.5rem; }
+    html:not([data-theme="light"])::-webkit-scrollbar-track {  background-color: rgb(255 255 255 / 15%);}
+    html:not([data-theme="light"])::-webkit-scrollbar-track-piece { background-color: rgb(255 255 255 / 5%);}
+    html:not([data-theme="light"])::-webkit-scrollbar-thumb { height: 50px; background-color: rgb(255 255 255 / 15%); border-radius: 3px;}
+    html:not([data-theme="light"])::-webkit-scrollbar-corner { background-color: rgb(255 255 255 / 15%);}
+    html:not([data-theme="light"])::-webkit-resizer { background-color: rgb(255 255 255 / 20%);}
 
     /* slimselect */
     .ss-main .ss-multi-selected, .ss-main .ss-single-selected, .ss-content, .ss-search input, .ss-option:not(.ss-selected), .ss-main {
@@ -37,7 +37,7 @@
             }
         }
     }
-    input[type="date"], input[type="datetime-local"], input[type="time"], input[type="month"], input[type="week"] {
+    html:not([data-theme="light"]) :where(input[type="date"], input[type="datetime-local"], input[type="time"], input[type="month"], input[type="week"]) {
         &::-webkit-calendar-picker-indicator {
           filter: invert(1);
         }
