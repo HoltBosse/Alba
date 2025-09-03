@@ -5,6 +5,11 @@ html {
 *, *:before, *:after {
   box-sizing: inherit;
 }
+
+:root {
+	--light-mode-image-background: color-mix(in srgb, white 100%, black 10%);
+}
+
 #mm_container {
   position:relative;
 }
@@ -115,7 +120,17 @@ div .ss-main :is(.ss-multi-selected, .ss-single-selected) {
 	display:inline-block;
 	width:12rem;
 	height:12rem;
+
+	@media (prefers-color-scheme: light) {
+		background-color: var(--light-mode-image-background);
+	}
+
 }
+[data-theme="light"] .upload_preview img {
+	background-color: var(--light-mode-image-background);
+}
+
+
 .upload_details {
     margin: 1rem;
 }
@@ -203,7 +218,17 @@ img.lazy.loaded {
 .image_selector img { max-width:300px;object-fit:contain; } 
 img.image_selector_thumb{object-fit:contain; width:300px;}
 .selected_image_wrap.active p { display:none; }
-.selected_image_wrap img { display:none; }
+.selected_image_wrap img {
+	display:none;
+
+	@media (prefers-color-scheme: light) {
+		background-color: var(--light-mode-image-background);
+	}
+}
+[data-theme="light"] .selected_image_wrap img {
+	background-color: var(--light-mode-image-background);
+}
+
 .selected_image_wrap.active img { display:inline-block;}
 
 div.field.hidden {
