@@ -44,7 +44,7 @@ class Image {
         if (!$w) {
             if ($size && !is_numeric($size)) {
                 // no w attribute, string size - figure out or default to 1920
-                $w = $this->image_sizes[$size] ?? '1920';
+                $w = $this::$image_sizes[$size] ?? '1920';
             }
             elseif ($size) {
                 // no $w attr, but got numeric $size
