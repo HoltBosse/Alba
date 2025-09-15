@@ -131,7 +131,7 @@ final class CMS {
 			if($_ENV["debug"]==="true") {
 				ErrorManager::exceptionHandler($e);
 			} else {
-				CMS::show_error($e->getMessage(), 500);
+				CMS::show_error(ErrorManager::generateNiceException($e), 500, true);
 			}
 		});
 	}
@@ -274,7 +274,7 @@ final class CMS {
 		//CMS::pprint_r ($widgets);
 	}
 
-	public static function show_error($text, $http_code="500") {
+	public static function show_error($text, $http_code="500", bool $asQRcode=false) {
 		ob_end_clean();
 		ob_end_clean();
 		http_response_code($http_code);
@@ -298,8 +298,20 @@ final class CMS {
 							<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
 						</div>
 						<br><br>
-						<div>
-							<h1 class="title is-3" style="text-align:center;"><?php echo $text;?></h1>
+						<div style="display: flex; flex-direction: column; gap: 1rem; align-items:center; justify-content:center;">
+							<?php
+								if($asQRcode) {
+									?>
+										<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.js"></script>
+										<canvas id="canvas" data-error-code="<?php echo $text; ?>"></canvas>
+										<script type="module">
+											QRCode.toCanvas(document.getElementById('canvas'), '<?php echo $text; ?>');
+										</script>
+									<?php
+								} else {
+									echo "<h1 class='title is-3' style='text-align:center;'>$text</h1>";
+								}
+							?>
 							<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;" hreflang="en">Visit Home</a></p>
 						</div>
 					</div>
