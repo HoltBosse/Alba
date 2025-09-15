@@ -16,7 +16,7 @@ Class ErrorManager {
         }
     }
 
-    public static function exceptionHandler(Exception $e) {
+    public static function exceptionHandler($e) {
         http_response_code(500);
         echo "<div style='
             background: #ffeeee;
