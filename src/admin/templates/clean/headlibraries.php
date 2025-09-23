@@ -27,7 +27,7 @@
     ?>
 </style>
 
-<script src="https://kit.fontawesome.com/e73dd5d55b.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 
 <?php
 // reCAPTCHA

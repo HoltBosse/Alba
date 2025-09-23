@@ -105,6 +105,7 @@
         .fa.fa-bold, .fa.fa-italic, .fa.fa-underline, .fa.fa-link, .fa.fa-puzzle-piece, .fa.fa-anchor {
             border-radius: 0.5rem;
             padding: 0.5rem;
+            min-width: 2rem;
 
             &.active {
                 background-color: color-mix(in srgb, currentcolor 100%, black 90%);
