@@ -364,6 +364,10 @@ class Rich extends Field {
 						updateEditorSave();
 					});
 
+					editorWrapperRoot.addEventListener("click", (e)=>{
+						updateEditorSave();
+					});
+
 					//dialog creation code
 
 					//takes a js object and converts it to a form field
