@@ -203,7 +203,7 @@ final class CMS {
 	
 	public static function get_admin_template() {
 		$template="clean";
-		if (null !== $_ENV["admintemplate"] && $_ENV["admintemplate"]) {
+		if (isset($_ENV["admintemplate"]) && $_ENV["admintemplate"]) {
 			if (file_exists(Template::getTemplatePath($_ENV["admintemplate"], true) . "/index.php")) {
 				$template = $_ENV["admintemplate"];
 			}

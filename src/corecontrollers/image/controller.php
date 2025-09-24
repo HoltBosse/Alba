@@ -5,8 +5,9 @@ Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 
 // api style controller - end output
-ob_end_clean();
-ob_end_clean(); // not a mistake, a safety net
+while(ob_get_level()>0) {
+	ob_end_clean();
+}
 // router
 
 $segments = CMS::Instance()->uri_segments;

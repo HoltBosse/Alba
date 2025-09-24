@@ -27,7 +27,7 @@ class Access {
     }
 
     public static function getAdminAccessRule(string $path): ?array {
-        return self::$adminAccessRegistry[$path];
+        return isset(self::$adminAccessRegistry[$path]) ? self::$adminAccessRegistry[$path] : null;
     }
 
     public static function can_access($page_groups=[], $user_groups=[]) {
