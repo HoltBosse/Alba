@@ -117,7 +117,7 @@ class Actions {
                 }
             echo "</td>";
             if($viewmore) {
-                echo "<td><a href='" . $_ENV["uri_path"] . "/admin/audit/more/$viewmore->id'>View</a></td>";
+                echo "<td><a href='" . ($_ENV["uri_path"] ?? "") . "/admin/audit/more/$viewmore->id'>View</a></td>";
             } else {
                 echo "<td></td>";
             }

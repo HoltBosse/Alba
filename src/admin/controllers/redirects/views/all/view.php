@@ -33,9 +33,9 @@ Use HoltBosse\DB\DB;
 					<input type='hidden' name='filters[2][key]' value='state' form='searchform'/>
 					<select name="filters[2][value]" form="searchform">
 						<option value=''>State</option>
-						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
-						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
-						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
+						<option <?php if (isset($filters['state']) && $filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
+						<option <?php if (isset($filters['state']) && $filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
+						<option <?php if (isset($filters['state']) && $filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
 						<?php
 							foreach($custom_fields->states as $state) {
 								echo "<option " . ($filters['state']==$state->state ? "selected" : false) . " value='$state->state'>" . ucwords($state->name) . "</option>";
@@ -96,7 +96,6 @@ Use HoltBosse\DB\DB;
 		</thead>
 		<tbody>
 			<?php foreach ($redirects as $redirect_item):?>
-				<?php CMS::Instance()->listing_content_id = $redirect_item->id; ?>
 				<tr id='row_id_<?php echo $redirect_item->id;?>' data-itemid="<?php echo $redirect_item->id;?>" data-ordering="<?php echo $redirect_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<?php

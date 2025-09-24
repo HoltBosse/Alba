@@ -158,9 +158,9 @@ class User {
 	}
 
 	
-	public static function get_username_by_id($id) {
+	public static function get_username_by_id($id): ?string {
 		$result = DB::fetch("select username from users where id=?", [$id]);
-		return $result->username;
+		return $result ? $result->username : null;
 	}
 
 	public function check_password($password) {

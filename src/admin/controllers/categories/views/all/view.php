@@ -86,7 +86,6 @@
 					}
 				}
 				?>
-				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<?php
@@ -99,7 +98,6 @@
 							$title_prefix .= "&nbsp;-&nbsp;";
 						}?>
 						<a href="<?php echo $_ENV["uripath"]; ?>/admin/categories/edit/<?php echo $content_item->id;?>"><?php echo $title_prefix . Input::stringHtmlSafe($content_item->title); ?></a>
-						<br><span class='unimportant'><?php echo $content_item->alias; ?></span>
 					</td>
 
 			

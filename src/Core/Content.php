@@ -507,9 +507,9 @@ class Content {
 		return $result->controller_location;
 	}
 
-	public static function get_view_location($view_id) {
+	public static function get_view_location($view_id): ?string {
 		$result = DB::fetch("select location from content_views where id=?", [$view_id]);
-		return $result->location;
+		return $result ? $result->location : null;
 	}
 
 	public static function get_content_type_for_view ($view_id) {
