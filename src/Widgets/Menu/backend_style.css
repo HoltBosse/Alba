@@ -3,9 +3,30 @@
 
     label.checkbox {
         display: flex;
+        justify-content: space-between;
+        align-items: center;
 
         span.page_title {
             word-break: break-word;
         }
+
+        input {
+            display: none;
+        }
+
+        .add-button {
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-weight: bold;
+            font-size: 1.25em;
+        }
+
+        &:hover .add-button {
+            opacity: 1;
+        }
+    }
+
+    #menu_desiger_add_pages {
+        display: none;
     }
 }

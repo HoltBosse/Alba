@@ -110,8 +110,14 @@ function delete_node (node) {
     render_menu_designer();
 }
 
-// handle add page button click
+//when a checkbox is clicked, click the hidden add pages button
+document.querySelector("#menu_designer_page_listing").addEventListener('click', (e)=>{
+    if(e.target.classList.contains('page-add-target')) {
+        document.getElementById('menu_desiger_add_pages').click();
+    }
+});
 
+// handle add page button click
 document.getElementById('menu_desiger_add_pages').addEventListener('click',()=> {
     // clicked add pages
     // get all pages to add

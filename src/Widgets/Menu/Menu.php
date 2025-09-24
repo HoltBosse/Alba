@@ -43,11 +43,15 @@ class Menu extends Widget {
 				<div class='field box'>
 					<?php foreach ($all_pages as $page):?>
 						<label class='checkbox'>
-							<input type='checkbox' value='<?php echo $page->id;?>'>
-							<?php for ($n=0; $n<$page->depth; $n++) {
-								echo "&nbsp;-&nbsp;";
-							}
-							echo "<span class='page_title'>" . Input::stringHtmlSafe($page->title) . "</span>"; ?>
+							<input class='page-add-target' type='checkbox' value='<?php echo $page->id;?>'>
+							<?php
+								$prefix = "";
+								for ($n=0; $n<$page->depth; $n++) {
+									$prefix .= "&nbsp;-&nbsp;";
+								}
+								echo "<span class='page_title'>" . $prefix . Input::stringHtmlSafe($page->title) . "</span>";
+							?>
+							<span class='add-button'>+</span>
 						</label>
 					<?php endforeach; ?>
 					<button type='button' class='button btn is-success' id='menu_desiger_add_pages'>Add</button>
