@@ -110,8 +110,14 @@ function delete_node (node) {
     render_menu_designer();
 }
 
-// handle add page button click
+//when a checkbox is clicked, click the hidden add pages button
+document.querySelector("#menu_designer_page_listing").addEventListener('click', (e)=>{
+    if(e.target.classList.contains('page-add-target')) {
+        document.getElementById('menu_desiger_add_pages').click();
+    }
+});
 
+// handle add page button click
 document.getElementById('menu_desiger_add_pages').addEventListener('click',()=> {
     // clicked add pages
     // get all pages to add
@@ -411,3 +417,28 @@ function render_menu_designer() {
 
 // render on pageload
 render_menu_designer();
+
+function clear_selection() {
+    if(document.querySelector('.menu_node.selected')) {
+        document.querySelector('.menu_node.selected').classList.remove('selected');
+    }
+    if(document.querySelector('fieldset.edit')) {
+        document.querySelector('fieldset.edit').classList.remove('edit');
+    }
+    document.getElementById('heading_text').value='';
+    document.getElementById('link_text').value='';
+    document.getElementById('link_url').value='';
+    document.getElementById('link_newtab').checked=false;
+}
+
+document.addEventListener('keydown', (e)=>{
+    if (e.key === "Escape" || e.key === "Esc") {
+        clear_selection();
+    }
+});
+
+document.addEventListener('click', (e)=>{
+    if (!e.target.closest('.menu_node') && !e.target.closest('fieldset')) {
+        clear_selection();
+    }
+});
