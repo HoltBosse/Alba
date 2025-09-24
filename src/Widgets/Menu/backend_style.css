@@ -1,0 +1,11 @@
+#menu_designer_page_listing {
+    max-width: 25rem;
+
+    label.checkbox {
+        display: flex;
+
+        span.page_title {
+            word-break: break-word;
+        }
+    }
+}

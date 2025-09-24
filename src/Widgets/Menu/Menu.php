@@ -28,6 +28,11 @@ class Menu extends Widget {
 
 	public function render_custom_backend() {
 		$all_pages = Page::get_all_pages_by_depth();
+
+		echo "<style>";
+			echo file_get_contents(__DIR__ . "/backend_style.css");
+		echo "</style>";
+
 		?>
 		<section class='flex gap' id='menu_designer_wrap'>
 
