@@ -74,61 +74,6 @@ input[type="date"], input[type="datetime-local"], input[type="time"], input[type
   display: block;
 }
 
-.menu_node {
-    /* margin: 1rem; */
-    /* padding: 1rem; */
-    /* border: 2px dotted #aaa; */
-    position: relative;
-    transition: all 0.3s ease;
-    /* padding-top: 1rem; */
-    background: rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-    /* margin-right:1rem; */
-}
-.menu_node.selected {
-  outline: 2px solid orange;
-}
-#menu_designer_tree.menu_node {
-  border:none;
-  margin:0;
-  padding:0;
-  padding-top:0;
-  background:transparent;
-}
-.menu_node_info {
-  pointer-events: none;
-  padding:1rem;
- /*  margin-bottom:2px; */
-}
-.menu_node_info .menu_designer_node_title {
-  margin-bottom:0;
-}
-
-.insertbefore {
-  box-shadow: inset 0 10px 0 0 #0a0;
-}
-.insertafter {
-  box-shadow: inset 0 -10px 0 0 #0a0;
-}
-.insertinside {
-  box-shadow: inset -10px 0 0 0 #0a0;
-}
-.insertbefore, .insertafter, .insertinside {
-  transform:scale(1.04);
-}
-.menu_node.depth_1 {
-  margin-left:4rem;
-}
-.menu_node.depth_2 {
-  margin-left:8rem;
-}
-.menu_node.depth_3 {
-  margin-left:12rem;
-}
-.menu_node.depth_4 {
-  margin-left:16rem;
-}
-
 legend {
   margin-bottom:0 !important;
 }
