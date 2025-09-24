@@ -19,14 +19,13 @@ class Controller {
 		$CMS = CMS::Instance();
 		// check for view template overrides first!
 		// note - overrides must include view AND model otherwise it will be ignored
-		$template_folder = $CMS->page->template->folder;
-		$controller_folder = $CMS->page->controller;
         if(!CMS::Instance()->isAdmin()) {
-            $controller_path = Template::getTemplatePath($template_folder);
+            $controller_path = Template::getTemplatePath($CMS->page->template->folder);
+			$controller_folder = $CMS->page->controller;
             $potential_override_model = $controller_path . "/overrides/" . $controller_folder . "/" . $this->view . "/model.php";
             $potential_override_view = $controller_path . "/overrides/" . $controller_folder . "/" . $this->view . "/view.php";
         }
-		if (file_exists($potential_override_model) && file_exists($potential_override_view)) {
+		if(isset($potential_override_model) && isset($potential_override_view) && file_exists($potential_override_model) && file_exists($potential_override_view)) {
 			// override files exist, use those
 			require ($potential_override_model);
 			require ($potential_override_view);
@@ -35,8 +34,8 @@ class Controller {
 			$view_path = $this->path . "/views/" . $this->view;
 			
 			if(!file_exists($view_path) && !CMS::Instance()->isAdmin()) {
-				$controller_path = Template::getTemplatePath($template_folder);
-				$view_path = $controller_path . "/overrides/" . $controller_folder . "/" . $this->view;
+				$controller_path = Template::getTemplatePath($CMS->page->template->folder);
+				$view_path = $controller_path . "/overrides/" . $CMS->page->controller . "/" . $this->view;
 			}
 
 			if (file_exists ($view_path) && is_dir($view_path)) {
