@@ -127,7 +127,7 @@ document.getElementById('menu_desiger_add_pages').addEventListener('click',()=> 
     }
     else {
         checked.forEach(page => {
-            const name = page.closest('label').querySelector('span').innerText;
+            const name = page.closest('label').querySelector('span.page_title').dataset.title;
             const page_id = page.value ;
            /*  console.log('Adding page:');
             console.log(name, page_id); */

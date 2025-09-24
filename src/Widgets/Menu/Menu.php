@@ -49,7 +49,8 @@ class Menu extends Widget {
 								for ($n=0; $n<$page->depth; $n++) {
 									$prefix .= "&nbsp;-&nbsp;";
 								}
-								echo "<span class='page_title'>" . $prefix . Input::stringHtmlSafe($page->title) . "</span>";
+								$safeTitle = Input::stringHtmlSafe($page->title);
+								echo "<span class='page_title' data-title='$safeTitle'>" . $prefix . $safeTitle . "</span>";
 							?>
 							<span class='add-button'>+</span>
 						</label>
