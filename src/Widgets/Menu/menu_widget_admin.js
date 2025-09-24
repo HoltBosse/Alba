@@ -411,3 +411,28 @@ function render_menu_designer() {
 
 // render on pageload
 render_menu_designer();
+
+function clear_selection() {
+    if(document.querySelector('.menu_node.selected')) {
+        document.querySelector('.menu_node.selected').classList.remove('selected');
+    }
+    if(document.querySelector('fieldset.edit')) {
+        document.querySelector('fieldset.edit').classList.remove('edit');
+    }
+    document.getElementById('heading_text').value='';
+    document.getElementById('link_text').value='';
+    document.getElementById('link_url').value='';
+    document.getElementById('link_newtab').checked=false;
+}
+
+document.addEventListener('keydown', (e)=>{
+    if (e.key === "Escape" || e.key === "Esc") {
+        clear_selection();
+    }
+});
+
+document.addEventListener('click', (e)=>{
+    if (!e.target.closest('.menu_node') && !e.target.closest('fieldset')) {
+        clear_selection();
+    }
+});
