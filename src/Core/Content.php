@@ -583,6 +583,7 @@ class Content {
 
 
 	//exists for legacy compat, please use new content_search for new code instead of this
+	#[\Deprecated(message: "use ContentSearch instead", since: "3.0.0")]
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
 		//add inputed filters, and then if id is present, add that to filters as well
 		if ($filter_field) {
