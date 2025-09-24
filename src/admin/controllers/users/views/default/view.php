@@ -38,10 +38,10 @@ Use HoltBosse\Form\Input;
 					<input type='hidden' name='filters[2][key]' value='state' form='searchform'/>
 					<select name="filters[2][value]" form="searchform">
 						<option value=''>State</option>
-						<option <?php if ($filters['state']==='1') { echo " selected "; }?> value='1'>Enabled</option>
-						<option <?php if ($filters['state']==='2') { echo " selected "; }?> value='2'>Enabled - Pwd Reset Req</option>
-						<option <?php if ($filters['state']==='0') { echo " selected "; }?> value='0'>Disabled</option>
-						<option <?php if ($filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
+						<option <?php if (isset($filters["state"]) && $filters['state']==='1') { echo " selected "; }?> value='1'>Enabled</option>
+						<option <?php if (isset($filters["state"]) && $filters['state']==='2') { echo " selected "; }?> value='2'>Enabled - Pwd Reset Req</option>
+						<option <?php if (isset($filters["state"]) && $filters['state']==='0') { echo " selected "; }?> value='0'>Disabled</option>
+						<option <?php if (isset($filters["state"]) && $filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
 						<?php
 							if($states!==NULL) {
 								foreach($states as $state) {

@@ -25,7 +25,7 @@ else {
 
 // check for new widget types
 $all_widget_types = DB::fetchAll("SELECT * from widget_types");
-$missing_widgets=[];
+$missing=[];
 foreach (Widget::getWidgetNames() as $f) {
 	foreach ($all_widget_types as $existing_widget_type) {
 		if ($f==$existing_widget_type->location) {

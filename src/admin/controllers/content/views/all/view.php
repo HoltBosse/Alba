@@ -167,7 +167,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 				?>
 				<?php
 					//if in ordering mode or search, disable content listing order controls
-					if($_GET["filters"]) {
+					if(isset($_GET["filters"])) {
 						echo "<style>
 								.orderablerow{
 									pointer-events: none;
@@ -208,7 +208,6 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 		</thead>
 		<tbody>
 			<?php foreach ($all_content as $content_item):?>
-				<?php CMS::Instance()->listing_content_id = $content_item->id; ?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<?php

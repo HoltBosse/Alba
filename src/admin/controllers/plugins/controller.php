@@ -18,7 +18,7 @@ elseif ($segments[1]=='action') {
 
 // check for new plugins
 $all_plugins = DB::fetchAll("select * from plugins");
-$missing_plugins=[];
+$missing=[];
 foreach (Plugin::getPluginNames() as $f) {
 	foreach ($all_plugins as $existing_plugin) {
 		if ($f==$existing_plugin->location) {

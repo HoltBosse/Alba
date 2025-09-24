@@ -183,10 +183,6 @@ class UserSearch {
 			}
 		}
 
-		if ($_ENV["debugwarnings"]==="true") {
-			CMS::pprint_r($query);
-		}
-
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
 			$result = DB::fetchAll($query,array_merge([$like,$like],$this->filter_pdo_params ?? [], $this->custom_search_params ?? [])); // title and note

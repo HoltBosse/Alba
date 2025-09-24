@@ -29,6 +29,7 @@ final class CMS {
 	public $hooks = [];
 	public $head_entries = []; // array of string to be output during CMSHEAD replacement
 	public $version = "2.5.5";
+	public $edit_page_id; // used in admin to store page being edited
 
 	private static $coreControllersRegistry = [
 		"image"=>__DIR__ . "/../corecontrollers/image",
