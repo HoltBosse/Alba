@@ -29,7 +29,7 @@ class Content {
 		"basic_article" => __DIR__ . '/../controllers/basic_article',
 	];
 
-	public function __construct($content_type=0) {
+	public function __construct(?int $content_type=0) {
 		$this->id = false;
 		$this->title = "";
 		$this->description = "";
@@ -37,10 +37,10 @@ class Content {
 		$this->updated = date('Y-m-d H:i:s');
 		$this->content_type = $content_type;
 		$this->tags = [];
-		if ($content_type) {
+		if ($content_type != 0) {
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($this->content_location) . '/custom_fields.json');
-			$this->table_name = "controller_" . $this->custom_fields->id ;
+			$this->table_name = "controller_" . $this->custom_fields->id;
 		}
 		$this->created_by = CMS::Instance()->user->id;
 		$this->alias="";
@@ -78,27 +78,22 @@ class Content {
 		return array_keys(self::$controllerRegistry);
 	}
 
-	public static function get_table_name_for_content_type($type_id) {
-		if (!is_numeric($type_id)) {
-			throw new Exception('Unable to determine table name for non-numeric content type');
+	public static function get_table_name_for_content_type(int $type_id): string {
+		$location = Content::get_content_location($type_id);
+		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
+		if ($custom_fields->id ?? null) {
+			$table_name = "controller_" . $custom_fields->id ;
+			return $table_name;
 		}
 		else {
-			$location = Content::get_content_location($type_id);
-			$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
-			if ($custom_fields->id ?? null) {
-				$table_name = "controller_" . $custom_fields->id ;
-				return $table_name;
-			}
-			else {
-				throw new Exception('Unable to determine table name for content id ' . $type_id);
-			}
+			throw new Exception('Unable to determine table name for content id ' . $type_id);
 		}
 	}
 
 	private function make_alias_unique() {
 		$is_unique = false;
 		while (!$is_unique) {
-			$results = DB::fetchAll("select * from `{$this->table_name}` where alias=? and content_type=?", [$this->alias, $this->content_type] );
+			$results = DB::fetchAll("SELECT * from `{$this->table_name}` where alias=? and content_type=?", [$this->alias, $this->content_type] );
 			// if this is an existing content item, make sure we don't count itself as a clashing alias
 			$self_clash = false;
 			if ($this->id) {
@@ -131,16 +126,12 @@ class Content {
 		}
 	}
 
-	public function get_field($field_name) {
+	public function get_field($field_name): mixed {
 		//CMS::pprint_r ($this);
-		if (!$this->table_name) {
-			if($_ENV["debug"]) {
-				CMS::pprint_r ($this);
-			}
-			
-			throw new Exception('Unknown table name', 500);
+		if (!$this->table_name) {			
+			throw new Exception('Unknown table name');
 		}
-		$query = "select `{$field_name}` as v from `{$this->table_name}` where id=?";
+		$query = "SELECT `{$field_name}` as v from `{$this->table_name}` where id=?";
 		$value = DB::fetch($query, [$this->id])->v; // todo: can we make col name param?
 		if ($value) {
 			return $value; 
@@ -150,7 +141,7 @@ class Content {
 		}
 	}
 
-	public function load($id, $content_type) {
+	public function load(?int $id, ?int $content_type): bool {
 		$table_name = Content::get_table_name_for_content_type($content_type);
 		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE id=?",[$id]);
 		if ($info) {
@@ -175,7 +166,7 @@ class Content {
 		}
 	}
 
-	public function load_from_alias($alias, $content_type) {
+	public function load_from_alias(string $alias, int $content_type): bool {
 		$table_name = Content::get_table_name_for_content_type($content_type);
 		$info = DB::fetch("SELECT * FROM `{$table_name}` WHERE alias=?",[$alias]);
 		if ($info) {
@@ -199,7 +190,7 @@ class Content {
 		}
 	}
 
-	public function duplicate() {
+	public function duplicate(): bool {
 		$table_name = Content::get_table_name_for_content_type($this->content_type);
 		$location = Content::get_content_location($this->content_type);
 		$content_form = new Form (Content::getContentControllerPath($location) . "/custom_fields.json");
@@ -242,7 +233,7 @@ class Content {
 					}
 				}
 				// get og field value and insert into new content
-				// $dup_query = 'update ' . $table_name . " as o set o." . $field->name . " = (select c.{$field->name} from {$table_name} c where c.id={$original_id}) where o.id=?";
+				// $dup_query = 'update ' . $table_name . " as o set o." . $field->name . " = (SELECT c.{$field->name} from {$table_name} c where c.id={$original_id}) where o.id=?";
 				// above query does not work - query optimizer makes it so sql see table as same, and cannot update from self selection
 				// leaving for future us to learn from repeatedly
 				$dup_query = "UPDATE `{$table_name}` AS n INNER JOIN `{$table_name}` AS o ON o.id=? AND n.id=? SET n.{$field->name} = o.{$field->name}";
@@ -256,7 +247,7 @@ class Content {
 		}
 	}
 
-	public function save($required_details_form, $content_form, $return_url='') {
+	public function save($required_details_form, $content_form, $return_url=''): bool {
 		// return URL not used anymore - left for now for legacy
 
 		$userActionDiff = [];
@@ -332,7 +323,7 @@ class Content {
 			// new
 			//CMS::pprint_r ($this);
 			// get next order value
-			$ordering = DB::fetch("select (max(ordering)+1) as ordering from `{$this->table_name}`")->ordering;
+			$ordering = DB::fetch("SELECT (max(ordering)+1) as ordering from `{$this->table_name}`")->ordering;
 			if (!$ordering) {
 				$ordering=1;
 			}
@@ -421,13 +412,9 @@ class Content {
 		}
 	}
 
-	
-
-
-	// $pdo->prepare($sql)->execute([$name, $id]);
-	public static function get_all_content_types() {
-		$result = DB::fetchAll('select * from content_types where state > 0 order by id ASC');
-		return $result;
+	public static function get_all_content_types(): array {
+		$result = DB::fetchAll('SELECT * from content_types where state > 0 order by id ASC');
+		return $result ? $result : [];
 	}
 	
 	public static function get_content_type_title($content_type) {
@@ -443,7 +430,7 @@ class Content {
 		if ($content_type=="-3") {
 			return "Tag";
 		}
-		$result = DB::fetch("select title from content_types where id=?", [$content_type]);
+		$result = DB::fetch("SELECT title from content_types where id=?", [$content_type]);
 		if ($result) {
 			return $result->title;
 		}
@@ -456,7 +443,7 @@ class Content {
 		if (!$content_type) {
 			return false;
 		}
-		$result = DB::fetch("select * from content_types where id=?", [$content_type]);
+		$result = DB::fetch("SELECT * from content_types where id=?", [$content_type]);
 		if ($result) {
 			return $result;
 		}
@@ -469,7 +456,7 @@ class Content {
 		if (!$controller_location) {
 			return false;
 		}
-		$result = DB::fetch("select id from content_types where controller_location=?", [$controller_location]);
+		$result = DB::fetch("SELECT id from content_types where controller_location=?", [$controller_location]);
 		if ($result) {
 			return $result->id;
 		}
@@ -489,39 +476,57 @@ class Content {
 		return null;
 	}
 
-	public static function get_applicable_tags ($content_type_id) {
-		$query = "select * from tags where (filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)) ";
-		$query.= "or (filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)) ";
-		$tags = DB::fetchAll($query, [$content_type_id, $content_type_id]);
-		return $tags;
+	public static function get_applicable_tags (?int $content_type_id): array {
+		$tags = DB::fetchAll(
+			"SELECT *
+			from tags
+			where (
+				filter=2
+				and id in (
+					SELECT tag_id
+					from tag_content_type
+					where content_type_id=?
+				)
+			) or (
+				filter=1
+				and id
+				not in (
+					SELECT tag_id
+					from tag_content_type
+					where content_type_id=?
+				)
+			)",
+			[$content_type_id, $content_type_id]
+		);
+		return $tags ? $tags : [];
 	}
 
-	public static function get_applicable_categories ($content_type_id) {
-		$query = "select * from categories where content_type=?";
+	public static function get_applicable_categories (?int $content_type_id): array {
+		$query = "SELECT * from categories where content_type=?";
 		$cats = DB::fetchAll($query, [$content_type_id]);
-		return $cats;
+		return $cats ? $cats : [];
 	}
 
-	public static function get_content_location($content_type_id) {
-		$result = DB::fetch("select controller_location from content_types where id=?", [$content_type_id]);
-		return $result->controller_location;
+	public static function get_content_location(?int $content_type_id): ?string {
+		$result = DB::fetch("SELECT controller_location from content_types where id=?", [$content_type_id]);
+		return $result ? $result->controller_location : null;
 	}
 
-	public static function get_view_location($view_id): ?string {
-		$result = DB::fetch("select location from content_views where id=?", [$view_id]);
+	public static function get_view_location(?int $view_id): ?string {
+		$result = DB::fetch("SELECT location from content_views where id=?", [$view_id]);
 		return $result ? $result->location : null;
 	}
 
-	public static function get_content_type_for_view ($view_id) {
-		$result = DB::fetch("select content_type_id from content_views where id=?", [$view_id]);
-		return $result->content_type_id;
+	public static function get_content_type_for_view (?int $view_id): ?int {
+		$result = DB::fetch("SELECT content_type_id from content_views where id=?", [$view_id]);
+		return $result ? $result->content_type_id : null;
 	}
 
 	public static function get_view_title($view_id) {
 		if (!$view_id) {
 			return false;
 		}
-		$result = DB::fetch("select title from content_views where id=?", [$view_id]);
+		$result = DB::fetch("SELECT title from content_views where id=?", [$view_id]);
 		if ($result) {
 			return $result->title;
 		}
@@ -542,7 +547,6 @@ class Content {
 		// NOW requires content_type since id is not unique - same id can exist in multiple content tables
 		
 		$location = Content::get_content_location($content_type);
-		//$content_fields = DB::fetchAll('select * from content_fields where content_id=?',$result->id);
 		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
 		$table_name = "controller_" . $custom_fields->id ;
 		$result = DB::fetch("SELECT * FROM `{$table_name}` WHERE id=?", [$id]);
