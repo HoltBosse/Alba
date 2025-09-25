@@ -115,7 +115,7 @@ if($_GET["exportcsv"]) {
             $data = json_decode($row->data);
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
             //$value = $normalizedFields[$header];
-            $value = $field->getFriendlyValue((object)["return_in_text_form"=>true]);
+            $value = (string) $field->getFriendlyValue((object)["return_in_text_form"=>true]);
             $value = str_replace(",", ".", ($value));
             $value = str_replace("\n", " ", ($value));
             $value = str_replace("\r", " ", ($value));

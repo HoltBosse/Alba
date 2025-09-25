@@ -171,7 +171,7 @@ function image_make_thumb ($src, $dest, $desired_width, $file, $quality, $mimety
 	$width = imagesx($source_image);
 	$height = imagesy($source_image);
 	/* find the "desired height" of this thumbnail, relative to the desired width  */
-	$desired_height = floor($height * ($desired_width / $width));
+	$desired_height = (int) floor($height * ($desired_width / $width)); //floor returns a float, cast to int, cause php is weird
 	/* create a new, "virtual" image */
 	$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
 	/* copy source image at a resized size */
@@ -187,7 +187,7 @@ function image_make_thumb ($src, $dest, $desired_width, $file, $quality, $mimety
 	elseif ($mimetype=='image/webp') {
 		// scale webp quality to 3/4 of jpeg quality
 		// TODO: trust that folks will use a good q for webp? :)
-		imagewebp($virtual_image, $dest, floor($quality*0.75));
+		imagewebp($virtual_image, $dest, (int) floor($quality*0.75));
 	}
 	else {
 		imagepng($virtual_image, $dest);

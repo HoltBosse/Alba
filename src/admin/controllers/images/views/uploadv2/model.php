@@ -43,7 +43,7 @@ function make_thumb($src, $dest, $desired_width, $file) {
 	$width = imagesx($source_image);
 	$height = imagesy($source_image);
 	/* find the "desired height" of this thumbnail, relative to the desired width  */
-	$desired_height = floor($height * ($desired_width / $width));
+	$desired_height = (int) floor($height * ($desired_width / $width)); //floor returns a float, cast to int, cause php is weird
 	/* create a new, "virtual" image */
 	$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
 	/* copy source image at a resized size */
