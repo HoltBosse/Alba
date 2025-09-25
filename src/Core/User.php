@@ -190,7 +190,7 @@ class User {
 
 	public function generate_reset_key() {
 		$key = md5((2418*2) . $this->email);
-   		$addKey = substr(md5(uniqid(rand(),1)),3,10);
+   		$addKey = substr(md5(uniqid((string) rand(),true)),3,10);
 		$key = $key . $addKey;
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
 		$ok = DB::exec($query, [$key, $this->id]);
@@ -281,7 +281,7 @@ class User {
 					}
 				} else {
 					// no matching user for resetkey found or resetkey is outdated
-					return new Message('Invalid reset key or reset key is too old.','danger', $_ENV["uripath"] . '/admin?resetkey=' . $resetkey);	
+					return new Message(false, MessageType::Danger, 'Invalid reset key or reset key is too old.', $_ENV["uripath"] . '/admin?resetkey=' . $resetkey);	
 				}
 			}
 		} else {

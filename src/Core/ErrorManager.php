@@ -2,6 +2,7 @@
 namespace HoltBosse\Alba\Core;
 
 use \Exception;
+use \Throwable;
 
 Class ErrorManager {
     public static function initPhpErrorLevels() {
@@ -38,7 +39,7 @@ Class ErrorManager {
         echo "</div>";
     }
 
-    public static function generateNiceException(Exception $e): string {
+    public static function generateNiceException(Throwable $e): string {
         $data = $e->getMessage() . '|' . $e->getLine() . '|' . $e->getFile();
         $compressed = gzcompress($data, 9);
         $base64 = base64_encode($compressed);
