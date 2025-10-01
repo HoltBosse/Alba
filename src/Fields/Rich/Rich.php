@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Fields\Rich;
 Use HoltBosse\Form\Field;
 
 class Rich extends Field {
+	public $listing_endpoint;
 
 	public function display() {
 		//$this->getRenderedName()
@@ -863,7 +864,7 @@ class Rich extends Field {
 								let imagesPerPage = 50;
 								let mimetypes = null;
 								let tags = null;
-								let listingEndpoint = '<?php echo $_ENV["uripath"];?>/image/list_images';
+								let listingEndpoint = "<?php echo $this->listing_endpoint; ?>";
 								
 								// set up rich editor variables
 								let lastEditor = document.querySelector(`#editor_toolbar_for_${elementId}`);
@@ -978,6 +979,8 @@ class Rich extends Field {
 
 	public function loadFromConfig($config) {
 		parent::loadFromConfig($config);
+
+		$this->listing_endpoint = $config->listing_endpoint ?? $_ENV["uripath"] . "/image/list_images";
 
 	}
 
