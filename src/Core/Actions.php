@@ -84,7 +84,7 @@ class Actions {
 
     public function render_time() {
         $time1 = new DateTime($this->date);
-        $now = new DateTime();
+        $now = new DateTime(DB::fetch("SELECT NOW() as currentime")->currentime); //get now from sql which honors the server timezone while php does not
         $interval = $time1->diff($now,true);
 
         if ($interval->y || $interval->m || $interval->d) {
