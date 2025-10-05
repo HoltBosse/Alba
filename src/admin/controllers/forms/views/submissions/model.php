@@ -105,9 +105,9 @@ if($_GET["exportcsv"]) {
 
     $results = DB::fetchAll("SELECT * FROM form_submissions WHERE 1" . $queryWhereFilters, $params);
 
-    echo implode(",", $headerFields) . "\n";
+    echo "Submission Date," . implode(",", $headerFields) . "\n";
     foreach($results as $row) {
-        $buffer = [];
+        $buffer = [Date("m/d/Y g:i a", strtotime($row->created))];
         foreach($headerFields as $header) {
             $currentSelectedForm->deserializeJson($row->data);
             $field = $currentSelectedForm->getFieldByName($header);
