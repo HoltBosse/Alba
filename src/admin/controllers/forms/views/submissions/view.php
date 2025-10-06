@@ -30,6 +30,8 @@ if($countResults > 0) {
     $rowLength = sizeof($headerFields);
     //CMS::pprint_r($results);
 
+    $rowLength+=1; //add submission date column
+
     echo "<style>
         .form_submissions_wrapper {
             display: grid;
@@ -56,6 +58,7 @@ if($countResults > 0) {
 
     echo "<div class='form_submissions_wrapper'>";
         echo "<div class='form_submissions_row header'>";
+            echo "<div>Submission Date</div>";
             foreach($headerFields as $header) {
                 $field = $currentSelectedForm->getFieldByName($header);
                 $displayLabel = $field->label ?? $header;
@@ -68,6 +71,7 @@ if($countResults > 0) {
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
             
             echo "<div class='form_submissions_row'>";
+                echo "<div>" . Date("m/d/Y g:i a", strtotime($row->created)) . "</div>";
                 foreach($headerFields as $header) {
                     echo "<div>";
                         $field = $currentSelectedForm->getFieldByName($header);
