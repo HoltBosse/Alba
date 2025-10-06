@@ -50,7 +50,7 @@ RewriteRule .* index.php [L]
 # send dev tools related requests to 404 page
 RedirectMatch 404 composer.json
 RedirectMatch 404 composer.lock
-RedirectMatch 404 /vendor
+RedirectMatch 404 ^/vendor(/|$)
 RedirectMatch 404 /tests
 RedirectMatch 404 biome.json
 RedirectMatch 404 cmslog.txt
