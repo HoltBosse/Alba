@@ -14,3 +14,35 @@
         }
     }
 }
+
+.form_submission_dialog {
+    min-width: min(50rem, 95vw);
+    max-width: 95vw;
+    position: relative;
+    color: var(--bulma-body-color);
+    background-color: var(--bulma-body-background-color);
+    border: 0.1rem solid var(--bulma-border-color);
+    border-radius: 0.5rem;
+
+    &::backdrop {
+        background: rgba(0,0,0,0.9);
+    }
+
+    hr {
+        margin: 0.5rem 0;
+    }
+
+    .form_submission_dialog_close {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 1.5rem;
+        color: var(--bulma-body-color);
+        cursor: pointer;
+        line-height: 1;
+
+        &:focus-visible {
+            outline: none;
+        }
+    }
+}

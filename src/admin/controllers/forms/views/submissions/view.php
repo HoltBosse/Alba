@@ -30,12 +30,12 @@ if($countResults > 0) {
     $rowLength = sizeof($headerFields);
     //CMS::pprint_r($results);
 
-    $rowLength+=1; //add submission date column
+    $rowLength+=2; //add submission date column
 
     echo "<style>
         .form_submissions_wrapper {
             display: grid;
-            grid-template-columns: repeat($rowLength, minmax(20rem, 1fr));
+            grid-template-columns: auto repeat($rowLength, minmax(20rem, 1fr)); /* first column fit to content for dialog open */
             overflow: auto;
 
             .form_submissions_row {
@@ -52,12 +52,21 @@ if($countResults > 0) {
                 > div {
                     padding: 0.5rem;
                 }
+
+                > div:first-of-type a {
+                    color: unset;
+
+                    * {
+                        pointer-events: none;
+                    }
+                }
             }
         }
     </style>";
 
     echo "<div class='form_submissions_wrapper'>";
         echo "<div class='form_submissions_row header'>";
+            echo "<div>View</div>"; //empty cell for checkbox column
             echo "<div>Submission Date</div>";
             foreach($headerFields as $header) {
                 $field = $currentSelectedForm->getFieldByName($header);
@@ -71,6 +80,7 @@ if($countResults > 0) {
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
             
             echo "<div class='form_submissions_row'>";
+                echo "<div><a class='form_row_open'><i class='fa-solid fa-arrow-up-right-from-square'></i></a></div>";
                 echo "<div>" . Date("m/d/Y g:i a", strtotime($row->created)) . "</div>";
                 foreach($headerFields as $header) {
                     echo "<div>";
@@ -92,3 +102,7 @@ if($countResults > 0) {
     Component::create_pagination($countResults, $paginationSize, $curPage);
     echo "<br>";
 }
+
+echo "<script>";
+    echo file_get_contents(__DIR__ . "/script.js");
+echo "</script>";
