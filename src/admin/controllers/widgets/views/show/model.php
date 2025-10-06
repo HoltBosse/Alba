@@ -53,17 +53,17 @@ if(isset($_POST["state"]) && is_numeric($_POST["state"])) {
 	$params[] = $_POST["state"];
 }
 
-if(isset($_POST["title"])) {
+if(isset($_POST["title"]) && $_POST["title"]!="") {
 	$query .= " AND w.title like ?";
 	$params[] = "%{$_POST['title']}%";
 }
 
-if(isset($_POST["widget_type"])) {
+if(isset($_POST["widget_type"]) && $_POST["widget_type"]!="") {
 	$query .= " AND wt.location=?";
 	$params[] = $_POST["widget_type"];
 }
 
-if(isset($_POST["page"])) {
+if(isset($_POST["page"]) && is_numeric($_POST["page"])) {
 	$query .= " AND ((FIND_IN_SET(?, w.page_list) AND w.position_control=0) OR (NOT FIND_IN_SET(?, w.page_list) AND w.position_control=1))";
 	$params[] = $_POST["page"];
 	$params[] = $_POST["page"];
