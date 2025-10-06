@@ -41,9 +41,12 @@ class TagSingle extends Select {
 		$this->content_type = $config->content_type ?? false;
 
 		if ($this->content_type) {
-			$tags = Content::get_applicable_tags ($this->content_type);
-		}
-		else {
+			if(!is_numeric($this->content_type)) {
+				$this->content_type = Content::get_content_type_id($this->content_type);
+			}
+
+			$tags = Content::get_applicable_tags($this->content_type);
+		} else {
 			$tags = Tag::get_all_tags ();
 		}
 
