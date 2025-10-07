@@ -29,7 +29,7 @@ class Repeatable extends Field {
 		// loop over existing data and render
 		$this->forms = [];
 
-		echo "<div class='field'>";
+		echo "<div class='field " . ($this->required ? "required" : "") . "'>";
 			echo "<label for='{$this->id}' class='label'>";
 			echo $this->label;
 			echo "</label>";

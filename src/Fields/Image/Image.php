@@ -43,7 +43,9 @@ class Image extends Field {
 
 		echo "<hr class='image_field_hr image_field_top'>";
 
-		echo "<label class='label'>" . $this->label . "</label>";
+		echo "<div class='field " . ($this->required ? "required" : "") . "'>";
+			echo "<label class='label'>" . $this->label . "</label>";
+		echo "</div>";
 
 		echo "<p>Selected Image</p>";
 		if ($this->default) {
