@@ -38,7 +38,7 @@ class PickerOrdered extends Field {
                 
                 <hr>
                 <h5 class="title"><?php echo $this->label;?></h5>
-				<input class='picker_data' type='hidden' value='<?php echo $this->default;?>' <?php echo "{$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}";?>>
+				<input data-repeatableindex="{{replace_with_index}}" class='picker_data' type='hidden' value='<?php echo $this->default;?>' <?php echo "{$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}";?>>
                 <div data-uniqid='<?php echo $uniqid;?>' class='twocol_picker' id='twocol_picker_<?php echo $this->id;?>' >
                     <div class='twocol_picker_left'>
                         <h4 class='is-title title is-4'>All Items</h4>
@@ -101,15 +101,16 @@ class PickerOrdered extends Field {
 					
                 </div>
 				<p class='note'>Click items on the left to add to selected area. Drag and drop in selected area to reorder. To remove a selected item, click it.</p>
-                <script>
-					let picker_<?php echo $uniqid;?> = document.querySelector('[data-uniqid="<?php echo $uniqid;?>"]');
+                <script type="module">
+					const hidden_input = document.querySelector(`.picker_data[<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"]`);
+					const picker = hidden_input.parentElement.querySelector('.twocol_picker');
 					// handle search
-					picker_<?php echo $uniqid;?>.querySelector('.pickersearch')?.addEventListener('input',function(e){
-						// loop over values that partially match search string
+					picker.querySelector('.pickersearch')?.addEventListener('input',function(e){
+						// loop over values that partially match search stringsssss
 						let searchstring = e.target.value;
 						if (searchstring) {
 							// filter
-							picker_<?php echo $uniqid;?>.querySelectorAll('.twocol_picker_source_item').forEach(el => {
+							picker.querySelectorAll('.twocol_picker_source_item').forEach(el => {
 								if (el.innerText.toLowerCase().includes(searchstring.toLowerCase()) && !el.classList.contains('picked')) {
 									el.style.display = 'block';
 								}
@@ -120,7 +121,7 @@ class PickerOrdered extends Field {
 						}
 						else {
 							// show all
-							picker_<?php echo $uniqid;?>.querySelectorAll('.twocol_picker_source_item').forEach(el => {
+							picker.querySelectorAll('.twocol_picker_source_item').forEach(el => {
 								if (el.classList.contains('picked')) {
 									el.style.display = 'none';
 								}
@@ -131,10 +132,10 @@ class PickerOrdered extends Field {
 						}
 					});
 					// handle clear search
-					picker_<?php echo $uniqid;?>.querySelector('.pickersearch_clear')?.addEventListener('click',function(e){
+					picker.querySelector('.pickersearch_clear')?.addEventListener('click',function(e){
 						e.target.closest('.contentpicker_search_wrap').querySelector('.pickersearch').value = '';
 						// show all
-						picker_<?php echo $uniqid;?>.querySelectorAll('.twocol_picker_source_item').forEach(el => {
+						picker.querySelectorAll('.twocol_picker_source_item').forEach(el => {
 							if (el.classList.contains('picked')) {
 								el.style.display = 'none';
 							}
@@ -144,13 +145,12 @@ class PickerOrdered extends Field {
 						});
 					});
 					// apply drag drop to server rendered lis
-					let rendered_lis_<?php echo $uniqid;?> = picker_<?php echo $uniqid;?>.querySelectorAll('.twocol_picker_right ul li');
+					let rendered_lis_<?php echo $uniqid;?> = picker.querySelectorAll('.twocol_picker_right ul li');
 					rendered_lis_<?php echo $uniqid;?>.forEach(li => {
 						li.setAttribute('draggable', true);
 						li.ondragend = function(item) {
 							item.target.classList.remove('drag-sort-active');
 							// update field
-							let hidden_input = picker_<?php echo $uniqid;?>.previousElementSibling;
 							
 							let csv_arr = [];
 							let all_li = li.closest('ul').querySelectorAll('li');
@@ -173,7 +173,7 @@ class PickerOrdered extends Field {
 						}
 					});
 					// handle clicks etc
-                    picker_<?php echo $uniqid;?>.addEventListener('click',function(e){
+                    picker.addEventListener('click',function(e){
                         if (e.target.classList.contains('twocol_picker_source_item')) {
 							let title = e.target.dataset.content_title;
 							let id = e.target.dataset.content_id;
@@ -186,7 +186,6 @@ class PickerOrdered extends Field {
 							li.ondragend = function(item) {
 								item.target.classList.remove('drag-sort-active');
 								// update field
-								let hidden_input = picker_<?php echo $uniqid;?>.previousElementSibling;
 								
 								let csv_arr = [];
 								let all_li = ul.querySelectorAll('li');
@@ -208,10 +207,9 @@ class PickerOrdered extends Field {
 								}
 							}
 							// add to ul
-							let ul = picker_<?php echo $uniqid;?>.querySelector('.twocol_picker_right ul');
+							let ul = picker.querySelector('.twocol_picker_right ul');
 							ul.appendChild(li);
 							// update field
-							let hidden_input = picker_<?php echo $uniqid;?>.previousElementSibling;
 							
 							let csv_arr = [];
 							let all_li = ul.querySelectorAll('li');
@@ -227,7 +225,6 @@ class PickerOrdered extends Field {
 							if (e.target.nodeName=="LI") {
 								// update field
 								let ul = e.target.closest('ul');
-								let hidden_input = picker_<?php echo $uniqid;?>.previousElementSibling;
 								
 								let csv_arr = [];
 								let all_li = ul.querySelectorAll('li');
