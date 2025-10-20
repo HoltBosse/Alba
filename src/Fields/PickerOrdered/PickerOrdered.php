@@ -11,7 +11,6 @@ class PickerOrdered extends Field {
 	public function display() {
 		$required="";
 		$existing_arr = explode(",",$this->default);
-		$uniqid = uniqid();
 
 		if ($this->required) {$required=" required ";}
 		echo "<div class='field'>";
@@ -39,7 +38,7 @@ class PickerOrdered extends Field {
                 <hr>
                 <h5 class="title"><?php echo $this->label;?></h5>
 				<input data-repeatableindex="{{replace_with_index}}" class='picker_data' type='hidden' value='<?php echo $this->default;?>' <?php echo "{$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}";?>>
-                <div data-uniqid='<?php echo $uniqid;?>' class='twocol_picker' id='twocol_picker_<?php echo $this->id;?>' >
+                <div class='twocol_picker' id='twocol_picker_<?php echo $this->id;?>' >
                     <div class='twocol_picker_left'>
                         <h4 class='is-title title is-4'>All Items</h4>
 						<?php if ($this->searchable):?>
@@ -145,8 +144,8 @@ class PickerOrdered extends Field {
 						});
 					});
 					// apply drag drop to server rendered lis
-					let rendered_lis_<?php echo $uniqid;?> = picker.querySelectorAll('.twocol_picker_right ul li');
-					rendered_lis_<?php echo $uniqid;?>.forEach(li => {
+					const rendered_lis = picker.querySelectorAll('.twocol_picker_right ul li');
+					rendered_lis.forEach(li => {
 						li.setAttribute('draggable', true);
 						li.ondragend = function(item) {
 							item.target.classList.remove('drag-sort-active');
@@ -243,7 +242,7 @@ class PickerOrdered extends Field {
 								// remove right hand element, no longer needed
 								e.target.remove();
 								// check if matches filter
-								let searchstring = picker_<?php echo $this->id;?>.querySelector('.pickersearch')?.value;
+								let searchstring = picker.querySelector('.pickersearch')?.value;
 								if (searchstring) {
 									if (!left_col_el.innerText.toLowerCase().includes(searchstring.toLowerCase()) ) {
 										// no match - hide
@@ -253,7 +252,6 @@ class PickerOrdered extends Field {
 							}
 						}
                     });
-                    //console.log(picker_<?php echo $this->id;?>);
                 </script>
                 <hr>
                 <?php
