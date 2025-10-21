@@ -349,6 +349,8 @@ final class CMS {
 				CMS::pprint_r("Field class not found: " . $fieldClass); die;
 			}
 		}
+
+		Form::registerFieldAlias("Input", "Text");
 	}
 
 	private function __construct() {
