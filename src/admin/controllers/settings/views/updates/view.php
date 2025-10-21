@@ -92,6 +92,13 @@ else {
 	show_message ('Messages Table','Messages table created.','is-warning');
 }
 
+if ($form_instances_table_ok) {
+	show_message ('Form Instances Table','Form Instances table OK.','is-success');
+}
+else {
+	show_message ('Form Instances Table','Form Instances table created.','is-warning');
+}
+
 if($content_table_ordering_ok) {
 	show_message ('Content Table(s)','Content Ordering OK.','is-success');
 }

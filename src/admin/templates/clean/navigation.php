@@ -87,6 +87,7 @@ $navigation = [
             "label"=>"forms",
             "links"=>[
                 "submissions"=>"/admin/forms/submissions",
+                "forms"=>"/admin/forms/all",
             ]
         ]
     ],

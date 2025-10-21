@@ -30,6 +30,10 @@ class Widget {
 			"path" => __DIR__ . '/../Widgets/Menu',
 			"class" => "HoltBosse\\Alba\\Widgets\\Menu\\Menu",
 		],
+		"FormInstance" => [
+			"path" => __DIR__ . '/../Widgets/FormInstance',
+			"class" => "HoltBosse\\Alba\\Widgets\\FormInstance\\FormInstance",
+		],
 	];
 
     public static function registerWidget(string $widgetName, string $widgetPath, string $widgetClass): bool {
