@@ -1,0 +1,9 @@
+{
+    "allowedFields": [
+        "Text",
+        "Textarea",
+        "Checkbox",
+        "Antispam",
+        "Honeypot"
+    ]
+}

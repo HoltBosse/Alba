@@ -1,0 +1,16 @@
+{
+	"title":"CMS Form",
+	"location":"FormInstance",
+	"id":"widget_form_options",
+	"fields":[
+		{
+			"name":"forminstance",
+			"id":"forminstance",
+			"type":"SqlSelector",
+			"label":"Form",
+			"required":true,
+            "query": "SELECT id as value, title as text FROM `form_instances` WHERE state >= 0 ORDER BY title ASC",
+			"filter":"RAW"
+		}
+	]
+}
