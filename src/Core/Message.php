@@ -14,11 +14,11 @@ Class Message {
         $this->redirectTo = $redirectTo;
     }
 
-    public function hasMessage() {
+    public function hasMessage(): bool {
         return isset($this->message) && $this->message != "";
     }
 
-    public function toMessagesAddArgsArray() {
+    public function toMessagesAddArgsArray(): array {
         return [
             $this->type,
             $this->message ?? "", //it is recommended that the calling code should check has message before hand
@@ -26,7 +26,7 @@ Class Message {
         ];
     }
 
-    public function toQueueMessageArgsArray() {
+    public function toQueueMessageArgsArray(): array {
         return [
             $this->message ?? "",
             $this->type,
