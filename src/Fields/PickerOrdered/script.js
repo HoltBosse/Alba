@@ -3,7 +3,7 @@ const picker = hidden_input.parentElement.querySelector('.twocol_picker');
 // handle search
 picker.querySelector('.pickersearch')?.addEventListener('input', (e) => {
     // loop over values that partially match search stringsssss
-    let searchstring = e.target.value;
+    const searchstring = e.target.value;
     if (searchstring) {
         // filter
         picker.querySelectorAll('.twocol_picker_source_item').forEach(el => {
@@ -14,8 +14,7 @@ picker.querySelector('.pickersearch')?.addEventListener('input', (e) => {
                 el.style.display = 'none';
             }
         });
-    }
-    else {
+    } else {
         // show all
         picker.querySelectorAll('.twocol_picker_source_item').forEach(el => {
             if (el.classList.contains('picked')) {
@@ -34,8 +33,7 @@ picker.querySelector('.pickersearch_clear')?.addEventListener('click', (e) => {
     picker.querySelectorAll('.twocol_picker_source_item').forEach(el => {
         if (el.classList.contains('picked')) {
             el.style.display = 'none';
-        }
-        else {
+        } else {
             el.style.display = 'block';
         }
     });
@@ -48,8 +46,8 @@ rendered_lis.forEach(li => {
         item.target.classList.remove('drag-sort-active');
         // update field
         
-        let csv_arr = [];
-        let all_li = li.closest('ul').querySelectorAll('li');
+        const csv_arr = [];
+        const all_li = li.closest('ul').querySelectorAll('li');
         all_li.forEach(an_li => {
             csv_arr.push(an_li.dataset.content_id);
         });
@@ -71,9 +69,9 @@ rendered_lis.forEach(li => {
 // handle clicks etc
 picker.addEventListener('click', (e) => {
     if (e.target.classList.contains('twocol_picker_source_item')) {
-        let title = e.target.dataset.content_title;
-        let id = e.target.dataset.content_id;
-        let li = document.createElement('LI');
+        const title = e.target.dataset.content_title;
+        const id = e.target.dataset.content_id;
+        const li = document.createElement('LI');
         li.dataset.content_id = id;
         li.dataset.content_title = title;
         li.innerText = title;
@@ -83,8 +81,8 @@ picker.addEventListener('click', (e) => {
             item.target.classList.remove('drag-sort-active');
             // update field
             
-            let csv_arr = [];
-            let all_li = ul.querySelectorAll('li');
+            const csv_arr = [];
+            const all_li = ul.querySelectorAll('li');
             all_li.forEach(an_li => {
                 csv_arr.push(an_li.dataset.content_id);
             });
@@ -103,12 +101,12 @@ picker.addEventListener('click', (e) => {
             }
         }
         // add to ul
-        let ul = picker.querySelector('.twocol_picker_right ul');
+        const ul = picker.querySelector('.twocol_picker_right ul');
         ul.appendChild(li);
         // update field
         
-        let csv_arr = [];
-        let all_li = ul.querySelectorAll('li');
+        const csv_arr = [];
+        const all_li = ul.querySelectorAll('li');
         all_li.forEach(an_li => {
             csv_arr.push(an_li.dataset.content_id);
         });
@@ -120,10 +118,10 @@ picker.addEventListener('click', (e) => {
     else {
         if (e.target.nodeName=="LI") {
             // update field
-            let ul = e.target.closest('ul');
+            const ul = e.target.closest('ul');
             
-            let csv_arr = [];
-            let all_li = ul.querySelectorAll('li');
+            const csv_arr = [];
+            const all_li = ul.querySelectorAll('li');
             all_li.forEach(an_li => {
                 if(an_li.dataset.content_id!=e.target.dataset.content_id) {
                     csv_arr.push(an_li.dataset.content_id);
@@ -131,15 +129,15 @@ picker.addEventListener('click', (e) => {
             });
             hidden_input.value = csv_arr.join(",");
             // restore left column item
-            let id = e.target.dataset.content_id;
-            let picker = e.target.closest('.twocol_picker');
-            let left_col_el = picker.querySelector('.twocol_picker_left li[data-content_id="' + id + '"]');
+            const id = e.target.dataset.content_id;
+            const picker = e.target.closest('.twocol_picker');
+            const left_col_el = picker.querySelector(`.twocol_picker_left li[data-content_id="${id}"]`);
             left_col_el.style.display = 'block';
             left_col_el.classList.remove('picked');
             // remove right hand element, no longer needed
             e.target.remove();
             // check if matches filter
-            let searchstring = picker.querySelector('.pickersearch')?.value;
+            const searchstring = picker.querySelector('.pickersearch')?.value;
             if (searchstring) {
                 if (!left_col_el.innerText.toLowerCase().includes(searchstring.toLowerCase()) ) {
                     // no match - hide
