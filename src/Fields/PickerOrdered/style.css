@@ -1,0 +1,13 @@
+.twocol_picker {display:flex; gap:2rem;}
+.twocol_picker > * {width:50%;}
+.twocol_picker_wrap {border:2px solid rgba(0,0,0,0.2); padding:1rem; }
+.twocol_picker_left .twocol_picker_wrap {max-height:20rem; overflow-y:auto;}
+.twocol_picker ul {display:flex; flex-direction:column; gap:0.5rem;}
+.twocol_picker ul li {padding:0.5rem; border:1px solid rgba(0,0,0,0.1);}
+.twocol_picker ul li:hover {background-color:#ededed; cursor:pointer;}
+.twocol_picker li.drag-sort-active {opacity:0.2;}
+span.right-arrow {opacity:0.2; font-weight:bold;}
+.pickersearch {margin-bottom:1rem; min-width:16rem;}
+.contentpicker_search_wrap {display:flex; width:100%; gap:1rem;}
+.pickersearch_clear { display:inline-flex;height: 3.3em;}
+.pickersearch_control {width:100%;}
