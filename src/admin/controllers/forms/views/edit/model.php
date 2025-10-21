@@ -105,7 +105,6 @@ if($requiredDetailsForm->isSubmitted()) {
                     $fieldInstance = [];
 
                     foreach ($fieldReflection->getProperties() as $property) {
-                        //@phpstan-ignore-next-line
                         $attributes = $property->getAttributes(FormBuilderAttribute::class);
                         if (!empty($attributes)) {
                             $fieldInstance[$property->getName()] = $normalizedDetails[$property->getName()] ?? null;

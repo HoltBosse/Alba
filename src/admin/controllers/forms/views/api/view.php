@@ -32,7 +32,6 @@ function generateFormForFieldType($fieldType): Form {
                     "description"=>$attrInstance->description ?? null,
                 ];
 
-                //@phpstan-ignore-next-line
                 if($attrInstance->dataType === FormBuilderDataType::Bool && $attrInstance->fieldType == "Select") {
                     $field->select_options = [
                         (object) ["value"=>1, "text"=>"True"],
@@ -40,7 +39,6 @@ function generateFormForFieldType($fieldType): Form {
                     ];
                 }
 
-                //@phpstan-ignore-next-line
                 if($attrInstance->dataType === FormBuilderDataType::LetterString && $attrInstance->fieldType == "Text") {
                     $field->pattern = "^[a-z]+$";
                     $field->description = "Only letters (a-z) are allowed.";
