@@ -173,6 +173,26 @@ if (!$messages_table_ok) {
 	");
 }
 
+// ensure form_instances table exists
+$form_instances_table_ok = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'form_instances' LIMIT 1");
+if(!$form_instances_table_ok) {
+	DB::exec("DROP TABLE IF EXISTS `form_instances`;");
+	DB::exec(
+		"CREATE TABLE `form_instances` (
+			`id` int(11) NOT NULL AUTO_INCREMENT,
+			`state` tinyint(4) NOT NULL DEFAULT 1,
+			`title` varchar(255) NOT NULL,
+			`alias` varchar(255) NOT NULL,
+			`created_by` int(11) NOT NULL,
+			`updated_by` int(11) NOT NULL,
+			`emails` varchar(255) DEFAULT NULL,
+			`submit_page` varchar(255) DEFAULT NULL,
+			`location` varchar(255) NOT NULL,
+			PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;"
+	);
+}
+
 $content_table_ordering_ok = true;
 $contentTypes = Content::get_all_content_types();
 foreach($contentTypes as $type) {
