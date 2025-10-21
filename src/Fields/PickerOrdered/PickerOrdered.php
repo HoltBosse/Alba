@@ -82,7 +82,7 @@ class PickerOrdered extends Field {
 						$exists = false;
 						foreach ($this->select_options as $item) {
 							if ($loaded_id==$item->value) {
-								$loaded_lis .= "<li data-content_id='{$item->value}' data-content_title='{$item->text}'>{$item->text}</li>";
+								$loaded_lis .= "<li data-content_id='{$item->value}' data-content_title='{$item->text}'>" . Input::stringHtmlSafe($item->text) . "</li>";
 								break;
 							}
 						}
@@ -104,7 +104,7 @@ class PickerOrdered extends Field {
 					const hidden_input = document.querySelector(`.picker_data[<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"]`);
 					const picker = hidden_input.parentElement.querySelector('.twocol_picker');
 					// handle search
-					picker.querySelector('.pickersearch')?.addEventListener('input',function(e){
+					picker.querySelector('.pickersearch')?.addEventListener('input', (e) => {
 						// loop over values that partially match search stringsssss
 						let searchstring = e.target.value;
 						if (searchstring) {
@@ -131,7 +131,7 @@ class PickerOrdered extends Field {
 						}
 					});
 					// handle clear search
-					picker.querySelector('.pickersearch_clear')?.addEventListener('click',function(e){
+					picker.querySelector('.pickersearch_clear')?.addEventListener('click', (e) => {
 						e.target.closest('.contentpicker_search_wrap').querySelector('.pickersearch').value = '';
 						// show all
 						picker.querySelectorAll('.twocol_picker_source_item').forEach(el => {
@@ -172,7 +172,7 @@ class PickerOrdered extends Field {
 						}
 					});
 					// handle clicks etc
-                    picker.addEventListener('click',function(e){
+                    picker.addEventListener('click', (e) => {
                         if (e.target.classList.contains('twocol_picker_source_item')) {
 							let title = e.target.dataset.content_title;
 							let id = e.target.dataset.content_id;
