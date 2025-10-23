@@ -106,7 +106,7 @@ Use HoltBosse\Form\Input;
 				</div>
 			</div>
 			<div class='field'>
-				<button id='update_image_values_trigger' onclick="rename_image_action();" type='button' class='btn button is-success'>Update</button>
+				<button id='update_image_values_trigger' type='button' class='btn button is-success'>Update</button>
 				<button id='close_image_modal' onclick='this.closest(".modal").classList.remove("is-active");' type='button' class='btn button is-danger'>Cancel</button>
 			</div>
 		</form>

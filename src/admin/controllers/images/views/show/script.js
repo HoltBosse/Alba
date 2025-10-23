@@ -207,7 +207,7 @@ function rename_image_action() {
 	// hide modal early
 	modal.classList.remove('is-active');
 	// save data
-	api_data = {"action":"rename_image","title":title,"alt":alt,"image_id":image_id};
+	const api_data = {"action":"rename_image","title":title,"alt":alt,"image_id":image_id};
 	const formData = new FormData();
 	for (const [key, value] of Object.entries(api_data)) {
 		formData.append(key, value);
@@ -222,6 +222,10 @@ function rename_image_action() {
 		console.log("Error");
 	});
 }
+
+document.querySelector("#update_image_values_trigger").addEventListener("click", ()=>{
+	rename_image_action();
+});
 
 function clear_selection() {
 	const selected = get_selected();
