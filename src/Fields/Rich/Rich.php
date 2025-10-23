@@ -130,26 +130,24 @@ class Rich extends Field {
 				<div class="gui_editor"></div>
 				<textarea style="display: none;" id='<?php echo $this->id; ?>' <?php echo $this->getRenderedName(); ?> <?php echo $this->getRenderedForm(); ?> data-repeatableindex="{{replace_with_index}}"><?php echo $this->default; ?></textarea>
 				<script type="module">
-					import { Editor } from 'https://esm.sh/@tiptap/core@3.2.1'
-					import StarterKit from 'https://esm.sh/@tiptap/starter-kit@3.2.1'
-					import {Placeholder} from 'https://esm.sh/@tiptap/extensions@3.2.1'
-					//import Underline from 'https://esm.sh/@tiptap/extension-underline@3.2.1'
-					import Superscript from 'https://esm.sh/@tiptap/extension-superscript@3.2.1'
-					import Subscript from 'https://esm.sh/@tiptap/extension-subscript@3.2.1'
-					//import TextStyle from 'https://esm.sh/@tiptap/extension-text-style@3.2.1'
-					import Link from 'https://esm.sh/@tiptap/extension-link@3.2.1'
-					import Youtube from 'https://esm.sh/@tiptap/extension-youtube@3.2.1'
-					import Image from 'https://esm.sh/@tiptap/extension-image@3.2.1'
+					import { Editor } from '/js/dist/@tiptap/core.js'
+					import StarterKit from '/js/dist/@tiptap/starter-kit.js'
+					import {Placeholder} from '/js/dist/@tiptap/extensions.js'
+					import Superscript from '/js/dist/@tiptap/extension-superscript.js'
+					import Subscript from '/js/dist/@tiptap/extension-subscript.js'
+					import Link from '/js/dist/@tiptap/extension-link.js'
+					import Youtube from '/js/dist/@tiptap/extension-youtube.js'
+					import Image from '/js/dist/@tiptap/extension-image.js'
 					import {openMediaSelector} from "/js/media_selector.js?v=2"
-					import TextAlign from 'https://esm.sh/@tiptap/extension-text-align@3.2.1'
-					import Paragraph from 'https://esm.sh/@tiptap/extension-paragraph@3.2.1'
-					import Heading from 'https://esm.sh/@tiptap/extension-heading@3.2.1'
-					import BubbleMenu from 'https://esm.sh/@tiptap/extension-bubble-menu@3.2.1'
-					import { Details, DetailsContent, DetailsSummary } from 'https://esm.sh/@tiptap/extension-details@3.2.1'
-					import FileHandler from 'https://esm.sh/@tiptap/extension-file-handler@3.2.1'
+					import TextAlign from '/js/dist/@tiptap/extension-text-align.js'
+					import Paragraph from '/js/dist/@tiptap/extension-paragraph.js'
+					import Heading from '/js/dist/@tiptap/extension-heading.js'
+					import BubbleMenu from '/js/dist/@tiptap/extension-bubble-menu.js'
+					import { Details, DetailsContent, DetailsSummary } from '/js/dist/@tiptap/extension-details.js'
+					import FileHandler from '/js/dist/@tiptap/extension-file-handler.js'
 					import {getValidImageTypes, doUpload} from "/js/image_uploading.js?v=2"
-					import { findChildrenInRange, mergeAttributes, Node, nodeInputRule, Tracker } from 'https://esm.sh/@tiptap/core@3.2.1'
-					import { Plugin, PluginKey } from 'https://esm.sh/@tiptap/pm@3.2.1/state'
+					import { findChildrenInRange, mergeAttributes, Node, nodeInputRule, Tracker } from '/js/dist/@tiptap/core.js'
+					import { Plugin, PluginKey } from '/js/dist/@tiptap/pm.js' //previously from pm/state
 					
 					const editorWrapperRoot = document.querySelector(`.editor_root_node:has([<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"])`);
 					const editorElement = editorWrapperRoot.querySelector('.gui_editor');

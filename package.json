@@ -1,0 +1,45 @@
+{
+  "name": "alba",
+  "version": "1.0.0",
+  "description": "A PHP/MySQL based Content Management System. Designed with developer flexibility in mind.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HoltBosse/Alba.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HoltBosse/Alba/issues"
+  },
+  "homepage": "https://github.com/HoltBosse/Alba#readme",
+  "dependencies": {
+    "@tiptap/core": "^3.7.2",
+    "@tiptap/extension-bubble-menu": "^3.7.2",
+    "@tiptap/extension-details": "^3.7.2",
+    "@tiptap/extension-file-handler": "^3.7.2",
+    "@tiptap/extension-heading": "^3.7.2",
+    "@tiptap/extension-image": "^3.7.2",
+    "@tiptap/extension-link": "^3.7.2",
+    "@tiptap/extension-paragraph": "^3.7.2",
+    "@tiptap/extension-subscript": "^3.7.2",
+    "@tiptap/extension-superscript": "^3.7.2",
+    "@tiptap/extension-text-align": "^3.7.2",
+    "@tiptap/extension-youtube": "^3.7.2",
+    "@tiptap/extensions": "^3.7.2",
+    "@tiptap/pm": "^3.7.2",
+    "@tiptap/starter-kit": "^3.7.2",
+    "cropperjs": "^2.1.0",
+    "slim-select": "^3.0.3"
+  },
+  "devDependencies": {
+    "vite": "^7.1.12",
+    "vite-plugin-css-injected-by-js": "^3.5.2"
+  }
+}
