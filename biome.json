@@ -21,5 +21,8 @@
 		"enabled": true,
 		"clientKind": "git",
 		"useIgnoreFile": true
-	}
+	},
+	"files": {
+        "includes": ["**", "!src/corecontrollers/js/dist/**", "!vite.config.js"]
+    }
 }
