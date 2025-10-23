@@ -55,14 +55,14 @@ const Figcaption = Node.create({
                   debug += `figurePos: ${figurePos}\n`
                   // Find the empty paragraph position and size before any changes
                   const figcaptionNode = $pos.node($pos.depth - 1)
-                  const paraIndex = $pos.index($pos.depth - 1)
-                  const paraNode = figcaptionNode.child(paraIndex)
-                  const paraPos = $pos.start($pos.depth - 1)
+                  //const paraIndex = $pos.index($pos.depth - 1)
+                  //const paraNode = figcaptionNode.child(paraIndex)
+                  //const paraPos = $pos.start($pos.depth - 1)
                   let tr = state.tr
                   // Always check for and delete any empty paragraph at the end of figcaption
                   // Use the already declared figcaptionNode
-                  let lastParaIndex = figcaptionNode.childCount - 1
-                  let lastParaNode = figcaptionNode.child(lastParaIndex)
+                  const lastParaIndex = figcaptionNode.childCount - 1
+                  const lastParaNode = figcaptionNode.child(lastParaIndex)
                   let lastParaPos = $pos.start($pos.depth - 1)
                   for (let i = 0; i < lastParaIndex; i++) {
                     lastParaPos += figcaptionNode.child(i).nodeSize
