@@ -133,11 +133,9 @@ else {
 		if(!$widget->hasCustomBackend()) {
 			foreach ($widget->options as $option) {
 				//echo "$key => $value\n";
-				$field = $widget_options_form->getFieldByName($option->name);
-				if ($field) {
-					$field->default = $option->value;
-				}
-				else {
+				if ($widget_options_form->fieldExists($option->name)) {
+					$widget_options_form->getFieldByName($option->name)->default = $option->value;
+				} else {
 					// do nothing, leave default from form json
 				}
 			}
