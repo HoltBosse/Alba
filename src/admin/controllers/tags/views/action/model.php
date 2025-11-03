@@ -9,6 +9,25 @@ if (!$action) {
 	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
 }
 
+if ($action=='togglestate') {
+	$togglestate = Input::getvar('togglestate','ARRAYOFINT');
+	if (!$togglestate) {
+		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
+	}
+
+	Actions::add_action("tagupdate", (object) [
+		"affected_tag"=>$togglestate[0],
+	]);
+
+	$result = DB::exec("UPDATE tags SET state = ? where id=?", [$togglestate[1], $togglestate[0]]); //first is id, second is state
+	if ($result) {
+		CMS::Instance()->queue_message('Updated state of tag','success', $_SERVER['HTTP_REFERER']);
+	}
+	else {
+		CMS::Instance()->queue_message('Failed to update state of tag','danger', $_SERVER['HTTP_REFERER']);
+	}
+}
+
 $id = Input::getvar('id','ARRAYOFINT');
 if (!$id) {
 	CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);

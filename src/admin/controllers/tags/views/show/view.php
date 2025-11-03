@@ -66,7 +66,14 @@ Use HoltBosse\Form\Input;
 			<tr class='tag_admin_row'>
 				<td>
 					<?php
-						Component::state_toggle($tag->id, $tag->state, "tags", NULL, -1);
+						$customStates = [];
+						if (isset($_ENV["tag_custom_fields_file_path"])) {
+							$customFieldsFormObject = json_decode(file_get_contents($_ENV["tag_custom_fields_file_path"]));
+							if(isset($customFieldsFormObject->states)) {
+								$customStates = $customFieldsFormObject->states;
+							}
+						}
+						Component::state_toggle($tag->id, $tag->state, "tags", $customStates, -1);
 					?>
 				</td>
 				<td>
