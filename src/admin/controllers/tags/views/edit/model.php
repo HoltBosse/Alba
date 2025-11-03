@@ -26,10 +26,28 @@ else {
 }
 
 // prep forms
-$required_details_form = new Form(__DIR__ . '/required_fields_form.json');
 if (isset($_ENV["tag_custom_fields_file_path"])) {
 	$custom_fields_form = new Form ($_ENV["tag_custom_fields_file_path"]);
 }
+
+$required_details_obj = json_decode(file_get_contents(__DIR__ . '/required_fields_form.json'));
+
+if($custom_fields_form) {
+	$customFieldStates = json_decode(file_get_contents($_ENV["tag_custom_fields_file_path"]))->states ?? [];
+
+	foreach($required_details_obj->fields as $field) {
+		if($field->name == "state") {
+			foreach($customFieldStates as $state) {
+				$field->select_options[] = (object) [
+					"value"=>$state->state,
+					"text"=>$state->name,
+				];
+			}
+		}
+	}
+}
+
+$required_details_form = new Form($required_details_obj);
 
 // check if submitted or show defaults/data from db
 if ($required_details_form->isSubmitted()) {
