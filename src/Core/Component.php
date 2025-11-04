@@ -215,7 +215,7 @@ class Component {
         echo "<a class='navbar-item' href='" . $_ENV["uripath"] . "{$link['url']}' class='navbar-link'>" . ucwords($link["label"]) . "</a>";
     }
 
-    public static function create_fixed_control_bar($other_html="") {
+    public static function create_fixed_control_bar($middleButtonHtml="", $endBarHtml="") {
         ?>
             <style>
                 .fixed-control-bar {
@@ -246,8 +246,9 @@ class Component {
             </script>
             <div class="fixed-control-bar">
                 <button title="Save and exit" class="button is-primary" type="submit">Save</button>
-                <?php echo $other_html; ?>
+                <?php echo $middleButtonHtml; ?>
                 <button class="button is-warning" type="button" onclick="fixedControllerBarGoBack();">Cancel</button>
+                <?php echo $endBarHtml; ?>
             </div>
         <?php
     }
