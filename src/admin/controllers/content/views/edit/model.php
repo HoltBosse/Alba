@@ -6,8 +6,6 @@ Use HoltBosse\Form\{Form, Input};
 
 $segments = CMS::Instance()->uri_segments;
 
-$version_count = 0;
-
 if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])) {
 	// need to pass content type now as well
 	$content_id = $segments[2];
@@ -20,16 +18,52 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	
 	$content = new Content();
 	$contentLoadStatus = $content->load($content_id, $content_type);
+	$tableName = Content::get_table_name_for_content_type($content_type);
+	$contentItem = DB::fetch("SELECT * FROM `{$tableName}` WHERE id=?",[$content_id]);
 
 	if($contentLoadStatus===false) {
 		CMS::Instance()->queue_message('Failed to load content id: ' . $content_id, 'danger',$_ENV["uripath"].'/admin/content/all/' . $content_type);
 	}
 	$new_content = false;
 
-	$version_count = DB::fetch('select count(id) as c from content_versions where content_id=?', [$content_id])->c;
+	if(!empty($_GET["revision"])) {
+		if(!is_numeric($_GET["revision"])) {
+			CMS::Instance()->queue_message('Failed to load invalid revision',$_ENV["uripath"].'/admin/content/all/' . $content_type);
+		}
+
+		$revisionId = (int) $_GET["revision"];
+
+		$revisions = DB::fetchall(
+			"SELECT ua.date, uad.json
+			FROM user_actions ua
+			LEFT JOIN user_actions_details uad ON ua.id=uad.action_id
+			WHERE REPLACE(JSON_EXTRACT(ua.json, '$.content_id'), '\"', '')=?
+			AND REPLACE(JSON_EXTRACT(ua.json, '$.content_type'), '\"', '')=?
+			AND ua.id>=?
+			AND ua.type='contentupdate'
+			ORDER BY ua.date DESC",
+			[$content_id, $content_type, $revisionId]
+		);
+
+		foreach($revisions as $revision) {
+			if(empty($revision->json) || $revision->json=="{}") {
+				continue;
+			}
+
+			$rData = json_decode($revision->json);
+			foreach($rData as $key=>$action) {
+				
+				if(isset($contentItem->$key)) {
+					$contentItem->$key = $action->before;
+				}
+			}
+		}
+
+		//CMS::pprint_r($contentItem);
+		//CMS::pprint_r($revisions[sizeof($revisions)-1]);
+	}
 	
-}
-elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
+} elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
 	$content_type = $segments[3];
 	$content = new Content($content_type);
 
@@ -40,8 +74,7 @@ elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) 
 
 	//$content->type_id = $segments[3]; // passing optional parameter to class constructor above
 	$new_content = true;
-}
-else {
+} else {
 	CMS::Instance()->queue_message('Unknown content operation','danger',$_ENV["uripath"].'/admin');
 	exit(0);
 }
@@ -91,23 +124,6 @@ if ($required_details_form->isSubmitted()) {
 	// validate
 	if ($required_details_form->validate() && $content_form->validate()) {
 		// forms are valid, save info
-		// first save version if versions are turned on
-		
-		// TODO: make versions work with new fields
-		/* $content_versions = Configuration::get_configuration_value ('general_options', 'content_versions');
-		if (is_numeric($content_versions) && $content_versions>0 && !$new_content) {
-			// save old version
-			//$old_version = new content();
-			$content_location = Content::get_content_location($content->content_type);
-			$old_content = Content::get_all_content("id", $content_location, $content_id); // 2nd param being passed gives enough info to get custom fields
-			
-			if ($old_content) {
-				Content::save_version($old_content[0]);
-			}
-			else {
-				CMS::Instance()->queue_message('Unable to get all original content fields','danger',$_SERVER['REQUEST_URI']);
-			}
-		} */
 
 		$quicksave = Input::getvar('quicksave',"STRING");
 		$saved = $content->save($required_details_form, $content_form );
@@ -138,20 +154,20 @@ if ($required_details_form->isSubmitted()) {
 }
 else {
 	// set category field content_type based on current new/edited content type
-	$required_details_form->getFieldByName('category')->content_type = $content->content_type;
+	$required_details_form->getFieldByName('category')->content_type = $contentItem->content_type;
 	// set defaults if needed
 	if (!$new_content) {
-		$required_details_form->getFieldByName('state')->default = $content->state;
-		$required_details_form->getFieldByName('title')->default = $content->title;
-		$required_details_form->getFieldByName('alias')->default = $content->alias;
-		$required_details_form->getFieldByName('note')->default = $content->note;
-		$required_details_form->getFieldByName('start')->default = $content->start;
-		$required_details_form->getFieldByName('end')->default = $content->end;
-		$required_details_form->getFieldByName('category')->default = $content->category;
-		
+		$required_details_form->getFieldByName('state')->default = $contentItem->state;
+		$required_details_form->getFieldByName('title')->default = $contentItem->title;
+		$required_details_form->getFieldByName('alias')->default = $contentItem->alias;
+		$required_details_form->getFieldByName('note')->default = $contentItem->note;
+		$required_details_form->getFieldByName('start')->default = $contentItem->start;
+		$required_details_form->getFieldByName('end')->default = $contentItem->end;
+		$required_details_form->getFieldByName('category')->default = $contentItem->category;
+
 		// load tags
 		$tag_id_array=[]; // $content->tags is array of tag objects returned from Tag::get_tags_for_content function
-		foreach ($content->tags as $t) {
+		foreach ($content->tags as $t) { //tags are currently not handled by content versions, so we use the content class entry here
 			$tag_id_array[] = $t->id;
 		}
 		// TagMultiple field expects a json array of integers
@@ -165,7 +181,8 @@ else {
 					continue; // skip unsaveable fields
 				}
 			}
-			$value = $content->get_field($content_field->name);
+			$customFieldsKey = $content_field->name;
+			$value = $contentItem->$customFieldsKey;
 			//CMS::pprint_r ('got '); CMS::pprint_r ($value);
 			$content_field->default = $value;
 		}
