@@ -39,16 +39,6 @@
 			"filter": "NUM"
 		},
 		{
-			"name": "content_versions",
-			"id": "content_versions",
-			"type": "Text",
-			"label": "Version Save Count",
-			"required": true,
-			"description": "Enter the number of content versions to save. Entering 0 will save none and will use the least database space.",
-			"default":1,
-			"filter": "NUM"
-		},
-		{
 			"type":"Tab",
 			"mode":"tabend"
 		},
