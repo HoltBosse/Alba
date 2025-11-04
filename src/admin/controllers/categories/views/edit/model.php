@@ -101,11 +101,4 @@ else {
 		$required_details_form->getFieldByName('parent')->content_type = $cat->content_type;
 		$required_details_form->getFieldByName('content_type')->default = $cat->content_type;
 	}
-	//CMS::pprint_r ($required_details_form);
-	foreach ($content_form->fields as $content_field) {
-		$value = $content->get_field($content_field->name);
-		if ($value) {
-			$content_field->default = $value;
-		}
-	}
 }
