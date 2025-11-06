@@ -209,17 +209,17 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 		<tbody>
 			<?php foreach ($all_content as $content_item):?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
-					<td class='drag_td'>
+					<td class='drag_td state-wrapper'>
 						<?php
 							Component::state_toggle($content_item->id, $content_item->state, "content", $custom_fields->states ?? [], $content_item->content_type);
 						?>
 					</td>
 					<?php
 						if($_ENV["admin_show_ids_in_tables"]==="true") {
-							echo "<td>$content_item->id</td>";
+							echo "<td class='id-wrapper'>$content_item->id</td>";
 						}
 					?>
-					<td>
+					<td class='title-wrapper'>
 						<div>
 							<a href="<?php echo $_ENV["uripath"]; ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo Input::stringHtmlSafe($content_item->title); ?></a>
 						</div>
@@ -232,7 +232,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 
 					<?php if ($content_list_fields):?>
 						<?php foreach ($content_list_fields as $content_list_field):?>
-							<td><?php 
+							<td dataset-name="<?php echo $content_list_field->label; ?>"><?php 
 								$propname = "{$content_list_field->name}"; 
 								$classname = Form::getFieldClass($content_list_field->type);
 								$curfield = new $classname();
@@ -246,22 +246,23 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 						<?php endforeach; ?>
 					<?php endif; ?>
 					
-					<td><?php 
-					$tags = Tag::get_tags_for_content($content_item->id, $content_item->content_type);
-					echo '<div class="tags are-small are-light">';
-					foreach ($tags as $tag) {
-						echo '<span class="tag is-info is-light">' . Input::stringHtmlSafe($tag->title) . '</span>';
-					}
-					echo '</div>';
-					?>
-					</td>
+					<td dataset-name="Tags"><?php //we need to have the td start and end butted right up to the php tags so that css empty will work
+						$tags = Tag::get_tags_for_content($content_item->id, $content_item->content_type);
+						if(sizeof($tags) > 0) { //wee use css empty, so cant have blank tags inside
+							echo '<div class="tags are-small are-light">';
+								foreach ($tags as $tag) {
+									echo '<span class="tag is-info is-light">' . Input::stringHtmlSafe($tag->title) . '</span>';
+								}
+							echo '</div>';
+						}
+					?></td>
 
-					<td><?php echo Input::stringHtmlSafe($content_item->catname);?></td>
-					<td class='unimportant'><?php echo $content_item->start; ?></td>
-					<td class='unimportant'><?php echo $content_item->end; ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($content_item->updated_by); ?></td>
-					<td class='unimportant'><?php echo Input::stringHtmlSafe($content_item->note); ?></td>
+					<td dataset-name="Cat"><?php echo Input::stringHtmlSafe($content_item->catname);?></td>
+					<td dataset-name="Start" class='unimportant'><?php echo $content_item->start; ?></td>
+					<td dataset-name="End" class='unimportant'><?php echo $content_item->end; ?></td>
+					<td dataset-name="Created By" class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
+					<td dataset-name="Updated By" class='unimportant'><?php echo User::get_username_by_id($content_item->updated_by); ?></td>
+					<td dataset-name="Note" class='unimportant'><?php echo Input::stringHtmlSafe($content_item->note); ?></td>
 				</tr>
 				
 			<?php endforeach; ?>
