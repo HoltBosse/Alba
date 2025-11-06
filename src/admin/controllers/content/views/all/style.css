@@ -161,3 +161,66 @@ th:has(input[value="asc"]:checked) i.fas.fa-sort-up {
 th:has(input[value="desc"]:checked) i.fas.fa-sort-down {
     display: inline-block;
 }
+
+@media screen and (max-width: 1024px) {
+    table.table {
+        thead {
+            display: none;
+        }
+
+        tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem 0;
+
+            tr {
+                --row-background-color: rgba(255, 255, 255, 0.1);
+
+                padding: 1rem 0;
+                display: grid;
+                grid-template-columns: 4rem 1fr;
+                row-gap: 0.5rem;
+
+                td {
+                    &.state-wrapper {
+                        order: -2;
+                        background-color: var(--row-background-color);
+
+                        button {
+                            padding: 0.5rem;
+                        }
+                    }
+    
+                    &.title-wrapper {
+                        order: -1;
+                        background-color: var(--row-background-color);
+                    }
+    
+                    &:empty, &.id-wrapper {
+                        display: none !important;
+                    }
+
+                    &:not(.state-wrapper, .title-wrapper) {
+                        display: grid;
+                        grid-template-columns: subgrid;
+                        grid-column: span 2;
+
+                        &:before {
+                            content: attr(dataset-name);
+                        }
+                    }
+
+                    &.title-wrapper {
+                        max-width: 100%;
+                        overflow: hidden;
+
+                        a, span {
+                            text-wrap: wrap;
+                            word-break: break-all;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
