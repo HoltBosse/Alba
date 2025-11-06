@@ -39,7 +39,7 @@ Use HoltBosse\Form\Input;
 	Component::addon_page_title("Widgets", null, $rightContent);
 ?>
 
-<form method='post' style="margin-bottom: 0;">
+<form style="margin-bottom: 0;">
 	<?php
 		$searchForm->display();
 	?>

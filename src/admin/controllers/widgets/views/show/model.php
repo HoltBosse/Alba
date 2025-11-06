@@ -48,25 +48,25 @@ if(is_numeric($widget_type_id)) {
 	$params[] = $widget_type_id;
 }
 
-if(isset($_POST["state"]) && is_numeric($_POST["state"])) {
+if(isset($_GET["state"]) && is_numeric($_GET["state"])) {
 	$query .= " AND w.state=?";
-	$params[] = $_POST["state"];
+	$params[] = $_GET["state"];
 }
 
-if(isset($_POST["title"]) && $_POST["title"]!="") {
+if(isset($_GET["title"]) && $_GET["title"]!="") {
 	$query .= " AND w.title like ?";
-	$params[] = "%{$_POST['title']}%";
+	$params[] = "%{$_GET['title']}%";
 }
 
-if(isset($_POST["widget_type"]) && $_POST["widget_type"]!="") {
+if(isset($_GET["widget_type"]) && $_GET["widget_type"]!="") {
 	$query .= " AND wt.location=?";
-	$params[] = $_POST["widget_type"];
+	$params[] = $_GET["widget_type"];
 }
 
-if(isset($_POST["page"]) && is_numeric($_POST["page"])) {
+if(isset($_GET["page"]) && is_numeric($_GET["page"])) {
 	$query .= " AND ((FIND_IN_SET(?, w.page_list) AND w.position_control=0) OR (NOT FIND_IN_SET(?, w.page_list) AND w.position_control=1))";
-	$params[] = $_POST["page"];
-	$params[] = $_POST["page"];
+	$params[] = $_GET["page"];
+	$params[] = $_GET["page"];
 }
 
 $query .= ' ORDER BY id DESC';
