@@ -43,6 +43,7 @@ final class CMS {
 
 	private static $fakeFilesRegistry = [
 		"sitemap.xml"=>__DIR__ . "/../fakefiles/sitemap.xml.php",
+		"robots.txt"=>__DIR__ . "/../fakefiles/robots.txt.php",
 	];
 
 	public final static function Instance(){
