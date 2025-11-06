@@ -690,6 +690,9 @@ final class CMS {
 				$this->page_contents = ob_get_contents();
 				ob_end_clean(); // clear and stop buffering
 
+				// perform content filtering / plugins on CMS::page_contents;
+				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
+
 				//add head entries
 				$cms_head = "";
 				foreach ($this->head_entries as $he) {
@@ -700,8 +703,6 @@ final class CMS {
 				}
 				$this->page_contents = str_replace("<!--CMSHEAD-->", $cms_head, $this->page_contents);
 
-				// perform content filtering / plugins on CMS::page_contents;
-				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
 				if($_ENV["dev_banner"]==="true") {
 					$this->page_contents .= $this->render_dev_banner();
 				}
