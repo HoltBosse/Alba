@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS};
+Use HoltBosse\Alba\Core\{CMS, Plugin};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
 
@@ -16,6 +16,14 @@ if (!$id) {
 }
 
 if ($action=='toggle') {
+	try {
+		$plugin_info = DB::fetch("SELECT * FROM plugins WHERE id=?", $id[0]);
+		$plugin_class_name = Plugin::getPluginClass($plugin_info->location);
+		$a_plugin = new $plugin_class_name($plugin_info);
+	} catch(Throwable $e) {
+		CMS::Instance()->queue_message('Failed to load plugin','danger', $_SERVER['HTTP_REFERER'] ?? "/admin/plugins/show");
+	}
+
 	$result = DB::exec("UPDATE plugins SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
 	if ($result) {
 		$plugin = DB::fetch('SELECT * FROM plugins WHERE id=?', [$id[0]]);
