@@ -486,7 +486,14 @@ final class CMS {
 			$this->core_controller = $this->uri_segments[0];
 		}
 
-		if ( $_ENV["debugwarnings"]!=="true" && $_ENV["debug"]!=="true" && $_ENV["cache_enabled"]==="true" && !$this->isAdmin() && !($_SESSION['flash_messages'] ?? null) && !$this->user->id && !$this->core_controller)  {
+		if(
+			$_ENV["debugwarnings"]!=="true" &&
+			$_ENV["debug"]!=="true" &&
+			!empty($_ENV["cache_enabled"]) &&
+			$_ENV["cache_enabled"]==="true" &&
+			!$this->isAdmin() && !($_SESSION['flash_messages'] ?? null) &&
+			!$this->user->id && !$this->core_controller
+		)  {
 			// check if caching is turned on and we are on front-end 
 			// admin will never create caches, so no point in even checking
 			// also never serve cache if messages waiting to be viewed potentially
