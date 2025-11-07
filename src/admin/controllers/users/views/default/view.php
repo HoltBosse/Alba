@@ -8,6 +8,19 @@ Use HoltBosse\Form\Input;
 
 <style>
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
+	<?php if($_ENV["admin_show_ids_in_tables"]==="true") { ?>
+		@media screen and (max-width: 1023px) {
+			table.table th:nth-of-type(1), table.table th:nth-of-type(3), table.table td:nth-of-type(1), table.table td:nth-of-type(3) {
+				display: block;
+			}
+			table.table th:nth-of-type(2), table.table td:nth-of-type(2) {
+				display: none;
+			}
+			table.table th:nth-of-type(3), table.table td:nth-of-type(3) {
+				width: 100%;
+			}
+		}
+	<?php } ?>
 </style>
 
 <?php
