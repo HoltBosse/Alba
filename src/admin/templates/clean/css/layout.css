@@ -158,6 +158,7 @@ div#content_search_controls {
 }
 div#content_search_controls .field {
 	min-width:5rem;
+	max-width: 100%;
 }
 
 html > footer {
