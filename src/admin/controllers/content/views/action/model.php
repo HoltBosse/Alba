@@ -30,10 +30,21 @@ if ($action=='toggle') {
 	}
 
 	foreach($id as $entry) {
-		Actions::add_action("contentupdate", (object) [
+		$beforeState = DB::fetch("SELECT state FROM `$table_name` WHERE id=?", [$entry])->state;
+
+		$actionId = Actions::add_action("contentupdate", (object) [
 			"content_id"=>$entry,
 			"content_type"=>$content_type,
 		]);
+
+		$userActionDiff = [
+			"state" => (object) [
+				"before"=> $beforeState,
+				"after"=> $beforeState == 1 ? 0 : 1, //dupe logic in sql below
+			]
+		];
+
+		Actions::add_action_details($actionId, (object) $userActionDiff);
 	}
 
 	$result = DB::exec("update `$table_name` SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
@@ -53,10 +64,21 @@ if ($action=='togglestate') {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
 
-	Actions::add_action("contentupdate", (object) [
+	$beforeState = DB::fetch("SELECT state FROM `$table_name` WHERE id=?", [$togglestate[0]])->state;
+
+	$actionId = Actions::add_action("contentupdate", (object) [
 		"content_id"=>$togglestate[1],
 		"content_type"=>$content_type,
 	]);
+
+	$userActionDiff = [
+		"state" => (object) [
+			"before"=> $beforeState,
+			"after"=> $togglestate[1],
+		]
+	];
+
+	Actions::add_action_details($actionId, (object) $userActionDiff);
 
 	$result = DB::exec("update `$table_name` SET state = ? where id=?", [$togglestate[1], $togglestate[0]]); //first is id, second is state
 	if ($result) {
@@ -74,10 +96,21 @@ elseif ($action=='publish') {
 	}
 
 	foreach($id as $entry) {
-		Actions::add_action("contentupdate", (object) [
+		$beforeState = DB::fetch("SELECT state FROM `$table_name` WHERE id=?", [$entry])->state;
+
+		$actionId = Actions::add_action("contentupdate", (object) [
 			"content_id"=>$entry,
 			"content_type"=>$content_type,
 		]);
+
+		$userActionDiff = [
+			"state" => (object) [
+				"before"=> $beforeState,
+				"after"=> 1,
+			]
+		];
+
+		Actions::add_action_details($actionId, (object) $userActionDiff);
 	}
 
 	$idlist = implode(',',$id);
@@ -97,10 +130,21 @@ elseif ($action=='unpublish') {
 	}
 
 	foreach($id as $entry) {
-		Actions::add_action("contentupdate", (object) [
+		$beforeState = DB::fetch("SELECT state FROM `$table_name` WHERE id=?", [$entry])->state;
+
+		$actionId = Actions::add_action("contentupdate", (object) [
 			"content_id"=>$entry,
 			"content_type"=>$content_type,
 		]);
+
+		$userActionDiff = [
+			"state" => (object) [
+				"before"=> $beforeState,
+				"after"=> 0,
+			]
+		];
+
+		Actions::add_action_details($actionId, (object) $userActionDiff);
 	}
 
 	$idlist = implode(',',$id);
@@ -120,10 +164,21 @@ elseif ($action=='delete') {
 	}
 
 	foreach($id as $entry) {
-		Actions::add_action("contentdelete", (object) [
+		$beforeState = DB::fetch("SELECT state FROM `$table_name` WHERE id=?", [$entry])->state;
+
+		$actionId = Actions::add_action("contentupdate", (object) [
 			"content_id"=>$entry,
 			"content_type"=>$content_type,
 		]);
+
+		$userActionDiff = [
+			"state" => (object) [
+				"before"=> $beforeState,
+				"after"=> -1,
+			]
+		];
+
+		Actions::add_action_details($actionId, (object) $userActionDiff);
 	}
 
 	$idlist = implode(',',$id);
