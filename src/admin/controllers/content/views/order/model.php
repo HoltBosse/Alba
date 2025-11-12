@@ -43,4 +43,4 @@ if (property_exists($custom_fields,'list')) {
 
 // TODO: limit to $content_list_fields + needed for ordering view (id,ordering,title)
 $content_table = Content::get_table_name_for_content_type($content_type);
-$all_content = DB::fetchAll("SELECT * FROM $content_table ORDER BY ordering ASC, id ASC");
+$all_content = DB::fetchAll("SELECT * FROM `$content_table` ORDER BY ordering ASC, id ASC");
