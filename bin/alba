@@ -14,10 +14,14 @@ include($_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php');
 
 Use Symfony\Component\Dotenv\Dotenv;
 Use HoltBosse\DB\DB;
+Use Symfony\Component\Console\Application;
+use HoltBosse\Alba\Commands\{InitCommand};
 
-echo "Alba Project Creator \n";
+$application = new Application("Alba Project Creator");
+$application->add(new InitCommand());
+$application->run();
 
-$installPath = readline("Enter project root or [" . getcwd() . "] for default: ");
+/* $installPath = readline("Enter project root or [" . getcwd() . "] for default: ");
 
 if($installPath==="") {
     $installPath = getcwd();
@@ -313,4 +317,4 @@ if(!file_exists($installPath . "/src/Widgets")) {
     echo "\n";
 }
 
-echo "installer completed \n";
+echo "installer completed \n"; */
