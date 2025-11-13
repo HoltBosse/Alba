@@ -7,4 +7,8 @@ enum MessageType: string {
     case Success = "success";
     case Danger = "danger";
     case Warning = "warning";
+
+    public function toCssClass(): string {
+        return "is-" . $this->value;
+    }
 }

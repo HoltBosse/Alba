@@ -3,7 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Content, Component};
 Use HoltBosse\DB\DB;
 
-function show_message ($heading, $text, $class) {
+function show_message (string $heading, string $text, string $class) {
 	echo "<article class=\"message $class\">
 	<div class=\"message-header\">
 		<p>$heading</p>
@@ -21,93 +21,22 @@ Component::addon_page_title("System Version and Updates");
 <hr>
 <h5 class='is-5 title is-title'>Legacy DB Checks/Fixes</h5>
 
-<?php 
-if ($page_options_ok) {
-	show_message ('Pages Table','Pages table OK.','is-success');
-}
-else {
-	show_message ('Pages Table','Added missing columns','is-warning');
-}
-
-if ($plugins_table_ok) {
-	show_message ('Plugins Table','Plugins table OK.','is-success');
-}
-else {
-	show_message ('Plugins Table','Plugins table created.','is-warning');
-}
-
-if ($tags_table_ok) {
-	show_message ('Tags Table Parent Column','Tags table OK.','is-success');
-}
-else {
-	show_message ('Tags Table Parent Column','Tags table updated.','is-warning');
-}
-
-if ($tag_category_ok) {
-	show_message ('Tags Table Category Column','Tags table OK.','is-success');
-}
-else {
-	show_message ('Tags Table Category Column','Tags table updated.','is-warning');
-}
-
-if ($custom_fields_category_ok) {
-	show_message ('Category Custom Fields Column','Category table OK.','is-success');
-}
-else {
-	show_message ('Category Custom Fields Column','Category table updated.','is-warning');
-}
-
-if ($redirects_table_ok) {
-	show_message ('Redirects Table','Redirects table OK.','is-success');
-}
-else {
-	show_message ('Redirects Table','Redirects table created and/or updated.','is-warning');
-}
-
-if ($user_actions_table_ok) {
-	show_message ('User Actions Table','User Actions table OK.','is-success');
-}
-else {
-	show_message ('User Actions Table','User Actions table created.','is-warning');
-}
-
-if ($user_actions_details_table_ok) {
-	show_message ('User Actions Details Table','User Actions table OK.','is-success');
-}
-else {
-	show_message ('User Actions Details Table','User Actions table created.','is-warning');
-}
-
-if ($form_submissions_table_ok) {
-	show_message ('Form Submissions Table','Form Submissions table OK.','is-success');
-}
-else {
-	show_message ('Form Submissions Table','Form Submissions table created.','is-warning');
-}
-
-if ($messages_table_ok) {
-	show_message ('Messages Table','Messages table OK.','is-success');
-}
-else {
-	show_message ('Messages Table','Messages table created.','is-warning');
-}
-
-if ($form_instances_table_ok) {
-	show_message ('Form Instances Table','Form Instances table OK.','is-success');
-}
-else {
-	show_message ('Form Instances Table','Form Instances table created.','is-warning');
-}
-
-if($content_table_ordering_ok) {
-	show_message ('Content Table(s)','Content Ordering OK.','is-success');
-}
-else {
-	show_message ('Messages Table','Updated ordering of content tables','is-warning');
-}
-
-if(sizeof($page_domains_ok)>0 || sizeof($redirect_domains_ok)>0) {
-	show_message ('Pages and/or Redirects Table','Updated domains to index based','is-warning');
-} else {
-	show_message ('Pages and/or Redirects Table','domain column ok','is-success');
-}
+<?php
+show_message('Pages Table - Options Column', $pageOptionsMigrationStatus->message, $pageOptionsMigrationStatus->type->toCssClass());
+show_message('Pages Table - Domain Column', $pageDomainMigrationStatus->message, $pageDomainMigrationStatus->type->toCssClass());
+show_message('Plugins Table', $pluginsTableMigrationStatus->message, $pluginsTableMigrationStatus->type->toCssClass());
+show_message('Tags Table - Parent Column', $tagParentMigrationStatus->message, $tagParentMigrationStatus->type->toCssClass());
+show_message('Categories Table', $categoryTableMigrationStatus->message, $categoryTableMigrationStatus->type->toCssClass());
+show_message('Tags Table - Category Column', $tagCategoryMigrationStatus->message, $tagCategoryMigrationStatus->type->toCssClass());
+show_message('Categories Table - Custom Fields Column', $categoryCustomFieldsMigrationStatus->message, $categoryCustomFieldsMigrationStatus->type->toCssClass());
+show_message('Tags Table - Custom Fields Column', $tagCustomFieldsMigrationStatus->message, $tagCustomFieldsMigrationStatus->type->toCssClass());
+show_message('Redirects Table', $redirectsCustomFieldsMigrationStatus->message, $redirectsCustomFieldsMigrationStatus->type->toCssClass());
+show_message('Redirects Table - Domain Column', $redirectDomainMigrationStatus->message, $redirectDomainMigrationStatus->type->toCssClass());
+show_message('User Actions Table', $userActionsTableMigrationStatus->message, $userActionsTableMigrationStatus->type->toCssClass());
+show_message('User Actions Details Table', $userActionsDetailsTableMigrationStatus->message, $userActionsDetailsTableMigrationStatus->type->toCssClass());
+show_message('Form Submissions Table', $formSubmissionsTableMigrationStatus->message, $formSubmissionsTableMigrationStatus->type->toCssClass());
+show_message('Messages Table', $messagesTableMigrationStatus->message, $messagesTableMigrationStatus->type->toCssClass());
+show_message('Form Instances Table', $formInstancesMigrationStatus->message, $formInstancesMigrationStatus->type->toCssClass());
+show_message('Content Table Ordering', $contentTableOrderingMigrationStatus->message, $contentTableOrderingMigrationStatus->type->toCssClass());
+show_message('Pages Table - Domain Column Update', $pagesDomainsMigrationStatus->message, $pagesDomainsMigrationStatus->type->toCssClass());
+show_message('Redirects Table - Domain Column Update', $redirectsDomainsMigrationStatus->message, $redirectsDomainsMigrationStatus->type->toCssClass());
