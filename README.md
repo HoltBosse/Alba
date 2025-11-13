@@ -10,7 +10,7 @@ A PHP/MySQL based Content Management System. Designed with developer flexibility
 ## Installation
 1. create project with composer
 2. require this package and install
-3. run `./vendor/bin/alba`
+3. run `./vendor/bin/alba init`
 4. Follow prompts in terminal
 
 That's it, now browse to /admin to start. See [wiki](https://github.com/HoltBosse/Alba/wiki) for more info.
