@@ -1,6 +1,8 @@
 <?php
 
 Use HoltBosse\Alba\Core\CMS;
+Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -33,7 +35,7 @@ if(sizeof($segments)==2 && $segments[1]=="parsedown") {
 
         $response = [
             "data"=>[
-                "html"=>urlencode($Parsedown->text(urldecode($_GET["markup"])/* $markup */)),
+                "html"=>urlencode($Parsedown->text(urldecode(Input::getVar("markup", v::StringVal(), '')))),
             ],
             "success"=>true,
             "msg"=>"markdown converted",

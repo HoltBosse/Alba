@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, File, Image};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 // api style controller - end output
 while(ob_get_level()>0) {
@@ -103,7 +104,7 @@ if ($segments[1]=='list_images') {
 		)
 		AND title LIKE ?
 		AND state >= 1",
-		[-1, -1, "%" . urldecode($_GET['searchterm']) . "%"]
+		[-1, -1, "%" . urldecode(Input::getVar('searchterm', v::StringVal(), '')) . "%"]
 	);
 	echo json_encode((object) [
 		"data"=>$tags
@@ -115,26 +116,30 @@ if ($segments[1]=='list_images') {
 
 // get width
 if ($segsize>=3) {
-	$req_width = $segments[2] ?? null;
+	$req_width = Input::filter(($segments[2] ?? null), v::in(array_keys(Image::$image_sizes)), null);
+} else {
+	$req_width = Input::getVar("w", v::numericVal(), null);
 }
-else {
-	$req_width = $_GET['w'] ?? null;
-}
-// get format 
+// get format
+$fmtValidator =  v::in(array_map(
+	function($input) {
+		return explode("/", $input)[1];
+	},
+	array_keys(array_filter(
+		File::$image_types,
+		function($value) {
+			return $value==1;
+		}
+	))
+));
 if ($segsize>=4) {
-	$req_format = $segments[3] ?? null;
+	$req_format = Input::filter($segments[3], $fmtValidator, null);
 }
 else {
-	$req_format = $_GET['fmt'] ?? null;
+	$req_format = Input::getVar("fmt", $fmtValidator, null);
 }
 // quality fixed for url param version
-$req_quality = $_GET['q'] ?? 75;
-
-// check quality param - size/width checked elsewhere
-if (!is_numeric($req_quality)) {
-	http_response_code(406); 
-	exit(0);
-}
+$req_quality = Input::getVar("q", v::numericVal(), 75);
 
 function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	$seconds_to_cache = $seconds_to_cache;
