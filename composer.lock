@@ -92,16 +92,16 @@
         },
         {
             "name": "holtbosse/form",
-            "version": "1.5.0",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/HoltBosse/form.git",
-                "reference": "bf788d8cf680c5435c0cce6af9fa897621808e75"
+                "reference": "1cef81c6b601031e2c04e6e94a6020196c55c803"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/HoltBosse/form/zipball/bf788d8cf680c5435c0cce6af9fa897621808e75",
-                "reference": "bf788d8cf680c5435c0cce6af9fa897621808e75",
+                "url": "https://api.github.com/repos/HoltBosse/form/zipball/1cef81c6b601031e2c04e6e94a6020196c55c803",
+                "reference": "1cef81c6b601031e2c04e6e94a6020196c55c803",
                 "shasum": ""
             },
             "require": {
@@ -124,9 +124,9 @@
             "description": "library for creating forms from json and php",
             "support": {
                 "issues": "https://github.com/HoltBosse/form/issues",
-                "source": "https://github.com/HoltBosse/form/tree/1.5.0"
+                "source": "https://github.com/HoltBosse/form/tree/1.5.1"
             },
-            "time": "2025-11-17T13:54:23+00:00"
+            "time": "2025-11-17T14:01:54+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
