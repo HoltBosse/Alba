@@ -3,8 +3,10 @@
 Use HoltBosse\Alba\Core\{CMS, Configuration, Actions};
 Use HoltBosse\Form\Form;
 Use HoltBosse\DB\DB;
+Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
-$cur_page = $_GET["page"] ?? 1;
+$cur_page = Input::getVar("page", v::numericVal(), 1);
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size') ?? 10;
 
 $event_types = DB::fetchAll("SELECT DISTINCT `type` AS text, `type` AS value FROM user_actions");

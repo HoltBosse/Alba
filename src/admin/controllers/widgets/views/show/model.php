@@ -3,11 +3,12 @@
 Use HoltBosse\Alba\Core\{CMS, Template, Content, Widget};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Form;
+Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 if (sizeof(CMS::Instance()->uri_segments)==3) {
-	$widget_type_id = CMS::Instance()->uri_segments[2];
-}
-else {
+	$widget_type_id = Input::filter(CMS::Instance()->uri_segments[2], v::NumericVal(), false);
+} else {
 	$widget_type_id = false;
 }
 
@@ -48,25 +49,29 @@ if(is_numeric($widget_type_id)) {
 	$params[] = $widget_type_id;
 }
 
-if(isset($_GET["state"]) && is_numeric($_GET["state"])) {
+$searchState = Input::getVar("state", v::numericVal(), null);
+if($searchState) {
 	$query .= " AND w.state=?";
-	$params[] = $_GET["state"];
+	$params[] = $searchState;
 }
 
-if(isset($_GET["title"]) && $_GET["title"]!="") {
+$searchTitle = Input::getVar("title", v::stringType()->length(1, null), null);
+if($searchTitle) {
 	$query .= " AND w.title like ?";
-	$params[] = "%{$_GET['title']}%";
+	$params[] = "%{$searchTitle}%";
 }
 
-if(isset($_GET["widget_type"]) && $_GET["widget_type"]!="") {
+$searchType = Input::getVar("widget_type", v::stringType()->length(1, null), null);
+if($searchType) {
 	$query .= " AND wt.location=?";
-	$params[] = $_GET["widget_type"];
+	$params[] = $searchType;
 }
 
-if(isset($_GET["page"]) && is_numeric($_GET["page"])) {
+$searchPage = Input::getVar("page", v::numericVal(), null);
+if($searchPage) {
 	$query .= " AND ((FIND_IN_SET(?, w.page_list) AND w.position_control=0) OR (NOT FIND_IN_SET(?, w.page_list) AND w.position_control=1))";
-	$params[] = $_GET["page"];
-	$params[] = $_GET["page"];
+	$params[] = $searchPage;
+	$params[] = $searchPage;
 }
 
 $query .= ' ORDER BY id DESC';

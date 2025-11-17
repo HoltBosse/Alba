@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Content, Page, Template};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
+Use Respect\Validation\Validator as v;
 
 // any variables created here will be available to the view
 
@@ -81,9 +82,12 @@ $success = $page->save();
 
 if ($success) {
 	// save widget overrides
-	// unique key on page, template and position in table	
-	for ($n=0; $n < sizeof ($_POST['override_positions_widgets']); $n++ ) {
-		$data = [$page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n], $page->id, $_POST['override_positions'][$n], $_POST['override_positions_widgets'][$n]];
+	// unique key on page, template and position in table
+	$overridePositionsWidgets = Input::getVar('override_positions_widgets', v::arrayType()->each(v::optional(v::numericVal())), []);
+	$overridePositions = Input::getVar('override_positions', v::arrayType()->each(v::optional(v::StringVal())), []);
+
+	for ($n=0; $n < sizeof ($overridePositionsWidgets); $n++ ) {
+		$data = [$page->id, $overridePositions[$n], $overridePositionsWidgets[$n], $page->id, $overridePositions[$n], $overridePositionsWidgets[$n]];
 		$override_success = DB::exec("insert into page_widget_overrides (page_id, position, widgets) values (?,?,?) on duplicate key update page_id=?, position=?, widgets=?", $data);
 	}
 

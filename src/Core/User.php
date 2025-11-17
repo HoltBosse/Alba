@@ -5,6 +5,7 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use \Exception;
 use \PDOException;
+Use Respect\Validation\Validator as v;
 
 class User {
 	public $id;
@@ -105,13 +106,10 @@ class User {
 
 	public function load_from_post() {
 		$this->username = Input::getvar('username','RAW');
-		if (isset($_POST['password'])) {
-			if ($_POST['password']) {
-				$this->password = password_hash ($_POST['password'], PASSWORD_DEFAULT); 
-			}
-			else {
-				$this->password = null;
-			}
+
+		$submittedPassword = Input::getvar('password',v::StringVal(),null);
+		if ($submittedPassword) {
+			$this->password = password_hash ($submittedPassword, PASSWORD_DEFAULT); 
 		}
 		else {
 			$this->password = null;

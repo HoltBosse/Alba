@@ -3,6 +3,8 @@
 use HoltBosse\Alba\Core\{CMS, Form};
 use \ReflectionClass;
 use HoltBosse\Form\FormBuilderDataType;
+Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 function generateFormForFieldType($fieldType): Form {
     $formObject = (object) [
@@ -77,15 +79,14 @@ $segments = CMS::Instance()->uri_segments;
 if(sizeof($segments)==4 && $segments[2]=="fieldoptions") {
     $jsonConfig = json_decode(file_get_contents(__DIR__ . "/../edit/config.json"));
 
-    //CMS::pprint_r($_POST);
-
     if($segments[3]=="none") {
         echo "<p>Select Field</p>";
     } elseif(in_array($segments[3], $jsonConfig->allowedFields)) {
-        $index = isset($_GET["index"]) ? intval($_GET["index"]) : 0; //intval forces to 0 if junk
+        $index = Input::getVar("index", v::numericVal(), 0);
+        $submittedFieldTypes = Input::getVar("fieldtypes", v::ArrayType(), []);
 
         $form = generateFormForFieldType($segments[3]);
-        $form->deserializeJson($_POST["fieldtypes"][$index]);
+        $form->deserializeJson($submittedFieldTypes[$index]);
         echo getFieldOptionsForm($form, $segments[3]);
     } else {
         echo "<p>Unknown Field Type</p>";

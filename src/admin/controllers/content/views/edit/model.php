@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Content, Hook};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
+Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
 
@@ -26,12 +27,9 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	}
 	$new_content = false;
 
-	if(!empty($_GET["revision"])) {
-		if(!is_numeric($_GET["revision"])) {
-			CMS::Instance()->queue_message('Failed to load invalid revision',$_ENV["uripath"].'/admin/content/all/' . $content_type);
-		}
-
-		$revisionId = (int) $_GET["revision"];
+	$revision = Input::getVar("revision", v::numericVal(), null);
+	if($revision) {
+		$revisionId = (int) $revision;
 
 		$revisions = DB::fetchall(
 			"SELECT ua.date, uad.json
