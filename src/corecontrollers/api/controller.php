@@ -1,6 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\CMS;
+Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
 header('Content-Type: application/json; charset=utf-8');
