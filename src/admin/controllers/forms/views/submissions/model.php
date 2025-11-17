@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Configuration};
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
 if(sizeof($segments) > 2) {
@@ -32,7 +33,7 @@ $formSelectOptions = array_map(function($input) {
 $searchFieldsObject = json_decode(file_get_contents(__DIR__ . "/search_fields.json"));
 $searchFieldsObject->fields[0]->select_options = $formSelectOptions;
 // @phpstan-ignore-next-line
-if(!isset($_GET["form"]) && $searchFieldsObject->fields[0]->select_options[0]) {
+if(Input::getVar("form", v::StringVal(), null)==null && $searchFieldsObject->fields[0]->select_options[0]) {
     $searchFieldsObject->fields[0]->default = $searchFieldsObject->fields[0]->select_options[0]->value;
 }
 $searchFieldsObject->fields[] = (object) [
@@ -95,7 +96,7 @@ if($results[0]) {
     $currentSelectedForm = new Form($currentSelectedObject);
 }
 
-if($_GET["exportcsv"]) {
+if(Input::getVar("exportcsv", v::NumericVal(), 0) == 1) {
     ob_get_clean();
     ob_get_clean();
 

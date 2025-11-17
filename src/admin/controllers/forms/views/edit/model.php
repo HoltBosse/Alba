@@ -6,6 +6,7 @@ use HoltBosse\Alba\Fields\PageSelect\PageSelect;
 use \Exception;
 use HoltBosse\Form\{Input, FormBuilderAttribute};
 use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
 $formConfigPath = $_ENV["root_path_to_forms"] . "/forms/";
@@ -88,10 +89,13 @@ if($requiredDetailsForm->isSubmitted()) {
 
         $formFields = [];
 
-        foreach($_POST["fields"] as $index=>$fieldType) {
-            if(!empty($_POST["fieldtypes"][$index])) {
+        $submittedFields = Input::getVar("fields", v::ArrayType()->each(v::StringVal()), []);
+        $submittedFieldTypes = Input::getVar("fieldtypes", v::ArrayType()->each(v::Json()), []);
+
+        foreach($submittedFields as $index=>$fieldType) {
+            if(!empty($submittedFieldTypes[$index])) {
                 try {
-                    $fieldDetails = json_decode($_POST["fieldtypes"][$index], null, 512, JSON_THROW_ON_ERROR);
+                    $fieldDetails = json_decode($submittedFieldTypes[$index], null, 512, JSON_THROW_ON_ERROR);
                     $normalizedDetails = array_combine(array_column($fieldDetails, 'name'), array_column($fieldDetails, 'value'));
                 } catch(Exception $e) {
                     continue;
@@ -123,6 +127,8 @@ if($requiredDetailsForm->isSubmitted()) {
             exit(0);
         }
 
+        $emails = Input::getVar("emails", v::arrayType()->each(v::NumericVal()), []);
+        $emailsCsv = !empty($emails) ? implode(",", $emails) : null;
         if($formId) {
             DB::exec(
                 "UPDATE form_instances SET title=?, alias=?, updated_by=?, emails=?, submit_page=? WHERE id=?",
@@ -130,8 +136,8 @@ if($requiredDetailsForm->isSubmitted()) {
                     $requiredDetailsForm->getFieldByName("title")->default,
                     $aliasField->default,
                     CMS::Instance()->user->id,
-                    !empty($_POST["emails"]) ? implode(",", $_POST["emails"]) : null,
-                    $_POST["form_submit_page"] ?? null,
+                    $emailsCsv,
+                    Input::getVar("form_submit_page", v::NumericVal(), null),
                     $formId
                 ]
             );
@@ -143,8 +149,8 @@ if($requiredDetailsForm->isSubmitted()) {
                     $aliasField->default,
                     CMS::Instance()->user->id,
                     CMS::Instance()->user->id,
-                    !empty($_POST["emails"]) ? implode(",", $_POST["emails"]) : null,
-                    $_POST["form_submit_page"] ?? null,
+                    $emailsCsv,
+                    Input::getVar("form_submit_page", v::NumericVal(), null),
                     "", //create this below
                     1
                 ]

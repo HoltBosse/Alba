@@ -30,10 +30,6 @@ if ($plugin_options_form->isSubmitted()) {
 	// update forms with submitted values
 	$plugin_options_form->setFromSubmit();
 
-	/* CMS::pprint_r ($_POST);
-	CMS::pprint_r ($position_options_form);
-	exit(0); */
-
 	// validate
 	if ($plugin_options_form->validate()) {
 		// forms are valid, save info

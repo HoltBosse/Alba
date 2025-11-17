@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, JSON, Controller, Configuration, Tag, Content, ContentSearch};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
 $search = Input::getvar('search','RAW',null);
@@ -115,7 +116,7 @@ function make_sortable_header($title) {
 				<i class="tableorder fas fa-sort-up"></i>
 				<i class="tableorder fas fa-sort-down"></i>
 			</label>
-			<?php $selectedTitle = $_GET[str_replace(" ", "_", $title) . "_order"] ?? "regular"; ?>
+			<?php $selectedTitle = Input::getVar(str_replace(" ", "_", $title) . "_order", v::StringVal()->in(["asc", "desc", "regular"]), "regular");?>
 			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="regular" <?php echo $selectedTitle=="regular" ? "checked" : ""; ?> />
 			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="asc" <?php echo $selectedTitle=="asc" ? "checked" : ""; ?> />
 			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="desc" <?php echo $selectedTitle=="desc" ? "checked" : ""; ?> />

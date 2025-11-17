@@ -167,7 +167,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 				?>
 				<?php
 					//if in ordering mode or search, disable content listing order controls
-					if(isset($_GET["filters"])) {
+					if(Input::getVar("filters", "RAW", null)) {
 						echo "<style>
 								.orderablerow{
 									pointer-events: none;

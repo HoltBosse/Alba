@@ -2,16 +2,17 @@
 
 Use HoltBosse\Alba\Core\{CMS, Component};
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 echo "<style>";
     echo file_get_contents(__DIR__ . "/style.css");
 echo "</style>";
 
+$currentForm = Input::getVar("form", v::StringVal()->length(1, null), null) ?? $searchFieldsObject->fields[0]->select_options[0]->value ?? null;
+
 $titleText = "Form Submissions";
-if($_GET["form"]) {
-    $titleText = 'All “' . Input::stringHtmlSafe($_GET["form"]) . '” form submissions';
-} elseif($searchFieldsObject->fields[0]->select_options[0]->value) {
-    $titleText = 'All “' . $searchFieldsObject->fields[0]->select_options[0]->value . '” form submissions';
+if($currentForm) {
+    $titleText = 'All “' . Input::stringHtmlSafe($currentForm) . '” form submissions';
 }
 
 $urlQueryParams = $_GET;
