@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Component, Hook, User, Tag};
+Use HoltBosse\Alba\Core\{CMS, Component, Hook, User, Tag, Form};
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 Use HoltBosse\Form\Input;
 
@@ -149,6 +149,11 @@ Use HoltBosse\Form\Input;
 			?>
 			<th>Name</th>
 			<th>Email</th>
+			<?php if ($content_list_fields):?>
+				<?php foreach ($content_list_fields as $content_list_field):?>
+					<th><?php echo $content_list_field->label; ?></th>
+				<?php endforeach; ?>
+			<?php endif; ?>
 			<?php if (!$group_id):?><th>Group(s)</th><?php endif; ?>
 			<th>Tags</th>
 			<!-- <th>Created</th>
@@ -178,6 +183,22 @@ Use HoltBosse\Form\Input;
 				<td>
 					<?php echo Input::stringHtmlSafe($user->email); ?>
 				</td>
+				<?php if ($content_list_fields):?>
+					<?php $named_custom_fields = array_column(json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]))->fields, null, 'name'); ?>
+					<?php foreach ($content_list_fields as $content_list_field):?>
+						<td dataset-name="<?php echo $content_list_field->label; ?>"><?php 
+							$propname = "{$content_list_field->name}"; 
+							$classname = Form::getFieldClass($content_list_field->type);
+							$curfield = new $classname();
+							$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
+							$curfield->default = $customUserFieldsLookup[$user->id]->$propname; // set temp field value to current stored value
+							// TODO: pass precalc array of table names for content types to aid in performance of lookups 
+							// some fields will currently parse json config files to determine tables to query for friendly values
+							// PER row/field. not ideal.
+							echo $curfield->getFriendlyValue($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
+							?></td>
+					<?php endforeach; ?>
+				<?php endif; ?>
 				<?php if (!$group_id):?>
 					<td>
 						<?php 

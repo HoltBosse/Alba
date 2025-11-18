@@ -2,6 +2,7 @@
 
 Use HoltBosse\Alba\Core\{CMS, Configuration, User, UserSearch, Tag};
 Use HoltBosse\Form\Input;
+Use HoltBosse\DB\DB;
 
 // any variables created here will be available to the view
 
@@ -59,9 +60,33 @@ $all_users = $user_search->exec();
 $user_count = $user_search->get_count();
 
 $states = NULL;
+$content_list_fields = [];
+$customUserFieldsLookup = [];
 if(isset($_ENV["custom_user_fields_file_path"])) {
 	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
 	if($formObject->states) {
 		$states = $formObject->states;
+	}
+
+	if (property_exists($formObject,'list')) {
+		foreach ($formObject->list as $fieldName) {
+			$custom_fields_list_item = new stdClass();
+			$custom_fields_list_item->name = $fieldName;
+
+			foreach ($formObject->fields as $field) {
+				if ($field->name==$fieldName) {
+					$custom_fields_list_item->label = $field->label;
+					$custom_fields_list_item->type = $field->type;
+				}
+			}
+			$content_list_fields[] = $custom_fields_list_item;
+		}
+		
+	}
+
+	$allUserIds = array_column($all_users, 'id');
+	$cufResults = DB::fetchAll('SELECT * FROM custom_user_fields WHERE user_id IN (' . implode(",", array_map(function($input) {return "?";}, $allUserIds)) . ')', $allUserIds);
+	foreach($cufResults as $cufRow) {
+		$customUserFieldsLookup[$cufRow->user_id] = $cufRow;
 	}
 }
