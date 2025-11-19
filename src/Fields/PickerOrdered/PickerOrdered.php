@@ -2,6 +2,7 @@
 namespace HoltBosse\Alba\Fields\PickerOrdered;
 
 Use HoltBosse\Form\{Field, Input};
+Use Respect\Validation\Validator as v;
 
 class PickerOrdered extends Field {
 
@@ -109,7 +110,7 @@ class PickerOrdered extends Field {
 	public function loadFromConfig($config) {
 		parent::loadFromConfig($config);
 		
-		$this->filter = $config->filter ?? 'CSVINT';
+		$this->filter = $config->filter ?? v::StringVal();
 		$this->type = $config->type ?? 'error!!!';
 		$this->searchable = $config->searchable ?? true;
 		$this->select_options = $config->select_options ?? [];

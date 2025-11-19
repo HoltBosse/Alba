@@ -7,37 +7,45 @@
 			"required":true,
 			"type": "Select",
 			"label": "Content State",
-			"filter": "NUMBER",
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"Published"},
 				{"value":0,"text":"Unpublished"}
 			],
-			"coltype":"tinyint NOT NULL DEFAULT '1'"
+			"coltype":"tinyint NOT NULL DEFAULT '1'",
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"label":"Source",
 			"name":"old_url",
 			"id":"old_url",
 			"type":"Text",
-			"filter":"RAW",
 			"maxlength":4096,
 			"description":"",
 			"required":true,
 			"wrapclass":"bigtext",
-			"nowrap":false
+			"nowrap":false,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 4096]
+			}
 		},
 		{
 			"label":"Destination",
 			"name":"new_url",
 			"id":"new_url",
 			"type":"Text",
-			"filter":"RAW",
 			"maxlength":4096,
 			"description":"",
 			"required":true,
 			"wrapclass":"bigtext",
-			"nowrap":false
+			"nowrap":false,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 4096]
+			}
 		},
 		{
 			"type":"Select",
@@ -45,7 +53,9 @@
 			"name":"domain",
 			"required":true, 
 			"label":"Domain",
-			"filter":"RAW"
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"type":"Select",
@@ -55,12 +65,15 @@
 			"label":"Header/Status Code",
 			"default":"301",
 			"description":"Redirect header type - usually 301.",
-			"filter":"STRING",
 			"placeholder":"Please select",
 			"select_options":[
 				{"text":"301 - Permanent","value":"301"},
 				{"text":"302 - Temporary","value":"302"}
-			]
+			],
+			"filter":{
+				"IntVal": [],
+				"Between": [300, 303]
+			}
 		},
 		{
 			"label":"Note",
@@ -68,11 +81,14 @@
 			"id":"note",
 			"type":"Text",
 			"required":false,
-			"filter":"STRING",
 			"maxlength":255,
 			"description":"Not required, but may be useful.",
 			"default":"",
-			"coltype":"varchar (255)"
+			"coltype":"varchar (255)",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		}
 		
 	]

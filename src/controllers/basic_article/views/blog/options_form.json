@@ -8,8 +8,10 @@
 			"label": "Blog Tag",
 			"required": true,
 			"description": "",
-			"filter": "NUMBER",
-			"content_type":1
+			"content_type":1,
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"name":"articles_per_page",
@@ -20,7 +22,9 @@
 			"min":1,
 			"default":999,
 			"label":"Article Per Page",
-			"filter":"NUMBER"
+			"filter":{
+				"IntVal": []
+			}
 		}
 	]
 }

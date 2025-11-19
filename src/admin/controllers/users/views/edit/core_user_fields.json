@@ -10,11 +10,14 @@
 			"required":true,
 			"maxlength":250,
 			"minlength":0,
-			"filter":"RAW",
 			"placeholder":"Username",
             "icon_status": true,
             "icon_parent_class": "has-icons-left",
-            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-user'></i></span>"
+            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-user'></i></span>",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 250]
+			}
 		},
         {
 			"name":"email",
@@ -25,25 +28,30 @@
 			"required":true,
 			"maxlength":250,
 			"minlength":0,
-			"filter":"RAW",
 			"placeholder":"email@whatever.com",
             "icon_status": true,
             "icon_parent_class": "has-icons-left",
-            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-envelope'></i></span>"
+            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-envelope'></i></span>",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 250]
+			}
 		},
 		{
 			"name": "userstate",
 			"id": "userstate",
 			"type": "Select",
 			"label": "User State",
-			"filter": "NUMBER",
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"Enabled"},
 				{"value":2,"text":"Enabled - Pwd Reset Req"},
 				{"value":0,"text":"Disabled"}
 			],
-			"slimselect":true
+			"slimselect":true,
+			"filter":{
+				"IntVal": []
+			}
 		},
         {
 			"name":"password",
@@ -55,11 +63,14 @@
 			"description":"Leave blank if no password change required",
 			"maxlength":250,
 			"minlength":0,
-			"filter":"RAW",
 			"placeholder":"Password",
             "icon_status": true,
             "icon_parent_class": "has-icons-left",
-            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-lock'></i></span>"
+            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-lock'></i></span>",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 250]
+			}
 		}
 	]
 }

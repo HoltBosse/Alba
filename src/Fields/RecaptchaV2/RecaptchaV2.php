@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Fields\RecaptchaV2;
 
 Use HoltBosse\Form\Field;
 use HoltBosse\Alba\Core\{CMS, Configuration};
+Use Respect\Validation\Validator as v;
 
 class RecaptchaV2 extends Field {
 
@@ -22,7 +23,7 @@ class RecaptchaV2 extends Field {
 	public function loadFromConfig($config) {
 		parent::loadFromConfig($config);
 		
-		$this->filter = $config->filter ?? 'STRING';
+		$this->filter = $config->filter ?? v::StringVal();
 	}
 
 	public function validate() {

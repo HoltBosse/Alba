@@ -25,8 +25,11 @@
 			"description":"Used for SEO purposes.",
 			"maxlength":255,
 			"minlength":0,
-			"filter":"RAW",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name": "admin_logo",
@@ -36,7 +39,9 @@
 			"required": false,
 			"description": "Choose the logo to display in the admin section.",
 			"default":1,
-			"filter": "NUM"
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"type":"Tab",
@@ -56,8 +61,11 @@
 			"description":"URI users will be redirected to if they do not have access to the page",
 			"maxlength":255,
 			"minlength":1,
-			"filter":"STRING",
-			"default":"/"
+			"default":"/",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name":"pagination_size",
@@ -69,8 +77,11 @@
 			"description":"Maximum number of items returned by default in most content listings.",
 			"maxlength":86400,
 			"minlength":0,
-			"filter":"INT",
-			"default":200
+			"default":200,
+			"filter":{
+				"IntVal": [],
+				"Length": [0, 86400]
+			}
 		},
 		{
 			"name":"session_time",
@@ -82,8 +93,11 @@
 			"description":"Length of session in minutes",
 			"maxlength":86400,
 			"minlength":1,
-			"filter":"INT",
-			"default":15
+			"default":15,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 86400]
+			}
 		},
 		{
 			"type":"Tab",
@@ -94,27 +108,16 @@
 			"mode":"tabstart"
 		},
 		{
-			"name":"ga_key",
-			"id":"ga_key",
-			"type":"Text",
-			"label":"Google Analytics Key",
-			"input_type":"text",
-			"required":false,
-			"description":"Google Analytics key - if left blank, analytics will not be loaded.",
-			"maxlength":10,
-			"minlength":10,
-			"filter":"STRING",
-			"default":""
-		},
-		{
 			"name":"og_enabled",
 			"id":"og_enabled",
 			"type":"Checkbox",
 			"label":"Use OpenGraph",
 			"required":false,
 			"description":"Make OpenGraph [social media title/image/description] page settings available in back-end and render in front-end template.",
-			"filter":"INT",
-			"default":0
+			"default":0,
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"type":"Html",
@@ -130,8 +133,11 @@
 			"description":"If left blank, reCAPTCHA will not be used on the site. Currently we support the V2 I'm Not A Robot version.",
 			"maxlength":50,
 			"minlength":10,
-			"filter":"STRING",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 50]
+			}
 		},
 		{
 			"name":"rc_secretkey",
@@ -143,8 +149,11 @@
 			"description":"Please keep this safe and never show it on the front-end.",
 			"maxlength":50,
 			"minlength":10,
-			"filter":"STRING",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 50]
+			}
 		},
 		{
 			"type":"Html",
@@ -160,8 +169,11 @@
 			"description":"If left blank, Turnstile will not be used on the site.",
 			"maxlength":50,
 			"minlength":10,
-			"filter":"STRING",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 50]
+			}
 		},
 		{
 			"name":"cf_secretkey",
@@ -173,8 +185,11 @@
 			"description":"Please keep this safe and never show it on the front-end.",
 			"maxlength":50,
 			"minlength":10,
-			"filter":"STRING",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 50]
+			}
 		},
 		{
 			"type":"Tab",
@@ -193,8 +208,11 @@
 			"required":false,
 			"maxlength":50,
 			"minlength":3,
-			"filter":"STRING",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 50]
+			}
 		},
 		{
 			"name":"smtp_from",
@@ -205,8 +223,12 @@
 			"required":false,
 			"maxlength":50,
 			"minlength":3,
-			"filter":"EMAIL",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 50],
+				"Email": []
+			}
 		},
 		{
 			"name":"smtp_replyto",
@@ -217,8 +239,12 @@
 			"required":false,
 			"maxlength":50,
 			"minlength":3,
-			"filter":"EMAIL",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255],
+				"Email": []
+			}
 		},
 		{
 			"name":"smtp_username",
@@ -229,8 +255,11 @@
 			"required":false,
 			"maxlength":50,
 			"minlength":3,
-			"filter":"STRING",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 50]
+			}
 		},
 		{
 			"name":"smtp_password",
@@ -241,8 +270,11 @@
 			"required":false,
 			"maxlength":150,
 			"minlength":8,
-			"filter":"RAW",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 150]
+			}
 		},
 		{
 			"name":"smtp_server",
@@ -253,8 +285,11 @@
 			"required":false,
 			"maxlength":150,
 			"minlength":4,
-			"filter":"RAW",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 150]
+			}
 		},
 		{
 			"type":"Select",
@@ -268,7 +303,10 @@
 			"select_options":[
 				{"text":"Yes","value":1},
 				{"text":"No","value":0}
-			]
+			],
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"type":"Select",
@@ -277,13 +315,16 @@
 			"required":false, 
 			"label":"Encryption Method",
 			"default":"tls",
-			"filter":"TEXT",
 			"description":"TLS is newer and more secure, and works with most email providers. Only change if you're 100% sure.",
 			"select_options":[
 				{"text":"TLS (preferred)","value":"tls"},
 				{"text":"SSL","value":"ssl"},
 				{"text":"None","value":"none"}
-			]
+			],
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"type":"Tab",

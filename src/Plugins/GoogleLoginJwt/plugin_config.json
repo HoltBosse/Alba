@@ -13,20 +13,26 @@
 			"id":"client_id",
 			"type":"Text",
 			"required":true,
-			"filter":"STRING",
 			"maxlength":255,
 			"description":"From google oAuth credentials page.",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},{
 			"label":"Client Secret",
 			"name":"client_secret",
 			"id":"client_secret",
 			"type":"Text",
 			"required":true,
-			"filter":"STRING",
 			"maxlength":255,
 			"description":"From google oAuth credentials page.",
-			"default":""
+			"default":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		}
 		,{
 			"label":"Login Page",
@@ -34,10 +40,13 @@
 			"id":"login_page",
 			"type":"Text",
 			"required":false,
-			"filter":"STRING",
 			"maxlength":255,
 			"description":"Defaults to /admin/ if empty. Note - for JWT version MUST end in trailing slash!",
-			"default":"/admin/"
+			"default":"/admin/",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		}
     ]
 }

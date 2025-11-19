@@ -9,7 +9,9 @@
 			"label":"Content",
 			"required":true,
 			"minlength":3,
-			"filter":"RAW"
+			"filter":{
+				"StringVal": []
+			}
 		},
 		{
 			"name":"custom",
@@ -29,7 +31,10 @@
 			"description":"Description used for social sharing and SEO.",
 			"maxlength":1024,
 			"minlength":3,
-			"filter":"RAW"
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 1024]
+			}
 		},
 		{
 			"name":"seo_keywords",
@@ -41,7 +46,10 @@
 			"description":"Keywords and phrases used for SEO - separate entries with a comma.",
 			"maxlength":255,
 			"minlength":3,
-			"filter":"RAW"
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name":"og_title",
@@ -53,7 +61,10 @@
 			"description":"Used for social sharing - leave blank to use page title",
 			"maxlength":255,
 			"minlength":3,
-			"filter":"RAW"
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name": "og_image",
@@ -62,7 +73,9 @@
 			"label": "Opengraph Image",
 			"required": false,
 			"description": "Image used for social sharing",
-			"filter": "NUM"
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"name": "og_image_position",
@@ -72,7 +85,9 @@
 			"fieldname": "og_image",
 			"required": false,
 			"description": "Focal point of image where applicable",
-			"filter": "RAW"
+			"filter":{
+				"StringVal": []
+			}
 		}
 	]
 }

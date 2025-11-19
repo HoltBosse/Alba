@@ -15,7 +15,11 @@
             "placeholder": "verify url",
             "description": "Domain and uri slug.",
             "maxlength": "255",
-            "input_type": "text"
+            "input_type": "text",
+            "filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
         },
         {
             "type": "Text",
@@ -24,14 +28,17 @@
             "id": "user_groups",
             "placeholder": "user group ids",
             "maxlength": "255",
-            "input_type": "text"
+            "input_type": "text",
+            "filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
         },
         {
             "type": "Select",
             "label": "Enable admin new user emails?",
             "name": "admin_emails",
             "id": "admin_emails",
-            "filter": "TEXT",
             "select_options": [
                 {
                     "text": "no",
@@ -41,7 +48,11 @@
                     "text": "yes",
                     "value": "yes"
                 }
-            ]
+            ],
+            "filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
         },
         {
             "type": "Text",
@@ -50,7 +61,11 @@
             "id": "verified_redirect",
             "placeholder": "verified redirect slug",
             "maxlength": "255",
-            "input_type": "text"
+            "input_type": "text",
+            "filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
         },
         {
             "label": "Email Logo",
@@ -58,7 +73,10 @@
             "name": "logo_image",
             "id": "logo_image",
             "type": "Image",
-            "required": false
+            "required": false,
+            "filter":{
+				"IntVal": []
+			}
         },
         {
             "type": "Text",
@@ -66,7 +84,10 @@
             "name": "email_link_color",
             "id": "email_link_color",
             "placeholder": "Any valid css color.",
-            "input_type": "text"
+            "input_type": "text",
+            "filter":{
+				"StringVal": []
+			}
         },
         {
             "type": "Text",
@@ -74,7 +95,10 @@
             "name": "email_cta_color",
             "id": "email_cta_color",
             "placeholder": "Any valid css color.",
-            "input_type": "text"
+            "input_type": "text",
+            "filter":{
+				"StringVal": []
+			}
         }
     ]
 }

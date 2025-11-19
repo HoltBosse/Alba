@@ -8,9 +8,11 @@
 			"label": "Choose Article",
 			"required": false,
 			"description": "",
-			"filter": "NUMBER",
 			"content_type":1,
-			"slimselect": true
+			"slimselect": true,
+			"filter":{
+				"IntVal": []
+			}
 		}
 	]
 }

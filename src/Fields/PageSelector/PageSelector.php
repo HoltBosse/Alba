@@ -73,7 +73,8 @@ class PageSelector extends Field {
 
 	public function setFromSubmit() {
 		// override default field function
-		$value = Input::getvar($this->name, $this->filter);
+		$filter = Input::isValidatorRule($this->filter) ? Input::buildValidatorFromArray((array) $this->filter) : $this->filter;
+		$value = Input::getvar($this->name, $filter);
 		if (is_array($value)) {
 			$this->default = $value;
 		}

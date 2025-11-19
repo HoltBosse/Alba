@@ -10,7 +10,9 @@
 			"label":"Form",
 			"required":true,
             "query": "SELECT id as value, title as text FROM `form_instances` WHERE state >= 0 ORDER BY title ASC",
-			"filter":"RAW"
+			"filter":{
+				"IntVal": []
+			}
 		}
 	]
 }

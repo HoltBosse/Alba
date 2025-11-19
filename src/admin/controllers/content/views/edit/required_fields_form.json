@@ -8,17 +8,24 @@
 			"type":"Text",
 			"required":true,
 			"maxlength":255,
-			"coltype":"VARCHAR (255)"
+			"coltype":"VARCHAR (255)",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"label":"URL Friendly",
 			"name":"alias",
 			"id":"alias",
 			"type":"Text",
-			"filter":"ALIAS",
 			"maxlength":255,
 			"description":"",
-			"coltype":"VARCHAR (255)"
+			"coltype":"VARCHAR (255)",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"label":"Tags",
@@ -26,8 +33,10 @@
 			"id":"tags",
 			"type":"TagMultiple",
 			"required":false,
-			"filter":"ARRAYOFINT",
-			"coltype":"varchar (255)"
+			"coltype":"varchar (255)",
+			"filter":{
+				"ArrayType": []
+			}
 		},
 		{
 			"name": "category",
@@ -35,10 +44,12 @@
 			"type": "Category",
 			"content_type":1,
 			"label": "Category",
-			"filter": "NUMBER",
 			"default":0,
 			"coltype":"int default(0)",
-			"slimselect": true
+			"slimselect": true,
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"label":"Note",
@@ -49,7 +60,11 @@
 			"maxlength":255,
 			"description":"Not required, but may be useful.",
 			"default":"",
-			"coltype":"varchar (255)"
+			"coltype":"varchar (255)",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name": "state",
@@ -57,13 +72,15 @@
 			"type": "Select",
 			"label": "Content State",
 			"description": "Choose to show content or not globally.",
-			"filter": "NUMBER",
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"Published"},
 				{"value":0,"text":"Unpublished"}
 			],
-			"coltype":"tinyint NOT NULL DEFAULT '1'"
+			"coltype":"tinyint NOT NULL DEFAULT '1'",
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"label":"Start",
@@ -71,10 +88,13 @@
 			"id":"start",
 			"type":"Text",
 			"required":false,
-			"filter":"STRING",
 			"maxlength":255,
 			"input_type":"date",
-			"coltype":"timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP"
+			"coltype":"timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"label":"End",
@@ -82,10 +102,13 @@
 			"id":"end",
 			"type":"Text",
 			"required":false,
-			"filter":"STRING",
 			"maxlength":255,
 			"input_type":"date",
-			"coltype":"timestamp NULL"
+			"coltype":"timestamp NULL",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		}
 	]
 }

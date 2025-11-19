@@ -7,7 +7,11 @@
 			"id":"title",
 			"type":"Text",
 			"required":true,
-			"maxlength":64
+			"maxlength":64,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 64]
+			}
 		},
 		{
 			"label":"Content Type",
@@ -15,9 +19,11 @@
 			"id":"content_type",
 			"type":"Text",
 			"required":true,
-			"filter":"NUMBER",
 			"default":1,
-			"attribute_list":"hidden"
+			"attribute_list":"hidden",
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"name": "parent",
@@ -25,20 +31,24 @@
 			"type": "Category",
 			"content_type":1,
 			"label": "Parent",
-			"filter": "NUMBER",
-			"default":0
+			"default":0,
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"name": "state",
 			"id": "state",
 			"type": "Select",
 			"label": "Category State",
-			"filter": "NUMBER",
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"Published"},
 				{"value":0,"text":"Unpublished"}
-			]
+			],
+			"filter":{
+				"IntVal": []
+			}
 		}
 	]
 }

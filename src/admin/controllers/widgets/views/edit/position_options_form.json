@@ -6,13 +6,15 @@
 			"id": "position_control",
 			"type": "Select",
 			"label": "Position Control",
-			"filter": "NUMBER",
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"On all pages except"},
 				{"value":0,"text":"Only on these pages"},
 				{"value":2,"text":"Page widget overrides only"}
-			]
+			],
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"label":"Page Selection",
@@ -20,7 +22,9 @@
 			"id":"position_pages",
 			"type":"PageSelector",
 			"required":false,
-			"filter":"ARRAYOFINT"
+			"filter":{
+				"ArrayType": []
+			}
 		},
 		{
 			"name": "global_position",
@@ -28,7 +32,6 @@
 			"type": "PositionSelect",
 			"label": "Template Position",
 			"required":true,
-			"filter": "STRING",
 			"default":"",
 			"logic":[
 				[
@@ -38,7 +41,10 @@
 						"value": 2
 					}
 				]
-			]
+			],
+			"filter":{
+				"StringVal": []
+			}
 		}
 	]
 }

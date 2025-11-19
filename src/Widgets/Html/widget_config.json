@@ -10,7 +10,9 @@
 			"label":"Content",
 			"required":true,
 			"minlength":3,
-			"filter":"RAW"
+			"filter":{
+				"StringVal": []
+			}
 		}
 	]
 }

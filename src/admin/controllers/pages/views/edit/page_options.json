@@ -12,7 +12,9 @@
 			"name":"access",
 			"label":"Limit Access To",
 			"default":"",
-			"filter":"ARRAYOFINT"
+			"filter": {
+				"ArrayType": []
+			}
 		},
 		{
 			"type":"Html",
@@ -29,7 +31,10 @@
 			"description":"Description used for social sharing and SEO.",
 			"maxlength":1024,
 			"minlength":3,
-			"filter":"STRING"
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 1024]
+			}
 		},
 		{
 			"name":"seo_keywords",
@@ -41,7 +46,10 @@
 			"description":"Keywords and phrases used for SEO - separate entries with a comma.",
 			"maxlength":255,
 			"minlength":3,
-			"filter":"STRING"
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name":"og_title",
@@ -53,7 +61,10 @@
 			"description":"Used for social sharing - leave blank to use page title",
 			"maxlength":255,
 			"minlength":3,
-			"filter":"STRING"
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name": "og_image",
@@ -62,7 +73,9 @@
 			"label": "Opengraph Image",
 			"required": false,
 			"description": "Image used for social sharing",
-			"filter": "NUM"
+			"filter":{
+				"IntVal": []
+			}
 		}
 	]
 }

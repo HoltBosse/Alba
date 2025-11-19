@@ -5,6 +5,7 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
 Use HoltBosse\Form\Fields\Input\Input as Field_Text;
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
+Use Respect\Validation\Validator as v;
 
 ?>
 
@@ -43,7 +44,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 			"required"=>true,
 			"maxlength"=>250,
 			"minlength"=>0,
-			"filter"=>"RAW",
+			"filter"=>V::StringVal()->Length(0,250),
 			"placeholder"=>"Page Title",
             "icon_status"=>true,
             "icon_parent_class"=>"has-icons-left",
@@ -62,7 +63,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 			"required"=>false,
 			"maxlength"=>250,
 			"minlength"=>0,
-			"filter"=>"RAW",
+			"filter"=>V::StringVal()->Length(0,250),
 			"placeholder"=>"URL Segment",
             "icon_status"=>true,
             "icon_parent_class"=>"has-icons-left",
@@ -104,7 +105,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 			"type"=>"Select",
 			"label"=>"Parent Page",
 			"required"=>true,
-			"filter"=>"RAW",
+			"filter"=>v::AlwaysValid(),
 			"select_options"=>$pageOptions,
 			"default"=>($page->parent ? $page->parent : -1),
 			"slimselect"=>true,
@@ -151,7 +152,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 			"type"=>"Select",
 			"label"=>"Site",
 			"required"=>true,
-			"filter"=>"RAW",
+			"filter"=>v::AlwaysValid(),
             "icon_status"=>true,
             "icon_parent_class"=>"has-icons-left",
             "icon_markup"=> "<span class='icon is-small is-left'><i class='fas fa-sitemap'></i></span>",
