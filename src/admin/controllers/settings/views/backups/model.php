@@ -36,7 +36,7 @@ if ($submitted) {
 	if (!function_exists('exec')) {
 		CMS::Instance()->queue_message('Error creating backup - exec not available','danger',$_ENV["uripath"]."/admin");
 	}
-	if (!`which mysqldump`) {
+	if (!shell_exec("which mysqldump")) {
 		CMS::Instance()->queue_message('Error creating backup - mysqldump not available','danger',$_ENV["uripath"]."/admin");
 	}
 	if (!class_exists('ZipArchive',false)) {
