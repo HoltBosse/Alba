@@ -151,7 +151,7 @@ class Page {
 		
 		$this->id = Input::getvar('id',v::IntVal());
 
-		$this->domain = Input::getvar("domain", "RAW");
+		$this->domain = Input::getvar("domain", v::StringVal());
 
 		$this->page_options_form->setFromSubmit();
 		return true;

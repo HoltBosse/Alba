@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Fields\Repeatable;
 
 Use HoltBosse\Form\{Field, Form, Input};
 Use \stdClass;
+Use Respect\Validation\Validator as v;
 
 class Repeatable extends Field {
 
@@ -153,7 +154,7 @@ class Repeatable extends Field {
 		// create base repeatable form
 		$forms=[];
 		$repeatable_form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true); // must be true / repeatable
-		$form_arr = Input::getvar('form_' . $repeatable_form->id, 'ARRAYRAW');
+		$form_arr = Input::getvar('form_' . $repeatable_form->id, v::ArrayType());
 		if (is_array($form_arr)) {
 			$repeat_count = sizeof ($form_arr);
 		}

@@ -30,7 +30,7 @@ else {
 // new user search - based on improved content search
 
 $search = Input::getvar('search',v::StringVal(),null);
-$filters = Input::tuplesToAssoc( Input::getvar('filters','RAW',null) );
+$filters = Input::tuplesToAssoc( Input::getvar('filters',v::AlwaysValid(),null) );
 $coretags = Input::getvar('coretags',v::arrayType()->each(v::intVal()),[]);
 $groups = Input::getvar('groups',v::arrayType()->each(v::intVal()),[]); 
 $cur_page = Input::getvar('page',v::IntVal(),'1');

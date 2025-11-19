@@ -4,6 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, JSON, Controller, Configuration, Content, Componen
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
+Use Respect\Validation\Validator as v;
 
 ?>
 
@@ -43,7 +44,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 		<div class="field">
 			<label class="label">Search Title/Note</label>
 			<div class="control">
-				<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="">
+				<input value="<?php echo Input::StringHtmlSafe($search); ?>" name="search" form="searchform" class="input" type="text" placeholder="">
 			</div>
 		</div>
 
@@ -167,7 +168,7 @@ Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 				?>
 				<?php
 					//if in ordering mode or search, disable content listing order controls
-					if(Input::getVar("filters", "RAW", null)) {
+					if(Input::getVar("filters", v::AlwaysValid(), null)) {
 						echo "<style>
 								.orderablerow{
 									pointer-events: none;
