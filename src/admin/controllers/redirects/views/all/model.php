@@ -3,15 +3,16 @@
 Use HoltBosse\Alba\Core\{CMS, Configuration};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 // any variables created here will be available to the view
 
 $segments = CMS::Instance()->uri_segments;
-$search = Input::getvar('search','TEXT',null);
+$search = Input::getvar('search',v::StringVal(),null);
 $filters = Input::tuplesToAssoc( Input::getvar('filters','RAW',null) );
-$cur_page = Input::getvar('page','INT','1');
+$cur_page = Input::getvar('page',v::IntVal(),'1');
 $page_size = Configuration::get_configuration_value ('general_options', 'pagination_size'); 
-$order_by = Input::getvar('order_by','STRING');
+$order_by = Input::getvar('order_by',v::StringVal(),'');
 $order_by_snippet = " ORDER BY created DESC ";
 if ($order_by && $order_by=="hits") {
     $order_by_snippet = " ORDER BY hits DESC ";

@@ -15,7 +15,7 @@ if (!$success) {
 	CMS::Instance()->queue_message('Failed to create page object from form data','danger',$_ENV["uripath"].'/admin/pages');
 }
 
-if(Input::getvar("id")==0) {
+if(Input::getvar("id",v::IntVal())==0) {
 	$new_page = true;
 	$existing_page = DB::fetch("SELECT * FROM pages WHERE alias=? AND parent=? AND domain=?", [$page->alias, $page->parent, $page->domain]);
 	if($existing_page) {
@@ -26,9 +26,9 @@ if(Input::getvar("id")==0) {
 	}
 }
 
-if(Input::getvar("id")!=0) {
+if(Input::getvar("id",v::IntVal())!=0) {
 	$existingPage = new Page();
-	$existingPage->load_from_id(Input::getvar("id"));
+	$existingPage->load_from_id(Input::getvar("id",v::IntVal()));
 
 	if($existingPage->domain!=$page->domain) {
 		$aliasAlreadyExistForDomain = DB::fetch("SELECT * FROM pages WHERE alias=? AND domain=?", [$page->alias, $page->domain]);
@@ -91,7 +91,7 @@ if ($success) {
 		$override_success = DB::exec("insert into page_widget_overrides (page_id, position, widgets) values (?,?,?) on duplicate key update page_id=?, position=?, widgets=?", $data);
 	}
 
-	$quicksave = Input::getvar('quicksave',"STRING");
+	$quicksave = Input::getvar('quicksave',v::StringVal(),'');
 	if ($quicksave) {
 		$msg = "Quicksave successful";
 		$redirectTo = $_SERVER['HTTP_REFERER'];

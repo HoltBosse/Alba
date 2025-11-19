@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Actions};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 
 $action = CMS::Instance()->uri_segments[2];
@@ -11,7 +12,7 @@ if (!$action) {
 }
 
 
-$id = Input::getvar('id','ARRAYOFINT');
+$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 if (!$id) {
 	CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 }

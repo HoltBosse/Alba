@@ -5,6 +5,7 @@ Use HoltBosse\Alba\Core\{CMS, Widget, Page, Content};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use \stdClass;
+Use Respect\Validation\Validator as v;
 
 class Menu extends Widget {
 
@@ -14,7 +15,7 @@ class Menu extends Widget {
 	}
 
 	public function custom_save() {
-		$menu_designer_config_json = Input::getvar('menu_designer_config','STRING');
+		$menu_designer_config_json = Input::getvar('menu_designer_config',v::StringVal(),'');
 		$obj = new stdClass();
 		$obj->name = "menu_designer_config";
 		$obj->value = $menu_designer_config_json;

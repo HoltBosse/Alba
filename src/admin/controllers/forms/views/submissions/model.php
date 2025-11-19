@@ -12,7 +12,7 @@ if(sizeof($segments) > 2) {
 
 $paginationSize = Configuration::get_configuration_value ('general_options', 'pagination_size');
 
-$curPage = Input::getvar('page','INT','1');
+$curPage = Input::getvar('page',v::IntVal(),'1');
 
 $formSelectOptions = DB::fetchAll("SELECT DISTINCT form_id AS value, form_path FROM form_submissions");
 $formSelectOptions = array_map(function($input) {

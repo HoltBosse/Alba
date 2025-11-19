@@ -45,7 +45,7 @@
 
 	<div class="field has-addons">
 		<div class="control">
-			<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="Search title/note">
+			<input value="<?php echo Input::stringHtmlSafe($search); ?>" name="search" form="searchform" class="input" type="text" placeholder="Search title/note">
 		</div>
 		<div class="control">
 			<button form="searchform" type="submit" class="button is-info">

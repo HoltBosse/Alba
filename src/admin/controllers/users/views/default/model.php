@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Configuration, User, UserSearch, Tag};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 // any variables created here will be available to the view
 
@@ -28,11 +29,11 @@ else {
 
 // new user search - based on improved content search
 
-$search = Input::getvar('search','TEXT',null);
+$search = Input::getvar('search',v::StringVal(),null);
 $filters = Input::tuplesToAssoc( Input::getvar('filters','RAW',null) );
-$coretags = Input::getvar('coretags','ARRAYOFINT',[]);
-$groups = Input::getvar('groups','ARRAYOFINT',[]); 
-$cur_page = Input::getvar('page','INT','1');
+$coretags = Input::getvar('coretags',v::arrayType()->each(v::intVal()),[]);
+$groups = Input::getvar('groups',v::arrayType()->each(v::intVal()),[]); 
+$cur_page = Input::getvar('page',v::IntVal(),'1');
 
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
 

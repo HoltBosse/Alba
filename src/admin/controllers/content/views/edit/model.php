@@ -123,7 +123,7 @@ if ($required_details_form->isSubmitted()) {
 	if ($required_details_form->validate() && $content_form->validate()) {
 		// forms are valid, save info
 
-		$quicksave = Input::getvar('quicksave',"STRING");
+		$quicksave = Input::getvar('quicksave',V::StringVal());
 		$saved = $content->save($required_details_form, $content_form );
 	
 		if ($saved) {
@@ -133,7 +133,7 @@ if ($required_details_form->isSubmitted()) {
 			}
 			else {
 				$redirect_to = $_ENV["uripath"] . "/admin/content/all/" . $content->content_type;
-				if (Input::getvar("http_referer_form") && Input::getvar("http_referer_form") != $_SERVER["HTTP_REFERER"]){
+				if (Input::getvar("http_referer_form", v::StringVal()) && Input::getvar("http_referer_form", v::StringVal()) != $_SERVER["HTTP_REFERER"]){
 					$redirect_to = Input::getvar("http_referer_form");
 				}
 				$msg = "Content <a href='" . $_ENV["uripath"] . "/admin/content/edit/{$content->id}/{$content_type}'>" . Input::stringHtmlSafe($content->title) . "</a> " . ($new_content ? 'created' : 'updated');

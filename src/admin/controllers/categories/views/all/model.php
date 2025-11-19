@@ -3,9 +3,10 @@
 Use HoltBosse\Alba\Core\{CMS, Category, Content};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
-$search = Input::getvar('search','TEXT',null);
+$search = Input::getvar('search',v::StringVal(),null);
 
 $content_type_filter = 0;
 if (sizeof($segments)==3) {

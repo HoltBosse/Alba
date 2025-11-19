@@ -5,6 +5,7 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Alba\Core\{Hook, JSON};
 Use HoltBosse\Form\{Form, Input};
 Use \stdClass;
+Use Respect\Validation\Validator as v;
 
 class Widget {
 	public $id;
@@ -201,8 +202,8 @@ class Widget {
 	public function save($required_details_form, $widget_options_form, $position_options_form) {
 		// update this object with submitted and validated form info
 		$redirect_url = $_ENV["uripath"] . '/admin/widgets/show';
-		if (Input::getvar("http_referer_form") && Input::getvar("http_referer_form") != $_SERVER["HTTP_REFERER"]){
-			$redirect_url = Input::getvar("http_referer_form");
+		if (Input::getvar("http_referer_form", v::StringVal()) && Input::getvar("http_referer_form", v::StringVal()) != $_SERVER["HTTP_REFERER"]){
+			$redirect_url = Input::getvar("http_referer_form", v::StringVal());
 		}
 		$this->title = $required_details_form->getFieldByName('title')->default;
 		$this->state = $required_details_form->getFieldByName('state')->default;

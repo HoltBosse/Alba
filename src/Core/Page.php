@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
 Use \PDOException;
+Use Respect\Validation\Validator as v;
 
 class Page {
 	public $id;
@@ -128,19 +129,19 @@ class Page {
 	}
 
 	public function load_from_post() {
-		$this->title = Input::getvar('title');
-		$this->state = Input::getvar('state','NUM', 1);
-		$this->template_id = Input::getvar('template','NUM');
-		$this->alias = Input::getvar('alias','TEXT');
+		$this->title = Input::getvar('title', v::StringVal());
+		$this->state = Input::getvar('state',v::IntVal(), 1);
+		$this->template_id = Input::getvar('template',v::IntVal());
+		$this->alias = Input::getvar('alias',v::StringVal());
 		if (!$this->alias) {
 			$this->alias = Input::stringURLSafe($this->title);
 		}
-		$this->parent = Input::getvar('parent','NUM');
-		$this->content_type = Input::getvar('content_type','NUM');
-		$this->view = Input::getvar('content_type_controller_view','NUM');
+		$this->parent = Input::getvar('parent',v::IntVal());
+		$this->content_type = Input::getvar('content_type',v::IntVal());
+		$this->view = Input::getvar('content_type_controller_view',v::IntVal());
 
 		// OLD: view_options now handles by options_form.json in view
-		$this->view_configuration = Input::getvar('view_options','ARRAYTOJSON');
+		$this->view_configuration = json_encode(Input::getvar('view_options',v::arrayType()));
 		// TODO: load from options_form
 		// e.g. $options_form = new Form(form location);
 		// $options_form->setFromSubmit();
@@ -148,7 +149,7 @@ class Page {
 		// jsonify
 		// save as $this->view_configuration
 		
-		$this->id = Input::getvar('id','NUM');
+		$this->id = Input::getvar('id',v::IntVal());
 
 		$this->domain = Input::getvar("domain", "RAW");
 
