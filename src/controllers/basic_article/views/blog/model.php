@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Content};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 // get data for view/page combination
 //CMS::pprint_r (CMS::Instance()->page);
@@ -11,7 +12,7 @@ Use HoltBosse\Form\Input;
 $view_config = CMS::Instance()->page->view_configuration_object;
 $tag_id = Content::get_config_value ($view_config, 'blogtag');
 $articles_per_page = Content::get_config_value ($view_config, 'articles_per_page') ?? 999;
-$cur_page = Input::getvar('page') ? Input::getvar('page') : 1; // always make sure we get page number for blog
+$cur_page = Input::getvar('page', v::IntVal(), 1); // always make sure we get page number for blog
 
 
 if (CMS::Instance()->uri_segments) {

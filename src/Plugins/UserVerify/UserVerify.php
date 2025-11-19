@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Plugins\UserVerify;
 Use HoltBosse\Alba\Core\{CMS, Plugin, Mail, User, Configuration};
 Use HoltBosse\Form\{Input};
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 class UserVerify extends Plugin {
 
@@ -96,9 +97,9 @@ class UserVerify extends Plugin {
     public function user_verification() {
         if(!$_GET) {
             //we want details via post
-            $username = Input::getvar("username", "TEXT");
-            $email = Input::getvar("email", "TEXT");
-            $password1 = Input::getvar("password1", "TEXT");
+            $username = Input::getvar("username", v::StringVal(), '');
+            $email = Input::getvar("email", v::StringVal(), '');
+            $password1 = Input::getvar("password1", v::StringVal(), '');
             //perhaps consider optional server side two password field verification?
 
             if($username && $email && $password1 && !DB::fetch("SELECT * FROM users WHERE email=?", $email)) {
@@ -118,10 +119,10 @@ class UserVerify extends Plugin {
 
             $this->make_message($message);
         } else {
-            if(Input::getvar("key", "TEXT")) {
+            if(Input::getvar("key", v::StringVal(), '')) {
                 //get verification key here and validate account
                 $user = new User();
-                $user->get_user_by_reset_key(Input::getvar("key", "TEXT"));
+                $user->get_user_by_reset_key(Input::getvar("key", v::StringVal(), ''));
                 if($user->id) {
                     DB::exec("UPDATE users SET state=1 WHERE id=?", $user->id); //enable the user
                     $user->remove_reset_key();

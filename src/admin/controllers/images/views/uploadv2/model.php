@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, File, Actions};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
@@ -21,10 +22,10 @@ header('Content-Type: application/json; charset=utf-8');
 $image_types_data = File::$image_types;
 
 $uploaded_files_array = $_FILES['file-upload'];
-$alts = Input::getvar('alt','ARRAYOFSTRING');
-$titles = Input::getvar('title','ARRAYOFSTRING');
-$tags = Input::getvar('tags','ARRAYOFSTRING');
-$web_friendly_array = Input::getvar('web_friendly','ARRAYOFINT');
+$alts = Input::getvar('alt',v::arrayType()->each(v::StringVal()));
+$titles = Input::getvar('title',v::arrayType()->each(v::StringVal()));
+$tags = Input::getvar('tags',v::arrayType()->each(v::StringVal()));
+$web_friendly_array = Input::getvar('web_friendly',v::arrayType()->each(v::intVal()));
 $directory = $_ENV["images_directory"] . '/processed';
 $uploaded_files = [];
 

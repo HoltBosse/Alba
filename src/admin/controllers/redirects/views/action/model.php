@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Configuration};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 $table_name = "redirects";
 $action = CMS::Instance()->uri_segments[2];
@@ -12,7 +13,7 @@ if (!$action) {
 }
 
 if ($action=='toggle') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -28,7 +29,7 @@ if ($action=='toggle') {
 }
 
 if ($action=='togglestate') {
-	$togglestate = Input::getvar('togglestate','ARRAYOFINT');
+	$togglestate = Input::getvar('togglestate',v::arrayType()->each(v::intVal()));
 	if (!$togglestate) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -42,7 +43,7 @@ if ($action=='togglestate') {
 }
 
 elseif ($action=='publish') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -57,7 +58,7 @@ elseif ($action=='publish') {
 }
 
 elseif ($action=='unpublish') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -72,7 +73,7 @@ elseif ($action=='unpublish') {
 }
 
 elseif ($action=='delete') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}

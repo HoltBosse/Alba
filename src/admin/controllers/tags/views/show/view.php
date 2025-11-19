@@ -21,7 +21,7 @@ Use HoltBosse\Form\Input;
 		<div class="field">
 			<label class="label">Search Title/Note</label>
 			<div class="control">
-				<input value="<?php echo $search; ?>" name="search" form="searchform" class="input" type="text" placeholder="">
+				<input value="<?php echo Input::StringHtmlSafe($search); ?>" name="search" form="searchform" class="input" type="text" placeholder="">
 			</div>
 		</div>
 

@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Content};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
 ob_end_clean();
@@ -16,10 +17,10 @@ $action = Input::getvar('action','STRING');
 
 if ($action=="changeorder") {
 	// id, new_order, prev_order, content_type
-	$id = Input::getvar('id','NUMBER');
-	$new_order = Input::getvar('new_order','INT');
-	$prev_order = Input::getvar('prev_order','INT');
-	$content_type = Input::getvar('content_type','INT');
+	$id = Input::getvar('id',v::IntVal());
+	$new_order = Input::getvar('new_order',v::IntVal());
+	$prev_order = Input::getvar('prev_order',v::IntVal());
+	$content_type = Input::getvar('content_type',v::IntVal());
 	if (!$id || !$new_order || !$prev_order || !$content_type) {
 		rj([
 			"success"=>0,

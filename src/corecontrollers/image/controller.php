@@ -18,11 +18,11 @@ $dbInstance = DB::getInstance();
 // handle list api request
 if ($segments[1]=='list_images') {
 	header('Content-Type: application/json; charset=utf-8');
-	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING')));
-	$searchtext = Input::getvar('searchtext','STRING');
-	$images_per_page = Input::getvar('images_per_page','INT') ?? 50;
-	$page = Input::getvar('page','INT') ?? 1;
-	$tags = Input::getvar("tags");
+	$mimetypes = array_filter(explode(',',Input::getvar('mimetypes',v::StringVal(),''))); // array_filter ensures empty array if mimetypes is null
+	$searchtext = Input::getvar('searchtext',v::StringVal(),'');
+	$images_per_page = Input::getvar('images_per_page',v::IntVal(),50);
+	$page = Input::getvar('page',v::IntVal(),1);
+	$tags = Input::getvar("tags", v::StringVal(), null);
 	if ($searchtext=='null') {
 		$searchtext=null;
 	}

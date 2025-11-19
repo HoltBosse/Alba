@@ -3,13 +3,14 @@
 Use HoltBosse\Alba\Core\{CMS, Content, Actions, JSON};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 $action = CMS::Instance()->uri_segments[2];
 if (!$action) {
 	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
 }
 
-$content_type = Input::getvar('content_type','INT',null);
+$content_type = Input::getvar('content_type',v::IntVal(),null);
 if (!$content_type) {
 	CMS::Instance()->queue_message('Unknown content type','danger', $_SERVER['HTTP_REFERER']);
 }
@@ -24,7 +25,7 @@ if ($table_name=="controller_") {
 
 
 if ($action=='toggle') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -59,7 +60,7 @@ if ($action=='toggle') {
 }
 
 if ($action=='togglestate') {
-	$togglestate = Input::getvar('togglestate','ARRAYOFINT');
+	$togglestate = Input::getvar('togglestate',v::arrayType()->each(v::intVal()));
 	if (!$togglestate) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -90,7 +91,7 @@ if ($action=='togglestate') {
 }
 
 elseif ($action=='publish') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -124,7 +125,7 @@ elseif ($action=='publish') {
 }
 
 elseif ($action=='unpublish') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -158,7 +159,7 @@ elseif ($action=='unpublish') {
 }
 
 elseif ($action=='delete') {
-	$id = Input::getvar('id','ARRAYOFINT');
+	$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
@@ -192,7 +193,7 @@ elseif ($action=='delete') {
 }
 
 elseif ($action=='duplicate') {
-	$ids = Input::getvar('id','ARRAYOFINT');
+	$ids = Input::getvar('id',v::arrayType()->each(v::intVal()));
 	if (!$ids) {
 		//CMS::pprint_r ($ids);exit(0);
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
@@ -200,7 +201,7 @@ elseif ($action=='duplicate') {
 	
 	foreach ($ids as $id) {
 		$orig = new Content();
-		$orig->load($id, Input::getvar('content_type','INT'));
+		$orig->load($id, Input::getvar('content_type',v::IntVal()));
 		$orig->duplicate();
 	}
 	// todo: nicely report on good or bad duplicates

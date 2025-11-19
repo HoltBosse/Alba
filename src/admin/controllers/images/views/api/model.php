@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Actions, File};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
 ob_end_clean(); // do it again, we may be inside another buffer due to reasons
@@ -11,14 +12,14 @@ ob_end_clean(); // do it again, we may be inside another buffer due to reasons
 
 // TODO: remove front-end images api model????
 
-$action = Input::getvar('action','STRING');
-$mimetypes = array_filter(explode(',',Input::getvar('mimetypes','STRING'))); // array_filter ensures empty array if mimetypes is null
+$action = Input::getvar('action',v::StringVal());
+$mimetypes = array_filter(explode(',',Input::getvar('mimetypes',v::StringVal(),''))); // array_filter ensures empty array if mimetypes is null
 // TODO sanitize mimetypes against whitelist
 
 if ($action=='tag_media') {
-	$image_ids_string = Input::getvar('id_list','STRING');
+	$image_ids_string = Input::getvar('id_list',v::StringVal(),'');
 	$image_ids = explode(",", $image_ids_string);
-	$tag_id = Input::getvar('tag_id',"INT");
+	$tag_id = Input::getvar('tag_id',v::IntVal());
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
 	foreach ($image_ids as $image_id) {
@@ -46,7 +47,7 @@ if ($action=='tag_media') {
 }
 
 if ($action=='cleartags_media') {
-	$image_ids_string = Input::getvar('id_list','STRING');
+	$image_ids_string = Input::getvar('id_list',v::StringVal(),'');
 	$image_ids = explode(",", $image_ids_string);
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
@@ -67,7 +68,7 @@ if ($action=='cleartags_media') {
 }
 
 if ($action=='delete_media') {
-	$image_ids_string = Input::getvar('id_list','STRING');
+	$image_ids_string = Input::getvar('id_list',v::StringVal(),'');
 	$image_ids = explode(",", $image_ids_string);
 	$image_ids_tagged=[];
 	$image_ids_failed=[];
@@ -103,11 +104,11 @@ if ($action=='delete_media') {
 
 if ($action=='untag_media') {
 	// clear single tag from media list
-	$image_ids_string = Input::getvar('id_list','STRING');
+	$image_ids_string = Input::getvar('id_list',v::StringVal(),'');
 	$image_ids = explode(",", $image_ids_string);
 	$image_ids_untagged=[];
 	$image_ids_failed=[];
-	$tag_id = Input::getvar('tag_id','NUM');
+	$tag_id = Input::getvar('tag_id',v::IntVal());
 	foreach ($image_ids as $image_id) {
 		Actions::add_action("mediaupdate", (object) [
 			"affected_media"=>$image_id,
@@ -177,9 +178,9 @@ if ($action=='delete') {
 }
 
 if ($action=='rename_image') {
-	$title = Input::getvar('title','STRING');
-	$alt = Input::getvar('alt','STRING');
-	$image_id = Input::getvar('image_id','NUM');
+	$title = Input::getvar('title',v::StringVal(),'');
+	$alt = Input::getvar('alt',v::StringVal(),'');
+	$image_id = Input::getvar('image_id',v::IntVal());
 
 	Actions::add_action("mediaupdate", (object) [
 		"affected_media"=>$image_id,

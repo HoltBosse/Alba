@@ -114,16 +114,16 @@ class User {
 		else {
 			$this->password = null;
 		}
-		$this->email = Input::getvar('email','EMAIL');
+		$this->email = Input::getvar('email',v::email());
 		if (!$this->email) {
 			CMS::Instance()->queue_message('Invalid email','warning');
 			return false;
 		}
 		$this->registered = date('Y-m-d H:i:s');
-		$this->id = Input::getvar('id','INT');
-		$this->groups = Input::getvar('groups','ARRAYOFINT');
-		$this->tags = Input::getvar('tags','ARRAYOFINT');
-		$this->state = Input::getvar('userstate','INT');
+		$this->id = Input::getvar('id',v::IntVal(),null);
+		$this->groups = Input::getvar('groups',v::arrayType()->each(v::intVal()));
+		$this->tags = Input::getvar('tags',v::arrayType()->each(v::intVal()));
+		$this->state = Input::getvar('userstate',v::IntVal());
 		return true;
 	}
 

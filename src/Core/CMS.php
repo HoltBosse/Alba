@@ -5,6 +5,7 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use HoltBosse\Form\Form;
 Use HoltBosse\Form\Fields\{Antispam, Checkbox, Honeypot, Html, Input as Text, Select, Textarea};
+Use Respect\Validation\Validator as v;
 Use \stdClass;
 Use \Exception;
 
@@ -660,7 +661,7 @@ final class CMS {
 		// if ADMIN but guest, show login
 
 		if ( ($this->isAdmin() && $this->user->username=="guest") || ($this->user->username=="guest" && $_ENV["frontendlogin"]==="true") ) {
-			$email = Input::getvar('email','EMAIL'); // note: php email filter is a bit more picky than html input type email
+			$email = Input::getvar('email',v::email()); // note: php email filter is a bit more picky than html input type email
         	$password = Input::getvar('password','RAW');
 			
 			$loginResult = Access::handleLogin($email, $password);

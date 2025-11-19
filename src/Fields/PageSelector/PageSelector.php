@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Fields\PageSelector;
 
 Use HoltBosse\Form\{Field, Input};
 Use HoltBosse\Alba\Core\{CMS, Page};
+Use Respect\Validation\Validator as v;
 
 class PageSelector extends Field {
 
@@ -84,7 +85,7 @@ class PageSelector extends Field {
 	public function loadFromConfig($config) {
 		parent::loadFromConfig($config);
 		
-		$this->filter = $config->filter ?? 'ARRAYOFINT';
+		$this->filter = $config->filter ?? v::arrayType()->each(v::intVal());
 		$this->multiple = $config->multiple ?? true;
 	}
 

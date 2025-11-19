@@ -3,14 +3,15 @@
 Use HoltBosse\Alba\Core\{CMS, User, Actions};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 $action = CMS::Instance()->uri_segments[2];
 if (!$action) {
 	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
 }
 
-$id = Input::getvar('id','ARRAYOFINT');
-if (!$id && !Input::getvar('togglestate','ARRAYOFINT')) {
+$id = Input::getvar('id',v::arrayType()->each(v::intVal()));
+if (!$id && !Input::getvar('togglestate',v::arrayType()->each(v::intVal()))) {
 	CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 }
 
@@ -33,7 +34,7 @@ if ($action=='toggle') {
 }
 
 if ($action=='togglestate') {
-	$togglestate = Input::getvar('togglestate','ARRAYOFINT');
+	$togglestate = Input::getvar('togglestate',v::arrayType()->each(v::intVal()));
 	if (!$togglestate) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown users','danger', $_SERVER['HTTP_REFERER']);
 	}

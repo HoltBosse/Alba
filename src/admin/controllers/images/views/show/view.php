@@ -28,7 +28,7 @@ Use HoltBosse\Form\Input;
 			<div class="field">
 				<label class="label">Search Title/Alt/Filename</label>
 				<div class="control">
-					<input value="<?=$searchtext?>" name="searchtext" form="searchform" class="input" type="text" placeholder="">
+					<input value="<?=input::StringHtmlSafe($searchtext)?>" name="searchtext" form="searchform" class="input" type="text" placeholder="">
 				</div>
 			</div>
 			<div class="field">

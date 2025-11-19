@@ -3,12 +3,13 @@
 Use HoltBosse\Alba\Core\{CMS, Hook, User, Mail};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
-$view = Input::getvar('view','STRING');
+$view = Input::getvar('view',v::StringVal(),'');
 
 // handle reset request
 
-$resetemail = Input::getvar('resetemail','EMAIL');
+$resetemail = Input::getvar('resetemail',v::email());
 if ($resetemail) {
 	$resetUser = new User();
 	$resetUser->load_from_email($resetemail);

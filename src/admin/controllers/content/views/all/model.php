@@ -9,7 +9,7 @@ $segments = CMS::Instance()->uri_segments;
 $search = Input::getvar('search','RAW',null);
 $filters = Input::tuplesToAssoc( Input::getvar('filters','RAW',null) );
 // make sure coretags getvar returns empty array PHP 8+ in_array required haystack to be array
-$coretags = Input::getvar('coretags','ARRAYOFINT',[]);
+$coretags = Input::getvar('coretags',v::arrayType()->each(v::intVal()),[]);
 
 $content_type_filter = null;
 if (sizeof($segments)>3) {
@@ -25,7 +25,7 @@ if(!$contentTypeTableRecord) {
 	CMS::raise_404();
 }
 
-$cur_page = Input::getvar('page','INT','1');
+$cur_page = Input::getvar('page',v::IntVal(),'1');
 
 $all_content_types = Content::get_all_content_types();
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');

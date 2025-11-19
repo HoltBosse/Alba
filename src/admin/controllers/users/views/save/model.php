@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, User, Hook};
 Use HoltBosse\Form\{Form, Input};
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 // any variables created here will be available to the view
 
@@ -64,8 +65,8 @@ if ($custom_user_fields_form) {
 }
 
 $redirect_url = $_ENV["uripath"] . '/admin/users';
-if (Input::getvar("http_referer_form") && Input::getvar("http_referer_form") != $_SERVER["HTTP_REFERER"]){
-	$redirect_url = Input::getvar("http_referer_form");
+if (Input::getvar("http_referer_form", v::StringVal()) && Input::getvar("http_referer_form", v::StringVal()) != $_SERVER["HTTP_REFERER"]){
+	$redirect_url = Input::getvar("http_referer_form", v::StringVal());
 }
 
 if ($success) {
