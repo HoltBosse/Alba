@@ -61,6 +61,6 @@ class Turnstile extends Field {
 	public function loadFromConfig($config) {
 		parent::loadFromConfig($config);
 
-		$this->filter = $config->filter ?? 'RAW';
+		$this->filter = $config->filter ?? v::AlwaysValid();
 	}
 }

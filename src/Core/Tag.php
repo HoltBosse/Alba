@@ -154,6 +154,8 @@ class Tag {
 			$query = "UPDATE tags SET state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=?, custom_fields=? WHERE id=?";
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
+			} else {
+				$this->alias = Input::stringURLSafe($this->alias);
 			}
 			if (!$this->image) {
 				$this->image=null;
@@ -183,6 +185,8 @@ class Tag {
 			
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
+			} else {
+				$this->alias = Input::stringURLSafe($this->alias);
 			}
 			if (!$this->image) {
 				$this->image=null;

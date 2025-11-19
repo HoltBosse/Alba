@@ -264,6 +264,8 @@ class Content {
 		$this->alias = $required_details_form->getFieldByName('alias')->default;
 		if (!$this->alias) {
 			$this->alias = Input::stringURLSafe($this->title);
+		} else {
+			$this->alias = Input::stringURLSafe($this->alias);
 		}
 		$this->start = $required_details_form->getFieldByName('start')->default;
 		$this->end = $required_details_form->getFieldByName('end')->default;

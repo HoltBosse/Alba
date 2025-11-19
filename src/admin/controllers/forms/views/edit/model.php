@@ -84,6 +84,8 @@ if($requiredDetailsForm->isSubmitted()) {
 
                 CMS::Instance()->queue_message('Added random suffix to "URL Friendly" field to ensure uniqueness.','warning');
             }
+        } else {
+            Input::StringUrlSafe($aliasField->default);
         }
 
 

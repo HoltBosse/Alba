@@ -8,7 +8,11 @@
 			"id": "title",
 			"type": "Text",
 			"required": true,
-			"maxlength": 255
+			"maxlength": 255,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"label":"URL Friendly Title",
@@ -17,8 +21,11 @@
 			"type":"Text",
 			"description":"A URL friendly version of your title - only letters/numbers and underscores allowed.",
 			"required":false,
-			"filter":"ALIAS",
-			"maxlength":255
+			"maxlength":255,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name": "filter",
@@ -26,13 +33,15 @@
 			"type": "Select",
 			"label": "Tag Applies To",
 			"description": "",
-			"filter": "NUMBER",
 			"default": 1,
 			"required":true,
 			"select_options": [
 				{ "value": 1, "text": "Everything except selected content types" },
 				{ "value": 2, "text": "Only selected content types"}
-			]
+			],
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"label":"Applicable Content Types",
@@ -40,10 +49,12 @@
 			"id":"contenttypes",
 			"type":"ContentTypeSelector",
 			"description":"",
-			"filter":"ARRAYOFINT",
 			"showmedia":true,
 			"showusers":true,
-			"default":null
+			"default":null,
+			"filter":{
+				"ArrayType": []
+			}
 		},
 		{
 			"name": "public",
@@ -51,13 +62,15 @@
 			"type": "Select",
 			"label": "Visibility",
 			"description": "Note - invisible tags will, by default, by hidden from search results.<br>They are largely used for organizing items in ways that aren't useful for the end-user to see.",
-			"filter": "NUMBER",
 			"default": 1,
 			"required":true,
 			"select_options": [
 				{ "value": 1, "text": "Visible on front-end" },
 				{ "value": 0, "text": "Not shown on front-end"}
-			]
+			],
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"name": "state",
@@ -65,12 +78,14 @@
 			"type": "Select",
 			"label": "State",
 			"description": "",
-			"filter": "NUMBER",
 			"default": 1,
 			"select_options": [
 				{ "value": 1, "text": "Published" },
 				{ "value": 0, "text": "Unpublished" }
-			]
+			],
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"name": "category",
@@ -78,8 +93,10 @@
 			"type": "Category",
 			"content_type":-3,
 			"label": "Category",
-			"filter": "NUMBER",
-			"default":0
+			"default":0,
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"label": "Note",
@@ -89,7 +106,11 @@
 			"required": false,
 			"maxlength": 255,
 			"description": "Not required, but may be useful.",
-			"default": ""
+			"default": "",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"label": "Parent Tag",
@@ -97,9 +118,11 @@
 			"id": "parent",
 			"type": "TagParent",
 			"required": false,
-			"filter": "INT",
 			"default": "0",
-			"slimselect": true
+			"slimselect": true,
+			"filter":{
+				"IntVal": []
+			}
 		},
 		{
 			"label": "Description",
@@ -107,10 +130,13 @@
 			"id": "description",
 			"type": "Rich",
 			"required": false,
-			"filter": "RAW",
 			"maxlength": 255,
 			"description": "",
-			"default": ""
+			"default": "",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		
 		{
@@ -119,8 +145,10 @@
 			"id": "image",
 			"type": "Image",
 			"required": false,
-			"filter": "INT",
-			"description": "TODO: Create and change this to MEDIA field type"
+			"description": "TODO: Create and change this to MEDIA field type",
+			"filter":{
+				"IntVal": []
+			}
 		}
 	]
 }

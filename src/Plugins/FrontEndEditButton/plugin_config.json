@@ -13,7 +13,9 @@
 			"name":"access",
 			"label":"Limit Access To",
 			"default":"",
-			"filter":"ARRAYOFINT"
+			"filter":{
+				"ArrayType": []
+			}
 		}
 	]
 }

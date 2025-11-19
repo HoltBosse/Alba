@@ -28,7 +28,6 @@ test('registers built-in form fields and loads HTML widget config without except
     expect($markupField->type)->toBe('Rich');
     expect($markupField->label)->toBe('Content');
     expect($markupField->required)->toBeTrue();
-    expect($markupField->filter)->toBe('RAW');
 });
 
 test('registers built-in form fields and loads MENU widget config without exceptions', function () {
@@ -74,7 +73,6 @@ test('registers built-in form fields and loads controller basic article config w
     expect($markupField->type)->toBe('Rich');
     expect($markupField->label)->toBe('Content');
     expect($markupField->required)->toBeTrue();
-    expect($markupField->filter)->toBe('RAW');
     
     expect($form->fieldExists('og_description'))->toBeTrue();
     $ogDescField = $form->getFieldByName('og_description');
@@ -127,13 +125,11 @@ test('registers built-in form fields and loads content required fields config wi
     $aliasField = $form->getFieldByName('alias');
     expect($aliasField->type)->toBe('Text');
     expect($aliasField->label)->toBe('URL Friendly');
-    expect($aliasField->filter)->toBe('ALIAS');
     
     expect($form->fieldExists('state'))->toBeTrue();
     $stateField = $form->getFieldByName('state');
     expect($stateField->type)->toBe('Select');
     expect($stateField->label)->toBe('Content State');
-    expect($stateField->filter)->toBe('NUMBER');
     
     // Verify the form has the expected number of fields (6 after removing category)
     expect(count($form->fields))->toBe(6);
@@ -162,7 +158,6 @@ test('registers built-in form fields and loads widget required fields config wit
     expect($titleField->type)->toBe('Text');
     expect($titleField->label)->toBe('Widget Title');
     expect($titleField->required)->toBeTrue();
-    expect($titleField->filter)->toBe('STRING');
     expect($titleField->maxlength)->toBe(255);
     
     expect($form->fieldExists('note'))->toBeTrue();
@@ -170,14 +165,12 @@ test('registers built-in form fields and loads widget required fields config wit
     expect($noteField->type)->toBe('Text');
     expect($noteField->label)->toBe('Note');
     expect($noteField->required)->toBeFalse();
-    expect($noteField->filter)->toBe('STRING');
     expect($noteField->maxlength)->toBe(255);
     
     expect($form->fieldExists('state'))->toBeTrue();
     $stateField = $form->getFieldByName('state');
     expect($stateField->type)->toBe('Select');
     expect($stateField->label)->toBe('Widget State');
-    expect($stateField->filter)->toBe('NUMBER');
     expect($stateField->default)->toBe(1);
     
     // Verify the form has the expected number of fields

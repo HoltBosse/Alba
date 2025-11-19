@@ -8,16 +8,22 @@
 			"type":"Text",
 			"required":true,
 			"maxlength":255,
-			"filter": "RAW"
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"label":"URL Friendly",
 			"name":"alias",
 			"id":"alias",
 			"type":"Text",
-			"filter":"ALIAS",
 			"maxlength":255,
-			"description":""
+			"description":"",
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
 		},
 		{
 			"name": "state",
@@ -25,12 +31,14 @@
 			"type": "Select",
 			"label": "Form State",
 			"description": "Choose to show form or not globally.",
-			"filter": "NUMBER",
 			"default":1,
 			"select_options":[
 				{"value":1,"text":"Published"},
 				{"value":0,"text":"Unpublished"}
-			]
+			],
+			"filter":{
+				"IntVal": []
+			}
 		}
 	]
 }
