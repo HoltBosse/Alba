@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration};
+Use HoltBosse\Alba\Core\{CMS, Configuration, DataExport};
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
@@ -97,18 +97,13 @@ if($results[0]) {
 }
 
 if(Input::getVar("exportcsv", v::NumericVal(), 0) == 1) {
-    ob_get_clean();
-    ob_get_clean();
+    $exporter = new DataExport();
+    $exporter->format = "csv";
+    $exporter->filename = "form_export_" . date("Y-m-d");
+    $exporter->data = [];
 
-    $filename = "form_export_" . date("Y-m-d") . ".csv";
-    header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="' . $filename . '"');
-
-    $results = DB::fetchAll("SELECT * FROM form_submissions WHERE 1" . $queryWhereFilters, $params);
-
-    echo "Submission Date," . implode(",", $headerFields) . "\n";
     foreach($results as $row) {
-        $buffer = [Date("m/d/Y g:i a", strtotime($row->created))];
+        $buffer = ["Submission Date"=>Date("m/d/Y g:i a", strtotime($row->created))];
         foreach($headerFields as $header) {
             $currentSelectedForm->deserializeJson($row->data);
             $field = $currentSelectedForm->getFieldByName($header);
@@ -117,15 +112,12 @@ if(Input::getVar("exportcsv", v::NumericVal(), 0) == 1) {
             $normalizedFields = array_combine(array_column($data, 'name'), array_column($data, 'value'));
             //$value = $normalizedFields[$header];
             $value = (string) $field->getFriendlyValue((object)["return_in_text_form"=>true]);
-            $value = str_replace(",", ".", ($value));
-            $value = str_replace("\n", " ", ($value));
-            $value = str_replace("\r", " ", ($value));
-            $value = str_replace("\r\n", " ", ($value));
-            $value = str_replace("\n\r", " ", ($value));
-            $buffer[] = $value;
+            $buffer[$header] = $value;
         }
-        echo implode(",", $buffer) . "\n";
+        $exporter->data[] = $buffer;
     }
+
+    $exporter->exec();
 
     die;
 }
