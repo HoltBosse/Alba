@@ -86,7 +86,11 @@ if(isset($_ENV["custom_user_fields_file_path"])) {
 	}
 
 	$allUserIds = array_column($all_users, 'id');
-	$cufResults = DB::fetchAll('SELECT * FROM custom_user_fields WHERE user_id IN (' . implode(",", array_map(function($input) {return "?";}, $allUserIds)) . ')', $allUserIds);
+	if(!empty($allUserIds)) {
+		$cufResults = DB::fetchAll('SELECT * FROM custom_user_fields WHERE user_id IN (' . implode(",", array_map(function($input) {return "?";}, $allUserIds)) . ')', $allUserIds);
+	} else {
+		$cufResults = [];
+	}
 	foreach($cufResults as $cufRow) {
 		$customUserFieldsLookup[$cufRow->user_id] = $cufRow;
 	}
