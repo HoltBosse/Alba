@@ -6,8 +6,8 @@ Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
-$search = Input::getvar('search','RAW',null);
-$filters = Input::tuplesToAssoc( Input::getvar('filters','RAW',null) );
+$search = Input::getvar('search',v::StringVal(),null);
+$filters = Input::tuplesToAssoc( Input::getvar('filters',v::AlwaysValid(),null) );
 // make sure coretags getvar returns empty array PHP 8+ in_array required haystack to be array
 $coretags = Input::getvar('coretags',v::arrayType()->each(v::intVal()),[]);
 

@@ -22,12 +22,12 @@ if ($resetemail) {
 	die;
 }
 
-$resetkey = Input::getvar('resetkey','RAW'); 
+$resetkey = Input::getvar('resetkey',v::StringVal()); 
 if ($resetkey) {
 	$view = "newpassword";
 	// check if passwords sent
-	$password1 = Input::getvar('newpassword1','RAW'); 
-	$password2 = Input::getvar('newpassword2','RAW'); 
+	$password1 = Input::getvar('newpassword1',v::StringVal()); 
+	$password2 = Input::getvar('newpassword2',v::StringVal()); 
 
 	if ($password1 && $password2) {
 		$resetUser = new User();
@@ -43,14 +43,14 @@ if ($resetkey) {
 
 // end of reset handling
 
-$updatePassword = Input::getvar('updatepassword','RAW');
+$updatePassword = Input::getvar('updatepassword',v::StringVal());
 if ($updatePassword) {
 	$view = "newpassword";
 
-	$token = Input::getvar('token','RAW');
+	$token = Input::getvar('token',v::StringVal());
 
-	$password1 = Input::getvar('newpassword1','RAW'); 
-	$password2 = Input::getvar('newpassword2','RAW');
+	$password1 = Input::getvar('newpassword1',v::StringVal()); 
+	$password2 = Input::getvar('newpassword2',v::StringVal());
 
 	if ($password1 && $password2) {
 		$resetUser = new User();
@@ -190,7 +190,7 @@ if ($protocol=="http") {
 			<?php elseif ($view=='newpassword'):?>
 				<?php
 					if($updatePassword) {
-						$url = $_ENV["uripath"] . "/admin?updatepassword=true&token=" . Input::getvar('token','RAW');
+						$url = $_ENV["uripath"] . "/admin?updatepassword=true&token=" . Input::getvar('token',v::StringVal());
 					} elseif($resetkey) {
 						$url = $_ENV["uripath"] . '/admin?view=newpassword>resetkey=' . $resetkey;
 					}	

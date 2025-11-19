@@ -662,7 +662,7 @@ final class CMS {
 
 		if ( ($this->isAdmin() && $this->user->username=="guest") || ($this->user->username=="guest" && $_ENV["frontendlogin"]==="true") ) {
 			$email = Input::getvar('email',v::email()); // note: php email filter is a bit more picky than html input type email
-        	$password = Input::getvar('password','RAW');
+        	$password = Input::getvar('password',v::StringVal());
 			
 			$loginResult = Access::handleLogin($email, $password);
 

@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Plugins\GoogleLoginJwt;
 Use HoltBosse\Alba\Core\{CMS, Plugin};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 class GoogleLoginJwt extends Plugin {
 
@@ -47,7 +48,7 @@ class GoogleLoginJwt extends Plugin {
             return $user_object;
         }
 
-        $jwt_credentials = Input::getvar('credential', "RAW");
+        $jwt_credentials = Input::getvar('credential', v::StringVal());
         
         if (!$jwt_credentials) {
             // google login not attempted
@@ -55,7 +56,7 @@ class GoogleLoginJwt extends Plugin {
         }
 
         // double-cookie CSRF mitigation check
-        $csrf_token_body = Input::getvar('g_csrf_token', "RAW");
+        $csrf_token_body = Input::getvar('g_csrf_token', v::StringVal());
         $csrf_token_cookie = $_COOKIE['g_csrf_token'];
         if (!$csrf_token_body || !$csrf_token_cookie || ($csrf_token_body!=$csrf_token_cookie)) {
             CMS::Instance()->queue_message('CSRF verification check failed','danger', $_ENV["uripath"] . "/admin");

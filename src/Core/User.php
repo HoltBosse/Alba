@@ -105,7 +105,7 @@ class User {
 	}
 
 	public function load_from_post() {
-		$this->username = Input::getvar('username','RAW');
+		$this->username = Input::getvar('username',v::StringVal());
 
 		$submittedPassword = Input::getvar('password',v::StringVal(),null);
 		if ($submittedPassword) {

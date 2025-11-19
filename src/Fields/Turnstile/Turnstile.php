@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Fields\Turnstile;
 Use HoltBosse\Form\Field;
 Use HoltBosse\Alba\Core\{CMS, Configuration};
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 class Turnstile extends Field {
 
@@ -20,7 +21,7 @@ class Turnstile extends Field {
 
 	public function validate() {
 		
-		$this->default = Input::getvar('cf-turnstile-response',"RAW",false);
+		$this->default = Input::getvar('cf-turnstile-response',v::StringVal(),false);
 		if ($this->isMissing()) {
 			CMS::log("turnstile field failed validation due to missing check");
 			return false;
