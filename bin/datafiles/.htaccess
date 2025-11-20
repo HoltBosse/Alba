@@ -46,6 +46,10 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 # internally rewrite the request to the index.php script
 RewriteRule .* index.php [L]
+# send any php src files to 404
+RewriteRule ^src/.*\.php$ - [R=404,L]
+# send any json src files to 404
+RewriteRule ^src/.*\.json$ - [R=404,L]
 
 # send dev tools related requests to 404 page
 RedirectMatch 404 composer.json
