@@ -257,7 +257,7 @@ class InitCommand extends Command {
         $output->writeln("");
 
         if(!file_exists($installPath . "/index.php")) {
-            file_put_contents($installPath . "/index.php", file_get_contents(__DIR__ . "/datafiles/index.php"));
+            file_put_contents($installPath . "/index.php", file_get_contents(__DIR__ . "/../../bin/datafiles/index.php"));
 
             $output->writeln("created index.php");
             $output->writeln("");
@@ -272,7 +272,7 @@ class InitCommand extends Command {
         }
 
         if(!file_exists($installPath . "/.htaccess")) {
-            file_put_contents($installPath . "/.htaccess", file_get_contents(__DIR__ . "/datafiles/.htaccess"));
+            file_put_contents($installPath . "/.htaccess", file_get_contents(__DIR__ . "/../../bin/datafiles/.htaccess"));
 
             $output->writeln("created .htaccess");
             $output->writeln("");
