@@ -146,7 +146,7 @@ class InitCommand extends Command {
 
         $output->writeln("");
 
-        $sqlFiles = glob(__DIR__ . "/sql/mariadb/*.sql");
+        $sqlFiles = glob(__DIR__ . "/../../bin/sql/mariadb/*.sql");
         foreach($sqlFiles as $file) {
             $tableName = explode(".", basename($file))[0];
 
