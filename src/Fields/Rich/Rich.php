@@ -347,7 +347,7 @@ class Rich extends Field {
 						editorProps: {
 							transformPastedHTML: html => stripClassAttributes(html),
 						},
-						content: `<?php echo $this->default; ?>`,
+						content: `<?php echo str_replace("`", "\`", $this->default); ?>`,
 					});
 
 					console.log(editorInstance);
