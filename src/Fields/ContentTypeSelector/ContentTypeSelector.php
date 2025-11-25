@@ -28,7 +28,7 @@ class ContentTypeSelector extends Field {
 				if ($this->default && in_array("-1", $this->default)) {
 					$checked = " checked ";
 				}
-				echo "<label class='checkbox'>";
+				echo "<label class='checkbox' data-contenttype-id='-1'>";
 					echo "<input {$checked} type='checkbox' {$this->getRenderedName(true)} {$this->getRenderedForm()} value='-1'>";
 				echo "Media/Images</label>";
 				echo "<hr>";
@@ -38,14 +38,14 @@ class ContentTypeSelector extends Field {
 				if ($this->default && in_array("-2", $this->default)) {
 					$checked = " checked ";
 				}
-				echo "<label class='checkbox'>";
+				echo "<label class='checkbox' data-contenttype-id='-2'>";
 					echo "<input {$checked} type='checkbox' {$this->getRenderedName(true)} {$this->getRenderedForm()} value='-2'>";
 				echo "Users</label>";
 				echo "<hr>";
 			}
 			
 			foreach ($all_contenttypes as $type) {
-				echo "<label class='checkbox'>";
+				echo "<label class='checkbox' data-contenttype-id='{$type->id}'>";
 					$checked = "";
 					if ($this->default && in_array($type->id, $this->default)) {
 						$checked = " checked ";
