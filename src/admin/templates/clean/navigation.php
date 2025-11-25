@@ -1,6 +1,7 @@
 <?php
 
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Core\{CMS, Content};
 
 $navigation = [
     "system"=>[
@@ -36,7 +37,21 @@ $navigation = [
         "type"=>"addition_menu",
         "menu"=>[
             "label"=>"content",
-            "links"=>DB::fetchAll("SELECT title, CONCAT('/admin/content/all/', id) FROM content_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
+            "links"=>array_filter(
+                array_map(
+                    function($input) {
+                        if(Content::isAccessibleOnDomain($input[0]->id)) {
+                            return $input[0]->link;
+                        } else {
+                            return null;
+                        }
+                    },
+                    DB::fetchAll("SELECT title, CONCAT('/admin/content/all/', id) AS link, controller_location, id FROM content_types", [], ["mode"=>PDO::FETCH_GROUP])
+                ),
+                function($input) {
+                    return !is_null($input);
+                }
+            ),
         ]
     ],
     "widgets"=>[

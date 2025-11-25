@@ -77,6 +77,10 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	exit(0);
 }
 
+if(!Content::isAccessibleOnDomain($content_type)) {
+	CMS::raise_404();
+}
+
 // update CMS instance with this content information
 // this allows custom form fields etc to easily access information such as
 // content id/type

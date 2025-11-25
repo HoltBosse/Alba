@@ -20,6 +20,10 @@ if (sizeof($segments)>3) {
 	CMS::show_error('Cannot determine content type to show');
 }
 
+if(!Content::isAccessibleOnDomain($content_type_filter)) {
+	CMS::raise_404();
+}
+
 $contentTypeTableRecord = DB::fetch("SELECT * FROM content_types WHERE id=?", $content_type_filter);
 if(!$contentTypeTableRecord) {
 	CMS::raise_404();

@@ -15,6 +15,10 @@ if (!$content_type) {
 	CMS::Instance()->queue_message('Unknown content type','danger', $_SERVER['HTTP_REFERER']);
 }
 
+if(!Content::isAccessibleOnDomain($content_type)) {
+	CMS::raise_404();
+}
+
 $location = Content::get_content_location($content_type);
 $custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
 $table_name = "controller_" . $custom_fields->id ;
