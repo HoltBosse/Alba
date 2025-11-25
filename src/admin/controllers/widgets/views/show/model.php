@@ -12,6 +12,10 @@ if (sizeof(CMS::Instance()->uri_segments)==3) {
 	$widget_type_id = false;
 }
 
+if($widget_type_id && !Widget::isAccessibleOnDomain($widget_type_id)) {
+	CMS::raise_404();
+}
+
 $searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
 if(!is_numeric($widget_type_id)) {
 	$searchFormObject->fields[] = (object) [
@@ -20,7 +24,27 @@ if(!is_numeric($widget_type_id)) {
         "name"=>"widget_type",
         "id"=>"widget_type",
         "placeholder"=>"widget",
-        "select_options"=>DB::fetchAll("SELECT title AS text, location AS value FROM widget_types"),
+        //"select_options"=>DB::fetchAll("SELECT title AS text, location AS value FROM widget_types"),
+		"select_options"=>array_filter(
+			array_map(
+				function($input) {
+					if(Widget::isAccessibleOnDomain($input->id)) {
+						//CMS::pprint_r($input);
+						
+						return (object) [
+							"text"=>$input->title,
+							"value"=>$input->location
+						];
+					} else {
+						return null;
+					}
+				},
+				DB::fetchAll("SELECT id, title, location FROM widget_types")
+			),
+			function($input) {
+				return !is_null($input);
+			}
+		),
 	];
 }
 $searchFormObject->fields[] = (object) [
@@ -77,6 +101,15 @@ if($searchPage) {
 $query .= ' ORDER BY id DESC';
 
 $all_widgets = DB::fetchAll($query, $params);
+
+$contentTypeDomainCache = [];
+$all_widgets = array_filter($all_widgets, function($widget) use (&$contentTypeDomainCache) {
+	if(!isset($contentTypeDomainCache[$widget->type])) {
+		$contentTypeDomainCache[$widget->type] = Widget::isAccessibleOnDomain($widget->type);
+	}
+
+	return $contentTypeDomainCache[$widget->type] != false;
+});
 
 $all_widget_types = Widget::get_all_widget_types();
 

@@ -7,20 +7,14 @@ Use HoltBosse\Form\Form;
 // router
 
 $segments = CMS::Instance()->uri_segments;
-if (sizeof($segments)==0) {
-	$view = 'default';
-	$widget_id = false;
+if ($segments[1]=='show') {
+	$view = 'show';
 }
-else {
-	if ($segments[1]=='show') {
-		$view = 'show';
-	}
-	elseif ($segments[1]=='edit') {
-		$view = 'edit';
-	}
-	elseif ($segments[1]=='action') {
-		$view = 'action';
-	}
+elseif ($segments[1]=='edit') {
+	$view = 'edit';
+}
+elseif ($segments[1]=='action') {
+	$view = 'action';
 }
 
 // check for new widget types

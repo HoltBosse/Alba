@@ -38,6 +38,10 @@ else {
 	exit(0);
 }
 
+if(!Widget::isAccessibleOnDomain($widget->type_id)) {
+	CMS::raise_404();
+}
+
 // prep forms
 $required_details_form = new Form(__DIR__ . '/required_fields_form.json');
 $position_options_form = new Form(__DIR__ . '/position_options_form.json');

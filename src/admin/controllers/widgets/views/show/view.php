@@ -20,9 +20,16 @@ Use HoltBosse\Form\Input;
 			<div class='select'>
 				<select onchange="choose_new_widget_type();" data-widget_type_id='0' id='new_widget_type_selector'>
 					<option value='666'>Make selection:</option>
-					<?php foreach ($all_widget_types as $widget_type):?>
-						<option value='<?php echo $widget_type->id;?>'><?php echo $widget_type->title;?></option>
-					<?php endforeach; ?>
+					<?php 
+						foreach ($all_widget_types as $widget_type) {
+							if(!Widget::isAccessibleOnDomain($widget_type->id)) {
+								continue;
+							}
+							?>
+								<option value='<?php echo $widget_type->id;?>'><?php echo $widget_type->title;?></option>
+							<?php
+						}	
+					?>
 				</select>
 				<script>
 					function choose_new_widget_type() {
