@@ -20,3 +20,12 @@ if($content_type_filter < -3 || $content_type_filter > $max_content_id) {
 
 $all_categories = Category::get_all_categories_by_depth($content_type_filter);
 $all_content_types = Content::get_all_content_types();
+
+$contentTypeDomainCache = [];
+$all_categories = array_filter($all_categories, function($category) use (&$contentTypeDomainCache) {
+	if(!isset($contentTypeDomainCache[$category->content_type])) {
+		$contentTypeDomainCache[$category->content_type] = Content::isAccessibleOnDomain($category->content_type);
+	}
+
+	return $contentTypeDomainCache[$category->content_type] != false;
+});
