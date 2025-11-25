@@ -80,6 +80,21 @@ class Widget {
 		return array_keys(self::$widgetRegistry);
 	}
 
+	public static function isAccessibleOnDomain(int $widget_type_id, ?int $domain_index = NULL): bool {
+		if($domain_index===NULL) {
+			$domain_index = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		}
+
+		$widgetType = DB::fetch('SELECT * FROM widget_types WHERE id=?', $widget_type_id);
+		$widget_config = JSON::load_obj_from_file(Widget::getWidgetPath($widgetType->location) . '/widget_config.json');
+		if (isset($widget_config->domains)) {
+			if (!in_array($domain_index, $widget_config->domains)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public function render_edit() {
 		if (CMS::Instance()->user->is_member_of(1) && !CMS::Instance()->isAdmin()) { ?>
 			<div class='front_end_edit_wrap' >

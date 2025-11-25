@@ -1,7 +1,7 @@
 <?php
 
 Use HoltBosse\DB\DB;
-Use HoltBosse\Alba\Core\{CMS, Content};
+Use HoltBosse\Alba\Core\{CMS, Content, Widget};
 
 $navigation = [
     "system"=>[
@@ -59,7 +59,21 @@ $navigation = [
         "menu"=>[
             "label"=>"widgets",
             "links"=>array_merge(
-                DB::fetchAll("SELECT title, CONCAT('/admin/widgets/show/', id) FROM widget_types", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
+                array_filter(
+                    array_map(
+                        function($input) {
+                            if(Widget::isAccessibleOnDomain($input[0]->id)) {
+                                return $input[0]->link;
+                            } else {
+                                return null;
+                            }
+                        },
+                        DB::fetchAll("SELECT title, CONCAT('/admin/widgets/show/', id) AS link, id FROM widget_types", [], ["mode"=>PDO::FETCH_GROUP])
+                    ),
+                    function($input) {
+                        return !is_null($input);
+                    }
+                ),
                 ["hr"=>"hr"],
                 ["all widgets"=>"/admin/widgets/show"],
             )
