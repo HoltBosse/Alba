@@ -23,9 +23,16 @@
 			<div class='select'>
 				<select onchange="choose_new_content_type();" data-widget_type_id='0' id='new_content_type_selector'>
 					<option value='666'>Make selection:</option>
-					<?php foreach ($all_content_types as $content_type):?>
-						<option value='<?php echo $content_type->id;?>'><?php echo $content_type->title;?></option>
-					<?php endforeach; ?>
+					<?php
+						foreach ($all_content_types as $content_type) {
+							if(Content::isAccessibleOnDomain($content_type->id)==false) {
+								continue;
+							}
+							?>
+								<option value='<?php echo $content_type->id;?>'><?php echo $content_type->title;?></option>
+							<?php
+						}
+					?>
 				</select>
 				<script>
 					function choose_new_content_type() {
