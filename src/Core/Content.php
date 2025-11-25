@@ -78,6 +78,21 @@ class Content {
 		return array_keys(self::$controllerRegistry);
 	}
 
+	public static function isAccessibleOnDomain(int $content_type_id, ?int $domain_index = NULL): bool {
+		if($domain_index===NULL) {
+			$domain_index = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		}
+
+		$location = Content::get_content_location($content_type_id);
+		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
+		if (isset($custom_fields->domains)) {
+			if (!in_array($domain_index, $custom_fields->domains)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static function get_table_name_for_content_type(int $type_id): string {
 		$location = Content::get_content_location($type_id);
 		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
