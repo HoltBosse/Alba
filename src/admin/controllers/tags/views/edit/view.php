@@ -1,7 +1,24 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Tag, Component};
+Use HoltBosse\Alba\Core\{CMS, Tag, Component, Content};
 Use HoltBosse\Form\{Input, Form};
+Use HoltBosse\DB\DB;
+
+//terrible hack to hide inaccessible content types from the content type selector, but keep them there so that they get saved properly
+echo "<style>";
+	$contentTypes = DB::fetchAll("SELECT * FROM content_types");
+	foreach($contentTypes as $ct) {
+		if(Content::isAccessibleOnDomain($ct->id)) {
+			continue;
+		}
+
+		echo "
+			label.checkbox[data-contenttype-id='$ct->id'] {
+				display: none;
+			}
+		";
+	}
+echo "</style>";
 
 ?>
 

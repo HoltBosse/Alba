@@ -88,10 +88,14 @@ class Tag {
 		return DB::fetchAll("SELECT content_type_id from tag_content_type where tag_id=?", [$id]);
 	}
 
-	public static function get_tag_content_type_titles($id) {
+	public static function get_tag_content_type_titles($id, ?int $domain=null) {
+		if($domain==null) {
+			$domain==CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		}
+
 		$tag = new Tag();
 		$tag->load($id);
-		$titles_obj = DB::fetchAll("SELECT title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", [$id]);
+		$titles_obj = DB::fetchAll("SELECT id, title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", [$id]);
 		$titles = [];
 		if (in_array('-1',$tag->contenttypes)) {
 			$titles[] = "Media";
@@ -100,6 +104,9 @@ class Tag {
 			$titles[] = "Users";
 		}
 		foreach($titles_obj as $t) {
+			if(!Content::isAccessibleOnDomain($t->id, $domain)) {
+				continue;
+			}
 			$titles[] = $t->title;
 		}
 		return implode(', ',$titles);
