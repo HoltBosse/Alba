@@ -14,6 +14,10 @@ class Migration {
         return $this->status;
     }
 
+    public function isTerminalSafe(): bool {
+        return true;
+    }
+
     public function run(): Message {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Info, "No migration needed");
