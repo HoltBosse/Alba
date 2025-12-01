@@ -104,6 +104,21 @@ class User {
 		return false;
 	}
 
+	public function canAccessBackend(): bool {
+		$result = DB::fetchAll(
+			"SELECT *
+			FROM user_groups ug
+			LEFT JOIN groups g on ug.group_id = g.id
+			WHERE ug.user_id = ?
+			AND (
+				g.backend=1	
+			)",
+			[$this->id]
+		);
+
+		return !empty($result);
+	}
+
 	public function load_from_post() {
 		$this->username = Input::getvar('username',v::StringVal());
 

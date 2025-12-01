@@ -683,7 +683,7 @@ final class CMS {
 			if ($this->isAdmin()) {
 				//check the users access rights
 				if (!Access::can_access(Access::getAdminAccessRule($this->uri_segments[0] ?? ""))) {
-					if(CMS::Instance()->user && CMS::Instance()->user->groups && (CMS::Instance()->user->is_member_of(1) || CMS::Instance()->user->is_member_of(2))) {
+					if(CMS::Instance()->user && CMS::Instance()->user->groups && CMS::Instance()->user->canAccessBackend()) {
 						$this->queue_message('You do not have access to this page','danger', $_ENV["uripath"] . "/admin");
 					} else {
 						$this->queue_message('You do not have access to this page','danger', $_ENV["uripath"] . "/");
