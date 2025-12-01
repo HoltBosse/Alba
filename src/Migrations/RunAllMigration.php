@@ -49,6 +49,7 @@ class RunAllMigration extends Migration {
             ['Content Table Ordering', new ContentTableOrderingMigration()],
             ['Pages Table - Domain Column Update', new PageDomainsMigration()],
             ['Redirects Table - Domain Column Update', new RedirectsDomainsMigration()],
+            ['Groups Table - Backend Column Update', new GroupBackendMigration()],
         ];
     }
 }
