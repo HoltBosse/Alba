@@ -34,6 +34,10 @@ class ContentTableOrderingMigration extends Migration {
         return $this->status;
     }
 
+    public function isTerminalSafe(): bool {
+        return false;
+    }
+
     public function run(): Message {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Success, "Content table ordering OK.");
