@@ -13,6 +13,8 @@ jobs:
         run: echo "alba_installer_skip_configuration=true" >> $GITHUB_ENV
 
       - uses: php-actions/composer@v6
+        with:
+          php_version: 8.4
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
