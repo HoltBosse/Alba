@@ -46,7 +46,7 @@ class MigrateCommand extends Command {
                 $output->writeln("<error> - " . $migrationDetails[0] . ": Skipped (not terminal safe) - visit admin to run this migration.</error>");
                 continue;
             } else {
-                $migrationStatus = $migrationInstance->run();
+                $migrationStatus = $migrationInstance->run($output);
                 $output->writeln("<info> - " . $migrationDetails[0] . ": " . $migrationStatus->message . "</info>");
             }
         }

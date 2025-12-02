@@ -17,7 +17,7 @@ if (!is_numeric($content_type)) {
     CMS::show_error('Invalid content type');
 }
 
-if(!Content::isAccessibleOnDomain($content_type)) {
+if(!Content::isAccessibleOnDomain($content_type, $_SESSION["current_domain"])) {
 	CMS::raise_404();
 }
 

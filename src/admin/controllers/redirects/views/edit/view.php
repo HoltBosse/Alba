@@ -13,18 +13,6 @@ Use HoltBosse\DB\DB;
 	<h1 class='title'>Editing Redirect</h1>
 <?php endif; ?>
 
-<?php
-	if(!isset($_ENV["domains"])) {
-		?>
-			<style>
-				.field:has([name="domain"]) {
-					display: none;
-				}
-			</style>
-		<?php
-	}
-?>
-
 <hr>
 
 <form method="POST" action="" enctype="multipart/form-data">

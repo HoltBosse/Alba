@@ -8,6 +8,7 @@ Use HoltBosse\Form\Fields\{Antispam, Checkbox, Honeypot, Html, Input as Text, Se
 Use Respect\Validation\Validator as v;
 Use \stdClass;
 Use \Exception;
+Use \PDO;
 
 final class CMS {
 	public $domain;
@@ -287,7 +288,7 @@ final class CMS {
 				<head>
 					<title>Page not Found</title>
 					<meta name="viewport" content="width=device-width, initial-scale=1" />
-					<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+					<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.0/css/bulma.min.css"></link>
 				</head>
 				<body style="display:flex; justify-content:center; align-items:center; height: 100%;">
 					<div style="max-width: 50%;">
@@ -314,7 +315,7 @@ final class CMS {
 									<?php
 								}
 							?>
-							<p style="text-align:center;"><a href="/" style="color: black; font-size: 1.5rem; text-decoration: underline;" hreflang="en">Visit Home</a></p>
+							<p style="text-align:center;"><a href="/" style="font-size: 1.5rem; text-decoration: underline;" hreflang="en">Visit Home</a></p>
 						</div>
 					</div>
 				</body>
@@ -609,10 +610,7 @@ final class CMS {
 	}
 
 	public static function getDomainIndex(string $domain) {
-		$domains = [$_SERVER["HTTP_HOST"]];
-		if(isset($_ENV["domains"])) {
-			$domains = explode(",", $_ENV["domains"]);
-		}
+		$domains = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
 
 		$index = array_search($domain, $domains);
 		if($index===false) {
@@ -683,7 +681,7 @@ final class CMS {
 			if ($this->isAdmin()) {
 				//check the users access rights
 				if (!Access::can_access(Access::getAdminAccessRule($this->uri_segments[0] ?? ""))) {
-					if(CMS::Instance()->user && CMS::Instance()->user->groups && CMS::Instance()->user->canAccessBackend()) {
+					if(CMS::Instance()->user && CMS::Instance()->user->groups && CMS::Instance()->user->canAccessBackend() && Access::can_access(Access::getAdminAccessRule(""))) {
 						$this->queue_message('You do not have access to this page','danger', $_ENV["uripath"] . "/admin");
 					} else {
 						$this->queue_message('You do not have access to this page','danger', $_ENV["uripath"] . "/");

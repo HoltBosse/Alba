@@ -10,6 +10,7 @@ class PageSelector extends Field {
 	public $maxlength;
 	public $minlength;
 	public $multiple;
+	public $domain;
 
 	public function display() {
 		$all_pages = Page::get_all_pages_by_depth();
@@ -18,6 +19,9 @@ class PageSelector extends Field {
 			echo "<style>label.checkbox {display:block; margin-bottom:1rem;} label.checkbox input {margin-right:1rem;}</style>";
 			echo "<div class='field'>";
 				foreach ($all_pages as $page) {
+					if($this->domain !== null && $page->domain != $this->domain) {
+						continue;
+					}
 					echo "<label class='checkbox'>";
 						$checked = "";
 						if (is_array($this->default)) {
@@ -88,6 +92,7 @@ class PageSelector extends Field {
 		
 		$this->filter = $config->filter ?? v::arrayType()->each(v::intVal());
 		$this->multiple = $config->multiple ?? true;
+		$this->domain = $config->domain ?? null;
 	}
 
 	public function validate() {

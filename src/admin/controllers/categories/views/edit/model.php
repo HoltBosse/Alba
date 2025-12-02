@@ -31,7 +31,7 @@ else {
 	exit(0);
 }
 
-if(!Content::isAccessibleOnDomain(isset($content_type->content_type) ? $content_type->content_type : $segments[3])) {
+if(!Content::isAccessibleOnDomain(isset($content_type->content_type) ? $content_type->content_type : $segments[3], $_SESSION["current_domain"])) {
 	CMS::raise_404();
 }
 

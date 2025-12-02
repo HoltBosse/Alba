@@ -1,6 +1,8 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
+use Symfony\Component\Console\Output\OutputInterface;
+
 //use
 
 class Migration {
@@ -18,7 +20,7 @@ class Migration {
         return true;
     }
 
-    public function run(): Message {
+    public function run(?OutputInterface $output=null): Message {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Info, "No migration needed");
         } else {

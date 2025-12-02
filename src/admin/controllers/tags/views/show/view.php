@@ -96,7 +96,7 @@ Use HoltBosse\Form\Input;
 				if ($tag->filter==1) {
 					if ($filter_content_type_ids) {
 						echo "Available for use on all content except:";
-						echo "<br><strong>" . Tag::get_tag_content_type_titles($tag->id) . "</strong>";
+						echo "<br><strong>" . Tag::get_tag_content_type_titles($tag->id, $_SESSION["current_domain"]) . "</strong>";
 					}
 					else {
 						echo "Available for use on <em>all</em> content.";
@@ -105,7 +105,7 @@ Use HoltBosse\Form\Input;
 				elseif ($tag->filter==2) {
 					if ($filter_content_type_ids) {
 						echo "Available for use <em>only</em> on the following content:";
-						echo "<br><strong>" . Tag::get_tag_content_type_titles($tag->id) . "</strong>";
+						echo "<br><strong>" . Tag::get_tag_content_type_titles($tag->id, $_SESSION["current_domain"]) . "</strong>";
 					}
 					else {
 						echo "<strong>Not available for use on any current content type.</strong>";

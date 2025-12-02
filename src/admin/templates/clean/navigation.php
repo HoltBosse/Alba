@@ -40,7 +40,7 @@ $navigation = [
             "links"=>array_filter(
                 array_map(
                     function($input) {
-                        if(Content::isAccessibleOnDomain($input[0]->id)) {
+                        if(Content::isAccessibleOnDomain($input[0]->id, $_SESSION["current_domain"])) {
                             return $input[0]->link;
                         } else {
                             return null;
@@ -62,7 +62,7 @@ $navigation = [
                 array_filter(
                     array_map(
                         function($input) {
-                            if(Widget::isAccessibleOnDomain($input[0]->id)) {
+                            if(Widget::isAccessibleOnDomain($input[0]->id, $_SESSION["current_domain"])) {
                                 return $input[0]->link;
                             } else {
                                 return null;

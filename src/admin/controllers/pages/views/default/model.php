@@ -1,6 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Template, Page};
+Use HoltBosse\DB\DB;
 
 // any variables created here will be available to the view
 
@@ -30,7 +31,10 @@ function get_template_title($page_template_id, $all_templates) {
 	//return "Error - Unknown Template";
 }
 
-$domainLookup = [$_SERVER["HTTP_HOST"]];
-if(isset($_ENV["domains"])) {
-	$domainLookup = explode(",", $_ENV["domains"]);
-}
+$all_pages = array_filter($all_pages, function($page) {
+	return $page->domain == $_SESSION["current_domain"];
+});
+
+$all_pages = array_values($all_pages); // reindex after array_filter
+
+$domainLookup = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);

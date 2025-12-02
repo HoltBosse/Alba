@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Migrations;
 
 use HoltBosse\Alba\Core\{Migration, Message, MessageType, CMS};
 use HoltBosse\DB\DB;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class RunAllMigration extends Migration {
     public function isNeeded(): Message {
@@ -18,7 +19,7 @@ class RunAllMigration extends Migration {
         return new Message(false, MessageType::Warning, "Method not implemented");
     }
 
-    public function run(): Message {
+    public function run(?OutputInterface $output=null): Message {
         /* if($this->isNeeded()->success) {
             return new Message(true, MessageType::Success, "Pages table OK.");
         } else {
@@ -50,6 +51,10 @@ class RunAllMigration extends Migration {
             ['Pages Table - Domain Column Update', new PageDomainsMigration()],
             ['Redirects Table - Domain Column Update', new RedirectsDomainsMigration()],
             ['Groups Table - Backend Column Update', new GroupBackendMigration()],
+            ['Widgets Table - Domain Column Update', new WidgetDomainMigration()],
+            ['Groups Table - Domain Column Update', new GroupDomainMigration()],
+            ['Domains Table', new DomainsTableMigration()],
+            ['Content Table - Domain Column Update', new ContentDomainMigration()],
         ];
     }
 }

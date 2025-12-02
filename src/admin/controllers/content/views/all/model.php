@@ -20,7 +20,7 @@ if (sizeof($segments)>3) {
 	CMS::show_error('Cannot determine content type to show');
 }
 
-if(!Content::isAccessibleOnDomain($content_type_filter)) {
+if(!Content::isAccessibleOnDomain($content_type_filter, $_SESSION["current_domain"])) {
 	CMS::raise_404();
 }
 
@@ -28,6 +28,10 @@ $contentTypeTableRecord = DB::fetch("SELECT * FROM content_types WHERE id=?", $c
 if(!$contentTypeTableRecord) {
 	CMS::raise_404();
 }
+
+$custom_fields = false; //i have no idea why this exists, moved from below
+$location = Content::get_content_location($content_type_filter);
+$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
 
 $cur_page = Input::getvar('page',v::IntVal(),'1');
 
@@ -39,6 +43,13 @@ $content_search = new ContentSearch();
 $content_search->searchtext = $search;
 $content_search->type_filter = $content_type_filter;
 $content_search->page = $cur_page;
+
+$domain = $_SESSION["current_domain"];
+if(isset($custom_fields->multi_domain_shared_instances) && $custom_fields->multi_domain_shared_instances===true) {
+	$domain = null;
+}
+
+$content_search->domain = $domain;
 
 foreach($_GET as $key=>$value) {
 	if(str_contains($key, "_order") && ($value=="asc" || $value=="desc")) {
@@ -80,13 +91,9 @@ else {
 // handle custom optional listing on content specific 'all' view
 
 $content_list_fields = [];
-$custom_fields = false;
 
 
 // get listing fields for content type based on custom_fields_json list field
-$location = Content::get_content_location($content_type_filter);
-//$custom_fields = json_decode(file_get_contents (CMSPATH . '/controllers/' . $location . '/custom_fields.json'));
-$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
 // create easy to access field array based on 'name' property
 // useful, for example, in field get_friendly_value function call
 $named_custom_fields = array_column($custom_fields->fields, null, 'name');

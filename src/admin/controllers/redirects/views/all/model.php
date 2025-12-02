@@ -38,9 +38,13 @@ if (!is_null($state)) {
     $and_or_where = $search ? " and " : " where ";
     $query.= " {$and_or_where} state>=0 ";
 }
+
+$query .= " AND domain=?";
+$params[] = $_SESSION["current_domain"];
+
+$query.= "{$order_by_snippet} LIMIT ? OFFSET ?";
 $params[] = $page_size;
 $params[] = ($cur_page-1)*$page_size; // offset
-$query.= "{$order_by_snippet} LIMIT ? OFFSET ?";
 $redirects = DB::fetchAll($query, $params);
 
 // get total count
@@ -58,5 +62,7 @@ if (!is_null($state)) {
 } else {
     $query.= " {$and_or_where} state>=0 ";
 }
+$query .= " AND domain=?";
+$params[] = $_SESSION["current_domain"];
 $redirect_count = DB::fetch($query, $params)->c ?? 0;
 

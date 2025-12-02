@@ -2,6 +2,7 @@
 
 Use HoltBosse\Alba\Core\{Component, Content, Page, Template};
 Use HoltBosse\Form\{Input};
+Use HoltBosse\DB\DB;
 
 ?>
 
@@ -18,6 +19,8 @@ Use HoltBosse\Form\{Input};
 			<span>New Page</span>
 		</a>";
 	Component::addon_page_title($header, null, $rightContent);
+
+	$domainLookup = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
 ?>
 
 <form action='' method='post' name='page_action' id='page_action_form'>
@@ -31,7 +34,7 @@ Use HoltBosse\Form\{Input};
 			<th>Status</th>
 			<th>Title</th>
 			<?php
-				if(isset($_ENV["domains"])) {
+				if(sizeof($domainLookup)>1) {
 					echo "<th>Domain</th>";
 				}
 			?>
@@ -70,7 +73,7 @@ Use HoltBosse\Form\{Input};
 				</td>
 
 				<?php
-					if(isset($_ENV["domains"])) {
+					if(sizeof($domainLookup)>1) {
 						echo "<td class='unimportant'>{$domainLookup[$page->domain]}</td>";
 					}
 				?>

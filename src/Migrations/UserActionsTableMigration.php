@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Migrations;
 
 use HoltBosse\Alba\Core\{Migration, Message, MessageType, CMS};
 use HoltBosse\DB\DB;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class UserActionsTableMigration extends Migration {
     public function isNeeded(): Message {
@@ -18,7 +19,7 @@ class UserActionsTableMigration extends Migration {
         return $this->status;
     }
 
-    public function run(): Message {
+    public function run(?OutputInterface $output=null): Message {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Success, "User Actions table OK.");
         } else {

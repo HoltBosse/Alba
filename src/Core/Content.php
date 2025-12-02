@@ -24,6 +24,7 @@ class Content {
 	public $start;
 	public $end;
 	public $content_location;
+	public $domain;
 
 	private static $controllerRegistry = [
 		"basic_article" => __DIR__ . '/../controllers/basic_article',
@@ -41,6 +42,7 @@ class Content {
 			$this->content_location = $this->get_content_location($this->content_type);
 			$this->custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($this->content_location) . '/custom_fields.json');
 			$this->table_name = "controller_" . $this->custom_fields->id;
+			$this->domain = null;
 		}
 		$this->created_by = CMS::Instance()->user->id;
 		$this->alias="";
@@ -174,6 +176,7 @@ class Content {
 			$this->updated_by = $info->updated_by;
 			$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
 			$this->category = $info->category;
+			$this->domain = $info->domain;
 			return true;
 		}
 		else {
@@ -198,6 +201,7 @@ class Content {
 			$this->created_by = $info->created_by;
 			$this->tags = Tag::get_tags_for_content($this->id, $this->content_type);
 			$this->category = $info->category;
+			$this->domain = $info->domain;
 			return true;
 		}
 		else {
@@ -221,8 +225,8 @@ class Content {
 		if (!$ordering) {
 			$ordering=1;
 		}
-		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category];
-		$required_result = DB::exec("INSERT into `{$table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)", $params);
+		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category, $this->domain];
+		$required_result = DB::exec("INSERT into `{$table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category, domain) values(?,?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
 			$this->id = DB::getLastInsertedId();
 
@@ -316,6 +320,22 @@ class Content {
 		
 		Hook::execute_hook_actions('before_content_save', $this, $content_form);
 
+		$content_location = $this->get_content_location($this->content_type);
+		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($content_location) . '/custom_fields.json');
+		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+
+		if($this->id && $this->domain!==null && $this->domain!==$domain) {
+			//dont change domain if it already has one
+			$domain = $this->domain;
+		}
+
+		//if shared accross all domains
+		if(isset($custom_fields->multi_domain_shared_instances) && $custom_fields->multi_domain_shared_instances===true) {
+			$domain = null; // null means shared across all domains
+		}
+
+		$this->domain = $domain;
+
 		if ($this->id) {
 			$actionId = Actions::add_action("contentupdate", (object) [
 				"content_id"=>$this->id,
@@ -333,8 +353,8 @@ class Content {
 			}
 
 			// update
-			$params = [$this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->id] ;
-			$required_result = DB::exec("UPDATE `{$this->table_name}` SET state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=? WHERE id=?", $params);
+			$params = [$this->state, $this->title, $this->alias, $this->note, $starttime, $endtime, $this->updated_by, $this->category, $this->domain, $this->id] ;
+			$required_result = DB::exec("UPDATE `{$this->table_name}` SET state=?,  title=?, alias=?, note=?, start=?, end=?, updated_by=?, category=?, domain=? WHERE id=?", $params);
 		}
 		else {
 			// new
@@ -344,8 +364,8 @@ class Content {
 			if (!$ordering) {
 				$ordering=1;
 			}
-			$query = "insert into `{$this->table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category) values(?,?,?,?,?,?,?,?,?,?,?)";
-			$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $starttime, $endtime, $this->category];
+			$query = "insert into `{$this->table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category, domain) values(?,?,?,?,?,?,?,?,?,?,?,?)";
+			$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $starttime, $endtime, $this->category, $this->domain];
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
 				// update object id with inserted id

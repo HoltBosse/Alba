@@ -8,7 +8,7 @@ Use HoltBosse\DB\DB;
 echo "<style>";
 	$contentTypes = DB::fetchAll("SELECT * FROM content_types");
 	foreach($contentTypes as $ct) {
-		if(Content::isAccessibleOnDomain($ct->id)) {
+		if(Content::isAccessibleOnDomain($ct->id, $_SESSION["current_domain"])) {
 			continue;
 		}
 
