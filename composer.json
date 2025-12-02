@@ -10,6 +10,7 @@
     },
     "bin": ["bin/alba"],
     "require": {
+        "php": ">=8.4",
         "phpmailer/phpmailer": "^6.10 || ^7.0",
         "erusev/parsedown": "^1.7",
         "holtbosse/db": "^1.0",
