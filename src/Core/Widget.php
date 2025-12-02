@@ -21,6 +21,7 @@ class Widget {
 	public $page_list;
 	public $form;
 	public $form_data;
+	public $domain;
 
     private static $widgetRegistry = [
 		"Html" => [
@@ -186,6 +187,7 @@ class Widget {
 			$this->position_control = $info->position_control;
 			$this->global_position = $info->global_position;
 			$this->page_list = explode(',', $info->page_list);
+			$this->domain = $info->domain;
 		} else {
 			$this->type_id = $type_id;
 		}
@@ -245,10 +247,23 @@ class Widget {
 
 		$options_json = json_encode($this->options);
 
+		//set the domain to current domain index
+		$domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+
+		if($this->id && $this->domain!==null && $this->domain!==$domain) {
+			//dont change domain if it already has one
+			$domain = $this->domain;
+		}
+
+		//if shared accross all domains
+		if(isset($this->form_data->multi_domain_shared_instances) && $this->form_data->multi_domain_shared_instances===true) {
+			$domain = null; // null means shared across all domains
+		}
+
 		if ($this->id) {
 			// update
-			$params = [$this->state, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list), $this->id] ;
-			$result = DB::exec("update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=? where id=?", $params);
+			$params = [$this->state, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list), $domain, $this->id] ;
+			$result = DB::exec("update widgets set state=?, title=?, note=?, options=?, position_control=?, global_position=?, page_list=?, domain=? where id=?", $params);
 			
 			if ($result) {
 				CMS::Instance()->queue_message("Widget <a href='" . $_ENV["uripath"] . "/admin/widgets/edit/{$this->id}'>{$this->title}</a> updated", 'success', $redirect_url);
@@ -258,8 +273,8 @@ class Widget {
 			}
 		} else {
 			// new
-			$params = [$this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list)] ;
-			$result = DB::exec("INSERT into widgets (state,type,title,note,options,position_control,global_position,page_list) values(?,?,?,?,?,?,?,?)", $params);
+			$params = [$this->state, $this->type_id, $this->title, $this->note, $options_json, $this->position_control, $this->global_position, implode(',',$this->page_list), $domain] ;
+			$result = DB::exec("INSERT into widgets (state,type,title,note,options,position_control,global_position,page_list,domain) values(?,?,?,?,?,?,?,?,?)", $params);
 			$new_widget_id = DB::getLastInsertedId();
 			if ($result) {
 				CMS::Instance()->queue_message("Widget <a href='" . $_ENV["uripath"] . "/admin/widgets/edit/{$new_widget_id}'>{$this->title}</a> created", 'success', $redirect_url);	

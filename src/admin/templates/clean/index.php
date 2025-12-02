@@ -2,10 +2,38 @@
 
 Use HoltBosse\Alba\Core\{CMS, Hook, Configuration, Component};
 Use HoltBosse\Form\Input;
+Use HoltBosse\Form\Fields\Select\Select;
+Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
 if(sizeof($segments)>0 && !CMS::isAdminController($segments[0])) {
 	CMS::raise_404();
+}
+
+if(Input::getvar('current_domain',v::intVal()) !== null) {
+	$_SESSION["current_domain"] = Input::getvar('current_domain');
+	header("Location: " . $_SERVER["SCRIPT_URL"]);
+	die();
+}
+
+$accessToDomains = [];
+foreach(CMS::Instance()->user->groups as $group) {
+	$domains = explode(",", $group->domain);
+	foreach($domains as $domain) {
+		$accessToDomains[$domain] = true;
+	}
+}
+
+if(!isset($_SESSION["current_domain"])) {
+
+	$currentDomain = CMS::getDomainIndex($_SERVER['HTTP_HOST']);
+	if(!in_array($currentDomain, array_keys($accessToDomains))) {
+		//set to first accessible domain
+		$currentDomain = array_key_first($accessToDomains);
+	}
+
+	$_SESSION["current_domain"] = $currentDomain;
 }
 ?>
 
@@ -52,16 +80,55 @@ if(sizeof($segments)>0 && !CMS::isAdminController($segments[0])) {
 				</div>
 
 				<div class="navbar-end">
-				<div class="navbar-item">
-					<div class="buttons">
-					<a target="_blank" href="<?php echo $_ENV["uripath"];?>/" class="button is-default">
-						Front-End
-					</a>
-					<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo $_ENV["uripath"];?>/admin/logout" class="button is-light">
-						Log Out <?php echo Input::stringHtmlSafe(CMS::Instance()->user->username); ?>
-					</a>
+					<div class="navbar-item">
+						<div class="buttons">
+							<form>
+								<?php
+									if(sizeof($accessToDomains)>1) {
+										$domainList = DB::fetchAll("SELECT id, display FROM `domains`", [], ["mode"=>PDO::FETCH_KEY_PAIR]);
+
+										$domainPicker = new Select();
+										$domainPicker->loadFromConfig((object) [
+											"name"=>"current_domain",
+											"id"=>"current_domain",
+											"select_options"=>array_map(function($domainIndex) use ($domainList) {
+												return (object) [
+													"value"=>$domainIndex,
+													"text"=>$domainList[$domainIndex] ?? "Unknown Domain",
+												];
+											}, array_keys($accessToDomains)),
+											"default"=>$_SESSION["current_domain"],
+										]);
+										$domainPicker->display();
+									}
+								?>
+								<style>
+									form:has(select#current_domain) {
+										margin-bottom: 0;
+
+										div.field {
+											margin: 0;
+
+											label {
+												margin: 0;
+											}
+										}
+									}
+								</style>
+								<script>
+									document.getElementById('current_domain').addEventListener('change', (e)=>{
+										e.target.closest("form").submit();
+									});
+								</script>
+							</form>
+							<a target="_blank" href="<?php echo $_ENV["uripath"];?>/" class="button is-default">
+								Front-End
+							</a>
+							<a onclick='<?php Hook::execute_hook_actions('logout_onclick_js');?>' href="<?php echo $_ENV["uripath"];?>/admin/logout" class="button is-light">
+								Log Out
+							</a>
+						</div>
 					</div>
-				</div>
 				</div>
 			</div>
 		</nav>

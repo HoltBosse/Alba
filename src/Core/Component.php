@@ -202,6 +202,7 @@ class Component {
                             if($label=="hr" || $url=="hr") {
                                 echo "<hr class='dropdown-divider'>";
                             } else {
+                                //echo $label . "<br>";
                                 echo "<a class='navbar-item' href='" . $_ENV["uripath"] . "$url'>" . ucwords($label) . "</a>";
                             }
                         }
@@ -212,7 +213,7 @@ class Component {
     }
 
     public static function render_admin_nav_link($link) {
-        echo "<a class='navbar-item' href='" . $_ENV["uripath"] . "{$link['url']}' class='navbar-link'>" . ucwords($link["label"]) . "</a>";
+        echo "<a class='navbar-item' href='" . $_ENV["uripath"] . "{$link['url']}'>" . ucwords($link["label"]) . "</a>";
     }
 
     public static function create_fixed_control_bar($middleButtonHtml="", $endBarHtml="") {

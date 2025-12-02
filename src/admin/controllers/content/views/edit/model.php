@@ -77,7 +77,7 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	exit(0);
 }
 
-if(!Content::isAccessibleOnDomain($content_type)) {
+if(!Content::isAccessibleOnDomain($content_type, $_SESSION["current_domain"])) {
 	CMS::raise_404();
 }
 

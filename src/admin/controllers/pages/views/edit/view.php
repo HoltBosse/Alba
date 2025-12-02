@@ -113,55 +113,6 @@ Use Respect\Validation\Validator as v;
 		$parentField->display();
 	?>
 
-	<?php
-		if(!isset($_ENV["domains"])) {
-			?>
-				<style>
-					.field:has([name="domain"]) {
-						display: none;
-					}
-				</style>
-			<?php
-		} else {
-			?>
-				<style>
-					.fields-horizontal.core-page-fields {
-						grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-					}
-				</style>
-			<?php
-		}
-
-		$domains = [$_SERVER["HTTP_HOST"]];
-		if(isset($_ENV["domains"])) {
-			$domains = explode(",", $_ENV["domains"]);
-		}
-		$domainOptions = [];
-		foreach($domains as $index=>$domain) {
-			$domainOptions[] = (object) [
-				"value"=>$index,
-				"text"=>$domain,
-			];
-		}
-
-
-		$aliasField = new Field_Select();
-		$aliasField->loadFromConfig((object) [
-			"name"=>"domain",
-			"id"=>"domain",
-			"type"=>"Select",
-			"label"=>"Site",
-			"required"=>true,
-			"filter"=>v::AlwaysValid(),
-            "icon_status"=>true,
-            "icon_parent_class"=>"has-icons-left",
-            "icon_markup"=> "<span class='icon is-small is-left'><i class='fas fa-sitemap'></i></span>",
-			"select_options"=>$domainOptions,
-			"default"=>$page->domain,
-		]);
-		$aliasField->display();
-	?>
-
 	<div class="field">
 		<label class="label">Template</label>
 		<div class="control has-icons-left has-icons-right">

@@ -24,10 +24,7 @@ else {
 
 $required_details_obj = json_decode(file_get_contents(__DIR__ . '/required_fields_form.json'));
 
-$domains = [$_SERVER["HTTP_HOST"]];
-if(isset($_ENV["domains"])) {
-	$domains = explode(",", $_ENV["domains"]);
-}
+$domains = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
 $domainOptions = [];
 foreach($domains as $index=>$domain) {
 	$domainOptions[] = (object) [
@@ -35,9 +32,6 @@ foreach($domains as $index=>$domain) {
 		"text"=>$domain,
 	];
 }
-
-$required_details_obj->fields[3]->select_options = $domainOptions;
-$required_details_obj->fields[3]->default = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
 // prep forms
 $required_details_form = new Form($required_details_obj);
@@ -58,7 +52,7 @@ if ($required_details_form->isSubmitted()) {
 		$new_url = $required_details_form->getFieldByName('new_url')->default;
 		$updated_by = CMS::Instance()->user->id;
 		$header = $required_details_form->getFieldByName('header')->default;
-		$domain = $required_details_form->getFieldByName('domain')->default;
+		$domain = $_SESSION["current_domain"];
 
 		if ($new_content) {
 			$params = [$state,$note,$old_url,$new_url,$updated_by,$header,$domain];
@@ -97,6 +91,5 @@ else {
 		$required_details_form->getFieldByName('note')->default = $redirect->note;
 		$required_details_form->getFieldByName('old_url')->default = $redirect->old_url;
 		$required_details_form->getFieldByName('new_url')->default = $redirect->new_url;
-		$required_details_form->getFieldByName('domain')->default = $redirect->domain;
 	}
 }

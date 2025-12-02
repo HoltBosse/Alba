@@ -49,16 +49,6 @@
 		},
 		{
 			"type":"Select",
-			"id":"domain",
-			"name":"domain",
-			"required":true, 
-			"label":"Domain",
-			"filter":{
-				"IntVal": []
-			}
-		},
-		{
-			"type":"Select",
 			"id":"header",
 			"name":"header",
 			"required":true, 

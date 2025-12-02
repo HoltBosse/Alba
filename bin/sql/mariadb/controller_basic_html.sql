@@ -18,5 +18,6 @@ CREATE TABLE `controller_basic_html` (
   `seo_keywords` mediumtext,
   `og_title` mediumtext,
   `og_image` mediumtext,
+  `domain` TEXT DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

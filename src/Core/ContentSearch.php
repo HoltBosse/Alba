@@ -26,7 +26,8 @@ class ContentSearch {
 	public $custom_field_name;
 	public $category; // category id to match
 	public $tags; // array of tag ids to match 
-	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] 
+	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']]
+	public ?int $domain; //null for all, or domain id to match
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $filter_pdo_params;
 	private $custom_search_params;
@@ -43,6 +44,7 @@ class ContentSearch {
 		$this->list_fields=[];
 		$this->count=0;
 		$this->filters=[];
+		$this->domain = null;
 		$this->fetch_all = false;
 		$this->category = null;
 		$this->tags=[];
@@ -219,6 +221,11 @@ class ContentSearch {
 			// new flat table
 			$this->filter_pdo_params[] = $value;
 			$where .= " and c." . $key . " = ? " ;
+		}
+
+		if ($this->domain!==null) {
+			$where .= " AND (c.domain = ? OR c.domain IS NULL) ";
+			$this->filter_pdo_params[] = $this->domain;
 		}
 
 		if ($this->category && is_numeric($this->category)) {

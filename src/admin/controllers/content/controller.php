@@ -75,6 +75,7 @@ if ($missing) { ?>
 								`created` timestamp NOT NULL DEFAULT current_timestamp(),
 								`category` int(11) NOT NULL DEFAULT 0,
 								`updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+								`domain` TEXT DEFAULT NULL,
 								PRIMARY KEY (id)
 							  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
 							DB::exec($create_table_query);
