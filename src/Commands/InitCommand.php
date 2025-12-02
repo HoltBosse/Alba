@@ -257,7 +257,25 @@ class InitCommand extends Command {
         $output->writeln("");
 
         if(!file_exists($installPath . "/index.php")) {
-            file_put_contents($installPath . "/index.php", file_get_contents(__DIR__ . "/../../bin/datafiles/index.php"));
+            $indexContents = file_get_contents(__DIR__ . "/../../bin/datafiles/index.php");
+            
+            if(file_exists($installPath . "/composer.json")) {
+                $composerData = json_decode(file_get_contents($installPath . "/composer.json"));
+                
+                if($composerData->autoload && $composerData->autoload->{"psr-4"}) {
+                    $namespace = array_keys((array) $composerData->autoload->{"psr-4"})[0];
+
+                    $output->writeln("use namespace $namespace from composer.json");
+                    $namespace = str_replace("\\", "\\\\", $namespace);
+                    $namespace = rtrim($namespace, "\\") . "\\";
+                    
+                    $indexContents = str_replace("NAMESPACE_PLACEHOLDER\\", $namespace, $indexContents);
+                } else {
+                    $output->writeln("could not find autoload psr-4 namespace in composer.json, using placeholder namespace");
+                }
+            }
+
+            file_put_contents($installPath . "/index.php", $indexContents);
 
             $output->writeln("created index.php");
             $output->writeln("");
