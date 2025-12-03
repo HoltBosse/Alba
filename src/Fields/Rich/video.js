@@ -19,7 +19,9 @@ const Video = Node.create({
 			muted: { default: false },
 			loop: { default: false },
 			playsinline: { default: false },
-			controls: { default: true },
+			// `controls` should be null when not present in source HTML so
+			// loading from HTML without the attribute doesn't force `true`.
+			controls: { default: null },
 		}
 	},
 
@@ -27,6 +29,31 @@ const Video = Node.create({
 		return [
 			{
 				tag: 'video',
+				getAttrs: dom => {
+					if (!(dom instanceof HTMLElement)) return {}
+
+					// Helper to map boolean attributes by presence
+					const bool = name => (dom.hasAttribute(name) ? true : false)
+
+					// Extract src from a <source> child if available
+					let src = null
+					const sourceEl = dom.querySelector('source')
+					if (sourceEl?.getAttribute('src')) {
+						src = sourceEl.getAttribute('src')
+					} else if (dom.getAttribute('src')) {
+						src = dom.getAttribute('src')
+					}
+
+					return {
+						src,
+						autoplay: bool('autoplay'),
+						muted: bool('muted'),
+						loop: bool('loop'),
+						playsinline: bool('playsinline'),
+						// For controls, we want `null` when attribute is absent
+						controls: dom.hasAttribute('controls') ? true : null,
+					}
+				},
 			},
 		]
 	},
@@ -40,7 +67,8 @@ const Video = Node.create({
 			muted: muted ? 'muted' : null,
 			loop: loop ? 'loop' : null,
 			playsinline: playsinline ? 'playsinline' : null,
-			controls: controls ? 'controls' : null,
+			// Only add `controls` attribute when it's explicitly true
+			controls: controls === true ? 'controls' : null,
 		}
 
 		// Render a <video> element with a child <source src="..."> element
