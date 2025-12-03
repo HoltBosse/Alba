@@ -25,7 +25,7 @@
 					<option value='666'>Make selection:</option>
 					<?php
 						foreach ($all_content_types as $content_type) {
-							if(Content::isAccessibleOnDomain($content_type->id)==false) {
+							if(Content::isAccessibleOnDomain($content_type->id, $_SESSION["current_domain"])==false) {
 								continue;
 							}
 							?>

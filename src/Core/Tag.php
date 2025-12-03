@@ -20,6 +20,7 @@ class Tag {
 	public $category;
 	public $custom_fields;
 	public $contenttypes;
+	public ?int $domain = null;
 
 	public function load($id) {
 		$info = DB::fetch('SELECT * FROM tags WHERE id=?', [$id]);
@@ -37,6 +38,7 @@ class Tag {
 			$this->category = $info->category;
 			$this->custom_fields = $info->custom_fields;
 			$this->contenttypes = DB::fetchAll("SELECT content_type_id FROM tag_content_type WHERE tag_id=?", $this->id, ["mode"=>PDO::FETCH_COLUMN]);
+			$this->domain = isset($info->domain) ? $info->domain : null;
 			return true;
 		} else {
 			return false;
@@ -133,6 +135,25 @@ class Tag {
 			$this->parent = 0;
 		}
 
+		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+
+		
+		//if shared accross all domains
+		if (isset($_ENV["tag_custom_fields_file_path"])) {
+			$customFieldsFormObject = json_decode(file_get_contents($_ENV["tag_custom_fields_file_path"]));
+			if(isset($customFieldsFormObject->multi_domain_shared_instances) && $customFieldsFormObject->multi_domain_shared_instances==true) {
+				$domain = null;
+			}
+		}
+
+		//run last
+		if($this->id && $this->domain!==null && $this->domain!==$domain) {
+			//dont change domain if it already has one
+			$domain = $this->domain;
+		}
+
+		$this->domain = $domain;
+
 		if ($this->id) {
 
 			Actions::add_action("tagupdate", (object) [
@@ -158,7 +179,7 @@ class Tag {
 			// reach here, parent is valid or empty
 			
 			// update
-			$query = "UPDATE tags SET state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=?, custom_fields=? WHERE id=?";
+			$query = "UPDATE tags SET state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=?, custom_fields=?, domain=? WHERE id=?";
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
 			} else {
@@ -167,7 +188,7 @@ class Tag {
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = [$this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->custom_fields, $this->id ] ;
+			$params = [$this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->custom_fields, $this->domain, $this->id ] ;
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// clear any content types applicable to this tag from tag_content_type
@@ -188,7 +209,7 @@ class Tag {
 		}
 		else {
 			// new
-			$query = "INSERT INTO tags (state,public,title,alias,note,filter,description,image,parent,category,custom_fields) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+			$query = "INSERT INTO tags (state,public,title,alias,note,filter,description,image,parent,category,custom_fields,domain) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 			
 			if (!$this->alias) {
 				$this->alias = Input::stringURLSafe($this->title);
@@ -198,7 +219,7 @@ class Tag {
 			if (!$this->image) {
 				$this->image=null;
 			}
-			$params = [$this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category, $this->custom_fields];
+			$params = [$this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category, $this->custom_fields, $this->domain] ;
 			$result = DB::exec($query, $params);
 			if ($result) {
 				// insert new tag content_type relationships if required

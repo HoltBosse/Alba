@@ -248,16 +248,18 @@ class Widget {
 		$options_json = json_encode($this->options);
 
 		//set the domain to current domain index
-		$domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
-		if($this->id && $this->domain!==null && $this->domain!==$domain) {
-			//dont change domain if it already has one
-			$domain = $this->domain;
-		}
-
+		
 		//if shared accross all domains
 		if(isset($this->form_data->multi_domain_shared_instances) && $this->form_data->multi_domain_shared_instances===true) {
 			$domain = null; // null means shared across all domains
+		}
+		
+		//run last
+		if($this->id && $this->domain!==null && $this->domain!==$domain) {
+			//dont change domain if it already has one
+			$domain = $this->domain;
 		}
 
 		if ($this->id) {

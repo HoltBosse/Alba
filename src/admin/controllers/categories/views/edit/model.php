@@ -35,6 +35,10 @@ if(!Content::isAccessibleOnDomain(isset($content_type->content_type) ? $content_
 	CMS::raise_404();
 }
 
+if($cat->domain !== null && $cat->domain !== $_SESSION["current_domain"]) {
+	CMS::raise_404();
+}
+
 // update CMS instance with this content information
 // this allows custom form fields etc to easily access information such as
 // content id/type

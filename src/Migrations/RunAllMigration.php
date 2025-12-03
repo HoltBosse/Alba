@@ -55,6 +55,8 @@ class RunAllMigration extends Migration {
             ['Groups Table - Domain Column Update', new GroupDomainMigration()],
             ['Domains Table', new DomainsTableMigration()],
             ['Content Table - Domain Column Update', new ContentDomainMigration()],
+            ['Tags Table - Domain Column Update', new TagDomainMigration()],
+            ['Categories Table - Domain Column Update', new CategoryDomainMigration()],
         ];
     }
 }
