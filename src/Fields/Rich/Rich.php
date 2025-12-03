@@ -113,7 +113,8 @@ class Rich extends Field {
 							<select>
 								<option value="hr"><i class="fa fa-minus"></i>Horizontal Rule</option>
 								<option value="image"><i class="fa fa-image"></i>Image</option>
-								<option value="youtube"><i class="fa fa-video"></i>Youtube</option>
+								<option value="youtube"><i class="fa-brands fa-youtube"></i></i>Youtube</option>
+								<option value="video"><i class="fa fa-video"></i>Video</option>
 								<!-- <option value="table"><i class="fa fa-table"></i>Table</option> -->
 								<option value="unknown" selected style="display: none;">unknown</option>
 							</select>
@@ -186,6 +187,7 @@ class Rich extends Field {
 					<?php
 						echo file_get_contents(__DIR__ . "/figure.js");
 						echo file_get_contents(__DIR__ . "/figcaption.js");
+						echo file_get_contents(__DIR__ . "/video.js");
 					?>
 
 					function stripClassAttributes(html) {
@@ -343,6 +345,7 @@ class Rich extends Field {
 							}),
 							Figure,
 							Figcaption,
+							Video,
 						],
 						editorProps: {
 							transformPastedHTML: html => stripClassAttributes(html),
@@ -908,6 +911,65 @@ class Rich extends Field {
 
 									updateEditorSave();
 								});
+								break;
+							case "video":
+								const videoFields = [
+									{
+										type: "input",
+										id: "url",
+										label: "Video Url",
+										value: "",
+									},
+									{
+										type: "select",
+										id: "autoplay",
+										label: "Autoplay (muted) looped",
+										value: "disabled",
+										options: [
+											{
+												value: "enabled",
+												text: "Enabled",
+											},
+											{
+												value: "disabled",
+												text: "Disabled",
+											}
+										],
+									},
+									{
+										type: "select",
+										id: "controls",
+										label: "Show Controls",
+										value: "enabled",
+										options: [
+											{
+												value: "enabled",
+												text: "Enabled",
+											},
+											{
+												value: "disabled",
+												text: "Disabled",
+											}
+										],
+									}
+								];
+
+								const videoModal = createModal(videoFields);
+								videoModal.addEventListener("modalFormAdd", (e)=>{
+									//console.log("form add", document.getElementById(fields[0].id).value);
+
+									editorInstance.commands.setVideo({
+										src: document.getElementById(videoFields[0].id).value,
+										class: "rich_video",
+										autoplay: document.getElementById(videoFields[1].id).value=="enabled" ? true : false,
+										muted: document.getElementById(videoFields[1].id).value=="enabled" ? true : false,
+										loop: document.getElementById(videoFields[1].id).value=="enabled" ? true : false,
+										playsinline: true,
+										controls: document.getElementById(videoFields[2].id).value=="enabled" ? true : false,
+									});
+									updateEditorSave();
+								});
+
 								break;
 							case "table":
 								console.log("implement me");

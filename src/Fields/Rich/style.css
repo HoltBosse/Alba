@@ -260,7 +260,7 @@
             u {
                 text-decoration: underline
             }
-            iframe, img {
+            iframe, img, video {
                 border: 5px solid grey;
             }
 
