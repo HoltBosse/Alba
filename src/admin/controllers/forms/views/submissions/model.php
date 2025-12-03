@@ -26,9 +26,16 @@ $formSelectOptions = array_map(function($input) {
         $option->text = $json->display_name;
     }
 
+    if(isset($json->domains) && is_array($json->domains) && !in_array($_SESSION["current_domain"], $json->domains)) {
+        return null;
+    }
     return $option;
     
 }, $formSelectOptions);
+
+$formSelectOptions = array_values(array_filter($formSelectOptions, function($input) {
+    return $input !== null;
+}));
 
 $searchFieldsObject = json_decode(file_get_contents(__DIR__ . "/search_fields.json"));
 $searchFieldsObject->fields[0]->select_options = $formSelectOptions;
@@ -72,6 +79,20 @@ if($searchFieldsForm->isSubmitted()) {
 }
 
 $countResults = DB::fetch("SELECT count(*) AS c FROM form_submissions WHERE 1" . $queryWhereFilters, $params)->c;
+
+//check that $searchFieldsForm->getFieldByName("form")->default exists in formSelectOptions
+$formExists = false;
+foreach($formSelectOptions as $option) {
+    if($option->value == $searchFieldsForm->getFieldByName("form")->default) {
+        $formExists = true;
+        break;
+    }
+}
+
+//dont show anything
+if(!$formExists) {
+    $countResults = 0;
+}
 
 $paginationQuery = " LIMIT $paginationSize";
 
