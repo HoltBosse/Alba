@@ -324,14 +324,16 @@ class Content {
 		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($content_location) . '/custom_fields.json');
 		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
-		if($this->id && $this->domain!==null && $this->domain!==$domain) {
-			//dont change domain if it already has one
-			$domain = $this->domain;
-		}
-
+		
 		//if shared accross all domains
 		if(isset($custom_fields->multi_domain_shared_instances) && $custom_fields->multi_domain_shared_instances===true) {
 			$domain = null; // null means shared across all domains
+		}
+		
+		//run last
+		if($this->id && $this->domain!==null && $this->domain!==$domain) {
+			//dont change domain if it already has one
+			$domain = $this->domain;
 		}
 
 		$this->domain = $domain;

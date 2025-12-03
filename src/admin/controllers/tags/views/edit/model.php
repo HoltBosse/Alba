@@ -25,6 +25,10 @@ else {
 	exit(0);
 }
 
+if($tag->domain !== null && $tag->domain !== $_SESSION["current_domain"]) {
+	CMS::raise_404();
+}
+
 // prep forms
 if (isset($_ENV["tag_custom_fields_file_path"])) {
 	$custom_fields_form = new Form ($_ENV["tag_custom_fields_file_path"]);

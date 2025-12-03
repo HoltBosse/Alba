@@ -29,3 +29,12 @@ $all_categories = array_filter($all_categories, function($category) use (&$conte
 
 	return $contentTypeDomainCache[$category->content_type] != false;
 });
+
+$all_categories = array_filter($all_categories, function($category) {
+	if($category->domain!==null && $category->domain!=$_SESSION["current_domain"]) {
+		return false;
+	}
+	return true;
+});
+
+$all_categories = array_values($all_categories); //reindex nicely after filtering

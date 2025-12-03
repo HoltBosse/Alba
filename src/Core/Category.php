@@ -12,6 +12,7 @@ class Category {
 	public $parent;
 	public $custom_fields;
 	public $content_location = null;
+	public ?int $domain = null;
 
 	public function __construct($content_type) {
 		$this->id = false;
@@ -20,6 +21,7 @@ class Category {
 		$this->parent = 0;
 		$this->content_type = $content_type;
 		$this->custom_fields = "";
+		$this->domain = null;
 		if ($content_type) {
 			$this->content_location = Content::get_content_location($this->content_type);
 		}
@@ -86,6 +88,7 @@ class Category {
 			$this->content_type = $info->content_type;
 			$this->parent = $info->parent;
 			$this->custom_fields = $info->custom_fields;
+			$this->domain = $info->domain;
 			return true;
 		}
 		else {
@@ -100,6 +103,25 @@ class Category {
 		$this->parent = $required_details_form->getFieldByName('parent')->default; 
 		$this->content_type = $required_details_form->getFieldByName('content_type')->default; 
 		$this->custom_fields = $custom_fields_form ? json_encode($custom_fields_form) : "";
+
+		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+
+		
+		//if shared accross all domains
+		if (isset($_ENV["category_custom_fields_form_path"])) {
+			$customFieldsFormObject = json_decode(file_get_contents($_ENV["category_custom_fields_form_path"]));
+			if(isset($customFieldsFormObject->multi_domain_shared_instances) && $customFieldsFormObject->multi_domain_shared_instances==true) {
+				$domain = null;
+			}
+		}
+
+		//run last
+		if($this->id && $this->domain!==null && $this->domain!==$domain) {
+			//dont change domain if it already has one
+			$domain = $this->domain;
+		}
+
+		$this->domain = $domain;
 
 		if ($this->id) {
 			Actions::add_action("categoryupdate", (object) [

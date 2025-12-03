@@ -22,7 +22,7 @@ Use HoltBosse\Form\Input;
 					<option value='666'>Make selection:</option>
 					<?php 
 						foreach ($all_widget_types as $widget_type) {
-							if(!Widget::isAccessibleOnDomain($widget_type->id)) {
+							if(!Widget::isAccessibleOnDomain($widget_type->id, $_SESSION["current_domain"])) {
 								continue;
 							}
 							?>
