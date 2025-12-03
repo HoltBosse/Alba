@@ -54,6 +54,10 @@ $formSubmitPageField->loadFromConfig((object) [
 if($formId) {
     $formData = DB::fetch("SELECT * FROM form_instances WHERE id=?", [$formId]);
 
+    if($formData->domain !== null && $formData->domain !== $_SESSION["current_domain"]) {
+        CMS::raise_404();
+    }
+
     if(!$formData) {
         CMS::Instance()->queue_message('Form not found','danger',$_ENV["uripath"].'/admin/forms/all');
         exit(0);
