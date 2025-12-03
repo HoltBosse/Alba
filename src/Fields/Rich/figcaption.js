@@ -34,16 +34,29 @@ const Figcaption = Node.create({
               // Find the parent figure node
               let figureDepth = null
               for (let d = $pos.depth; d > 0; d--) {
-                if ($pos.node(d).type.name === 'figure') {
+                const nodeAtD = $pos.node(d)
+                if (!nodeAtD) continue
+                if (nodeAtD.type && nodeAtD.type.name === 'figure') {
                   figureDepth = d
                   break
                 }
               }
-              const parentIsFigcaption = $pos.node($pos.depth - 1).type.name === 'figcaption'
+
+              const parentNode = $pos.node($pos.depth - 1)
+              const parentIsFigcaption = parentNode?.type?.name === 'figcaption'
               debug += `figureDepth: ${figureDepth}, currentNode: ${$pos.node($pos.depth).type.name}, parentIsFigcaption: ${parentIsFigcaption}\n`
+              // If we don't reliably have a figcaption parent or current node info, bail out
+              const currentNode = $pos.node($pos.depth)
+              if (!currentNode || figureDepth === null || !parentIsFigcaption) {
+                console.log('[figcaption enter handler - not triggered]', debug)
+                return false
+              }
+
+              debug += `currentNode: ${currentNode.type ? currentNode.type.name : 'unknown'}\n`
+
               if (figureDepth !== null && parentIsFigcaption) {
                 // Only trigger if at end of last paragraph in figcaption
-                const figcaptionNode = $pos.node($pos.depth - 1)
+                const figcaptionNode = parentNode
                 const isLastParagraph = $pos.index($pos.depth - 1) === figcaptionNode.childCount - 1
                 const atEnd = $pos.parentOffset === $pos.parent.content.size
                 debug += `isLastParagraph: ${isLastParagraph}, atEnd: ${atEnd}\n`
