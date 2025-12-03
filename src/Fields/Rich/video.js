@@ -19,9 +19,7 @@ const Video = Node.create({
 			muted: { default: false },
 			loop: { default: false },
 			playsinline: { default: false },
-			// `controls` should be null when not present in source HTML so
-			// loading from HTML without the attribute doesn't force `true`.
-			controls: { default: null },
+			controls: { default: false },
 		}
 	},
 
@@ -50,8 +48,7 @@ const Video = Node.create({
 						muted: bool('muted'),
 						loop: bool('loop'),
 						playsinline: bool('playsinline'),
-						// For controls, we want `null` when attribute is absent
-						controls: dom.hasAttribute('controls') ? true : null,
+						controls: bool('controls'),
 					}
 				},
 			},
@@ -68,7 +65,7 @@ const Video = Node.create({
 			loop: loop ? 'loop' : null,
 			playsinline: playsinline ? 'playsinline' : null,
 			// Only add `controls` attribute when it's explicitly true
-			controls: controls === true ? 'controls' : null,
+			controls: controls ? 'controls' : null,
 		}
 
 		// Render a <video> element with a child <source src="..."> element
@@ -86,7 +83,7 @@ const Video = Node.create({
 						muted: !!options.muted,
 						loop: !!options.loop,
 						playsinline: !!options.playsinline,
-						controls: options.controls === undefined ? true : !!options.controls,
+						controls: !!options.controls,
 					}
 
 					// If selection is inside an existing video node, update it
