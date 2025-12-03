@@ -57,6 +57,16 @@ class Rich extends Field {
 							<span>UnJoin Figure</span>
 						</div>
 					</div>
+					<div class="video-bubble-bar">
+						<div>
+							<i class="fa fa-minus"></i>
+							<span>Toggle Controls</span>
+						</div>
+						<div>
+							<i class="fa fa-play"></i>
+							<span>Toggle AutoPlay</span>
+						</div>
+					</div>
 				</div>
 				<div class="gui_editor_control_bar">
 					<i class="fa fa-rotate-left"></i>
@@ -300,6 +310,14 @@ class Rich extends Field {
 								shouldShow: ({ editor, view, state, oldState, from, to }) => {
 									//dont show on images inside a figure
 									return editor.isActive('image') && editor.state.selection.$from.parent.type.name == "figure";
+								},
+							}),
+							BubbleMenu.configure({
+								pluginKey: "videoBubbleBar",
+								element: editorWrapperRoot.querySelector(".video-bubble-bar"),
+								shouldShow: ({ editor, view, state, oldState, from, to }) => {
+									//dont show on images inside a figure
+									return editor.isActive('video');
 								},
 							}),
 							Details.configure({
@@ -960,7 +978,6 @@ class Rich extends Field {
 
 									editorInstance.commands.setVideo({
 										src: document.getElementById(videoFields[0].id).value,
-										class: "rich_video",
 										autoplay: document.getElementById(videoFields[1].id).value=="enabled" ? true : false,
 										muted: document.getElementById(videoFields[1].id).value=="enabled" ? true : false,
 										loop: document.getElementById(videoFields[1].id).value=="enabled" ? true : false,
@@ -1031,6 +1048,25 @@ class Rich extends Field {
 							editorInstance.chain().focus().imageToFigure().run()
 						} else if(e.target.matches(".image-figure-unlink-bar div:has(.fa.fa-image)")) {
 							editorInstance.chain().focus().figureToImage().run()
+						} else if(e.target.matches(".video-bubble-bar div:has(.fa.fa-minus)")) {
+							//update the video to toggle controls
+							let currentAttrs = editorInstance.getAttributes('video');
+							editorInstance.chain().focus().updateAttributes('video', {
+								controls: !currentAttrs.controls,
+							}).run();
+
+							updateEditorSave();
+						} else if(e.target.matches(".video-bubble-bar div:has(.fa.fa-play)")) {
+							// toggle autoplay, muted, loop based on autoplay state
+							let currentAttrs = editorInstance.getAttributes('video');
+							let newAutoplayState = !currentAttrs.autoplay;
+							editorInstance.chain().focus().updateAttributes('video', {
+								autoplay: newAutoplayState,
+								muted: newAutoplayState,
+								loop: newAutoplayState,
+							}).run();
+
+							updateEditorSave();
 						}
 					});
 				</script>
