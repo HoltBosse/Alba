@@ -40,13 +40,19 @@ function in_group ($group_id, $edit_user) {
 		CMS::pprint_r ($edit_user); */
 		?>
 		<?php foreach ($all_groups as $group):?>
-		<div class="control">
-			<label class="checkbox">
-				<input name='groups[]' value='<?php echo $group->id;?>' type="checkbox" <?php if (in_group($group->id, $edit_user)) echo " checked " ?>  >
-				<?php echo $group->display;?>
-			</label>
-		</div>
-		<br>
+			<?php
+				$style="";
+				if($group->domain!==null && !in_array($_SESSION["current_domain"], explode(",", $group->domain))) {
+					$style="display: none;";
+				}
+			?>
+			<div class="control" style="<?php echo $style; ?>">
+				<label class="checkbox">
+					<input name='groups[]' value='<?php echo $group->id;?>' type="checkbox" <?php if (in_group($group->id, $edit_user)) echo " checked " ?>  >
+					<?php echo $group->display;?>
+				</label>
+			</div>
+			<br>
 		<?php endforeach; ?>
 	</div>
 

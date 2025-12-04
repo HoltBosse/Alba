@@ -7,26 +7,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RunAllMigration extends Migration {
     public function isNeeded(): Message {
-        /* if($this->status == null) {
-            $result = DB::fetchAll("show columns FROM `widgets` LIKE 'domain'");
-            if(!$result) {
-                $this->status = new Message(false, MessageType::Warning, "Widgets table missing domain column");
-            } else {
-                $this->status = new Message(true, MessageType::Success, "Widgets table has domain column");
-            }
-        } */
-
         return new Message(false, MessageType::Warning, "Method not implemented");
     }
 
     public function run(?OutputInterface $output=null): Message {
-        /* if($this->isNeeded()->success) {
-            return new Message(true, MessageType::Success, "Pages table OK.");
-        } else {
-            DB::exec("ALTER TABLE `widgets` ADD `domain` text;"); //nullable text column, null means current domain aka all domains
-            return new Message(true, MessageType::Success, "Widgets table updated.");
-        } */
-
         return new Message(false, MessageType::Warning, "Run each migration seperately.");
     }
 
@@ -58,6 +42,7 @@ class RunAllMigration extends Migration {
             ['Tags Table - Domain Column Update', new TagDomainMigration()],
             ['Categories Table - Domain Column Update', new CategoryDomainMigration()],
             ['Form Instances Table - Domain Column', new FormDomainMigration()],
+            ['User Table - Domain Column', new UserDomainMigration()],
         ];
     }
 }

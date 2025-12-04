@@ -17,6 +17,7 @@ class User {
 	public $state;
 	public $registered;
 	public $created;
+	public ?int $domain;
 
 	public function __construct() {
 		$this->email = false;
@@ -27,6 +28,7 @@ class User {
 		$this->id = false;
 		$this->tags = [];
 		$this->state = 1;
+		$this->domain = null;
 	}
 
 	public static function create_new ($username, $password, $email, $groups=[], $state=0) {
@@ -139,6 +141,7 @@ class User {
 		$this->groups = Input::getvar('groups',v::arrayType()->each(v::intVal()));
 		$this->tags = Input::getvar('tags',v::arrayType()->each(v::intVal()));
 		$this->state = Input::getvar('userstate',v::IntVal());
+		$this->domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		return true;
 	}
 
@@ -152,6 +155,7 @@ class User {
 			$this->email = $result->email;
 			$this->id = $result->id;
 			$this->state = $result->state;
+			$this->domain = $result->domain;
 			// get groups
 			$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
 			$this->groups = DB::fetchAll($query, [$id]);
@@ -303,6 +307,24 @@ class User {
 	}
 
 	public function save() {
+		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+
+		//if shared accross all domains
+		if(isset($_ENV["custom_user_fields_file_path"])) {
+			$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
+			if(isset($formObject->multi_domain_shared_instances) && $formObject->multi_domain_shared_instances===true) {
+				$domain = null;
+			}
+		}
+		
+		//run last
+		if($this->id && $this->domain!==null && $this->domain!==$domain) {
+			//dont change domain if it already has one
+			$domain = $this->domain;
+		}
+
+		$this->domain = $domain;
+
 		if ($this->id) {
 			Actions::add_action("userupdate", (object) [
 				"affected_user"=>$this->id,
