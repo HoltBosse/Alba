@@ -49,6 +49,10 @@ if (sizeof($segments)==3) {
 	}
 }
 
+if($edit_user->id && $edit_user->domain!==null && $edit_user->domain!=$_SESSION["current_domain"]) {
+	CMS::raise_404();
+}
+
 //remove the description from the password field for new users
 if(!$edit_user->email) {
 	$core_user_fields_form->fields["password"]->description = "";

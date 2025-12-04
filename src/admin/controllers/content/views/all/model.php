@@ -45,10 +45,11 @@ $content_search->type_filter = $content_type_filter;
 $content_search->page = $cur_page;
 
 $domain = $_SESSION["current_domain"];
-if(isset($custom_fields->multi_domain_shared_instances) && $custom_fields->multi_domain_shared_instances===true) {
+/* if(isset($custom_fields->multi_domain_shared_instances) && $custom_fields->multi_domain_shared_instances===true) {
 	$domain = null;
-}
+} */
 
+//even if in shared mode, specific domain view as the search looks for null (all domains) or specific domain
 $content_search->domain = $domain;
 
 foreach($_GET as $key=>$value) {

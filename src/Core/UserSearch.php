@@ -17,6 +17,7 @@ class UserSearch {
 	public $tags; // array of tag ids to match 
 	public $groups; // array of group_ids to match
 	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
+	public ?int $domain; //null for all, or domain id to match
 	private $count; // set after query is exec() shows total potential row count for paginated calls
 	private $filter_pdo_params;
 	private $custom_search_params;
@@ -32,6 +33,7 @@ class UserSearch {
 		$this->list_fields=[];
 		$this->count=0;
 		$this->filters=[];
+		$this->domain = null;
 		$this->tags=[];
 		$this->groups=[];
 		$this->filter_pdo_params = [];
@@ -147,6 +149,11 @@ class UserSearch {
 					$where .= " and u." . $key . " = ? " ;
 				}
 			}
+		}
+
+		if ($this->domain!==null) {
+			$where .= " AND (u.domain = ? OR u.domain IS NULL) ";
+			$this->filter_pdo_params[] = $this->domain;
 		}
 
 		// groups

@@ -42,6 +42,17 @@ $user_search = new UserSearch();
 $user_search->searchtext = $search;
 $user_search->page = $cur_page;
 
+$domain = $_SESSION["current_domain"];
+/* if(isset($_ENV["custom_user_fields_file_path"])) {
+	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
+	if(isset($formObject->multi_domain_shared_instances) && $formObject->multi_domain_shared_instances===true) {
+		$domain = null;
+	}
+} */
+
+//even if in shared mode, specific domain view as the search looks for null (all domains) or specific domain
+$user_search->domain = $domain;
+
 $applicable_tags = Tag::get_tags_available_for_content_type (-2); // -2 = user content type
 $all_groups = User::get_all_groups();
 if ($groups) {
