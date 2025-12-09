@@ -121,7 +121,7 @@ class Access {
                     foreach($domains as $domain) {
                         if($domain == CMS::getDomainIndex($_SERVER['HTTP_HOST'])) {
                             $canAccessOnDomain = true;
-                            break 2;;
+                            break 2;
                         }
                     }
                 }
