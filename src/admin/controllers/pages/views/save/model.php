@@ -70,7 +70,7 @@ $success = $page->save();
 if ($success) {
 	// save widget overrides
 	// unique key on page, template and position in table
-	$overridePositionsWidgets = Input::getVar('override_positions_widgets', v::arrayType()->each(v::optional(v::numericVal())), []);
+	$overridePositionsWidgets = Input::getVar('override_positions_widgets', v::arrayType()->each(v::optional(v::stringVal())), []);
 	$overridePositions = Input::getVar('override_positions', v::arrayType()->each(v::optional(v::StringVal())), []);
 
 	for ($n=0; $n < sizeof ($overridePositionsWidgets); $n++ ) {
