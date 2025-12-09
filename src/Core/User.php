@@ -191,16 +191,8 @@ class User {
 		$query = "select * from users where email=?";
 		$result = DB::fetch($query, [$email]);
 		if ($result) {
-			$this->username = $result->username;
-			$this->password = $result->password;
-			$this->created = $result->created;
-			$this->groups = false; // TODO: get groups
-			$this->email = $result->email;
-			$this->id = $result->id;
-			$this->state = $result->state;
-			return true;
-		}
-		else {
+			return $this->load_from_id($result->id);
+		} else {
 			return false;
 		}
 	}
