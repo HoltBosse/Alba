@@ -112,6 +112,23 @@ class Access {
                 if ($loginUser->state<1) {
                     return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
                 }
+
+                //CMS::pprint_r($loginUser); die;
+
+                $canAccessOnDomain = false;
+                foreach($loginUser->groups as $group) {
+                    $domains = explode(",", $group->domain);
+                    foreach($domains as $domain) {
+                        if($domain == CMS::getDomainIndex($_SERVER['HTTP_HOST'])) {
+                            $canAccessOnDomain = true;
+                            break 2;
+                        }
+                    }
+                }
+                if(!$canAccessOnDomain) {
+                    return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
+                }
+
                 // user exists, check password
                 if ($loginUser->check_password($password)) {
                     // logged in!
