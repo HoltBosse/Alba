@@ -202,8 +202,10 @@ class Component {
                             if($label=="hr" || $url=="hr") {
                                 echo "<hr class='dropdown-divider'>";
                             } else {
-                                //echo $label . "<br>";
-                                echo "<a class='navbar-item' href='" . $_ENV["uripath"] . "$url'>" . ucwords($label) . "</a>";
+                                $pathParts = explode("/", ltrim(parse_url($url, PHP_URL_PATH), "/"));
+                                if (Access::can_access(Access::getAdminAccessRule($pathParts[1]) ?? null)) {
+                                    echo "<a class='navbar-item' href='" . $_ENV["uripath"] . "$url'>" . ucwords($label) . "</a>";
+                                }
                             }
                         }
                     ?>
