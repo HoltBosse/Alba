@@ -36,7 +36,7 @@ if($countResults > 0) {
     echo "<style>
         .form_submissions_wrapper {
             display: grid;
-            grid-template-columns: auto repeat($rowLength, minmax(20rem, 1fr)); /* first column fit to content for dialog open */
+            grid-template-columns: auto repeat(" . ($rowLength - 1) . ", minmax(20rem, 1fr)); /* first column fit to content for dialog open */
             overflow: auto;
 
             .form_submissions_row {
@@ -86,7 +86,7 @@ if($countResults > 0) {
                 foreach($headerFields as $header) {
                     echo "<div>";
                         $field = $currentSelectedForm->getFieldByName($header);
-                        echo $field->getFriendlyValue([]);
+                        echo $field->getFriendlyValue((object)["return_in_text_html_form"=>true]);
                         //echo Input::stringHtmlSafe($normalizedFields[$header]);
                     echo "</div>";
                 }
