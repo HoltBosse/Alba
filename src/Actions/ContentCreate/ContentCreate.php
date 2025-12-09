@@ -86,8 +86,8 @@ class ContentCreate extends Actions {
                 echo "
                     <tr>
                         <td>$field</td>
-                        <td>{$beforeFieldInstance->getFriendlyValue([])}</td>
-                        <td>{$afterFieldInstance->getFriendlyValue([])}</td>
+                        <td>{$beforeFieldInstance->getFriendlyValue((object)["return_in_text_html_form"=>true])}</td>
+                        <td>{$afterFieldInstance->getFriendlyValue((object)["return_in_text_html_form"=>true])}</td>
                     </tr>
                 ";
             }
