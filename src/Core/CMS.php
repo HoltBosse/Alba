@@ -679,6 +679,9 @@ final class CMS {
 			}
 		} else {
 			if ($this->isAdmin()) {
+				//allow everyone to logout
+				Access::registerAdminAccessRule("logout", DB::fetchall("SELECT id FROM groups", [], ["mode"=>PDO::FETCH_COLUMN]));
+				
 				//check the users access rights
 				if (!Access::can_access(Access::getAdminAccessRule($this->uri_segments[0] ?? ""))) {
 					if(CMS::Instance()->user && CMS::Instance()->user->groups && CMS::Instance()->user->canAccessBackend() && Access::can_access(Access::getAdminAccessRule(""))) {
