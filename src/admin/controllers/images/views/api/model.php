@@ -83,14 +83,6 @@ if ($action=='delete_media') {
 		// clear media table
 		$ok = DB::exec("delete from media where id=?", [$image_id]);
 		
-		// TODO: remove file(s) from /processed or any other thumbnail/resolution cache created in future
-		if ($filename_response) {
-			$filename = $filename_response->filename;
-			foreach (glob($_ENV["images_directory"] . "/processed/*".$filename) as $delfile) {
-				unlink($delfile);
-			}
-		}
-		
 		if ($ok) {
 			$image_ids_tagged[] = $image_id;
 		}
