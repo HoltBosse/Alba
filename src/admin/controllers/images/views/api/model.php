@@ -126,22 +126,6 @@ if ($action=='untag_media') {
 	exit(0);
 }
 
-if ($action=='delete') {
-	$idlist = implode(',',$id);
-	
-	$result = DB::exec("DELETE FROM media where id in ({$idlist})"); 
-	if ($result) {
-		//CMS::Instance()->queue_message('Deleted tags','success', $_SERVER['HTTP_REFERER']);
-		echo '{"success":1,"msg":"Image(s) deleted"}';
-		exit(0);
-	}
-	else {
-		//CMS::Instance()->queue_message('Failed to delete tags','danger', $_SERVER['HTTP_REFERER']);
-		echo '{"success":0,"msg":"Unable to remove image(s) from database"}';
-		exit(0);
-	}
-}
-
 if ($action=='rename_image') {
 	$title = Input::getvar('title',v::StringVal(),'');
 	$alt = Input::getvar('alt',v::StringVal(),'');
