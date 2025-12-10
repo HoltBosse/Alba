@@ -12,6 +12,8 @@ ob_end_clean(); // do it again, we may be inside another buffer due to reasons
 
 // TODO: remove front-end images api model????
 
+header('Content-Type: application/json');
+
 $action = Input::getvar('action',v::StringVal());
 $mimetypes = array_filter(explode(',',Input::getvar('mimetypes',v::StringVal(),''))); // array_filter ensures empty array if mimetypes is null
 // TODO sanitize mimetypes against whitelist
