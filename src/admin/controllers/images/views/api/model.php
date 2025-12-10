@@ -83,14 +83,6 @@ if ($action=='delete_media') {
 		// clear media table
 		$ok = DB::exec("delete from media where id=?", [$image_id]);
 		
-		// TODO: remove file(s) from /processed or any other thumbnail/resolution cache created in future
-		if ($filename_response) {
-			$filename = $filename_response->filename;
-			foreach (glob($_ENV["images_directory"] . "/processed/*".$filename) as $delfile) {
-				unlink($delfile);
-			}
-		}
-		
 		if ($ok) {
 			$image_ids_tagged[] = $image_id;
 		}
@@ -124,57 +116,6 @@ if ($action=='untag_media') {
 	}
 	echo '{"success":1,"message":"Untagging finished","untagged":'.json_encode($image_ids_untagged).',"failed":'.json_encode($image_ids_failed).'}';
 	exit(0);
-}
-
-if ($action=='toggle') {
-	// NOT APPLICABLE TO IMAGES!
-	$result = DB::exec("UPDATE tags SET state = (CASE state WHEN 1 THEN 0 ELSE 1 END) where id=?", [$id[0]]); // id always array even with single id being passed
-	if ($result) {
-		CMS::Instance()->queue_message('Toggled state of tag','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to toggle state of tag','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='publish') {
-	// NOT APPLICABLE TO IMAGES!
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = 1 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Published tags','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to publish tags','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='unpublish') {
-	// NOT APPLICABLE TO IMAGES!
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = 0 where id in ({$idlist})"); 
-	if ($result) {
-		CMS::Instance()->queue_message('Unpublished tags','success', $_SERVER['HTTP_REFERER']);
-	}
-	else {
-		CMS::Instance()->queue_message('Failed to unpublish tags','danger', $_SERVER['HTTP_REFERER']);
-	}
-}
-
-if ($action=='delete') {
-	$idlist = implode(',',$id);
-	
-	$result = DB::exec("DELETE FROM media where id in ({$idlist})"); 
-	if ($result) {
-		//CMS::Instance()->queue_message('Deleted tags','success', $_SERVER['HTTP_REFERER']);
-		echo '{"success":1,"msg":"Image(s) deleted"}';
-		exit(0);
-	}
-	else {
-		//CMS::Instance()->queue_message('Failed to delete tags','danger', $_SERVER['HTTP_REFERER']);
-		echo '{"success":0,"msg":"Unable to remove image(s) from database"}';
-		exit(0);
-	}
 }
 
 if ($action=='rename_image') {
