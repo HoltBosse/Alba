@@ -27,6 +27,9 @@ if ($searchtext) {
     $params = ["%".$searchtext."%", "%".$searchtext."%", "%".$searchtext."%"];
 }
 
+$query .= " AND (domain=? OR domain IS NULL) ";
+$params[] = ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']));
+
 $all_images = DB::fetchAll("SELECT * " . $query . " LIMIT " . $pagination_size . " OFFSET " . ($cur_page-1)*$pagination_size, $params);
 $images_count = DB::fetch("SELECT count(*) as count " . $query, $params)->count;
 

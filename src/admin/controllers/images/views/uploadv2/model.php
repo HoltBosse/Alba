@@ -115,7 +115,10 @@ foreach ($_FILES["file-upload"]["error"] as $key => $error) {
 			$file->original_width = $file->width;
 			$file->recalc_height(1920);
 		}
-		$in_db_ok = DB::exec("insert into media (width, height, title, alt, filename, mimetype) values (?,?,?,?,?,?)", [$file->width, $file->height, $title, $alt, $file->filename, $file->mimetype]);
+		$in_db_ok = DB::exec(
+			"INSERT INTO media (width, height, title, alt, filename, mimetype, domain) VALUES (?,?,?,?,?,?,?)",
+			[$file->width, $file->height, $title, $alt, $file->filename, $file->mimetype, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]
+		);
 		$img_ids[] = DB::getLastInsertedId();
 		if ($in_db_ok) {
 			$thumbdest = $_ENV["images_directory"] . '/processed/' . "web_" . $file->filename;

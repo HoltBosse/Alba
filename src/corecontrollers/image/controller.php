@@ -28,6 +28,7 @@ if ($segments[1]=='list_images') {
 	}
 	if ($searchtext) {
 		$query = "SELECT * FROM `media` WHERE (`title` LIKE ? OR alt LIKE ?)";
+		$params = ["%$searchtext%","%$searchtext%"];
 		if ($mimetypes) {
 			$query.=" AND mimetype IN (";
 			$result = "'" . implode ( "', '", $mimetypes ) . "'";
@@ -44,14 +45,15 @@ if ($segments[1]=='list_images') {
 			
 			$query.= " AND id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
 		}
+		$query .= " AND (domain=? OR domain IS NULL) ";
+		$params[] = ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']));
+
 		$query.=" LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
-		$list = DB::fetchAll($query, ["%$searchtext%","%$searchtext%"]);
+		$list = DB::fetchAll($query, $params);
 	}
 	else {
-		$query = "SELECT * FROM `media`";
-		if ($mimetypes) {
-			$query.=" WHERE id>0 ";
-		}
+		$query = "SELECT * FROM `media` WHERE id>0";
+		$params = [];
 		if ($mimetypes) {
 			// TODO: ensure valid mimetypes from JSON?
 			$query.=" AND mimetype in (";
@@ -71,10 +73,13 @@ if ($segments[1]=='list_images') {
 			}
 			$wrappedTags = implode(",", $explodedTags);
 			
-			$query.= " WHERE id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
+			$query.= " AND id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
 		}
+		$query .= " AND (domain=? OR domain IS NULL) ";
+		$params[] = ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']));
+
 		$query .= " ORDER BY id DESC LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page; // newest first, honor (safe) page limit
-		$list = DB::fetchAll($query);
+		$list = DB::fetchAll($query, $params);
 	}
 		
 	//$list = $stmt->fetchAll();
@@ -200,7 +205,7 @@ function image_make_thumb ($src, $dest, $desired_width, $file, $quality, $mimety
 }
 
 function get_image ($id) {
-	return DB::fetch('SELECT * FROM media WHERE id=?', CMS::Instance()->uri_segments[1]);
+	return DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
 }
 
 if ($segsize<2 || !is_numeric($segments[1]) ) {

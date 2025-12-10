@@ -43,6 +43,7 @@ class RunAllMigration extends Migration {
             ['Categories Table - Domain Column Update', new CategoryDomainMigration()],
             ['Form Instances Table - Domain Column', new FormDomainMigration()],
             ['User Table - Domain Column', new UserDomainMigration()],
+            ['Media Table - Domain Column', new MediaDomainMigration()],
         ];
     }
 }
