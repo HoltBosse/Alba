@@ -186,10 +186,14 @@ class User {
 		return password_verify($password, $hash->password);
 	}
 
-	public function load_from_email($email) {
+	public function load_from_email($email, ?int $domain=null) {
+		if($domain==null) {
+			$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		}
+
 		//echo "<h5>Loading user object from db with email {$email}</h5>";
-		$query = "select * from users where email=?";
-		$result = DB::fetch($query, [$email]);
+		$query = "SELECT * FROM users WHERE email=? AND domain=?";
+		$result = DB::fetch($query, [$email, $domain]);
 		if ($result) {
 			return $this->load_from_id($result->id);
 		} else {
@@ -300,14 +304,6 @@ class User {
 
 	public function save() {
 		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
-
-		//if shared accross all domains
-		if(isset($_ENV["custom_user_fields_file_path"])) {
-			$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
-			if(isset($formObject->multi_domain_shared_instances) && $formObject->multi_domain_shared_instances===true) {
-				$domain = null;
-			}
-		}
 		
 		//run last
 		if($this->id && $this->domain!==null && $this->domain!==$domain) {
