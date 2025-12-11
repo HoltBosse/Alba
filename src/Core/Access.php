@@ -85,7 +85,7 @@ class Access {
         );
     }
 
-    public static function handleLogin($email, $password): Message {
+    public static function handleLogin($email, $password, ?int $domain=null): Message {
         // check for login attempt
         $loginUser = new User();
         $redirectPath = $_ENV["uripath"] . "/";
@@ -108,7 +108,7 @@ class Access {
             return new Message(false, MessageType::Danger, 'Invalid email', $redirectPath);
         }
         if ($email && $password) {
-            if ($loginUser->load_from_email($email)) {
+            if ($loginUser->load_from_email($email, $domain)) {
                 if ($loginUser->state<1) {
                     return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
                 }

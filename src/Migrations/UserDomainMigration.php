@@ -23,7 +23,13 @@ class UserDomainMigration extends Migration {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Success, "Users table OK.");
         } else {
-            DB::exec("ALTER TABLE `users` ADD `domain` text;"); //nullable text column, null means current domain aka all domains
+            DB::exec("ALTER TABLE `users` DROP INDEX `email`;");
+            DB::exec("ALTER TABLE `users` DROP INDEX `username`;");
+
+            DB::exec("ALTER TABLE `users` ADD UNIQUE KEY `email_domain` (`email`,`domain`);");
+            DB::exec("ALTER TABLE `users` ADD UNIQUE KEY `username_domain` (`username`,`domain`);");
+
+            DB::exec("ALTER TABLE `users` ADD `domain` INT NOT NULL default 0;");
             return new Message(true, MessageType::Success, "Users table updated.");
         }
     }

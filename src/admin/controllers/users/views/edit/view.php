@@ -52,7 +52,7 @@ function in_group ($group_id, $edit_user) {
 					<?php echo $group->display;?>
 				</label>
 			</div>
-			<br>
+			<br style="<?php echo $style; ?>">
 		<?php endforeach; ?>
 	</div>
 
