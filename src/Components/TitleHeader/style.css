@@ -1,0 +1,25 @@
+.addon_page_title_wrapper {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+
+    &:has(.subheading) h1 {
+        margin-bottom: 0.5rem; 
+    }
+
+    &:not(.subheading) {
+        margin-bottom: var(--bulma-block-spacing);
+    }
+
+    .subheading {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: normal;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .addon_page_title_wrapper {
+        flex-direction: column;
+    }
+}

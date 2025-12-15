@@ -1,0 +1,53 @@
+.state_button {
+    padding: 0 !important;
+}
+
+.state_button button {
+    height: 100%;
+    padding: 1em 1em;
+    border: 1px solid transparent;
+    width: 100%;
+    background-color: #fff;
+}
+
+.state_button button:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+.state_button hr {
+    width: 1px;
+    height: 70%;
+}
+
+.state_button .navbar-link:not(.is-arrowless)::after {
+    right: auto;
+}
+
+.state_button .navbar-link:not(.is-arrowless) {
+    padding-right: 1.5em;
+}
+
+.state_button .navbar-item.has-dropdown {
+    height: 100%;
+}
+
+.state_button .navbar-item {
+    display: flex;
+    gap: 1em;
+}
+
+.state_button .navbar {
+    z-index: auto;
+}
+
+.state_button:hover button.navbar-item:not(:hover) {
+    background-color: hsl(var(--bulma-navbar-dropdown-item-h),var(--bulma-navbar-dropdown-item-s),calc(var(--bulma-navbar-dropdown-item-background-l) + var(--bulma-navbar-item-background-l-delta))) !important;
+}
+
+@media screen and (max-width: 1024px) {
+    /* disabled on mobile due to bulma lack of support */
+    .state_button .navbar-item.has-dropdown, .state_button hr {
+        display: none;
+    }
+}

@@ -1,0 +1,16 @@
+.addon_button_toolbar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 1rem 0;
+    z-index: 1;
+    background-color: var(--bulma-body-background-color);
+}
+
+@media only screen and (max-width: 1024px) {
+    .addon_button_toolbar {
+        top: calc(var(--bulma-navbar-height) + 1.4rem);
+    }
+}
