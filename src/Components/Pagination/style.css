@@ -1,0 +1,16 @@
+.small-pagination-list a {
+    margin: 0;
+}
+.small-pagination-list li:not(:last-child) a {
+    border-right: 0px solid transparent;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+.small-pagination-list li:not(:first-child) a {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+.small-pagination-list li a.is-current {
+    font-weight: bold;
+    font-size: 1.075em;
+}
