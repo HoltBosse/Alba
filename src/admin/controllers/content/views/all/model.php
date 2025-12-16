@@ -112,6 +112,8 @@ if (property_exists($custom_fields,'list')) {
 	
 }
 
+$hidden_list_fields = isset($custom_fields->hide) ? $custom_fields->hide : [];
+
 function make_sortable_header($title) {
 	?>
 		<th>
