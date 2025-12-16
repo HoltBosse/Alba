@@ -19,6 +19,9 @@ if(Input::getvar('current_domain',v::intVal()) !== null) {
 
 $accessToDomains = [];
 foreach(CMS::Instance()->user->groups as $group) {
+	if($group->domain === null) {
+		continue;
+	}
 	$domains = explode(",", $group->domain);
 	foreach($domains as $domain) {
 		$accessToDomains[$domain] = true;
