@@ -48,6 +48,9 @@ $domain = $_SESSION["current_domain"];
 $user_search->domain = $domain;
 
 $applicable_tags = Tag::get_tags_available_for_content_type (-2); // -2 = user content type
+$applicable_tags = array_values(array_filter($applicable_tags, function($tag) {
+	return ($tag->domain === null || $tag->domain === $_SESSION["current_domain"]);
+}));
 $all_groups = User::get_all_groups();
 if ($groups) {
 	$user_search->groups = $groups;

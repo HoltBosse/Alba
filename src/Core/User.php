@@ -419,7 +419,11 @@ class User {
 		}
 	}
 
-	public static function get_all_groups() {
-		return DB::fetchAll("SELECT * FROM `groups` ORDER BY display ASC");
+	public static function get_all_groups(?int $domain=null) {
+		if($domain==null) {
+			$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		}
+
+		return DB::fetchAll("SELECT * FROM `groups` WHERE (domain IS NULL OR FIND_IN_SET(?, domain)) ORDER BY display ASC", [$domain]);
 	}
 }
