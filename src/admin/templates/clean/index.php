@@ -119,7 +119,7 @@ if(!isset($_SESSION["current_domain"])) {
 									}
 								</style>
 								<script>
-									document.getElementById('current_domain').addEventListener('change', (e)=>{
+									document.getElementById('current_domain')?.addEventListener('change', (e)=>{
 										e.target.closest("form").submit();
 									});
 								</script>

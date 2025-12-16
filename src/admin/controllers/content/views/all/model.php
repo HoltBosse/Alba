@@ -78,7 +78,7 @@ $content_count = $content_search->get_count();
 
 // get filter values for dropdowns etc
 
-$applicable_users = DB::fetchAll('SELECT id,username FROM users ORDER BY username ASC');
+$applicable_users = DB::fetchAll('SELECT id,username FROM users WHERE domain=? ORDER BY username ASC', [$_SESSION["current_domain"]]);
 $applicable_categories = DB::fetchAll('SELECT * FROM categories WHERE content_type=? AND (domain=? OR domain IS NULL) ORDER BY title ASC', [$content_type_filter, $_SESSION["current_domain"]]);
 $applicable_tags = Tag::get_tags_available_for_content_type ($content_type_filter);
 
