@@ -44,6 +44,7 @@ class RunAllMigration extends Migration {
             ['Form Instances Table - Domain Column', new FormDomainMigration()],
             ['User Table - Domain Column', new UserDomainMigration()],
             ['Media Table - Domain Column', new MediaDomainMigration()],
+            ['Configurations Table - Domain Column', new ConfigurationDomainMigration()],
         ];
     }
 }
