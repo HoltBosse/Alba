@@ -18,6 +18,7 @@ Use Respect\Validation\Validator as v;
 				$baseGridCount++;
 			}
 			$baseGridCount += sizeof($content_list_fields);
+			$baseGridCount = $baseGridCount - sizeof($hidden_list_fields);
 		?>
 		table.table tr {
 			grid-template-columns: repeat(<?php echo $baseGridCount; ?>, 1fr);
@@ -160,9 +161,9 @@ Use Respect\Validation\Validator as v;
 	<table class='table can-have-ids'>
 		<thead>
 			<tr>
-				<th>State</th>
+				<?php if(!in_array("state", $hidden_list_fields)) { echo "<th>State</th>"; } ?>
 				<?php
-					if($_ENV["admin_show_ids_in_tables"]==="true") {
+					if($_ENV["admin_show_ids_in_tables"]==="true" && !in_array("id", $hidden_list_fields)) {
 						echo "<th>Id</th>";
 					}
 				?>
@@ -180,7 +181,7 @@ Use Respect\Validation\Validator as v;
 							</style>";
 					}
 				?>
-				<?php make_sortable_header("title"); ?>
+				<?php if(!in_array("title", $hidden_list_fields)) { make_sortable_header("title"); } ?>
 
 				<?php if ($content_list_fields):?>
 					<?php foreach ($content_list_fields as $content_list_field):?>
@@ -196,40 +197,46 @@ Use Respect\Validation\Validator as v;
 					<?php endforeach; ?>
 				<?php endif; ?>
 
-				<th>Tags</th>
-				<?php
-					make_sortable_header("category");
-					make_sortable_header("start");
-					make_sortable_header("end");
-					make_sortable_header("created by");
-					make_sortable_header("updated by");
+				<?php 
+					if(!in_array("tags", $hidden_list_fields)) { echo "<th>Tags</th>"; }
+
+					if(!in_array("category", $hidden_list_fields)) { make_sortable_header("category"); }
+					if(!in_array("start", $hidden_list_fields)) { make_sortable_header("start"); }
+					if(!in_array("end", $hidden_list_fields)) { make_sortable_header("end"); }
+					if(!in_array("created_by", $hidden_list_fields)) { make_sortable_header("created by"); }
+					if(!in_array("updated_by", $hidden_list_fields)) { make_sortable_header("updated by"); }
+					
+					if(!in_array("note", $hidden_list_fields)) { echo "<th>Note</th>"; }
 				?>
-				<th>Note</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach ($all_content as $content_item):?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
-					<td class='drag_td state-wrapper'>
-						<?php
-							Component::state_toggle($content_item->id, $content_item->state, "content", $custom_fields->states ?? [], $content_item->content_type);
-						?>
-					</td>
+					<?php if(!in_array("state", $hidden_list_fields)) { ?>
+						<td class='drag_td state-wrapper'>
+							<?php
+								Component::state_toggle($content_item->id, $content_item->state, "content", $custom_fields->states ?? [], $content_item->content_type);
+							?>
+						</td>
+					<?php } ?>
 					<?php
-						if($_ENV["admin_show_ids_in_tables"]==="true") {
+						if($_ENV["admin_show_ids_in_tables"]==="true" && !in_array("id", $hidden_list_fields)) {
 							echo "<td class='id-wrapper'>$content_item->id</td>";
 						}
 					?>
-					<td class='title-wrapper'>
-						<div>
-							<a href="<?php echo $_ENV["uripath"]; ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo Input::stringHtmlSafe($content_item->title); ?></a>
-						</div>
-						<span class='unimportant'>
-							<?php
-								echo Hook::execute_hook_filters('display_alias_override', $content_item->alias, $content_item);
-							?>
-						</span>
-					</td>
+					<?php if(!in_array("title", $hidden_list_fields)) { ?>
+						<td class='title-wrapper'>
+							<div>
+								<a href="<?php echo $_ENV["uripath"]; ?>/admin/content/edit/<?php echo $content_item->id;?>/<?php echo $content_item->content_type;?>"><?php echo Input::stringHtmlSafe($content_item->title); ?></a>
+							</div>
+							<span class='unimportant'>
+								<?php
+									echo Hook::execute_hook_filters('display_alias_override', $content_item->alias, $content_item);
+								?>
+							</span>
+						</td>
+					<?php } ?>
 
 					<?php if ($content_list_fields):?>
 						<?php foreach ($content_list_fields as $content_list_field):?>
@@ -247,23 +254,37 @@ Use Respect\Validation\Validator as v;
 						<?php endforeach; ?>
 					<?php endif; ?>
 					
-					<td dataset-name="Tags"><?php //we need to have the td start and end butted right up to the php tags so that css empty will work
-						$tags = Tag::get_tags_for_content($content_item->id, $content_item->content_type);
-						if(sizeof($tags) > 0) { //wee use css empty, so cant have blank tags inside
-							echo '<div class="tags are-small are-light">';
-								foreach ($tags as $tag) {
-									echo '<span class="tag is-info is-light">' . Input::stringHtmlSafe($tag->title) . '</span>';
-								}
-							echo '</div>';
-						}
-					?></td>
+					<?php if(!in_array("tags", $hidden_list_fields)) { ?>
+						<td dataset-name="Tags"><?php //we need to have the td start and end butted right up to the php tags so that css empty will work
+							$tags = Tag::get_tags_for_content($content_item->id, $content_item->content_type);
+							if(sizeof($tags) > 0) { //wee use css empty, so cant have blank tags inside
+								echo '<div class="tags are-small are-light">';
+									foreach ($tags as $tag) {
+										echo '<span class="tag is-info is-light">' . Input::stringHtmlSafe($tag->title) . '</span>';
+									}
+								echo '</div>';
+							}
+						?></td>
+					<?php } ?>
 
-					<td dataset-name="Cat"><?php echo Input::stringHtmlSafe($content_item->catname);?></td>
-					<td dataset-name="Start" class='unimportant'><?php echo $content_item->start; ?></td>
-					<td dataset-name="End" class='unimportant'><?php echo $content_item->end; ?></td>
-					<td dataset-name="Created By" class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
-					<td dataset-name="Updated By" class='unimportant'><?php echo User::get_username_by_id($content_item->updated_by); ?></td>
-					<td dataset-name="Note" class='unimportant'><?php echo Input::stringHtmlSafe($content_item->note); ?></td>
+					<?php if(!in_array("category", $hidden_list_fields)) { ?>
+						<td dataset-name="Cat"><?php echo Input::stringHtmlSafe($content_item->catname);?></td>
+					<?php } ?>
+					<?php if(!in_array("start", $hidden_list_fields)) { ?>
+						<td dataset-name="Start" class='unimportant'><?php echo $content_item->start; ?></td>
+					<?php } ?>
+					<?php if(!in_array("end", $hidden_list_fields)) { ?>
+						<td dataset-name="End" class='unimportant'><?php echo $content_item->end; ?></td>
+					<?php } ?>
+					<?php if(!in_array("created_by", $hidden_list_fields)) { ?>
+						<td dataset-name="Created By" class='unimportant'><?php echo User::get_username_by_id($content_item->created_by); ?></td>
+					<?php } ?>
+					<?php if(!in_array("updated_by", $hidden_list_fields)) { ?>
+						<td dataset-name="Updated By" class='unimportant'><?php echo User::get_username_by_id($content_item->updated_by); ?></td>
+					<?php } ?>
+					<?php if(!in_array("note", $hidden_list_fields)) { ?>
+						<td dataset-name="Note" class='unimportant'><?php echo Input::stringHtmlSafe($content_item->note); ?></td>
+					<?php } ?>
 				</tr>
 				
 			<?php endforeach; ?>
