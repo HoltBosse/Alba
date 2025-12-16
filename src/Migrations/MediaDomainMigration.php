@@ -23,7 +23,7 @@ class MediaDomainMigration extends Migration {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Success, "Media table OK.");
         } else {
-            DB::exec("ALTER TABLE `media` ADD `domain` text;"); //nullable text column, null means current domain aka all domains
+            DB::exec("ALTER TABLE `media` ADD `domain` int;"); //nullable int column, null means current domain aka all domains
             return new Message(true, MessageType::Success, "Media table updated.");
         }
     }

@@ -13,6 +13,7 @@ class ContentPickerOrdered extends PickerOrdered {
 	public $searchable;
 	public $empty_string;
 	public $content_type;
+	public $domain;
 
 	public function loadFromConfig($config) {
 		parent::loadFromConfig($config);
@@ -42,29 +43,31 @@ class ContentPickerOrdered extends PickerOrdered {
 					// default order is alphabetical
 					$options_all_articles = DB::fetchAll(
 						"SELECT id AS value, title AS text
-						FROM {$table_name}
-						WHERE state>={$min_state}
-						ORDER BY title ASC"
+						FROM `$table_name`
+						WHERE state>=?
+						ORDER BY title ASC",
+						[$min_state]
 					);
 				}
 				else {
 					$tags_csv = "'".implode("','", $this->tags)."'";
 					$options_all_articles = DB::fetchAll(
 						"SELECT c.id AS value, c.title AS text
-						FROM {$table_name} c
+						FROM `$table_name` c
 						WHERE c.state=1
 						AND c.id IN (
 							SELECT tc.content_id
 							FROM tagged tc
-							WHERE tc.content_type_id={$this->content_type}
+							WHERE tc.content_type_id=?
 							AND tc.tag_id IN (
 								SELECT t.id
 								FROM tags t
-								WHERE t.state>={$min_state}
+								WHERE t.state>=?
 								AND t.alias IN ($tags_csv)
 							)
 						)
-						ORDER BY c.title ASC"
+						ORDER BY c.title ASC",
+						[$this->content_type, $min_state]
 					);
 				}
 			}
