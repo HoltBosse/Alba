@@ -9,6 +9,7 @@ class Configuration {
 	public $name; 
 	public $configuration;
 	public $form;
+	public int $domain;
 
 	static public function get_configuration_value ($form_name, $setting_name, $pdo=null) {
 		// pdo param is a spot left for legacy reasons, but not actually used
@@ -23,7 +24,7 @@ class Configuration {
 		}
 
 		// fallback - get complete json and get property in PHP
-		$configuration = DB::fetch("SELECT configuration FROM configurations WHERE name=?", $form_name);
+		$configuration = DB::fetch("SELECT configuration FROM configurations WHERE name=? AND domain=?", [$form_name, $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST'])]);
 		if ($configuration) {
 			$config = json_decode($configuration->configuration);
 			if (property_exists($config, $setting_name)) {
@@ -52,11 +53,17 @@ class Configuration {
 		return false; // got here, got nuthin
 	}
 
-	function __construct($form) {
+	function __construct($form, ?int $domain=null) {
 		$this->id = null;
 		$this->name = $form->id;
 		$this->form = $form;
 		$this->configuration = new stdClass();
+
+		if(is_null($domain)) {
+			$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
+		}
+		$this->domain = $domain;
+
 		$this->load_from_form($this->form);
 	}
 
@@ -69,7 +76,7 @@ class Configuration {
 
 	public function load_from_db() {
 		// set config and form fields from configurations table entry
-		$result = DB::fetch("SELECT * FROM configurations WHERE name=?", $this->name);
+		$result = DB::fetch("SELECT * FROM configurations WHERE name=? AND domain=?", [$this->name, $this->domain]);
 		if ($result) {
 			// update object configuration
 			$this->configuration = json_decode($result->configuration);
@@ -93,7 +100,13 @@ class Configuration {
 	public function save() {
 		// update or insert new set of configuration options
 		$json_config = json_encode($this->configuration);
-		$ok = DB::exec("INSERT INTO configurations (name,configuration) VALUES (?,?) ON DUPLICATE KEY UPDATE configuration=?", [$this->name, $json_config, $json_config]);
+		$configurationExists = DB::fetch("SELECT name FROM configurations WHERE name=? AND domain=?", [$this->name, $this->domain]);
+		if ($configurationExists) {
+			$ok = DB::exec("UPDATE configurations SET configuration=? WHERE name=? AND domain=?", [$json_config, $this->name, $this->domain]);
+		} else {
+			$ok = DB::exec("INSERT INTO configurations (name,configuration,domain) VALUES (?,?,?)", [$this->name, $json_config, $this->domain]);
+		}
+
 		if ($ok) {
 			return $this;
 		}
