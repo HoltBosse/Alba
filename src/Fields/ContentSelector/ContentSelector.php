@@ -3,7 +3,9 @@ namespace HoltBosse\Alba\Fields\ContentSelector;
 
 Use HoltBosse\Form\Fields\Select\Select;
 Use HoltBosse\Alba\Core\{Content, JSON, CMS};
-use HoltBosse\DB\DB;
+Use HoltBosse\DB\DB;
+Use Respect\Validation\Validator as v;
+Use HoltBosse\Form\Input;
 
 class ContentSelector extends Select {
 
@@ -12,6 +14,7 @@ class ContentSelector extends Select {
 	public $order_by_field;
 	public $order_by_direction;
 	public $content_type;
+	public $domain;
 
 	public function getFriendlyValue($helpful_info) {
 		// content_type already checked for being numeric in load_from_config function
@@ -48,7 +51,8 @@ class ContentSelector extends Select {
 		$this->list_unpublished = $config->list_unpublished ?? false;
 		$this->tags = $config->tags ?? false;
 		$this->order_by_field = $config->order_by_field ?? "title";
-		$this->order_by_direction = $config->order_by_direction ?? "ASC";
+		$this->order_by_direction = Input::filter(($config->order_by_direction ?? "ASC"), v::in(["ASC", "DESC"]), "ASC");
+		$this->domain = $config->domain ?? $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
 
 		if (!$this->content_type) {
 			CMS::show_error('Content type required for ContentSelector field in v3+');
@@ -63,33 +67,36 @@ class ContentSelector extends Select {
 
 			$location = Content::get_content_location($this->content_type);
 			$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
-			$table_name = "controller_" . $custom_fields->id ;
+			$table_name = "controller_" . $custom_fields->id;
 
 			$min_state = $this->list_unpublished ? 0 : 1;
 
 			if (!$this->tags) {
 				// default order is alphabetical
-				$options_all_articles = DB::fetchAll("SELECT id AS value, title AS text FROM `$table_name` WHERE state >={$min_state} ORDER BY $this->order_by_field $this->order_by_direction");
+				$options_all_articles = DB::fetchAll("SELECT id AS value, title AS text FROM `$table_name` WHERE state >= ? AND (domain IS NULL OR domain=?) ORDER BY $this->order_by_field $this->order_by_direction", [$min_state, $this->domain]);
 				//CMS::pprint_r ($options_all_articles);
 			}
 			else {
 				$tags_csv = "'".implode("','", $this->tags)."'";
 				$options_all_articles = DB::fetchAll(
 					"SELECT id AS value, title AS text
-					FROM {$table_name} c
+					FROM `$table_name` c
 					WHERE c.state=1
 					AND c.id in (
 						SELECT tc.content_id
 						FROM tagged tc
-						WHERE tc.content_type_id={$this->content_type}
+						WHERE tc.content_type_id=?
 						AND tc.tag_id IN (
 							SELECT t.id
 							FROM tags t
-							WHERE t.state>={$min_state}
+							WHERE t.state>=?
 							AND t.alias IN ($tags_csv)
 						)
-					) ORDER BY c.$this->order_by_field $this->order_by_direction"
-				);
+					)
+					AND (c.domain IS NULL OR c.domain=?)
+					ORDER BY c.$this->order_by_field $this->order_by_direction"
+				,
+				[$this->content_type, $min_state, $this->domain]);
 			}
 		}
 		

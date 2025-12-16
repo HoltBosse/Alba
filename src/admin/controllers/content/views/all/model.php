@@ -78,16 +78,9 @@ $content_count = $content_search->get_count();
 
 // get filter values for dropdowns etc
 
-$applicable_users = DB::fetchAll('select id,username from users order by username asc');
-if ($content_type_filter) {
-	$applicable_categories = DB::fetchAll('select * from categories where content_type=? order by title asc',$content_type_filter);
-	$applicable_tags = Tag::get_tags_available_for_content_type ($content_type_filter);
-}
-else {
-	$applicable_categories = DB::fetchAll('select * from categories order by title asc');
-	$applicable_tags = DB::fetchAll('select * from tags order by title asc');
-}
-
+$applicable_users = DB::fetchAll('SELECT id,username FROM users ORDER BY username ASC');
+$applicable_categories = DB::fetchAll('SELECT * FROM categories WHERE content_type=? AND (domain=? OR domain IS NULL) ORDER BY title ASC', [$content_type_filter, $_SESSION["current_domain"]]);
+$applicable_tags = Tag::get_tags_available_for_content_type ($content_type_filter);
 
 // handle custom optional listing on content specific 'all' view
 

@@ -23,7 +23,7 @@ class TagDomainMigration extends Migration {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Success, "Tags table OK.");
         } else {
-            DB::exec("ALTER TABLE `tags` ADD `domain` text;"); //nullable text column, null means current domain aka all domains
+            DB::exec("ALTER TABLE `tags` ADD `domain` int;"); //nullable int column, null means current domain aka all domains
             return new Message(true, MessageType::Success, "Tags table updated.");
         }
     }

@@ -2,13 +2,14 @@
 namespace HoltBosse\Alba\Fields\TagSingle;
 
 Use HoltBosse\Form\Fields\Select\Select;
-Use HoltBosse\Alba\Core\{Content, Tag};
+Use HoltBosse\Alba\Core\{Content, Tag, CMS};
 Use HoltBosse\DB\DB;
 
 class TagSingle extends Select {
 
 	public $tag_cache = [];
 	public $content_type;
+	public $domain;
 
 	private function get_parent_tag($input) {
 		if ($input->parent != 0) {
@@ -39,6 +40,7 @@ class TagSingle extends Select {
 		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? false;
+		$this->domain = $config->domain ?? $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
 
 		if ($this->content_type) {
 			if(!is_numeric($this->content_type)) {
@@ -49,6 +51,10 @@ class TagSingle extends Select {
 		} else {
 			$tags = Tag::get_all_tags ();
 		}
+
+		$tags = array_values(array_filter($tags, function($tag) {
+			return ($tag->domain === null || $tag->domain == $this->domain);
+		}));
 
 		$this->select_options = [];
 		foreach($tags as $tag) {

@@ -23,7 +23,7 @@ class FormDomainMigration extends Migration {
         if($this->isNeeded()->success) {
             return new Message(true, MessageType::Success, "Form instances table OK.");
         } else {
-            DB::exec("ALTER TABLE `form_instances` ADD `domain` text;");
+            DB::exec("ALTER TABLE `form_instances` ADD `domain` int;");
             return new Message(true, MessageType::Success, "Form instances table updated.");
         }
     }

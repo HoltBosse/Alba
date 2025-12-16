@@ -44,7 +44,7 @@ class ContentDomainMigration extends Migration {
         } else {
             $controllerTables = $this->getContentTables();
             foreach($controllerTables as $table) {
-                DB::exec("ALTER TABLE `$table` ADD `domain` text;"); //nullable text column, null means current domain aka all domains
+                DB::exec("ALTER TABLE `$table` ADD `domain` int;"); //nullable int column, null means current domain aka all domains
             }
             
             return new Message(true, MessageType::Success, "Widgets table updated.");
