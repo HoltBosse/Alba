@@ -126,7 +126,7 @@ class Component {
             "itemId"=>$id,
             "state"=>$state,
             "multiStateFormAction"=>$_ENV["uripath"] . "/admin/" . $folder . "/action/togglestate",
-            "duelStateFormAction"=>$_ENV["uripath"] . "/admin/" . $folder . "/action/toggle",
+            "dualStateFormAction"=>$_ENV["uripath"] . "/admin/" . $folder . "/action/toggle",
             "states"=>$states,
             "contentType"=>$type
         ])->display();

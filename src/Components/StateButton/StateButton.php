@@ -8,7 +8,7 @@ class StateButton extends Component {
     public ?string $itemId;
     public int $state;
     public string $multiStateFormAction;
-    public string $duelStateFormAction;
+    public string $dualStateFormAction;
     public ?array $states;
     public ?int $contentType;
 
@@ -20,7 +20,7 @@ class StateButton extends Component {
             <div class="center_state">
                 <input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $this->itemId; ?>'/>
                 <div class='<?php echo $this->states===NULL ? "" : "button state_button";?>'>
-                    <button <?php if($this->state==0 || $this->state==1) { echo "type='submit' formaction='$this->duelStateFormAction' name='id[]' value='$this->itemId'"; } else { echo "style='pointer-events: none;'"; } ?> class="<?php echo $this->states===NULL ? "button" : "";?>">
+                    <button <?php if($this->state==0 || $this->state==1) { echo "type='submit' formaction='$this->dualStateFormAction' name='id[]' value='$this->itemId'"; } else { echo "style='pointer-events: none;'"; } ?> class="<?php echo $this->states===NULL ? "button" : "";?>">
                         <?php 
                             if ($this->state==1) { 
                                 echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -85,7 +85,7 @@ class StateButton extends Component {
         $this->itemId = $config->itemId ?? null;
         $this->state = $config->state ?? 0;
         $this->multiStateFormAction = $config->multiStateFormAction ?? "";
-        $this->duelStateFormAction = $config->duelStateFormAction ?? "";
+        $this->dualStateFormAction = $config->dualStateFormAction ?? "";
         $this->states = $config->states ?? null;
         $this->contentType = $config->contentType ?? null;
 
