@@ -3,7 +3,7 @@ CREATE TABLE `content_types` (
   `title` varchar(255) NOT NULL,
   `controller_location` varchar(255) NOT NULL,
   `description` mediumtext NOT NULL,
-  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `state` tinyint(4) NOT NULL DEFAULT '1',
+  `updated` timestamp NOT NULL DEFAULT current_timestamp(),
+  `state` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
