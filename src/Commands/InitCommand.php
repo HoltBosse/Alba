@@ -166,8 +166,8 @@ class InitCommand extends Command {
         echo "\n";
 
         if(DB::fetch("SELECT count(*) AS c FROM groups")->c == 0) {
-            DB::exec("INSERT INTO `groups` (value, display) VALUES ('admin','Administrators')");
-            DB::exec("INSERT INTO `groups` (value, display) VALUES ('editor','Contributors')");
+            DB::exec("INSERT INTO `groups` (value, display, backend, domain) VALUES ('admin','Administrators', 1, 0)");
+            DB::exec("INSERT INTO `groups` (value, display, backend, domain) VALUES ('editor','Contributors', NULL, NULL)");
             $output->writeln("groups installed");
         } else {
             $output->writeln("groups already installed");
@@ -197,14 +197,15 @@ class InitCommand extends Command {
 
         if(DB::fetch("SELECT count(*) AS c FROM pages")->c == 0) {
             DB::exec(
-                "INSERT INTO pages (title, alias, content_type, parent, template, page_options) VALUES (?,?,?,?,?,?)",
+                "INSERT INTO pages (title, alias, content_type, parent, template, page_options, domain) VALUES (?,?,?,?,?,?,?)",
                 [
                     "My Home Page",
                     "home",
                     -1,
                     -1,
                     0,
-                    ""
+                    "",
+                    0
                 ]
             );
 
@@ -230,7 +231,7 @@ class InitCommand extends Command {
 
             $hash = password_hash($user["password"], PASSWORD_DEFAULT);
             DB::exec(
-                "INSERT INTO users (username, email, password, state) VALUES (?,?,?,1)",
+                "INSERT INTO users (username, email, password, state, domain) VALUES (?,?,?,1,0)",
                 [
                     $user["username"],
                     $user["email"],
