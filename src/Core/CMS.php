@@ -673,7 +673,13 @@ final class CMS {
 				// force switch to admin template login 
 				$template = $this->get_admin_template();
 			}
-			include_once (Template::getTemplatePath($template, true) . "/login.php");
+			ob_start();
+				include_once (Template::getTemplatePath($template, true) . "/login.php");
+			$loginContents = ob_get_clean();
+			$loginContents = Hook::execute_hook_filters('content_ready_login', $loginContents);
+
+			echo $loginContents;
+
 			if($_ENV["dev_banner"]==="true") {
 				echo $this->render_dev_banner();
 			}
