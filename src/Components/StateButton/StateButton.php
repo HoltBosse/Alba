@@ -7,7 +7,8 @@ use HoltBosse\Alba\Core\Component;
 class StateButton extends Component {
     public ?string $itemId;
     public int $state;
-    public string $formAction;
+    public string $multiStateFormAction;
+    public string $dualStateFormAction;
     public ?array $states;
     public ?int $contentType;
 
@@ -19,7 +20,7 @@ class StateButton extends Component {
             <div class="center_state">
                 <input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $this->itemId; ?>'/>
                 <div class='<?php echo $this->states===NULL ? "" : "button state_button";?>'>
-                    <button <?php if($this->state==0 || $this->state==1) { echo "type='submit' formaction='$this->formAction' name='id[]' value='$this->itemId'"; } else { echo "style='pointer-events: none;'"; } ?> class="<?php echo $this->states===NULL ? "button" : "";?>">
+                    <button <?php if($this->state==0 || $this->state==1) { echo "type='submit' formaction='$this->dualStateFormAction' name='id[]' value='$this->itemId'"; } else { echo "style='pointer-events: none;'"; } ?> class="<?php echo $this->states===NULL ? "button" : "";?>">
                         <?php 
                             if ($this->state==1) { 
                                 echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
@@ -45,27 +46,27 @@ class StateButton extends Component {
                         <div class="navbar navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link"></a>
                             <div class="navbar-dropdown">
-                                <form action='<?php echo $this->formAction;?>' method="post">
+                                <form action='<?php echo $this->multiStateFormAction;?>' method="post">
                                     <input type='hidden' name='content_type' value='<?= $this->contentType;?>'/>
                                     <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $this->itemId; ?>'/>
-                                    <button type='submit' formaction='<?php echo $this->formAction;?>' name='togglestate[]' value='0' class="navbar-item">
+                                    <button type='submit' formaction='<?php echo $this->multiStateFormAction;?>' name='togglestate[]' value='0' class="navbar-item">
                                         <i class="state0 fas fa-times-circle" aria-hidden="true"></i>Unpublished
                                     </button>
                                 </form>
-                                <form action='<?php echo $this->formAction;?>' method="post">
+                                <form action='<?php echo $this->multiStateFormAction;?>' method="post">
                                     <input type='hidden' name='content_type' value='<?= $this->contentType;?>'/>
                                     <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $this->itemId; ?>'/>
-                                    <button type='submit' formaction='<?php echo $this->formAction;?>' name='togglestate[]' value='1' class="navbar-item">
+                                    <button type='submit' formaction='<?php echo $this->multiStateFormAction;?>' name='togglestate[]' value='1' class="navbar-item">
                                         <i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
                                     </button>
                                 </form>
                                 
                                 <hr class="dropdown-divider">
                                 <?php foreach($this->states as $stateDetails) { ?>
-                                    <form action='<?php echo $this->formAction;?>' method="post">
+                                    <form action='<?php echo $this->multiStateFormAction;?>' method="post">
                                         <input type='hidden' name='content_type' value='<?= $this->contentType;?>'/>
                                         <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $this->itemId; ?>'/>
-                                        <button type='submit' formaction='<?php echo $this->formAction;?>' name='togglestate[]' value='<?php echo $stateDetails->state; ?>' class="navbar-item">
+                                        <button type='submit' formaction='<?php echo $this->multiStateFormAction;?>' name='togglestate[]' value='<?php echo $stateDetails->state; ?>' class="navbar-item">
                                             <i style="color:<?php echo $stateDetails->color; ?>" class="fas fa-times-circle" aria-hidden="true"></i><?php echo $stateDetails->name; ?>
                                         </button>
                                     </form>
@@ -83,7 +84,8 @@ class StateButton extends Component {
 
         $this->itemId = $config->itemId ?? null;
         $this->state = $config->state ?? 0;
-        $this->formAction = $config->formAction ?? "";
+        $this->multiStateFormAction = $config->multiStateFormAction ?? "";
+        $this->dualStateFormAction = $config->dualStateFormAction ?? "";
         $this->states = $config->states ?? null;
         $this->contentType = $config->contentType ?? null;
 
