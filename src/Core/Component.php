@@ -125,7 +125,8 @@ class Component {
         (new StateButton())->loadFromConfig((object)[
             "itemId"=>$id,
             "state"=>$state,
-            "formAction"=>$_ENV["uripath"] . "/admin/" . $folder . "/action/togglestate",
+            "multiStateFormAction"=>$_ENV["uripath"] . "/admin/" . $folder . "/action/togglestate",
+            "duelStateFormAction"=>$_ENV["uripath"] . "/admin/" . $folder . "/action/toggle",
             "states"=>$states,
             "contentType"=>$type
         ])->display();
