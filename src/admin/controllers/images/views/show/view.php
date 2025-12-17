@@ -137,7 +137,13 @@ Use HoltBosse\Form\Input;
 				<?php $image_tags = Tag::get_tags_for_content($image->id); ?>
 				<div class="image_tags field is-grouped is-grouped-multiline">
 					<?php foreach ($image_tags as $tag):?>
-						<div class="control">
+						<?php
+							$style = "";
+							if($tag->domain !== null && $tag->domain != ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))) {
+								$style = "display: none !important;";
+							}
+						?>
+						<div class="control" style="<?php echo $style; ?>">
 							<div data-title="<?php echo Input::stringHtmlSafe($tag->title);?>" data-id="<?php echo $tag->id;?>" class="tags tag_id_<?php echo $tag->id;?> are-small has-addons">
 								<span class='tag is-light is-info'><?php echo Input::stringHtmlSafe($tag->title);?></span>
 								<a class="remove_tag tag_add tag is-delete is-warning"></a>

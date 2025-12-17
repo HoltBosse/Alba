@@ -35,6 +35,10 @@ $images_count = DB::fetch("SELECT count(*) as count " . $query, $params)->count;
 
 $image_tags = Content::get_applicable_tags(-1);
 
+$image_tags = array_values(array_filter($image_tags, function($tag) {
+    return ($tag->domain === null || $tag->domain == $_SESSION["current_domain"]) && $tag->state > 0;
+}));
+
 $filter = Input::getvar('filter',v::StringVal(),'');
 $autoclose = Input::getvar('autoclose',v::StringVal(),'');
 
