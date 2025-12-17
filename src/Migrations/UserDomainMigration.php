@@ -26,10 +26,16 @@ class UserDomainMigration extends Migration {
             DB::exec("ALTER TABLE `users` ADD `domain` INT NOT NULL default 0;");
             
             DB::exec("ALTER TABLE `users` DROP INDEX `email`;");
-            DB::exec("ALTER TABLE `users` DROP INDEX `username`;");
+            
+            $usernameIndex = DB::fetchAll("SHOW INDEX FROM `users` WHERE Key_name = 'username'");
+            if($usernameIndex) {
+                DB::exec("ALTER TABLE `users` DROP INDEX `username`;");
+            }
 
             DB::exec("ALTER TABLE `users` ADD UNIQUE KEY `email_domain` (`email`,`domain`);");
-            DB::exec("ALTER TABLE `users` ADD UNIQUE KEY `username_domain` (`username`,`domain`);");
+            if($usernameIndex) {
+                DB::exec("ALTER TABLE `users` ADD UNIQUE KEY `username_domain` (`username`,`domain`);");
+            }
 
             return new Message(true, MessageType::Success, "Users table updated.");
         }
