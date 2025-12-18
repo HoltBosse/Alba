@@ -31,12 +31,16 @@ class User {
 		$this->domain = null;
 	}
 
-	public static function create_new ($username, $password, $email, $groups=[], $state=0) {
+	public static function create_new ($username, $password, $email, $groups=[], $state=0, $domain=null) {
+		if(is_null($domain)) {
+			$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		}
+
 		if ($username && $email && $password) {
 			$hash = password_hash ($password, PASSWORD_DEFAULT);
-			$query = "INSERT INTO users (username, email, password, state) VALUES (?,?,?,?)";
+			$query = "INSERT INTO users (username, email, password, state, domain) VALUES (?,?,?,?,?)";
 			//CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
-			DB::exec($query, [$username,$email,$hash,$state]);
+			DB::exec($query, [$username,$email,$hash,$state,$domain]);
 			$id = DB::getLastInsertedId();
 			foreach ($groups as $group) {
 				if (is_int($group)) {
@@ -376,8 +380,8 @@ class User {
 			// insert new
 			try {
 				$result = DB::exec(
-					"INSERT INTO users (username,email,password) VALUES (?,?,?)",
-					[$this->username, $this->email, $this->password]
+					"INSERT INTO users (username,email,password,domain) VALUES (?,?,?,?)",
+					[$this->username, $this->email, $this->password, $this->domain]
 				);	
 			}
 			catch (PDOException $e) {
