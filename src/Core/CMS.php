@@ -264,7 +264,7 @@ final class CMS {
 		}
 		
 		foreach ($widgets as $widget) {
-			if ($widget->state>0) {
+			if ($widget->state>0 && (is_null($widget->domain) || $widget->domain==CMS::getDomainIndex($_SERVER["HTTP_HOST"]))) {
 				$type_info = Widget::get_widget_type($widget->type);
 				//CMS::pprint_r ($widget);
 				//CMS::pprint_r ($type_info);

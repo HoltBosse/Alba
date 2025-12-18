@@ -122,7 +122,7 @@ class Widget {
 	}
 
 	public static function get_widgets_for_position($page_id, $position) {
-		$query = 'SELECT id,title,type,state 
+		$query = 'SELECT * 
 		from widgets 
 		where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) 
 		and global_position=? and state>=0 ORDER BY ordering,id ASC';
@@ -156,7 +156,7 @@ class Widget {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
 		$widget_ids = DB::fetch("SELECT widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets ?? null; // csv
 		if ($widget_ids) {
-			$query = 'SELECT id,title,type,state 
+			$query = 'SELECT * 
 			from widgets 
 			where id in ('.$widget_ids.') and state>=0 
 			ORDER BY FIELD(id,'.$widget_ids.')';
