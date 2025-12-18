@@ -82,11 +82,21 @@ class Template {
 	}
 
 	static public function get_all_templates() {
-		return DB::fetchAll("SELECT * FROM templates");
+		return DB::fetchAll(
+			"SELECT * FROM templates WHERE (domain IS NULL OR domain=?)",
+			[$_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"])]
+		);
 	}
 
 	static public function get_default_template() {
-		$result = DB::fetch("SELECT * FROM templates WHERE is_default=1 LIMIT 1");
+		$result = DB::fetch(
+			"SELECT *
+			FROM templates
+			WHERE is_default=1
+			AND (domain IS NULL OR domain=?)
+			LIMIT 1",
+			[$_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"])]
+		);
 		if ($result) {
 			return new Template($result->id);
 		} else {
