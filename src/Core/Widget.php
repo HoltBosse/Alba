@@ -248,7 +248,7 @@ class Widget {
 		$options_json = json_encode($this->options);
 
 		//set the domain to current domain index
-		$domain = CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
 		
 		//if shared accross all domains

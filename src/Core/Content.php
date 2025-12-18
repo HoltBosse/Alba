@@ -322,7 +322,7 @@ class Content {
 
 		$content_location = $this->get_content_location($this->content_type);
 		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($content_location) . '/custom_fields.json');
-		$domain = CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
 		
 		//if shared accross all domains

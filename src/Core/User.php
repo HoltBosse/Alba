@@ -141,7 +141,7 @@ class User {
 		$this->groups = Input::getvar('groups',v::arrayType()->each(v::intVal()));
 		$this->tags = Input::getvar('tags',v::arrayType()->each(v::intVal()));
 		$this->state = Input::getvar('userstate',v::IntVal());
-		$this->domain = CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$this->domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		return true;
 	}
 
@@ -303,7 +303,7 @@ class User {
 	}
 
 	public function save() {
-		$domain = CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		
 		//run last
 		if($this->id && $this->domain!==null && $this->domain!==$domain) {
@@ -421,7 +421,7 @@ class User {
 
 	public static function get_all_groups(?int $domain=null) {
 		if($domain==null) {
-			$domain = CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+			$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
 
 		return DB::fetchAll("SELECT * FROM `groups` WHERE (domain IS NULL OR FIND_IN_SET(?, domain)) ORDER BY display ASC", [$domain]);
