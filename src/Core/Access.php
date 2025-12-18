@@ -110,7 +110,7 @@ class Access {
         if ($email && $password) {
             if ($loginUser->load_from_email($email, $domain)) {
                 if ($loginUser->state<1) {
-                    return new Message(false, MessageType::Danger, 'Incorrect email or password 1', $redirectPath);
+                    return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
                 }
 
                 //CMS::pprint_r($loginUser); die;
@@ -126,7 +126,7 @@ class Access {
                     }
                 }
                 if(!$canAccessOnDomain) {
-                    return new Message(false, MessageType::Danger, 'Incorrect email or password 2', $redirectPath);
+                    return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
                 }
 
                 // user exists, check password
@@ -136,10 +136,10 @@ class Access {
                     
                     return Access::onLoginSuccess($redirectPath);
                 } else {
-                    return new Message(false, MessageType::Danger, 'Incorrect email or password 3', $redirectPath);
+                    return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
                 }
             } else {
-                return new Message(false, MessageType::Danger, 'Incorrect email or password 4', $redirectPath);
+                return new Message(false, MessageType::Danger, 'Incorrect email or password', $redirectPath);
             }
         }
 
