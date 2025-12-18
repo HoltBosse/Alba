@@ -32,6 +32,9 @@ $all_groups = $user->get_all_groups();
 $all_templates = Template::get_all_templates();
 
 $all_content_types = Content::get_all_content_types();
+$all_content_types = array_values(array_filter($all_content_types, function($ct) {
+	return Content::isAccessibleOnDomain($ct->id, $_SESSION["current_domain"]);
+}));
 
 // todo: get default template as set by user instead of template 1
 $default_template = Template::get_default_template();
