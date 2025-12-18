@@ -188,7 +188,7 @@ class User {
 
 	public function load_from_email($email, ?int $domain=null) {
 		if($domain==null) {
-			$domain = CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+			$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
 
 		//echo "<h5>Loading user object from db with email {$email}</h5>";
