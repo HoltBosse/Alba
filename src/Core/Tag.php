@@ -135,7 +135,7 @@ class Tag {
 			$this->parent = 0;
 		}
 
-		$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$domain = CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
 		
 		//if shared accross all domains

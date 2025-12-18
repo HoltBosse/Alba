@@ -84,7 +84,7 @@ class Template {
 	static public function get_all_templates() {
 		return DB::fetchAll(
 			"SELECT * FROM templates WHERE (domain IS NULL OR domain=?)",
-			[$_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"])]
+			[CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])]
 		);
 	}
 
@@ -95,7 +95,7 @@ class Template {
 			WHERE is_default=1
 			AND (domain IS NULL OR domain=?)
 			LIMIT 1",
-			[$_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"])]
+			[CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])]
 		);
 		if ($result) {
 			return new Template($result->id);
