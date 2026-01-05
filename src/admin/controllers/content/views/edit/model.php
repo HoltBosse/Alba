@@ -156,7 +156,7 @@ if ($required_details_form->isSubmitted()) {
 }
 else {
 	// set category field content_type based on current new/edited content type
-	$required_details_form->getFieldByName('category')->content_type = $contentItem->content_type;
+	$required_details_form->getFieldByName('category')->content_type = $contentItem ? $contentItem->content_type : $content->content_type;
 	// set defaults if needed
 	if (!$new_content) {
 		$required_details_form->getFieldByName('state')->default = $contentItem->state;
