@@ -42,6 +42,6 @@ class TitleHeader extends Component {
 
         $this->classList[] = "addon_page_title_wrapper";
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

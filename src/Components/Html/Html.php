@@ -26,6 +26,6 @@ class Html extends Component {
         $this->html = $config->html ?? "";
         $this->wrap = $config->wrap ?? true;
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

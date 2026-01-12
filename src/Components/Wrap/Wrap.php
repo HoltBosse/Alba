@@ -22,6 +22,6 @@ class Wrap extends Component {
             $this->innerComponent = $config->innerComponent;
         }
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

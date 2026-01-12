@@ -29,6 +29,6 @@ class Collection extends Component {
             $this->items = $config->items;
         }
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

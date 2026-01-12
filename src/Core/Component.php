@@ -28,6 +28,13 @@ class Component {
         return $this;
     }
 
+    public function hookObjectIntance(): static {
+        $classChunks = explode("\\", $this::class);
+        $class = end($classChunks);
+
+        return Hook::execute_hook_filters(strtolower($class) . "_instance_created", $this);
+    }
+
     public function renderAttributes(): string {
         $attributesString = "";
         

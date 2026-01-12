@@ -89,6 +89,6 @@ class StateButton extends Component {
         $this->states = $config->states ?? null;
         $this->contentType = $config->contentType ?? null;
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

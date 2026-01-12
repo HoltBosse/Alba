@@ -47,6 +47,6 @@ class StateButtonGroup extends Component {
             $this->buttons = $config->buttons;
         }
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

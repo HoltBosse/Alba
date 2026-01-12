@@ -38,6 +38,6 @@ class ControlBar extends Component {
 
         $this->classList[] = "fixed-control-bar";
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

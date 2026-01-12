@@ -46,6 +46,6 @@ class ButtonToolBar extends Component {
 
         $this->classList[] = "addon_button_toolbar";
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }
