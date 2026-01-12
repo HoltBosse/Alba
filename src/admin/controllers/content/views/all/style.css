@@ -224,3 +224,9 @@ th:has(input[value="desc"]:checked) i.fas.fa-sort-down {
         }
     }
 }
+
+#search_form {
+    div.field:has(#category), div.field:has(#creator) {
+        grid-column: span 2;
+    }
+}

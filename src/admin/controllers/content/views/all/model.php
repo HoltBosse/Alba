@@ -1,15 +1,15 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, JSON, Controller, Configuration, Tag, Content, ContentSearch};
+Use HoltBosse\Alba\Core\{CMS, JSON, Controller, Configuration, Tag, Content, ContentSearch, Form, Hook, HookQueryResult};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
 $segments = CMS::Instance()->uri_segments;
 $search = Input::getvar('search',v::StringVal(),null);
-$filters = Input::tuplesToAssoc( Input::getvar('filters',v::AlwaysValid(),null) );
+//$filters = Input::tuplesToAssoc( Input::getvar('filters',v::AlwaysValid(),null) );
 // make sure coretags getvar returns empty array PHP 8+ in_array required haystack to be array
-$coretags = Input::getvar('coretags',v::arrayType()->each(v::intVal()),[]);
+$coretags = Input::getvar('tagged',v::arrayType()->each(v::intVal()),[]);
 
 $content_type_filter = null;
 if (sizeof($segments)>3) {
@@ -32,55 +32,122 @@ if(!$contentTypeTableRecord) {
 $custom_fields = false; //i have no idea why this exists, moved from below
 $location = Content::get_content_location($content_type_filter);
 $custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
+$applicable_tags = Tag::get_tags_available_for_content_type ($content_type_filter);
+$applicable_users = DB::fetchAll('SELECT id,username FROM users WHERE domain=? ORDER BY username ASC', [$_SESSION["current_domain"]]);
+$applicable_categories = DB::fetchAll('SELECT * FROM categories WHERE content_type=? AND (domain=? OR domain IS NULL) ORDER BY title ASC', [$content_type_filter, $_SESSION["current_domain"]]);
+
+$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+
+$searchFormObject->fields[] = (object) [
+	"type"=>"Html",
+	"html"=>"<div style='display: flex; gap: 1rem;'>
+				<button class='button is-info' type='submit'>Submit</button>
+				<button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
+			</div>"
+];
+
+$searchFormObject = Hook::execute_hook_filters('admin_search_form_object', $searchFormObject);
+
+$tagFieldOptions = array_map(Function($i) {
+	return (object) [
+		"text"=>$i->title,
+		"value"=>$i->id,
+	];
+}, $applicable_tags);
+$searchFormObject->fields[4]->select_options = $tagFieldOptions;
+
+$userFieldsOptions = array_map(Function($i) {
+	return (object) [
+		"text"=>$i->username,
+		"value"=>$i->id,
+	];
+}, $applicable_users);
+$searchFormObject->fields[3]->select_options = $userFieldsOptions;
+
+$categoryFieldOptions = array_map(Function($i) {
+	return (object) [
+		"text"=>$i->title,
+		"value"=>$i->id,
+	];
+}, $applicable_categories);
+$searchFormObject->fields[2]->select_options = $categoryFieldOptions;
+
+$stateFieldOptions = array_map(Function($i) {
+	return (object) [
+		"text"=>$i->name,
+		"value"=>$i->state,
+	];
+}, $custom_fields->states ?? []);
+$searchFormObject->fields[1]->select_options = array_merge($searchFormObject->fields[1]->select_options, $stateFieldOptions);
+
+$searchForm = new Form($searchFormObject);
+
+if($searchForm->isSubmitted()) {
+	$searchForm->setFromSubmit();
+}
 
 $cur_page = Input::getvar('page',v::IntVal(),'1');
 
 $all_content_types = Content::get_all_content_types();
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
-
-// start new content search class call - experimental
-$content_search = new ContentSearch();
-$content_search->searchtext = $search;
-$content_search->type_filter = $content_type_filter;
-$content_search->page = $cur_page;
-
 $domain = $_SESSION["current_domain"];
-/* if(isset($custom_fields->multi_domain_shared_instances) && $custom_fields->multi_domain_shared_instances===true) {
-	$domain = null;
-} */
 
-//even if in shared mode, specific domain view as the search looks for null (all domains) or specific domain
-$content_search->domain = $domain;
+$queryResult = Hook::execute_hook_filters('admin_search_form_results', (new HookQueryResult($searchForm, null, null, $cur_page)));
 
-foreach($_GET as $key=>$value) {
-	if(str_contains($key, "_order") && ($value=="asc" || $value=="desc")) {
-		$content_search->order_by = str_replace("_order", "", $key);
-		if($value=="asc") {
-			$content_search->order_direction = "ASC";
+if($queryResult->results !== null && $queryResult->totalCount !== null) {
+	$all_content = $queryResult->results;
+	$content_count = $queryResult->totalCount;
+} else {
+	// start new content search class call
+	$content_search = new ContentSearch();
+	$content_search->searchtext = $search;
+	$content_search->type_filter = $content_type_filter;
+	$content_search->page = $cur_page;
+	
+	//even if in shared mode, specific domain view as the search looks for null (all domains) or specific domain
+	$content_search->domain = $domain;
+	
+	foreach($_GET as $key=>$value) {
+		if(str_contains($key, "_order") && ($value=="asc" || $value=="desc")) {
+			$content_search->order_by = str_replace("_order", "", $key);
+			if($value=="asc") {
+				$content_search->order_direction = "ASC";
+			}
+			//is desc by default
 		}
-		//is desc by default
 	}
-}
-
-if ($filters) {
-	$content_search->filters = $filters;
-	if($filters["state"]) {
-		$content_search->disable_builtin_state_check = true;
+	
+	$state = Input::getVar("state", v::IntVal(), null);
+	$category = Input::getVar("category", v::IntVal(), null);
+	$creator = Input::getVar("creator", v::IntVal(), null);
+	
+	$filters = [];
+	if($state !== null) {
+		$filters["state"] = $state;
 	}
+	if($category !== null) {
+		$filters["category"] = $category;
+	}
+	if($creator !== null) {
+		$filters["created_by"] = $creator;
+	}
+	
+	if (sizeof($filters) > 0) {
+		$content_search->filters = $filters;
+		if($filters["state"]) {
+			$content_search->disable_builtin_state_check = true;
+		}
+	}
+	if ($coretags) {
+		$content_search->tags = $coretags;
+	}
+	$all_content = $content_search->exec();
+	$content_count = $content_search->get_count();
+	
+	// end new content search class
 }
-if ($coretags) {
-	$content_search->tags = $coretags;
-}
-$all_content = $content_search->exec();
-$content_count = $content_search->get_count();
-
-// end new conten search class - experimental
 
 // get filter values for dropdowns etc
-
-$applicable_users = DB::fetchAll('SELECT id,username FROM users WHERE domain=? ORDER BY username ASC', [$_SESSION["current_domain"]]);
-$applicable_categories = DB::fetchAll('SELECT * FROM categories WHERE content_type=? AND (domain=? OR domain IS NULL) ORDER BY title ASC', [$content_type_filter, $_SESSION["current_domain"]]);
-$applicable_tags = Tag::get_tags_available_for_content_type ($content_type_filter);
 
 // handle custom optional listing on content specific 'all' view
 
