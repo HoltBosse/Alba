@@ -11,10 +11,6 @@ class Image extends Component {
     public ?int $fixedHeight = null;
     public ?int $quality = null;
     public ?string $fmt = null;
-    /* private static $image_sizes = [
-		"thumb"=>200,
-		"web"=>1920
-	]; */
 
     public function display(): void {
         ?>
