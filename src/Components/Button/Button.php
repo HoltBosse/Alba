@@ -35,6 +35,6 @@ class Button extends Component {
             $this->type = $config->type;
         }
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

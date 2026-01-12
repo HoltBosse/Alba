@@ -91,8 +91,6 @@ CMS::Instance()->editing_content = $content;
 $custom_fields = json_decode(file_get_contents(Content::getContentControllerPath($content->content_location) . "/custom_fields.json"));
 $required_details_obj = json_decode(file_get_contents(__DIR__ . '/required_fields_form.json'));
 
-$required_details_obj = Hook::execute_hook_filters('content_required_details_form_obj', $required_details_obj);
-
 foreach($required_details_obj->fields as $field) {
 	if($field->name == "state") {
 		foreach($custom_fields->states as $state) {
@@ -106,6 +104,8 @@ foreach($required_details_obj->fields as $field) {
 		$field->content_type = $content_type;
 	}
 }
+
+$required_details_obj = Hook::execute_hook_filters('content_required_details_form_obj', $required_details_obj);
 
 // prep forms
 $required_details_form = new Form($required_details_obj);

@@ -82,6 +82,6 @@ class Pagination extends Component {
             $this->currentPage = $config->currentPage;
         }
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }

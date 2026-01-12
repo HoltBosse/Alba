@@ -79,6 +79,6 @@ class Nav extends Component {
         $this->navigation = $config->navigation ?? [];
         $this->navigation = Hook::execute_hook_filters('render_admin_nav', $this->navigation);
 
-        return $this;
+        return $this->hookObjectIntance();
     }
 }
