@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, Content, File};
+Use HoltBosse\Alba\Core\{CMS, Configuration, Content, File, Hook, Form};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
@@ -8,6 +8,23 @@ Use Respect\Validation\Validator as v;
 $segments = CMS::Instance()->uri_segments;
 if(sizeof($segments)>2) {
     CMS::raise_404();
+}
+
+$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject->fields[] = (object) [
+	"type"=>"Html",
+	"html"=>"<div style='display: flex; gap: 1rem;'>
+				<button class='button is-info' type='submit'>Submit</button>
+				<button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
+			</div>"
+];
+
+$searchFormObject = Hook::execute_hook_filters('admin_search_form_object', $searchFormObject);
+
+$searchForm = new Form($searchFormObject);
+
+if($searchForm->isSubmitted()) {
+	$searchForm->setFromSubmit();
 }
 
 $valid_image_types = [];

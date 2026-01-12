@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, Actions};
+Use HoltBosse\Alba\Core\{CMS, Configuration, Actions, Hook};
 Use HoltBosse\Form\Form;
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
@@ -19,6 +19,9 @@ $search_form_object->fields[] = (object) [
                 <button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
             </div>"
 ];
+
+$search_form_object = Hook::execute_hook_filters('admin_search_form_object', $search_form_object);
+
 $search_form = new Form($search_form_object);
 
 if($search_form->isSubmitted()) {

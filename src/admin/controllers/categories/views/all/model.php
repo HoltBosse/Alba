@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Category, Content};
+Use HoltBosse\Alba\Core\{CMS, Category, Content, Hook, Form, HookQueryResult};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
@@ -18,7 +18,38 @@ if($content_type_filter < -3 || $content_type_filter > $max_content_id) {
 	CMS::show_error("Invalid content type", 404);
 }
 
-$all_categories = Category::get_all_categories_by_depth($content_type_filter);
+$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject->fields[] = (object) [
+	"type"=>"Html",
+	"html"=>"<div style='display: flex; gap: 1rem;'>
+				<button class='button is-info' type='submit'>Submit</button>
+				<button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
+			</div>"
+];
+
+$searchFormObject = Hook::execute_hook_filters('admin_search_form_object', $searchFormObject);
+
+$searchForm = new Form($searchFormObject);
+
+if($searchForm->isSubmitted()) {
+	$searchForm->setFromSubmit();
+}
+
+$queryResult = Hook::execute_hook_filters('admin_search_form_results', (new HookQueryResult($searchForm)));
+
+if($queryResult->results !== null && $queryResult->totalCount !== null) {
+	$all_categories = $queryResult->results;
+} else {
+	$all_categories = Category::get_all_categories_by_depth($content_type_filter);
+
+	$all_categories = array_values(array_filter($all_categories, function($category) use ($search) {
+		if($search === null) {
+			return true;
+		}
+		return (str_contains($category->title,$search));
+	})); //filter categories by search term if provided
+}
+
 $all_content_types = Content::get_all_content_types();
 
 $contentTypeDomainCache = [];

@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, DataExport};
+Use HoltBosse\Alba\Core\{CMS, Configuration, DataExport, Hook, HookQueryResult};
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
@@ -37,7 +37,7 @@ $formSelectOptions = array_values(array_filter($formSelectOptions, function($inp
     return $input !== null;
 }));
 
-$searchFieldsObject = json_decode(file_get_contents(__DIR__ . "/search_fields.json"));
+$searchFieldsObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
 $searchFieldsObject->fields[0]->select_options = $formSelectOptions;
 // @phpstan-ignore-next-line
 if(Input::getVar("form", v::StringVal(), null)==null && $searchFieldsObject->fields[0]->select_options[0]) {
@@ -50,6 +50,9 @@ $searchFieldsObject->fields[] = (object) [
                 <button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
             </div>"
 ];
+
+$searchFieldsObject = Hook::execute_hook_filters('admin_search_form_object', $searchFieldsObject);
+
 $searchFieldsForm = new Form($searchFieldsObject);
 
 $query = "SELECT * FROM form_submissions WHERE 1";

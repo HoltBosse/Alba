@@ -34,104 +34,10 @@ Use HoltBosse\Form\Input;
 	Component::addon_page_title($header, null, $rightContent);
 ?>
 
-<form id='searchform' action="" method="GET" style="margin: 0;">
-	<div id='content_search_controls' class='flex'>
-
-		<div class="field">
-			<label class="label">Search Name/Email</label>
-			<div class="control">
-				<input value="<?php echo Input::StringHtmlSafe($search); ?>" name="search" form="searchform" class="input" type="text" placeholder="">
-			</div>
-		</div>
-
-		<div class='field'>
-			<label class="label">State</label>
-			<div class='control'>
-				<div class="select">
-					<input type='hidden' name='filters[2][key]' value='state' form='searchform'/>
-					<select name="filters[2][value]" form="searchform">
-						<option value=''>State</option>
-						<option <?php if (isset($filters["state"]) && $filters['state']==='1') { echo " selected "; }?> value='1'>Enabled</option>
-						<option <?php if (isset($filters["state"]) && $filters['state']==='2') { echo " selected "; }?> value='2'>Enabled - Pwd Reset Req</option>
-						<option <?php if (isset($filters["state"]) && $filters['state']==='0') { echo " selected "; }?> value='0'>Disabled</option>
-						<option <?php if (isset($filters["state"]) && $filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
-						<?php
-							if($states!==NULL) {
-								foreach($states as $state) {
-									$selected = $filters['state']==$state->state ? "selected" : "";
-									echo "<option $selected value='$state->state'>$state->name</option>";
-								}
-							}
-						?>
-					</select>
-				</div>
-			</div>
-		</div>
-
-		<?php
-			$groupFieldOptions = array_map(Function($i) {
-				return (object) [
-					"text"=>$i->display,
-					"value"=>$i->id,
-				];
-			}, $all_groups);
-
-			$groupField = new Field_Select();
-			$groupField->loadFromConfig((object) [
-				"name"=>"groups",
-				"id"=>"user_search_groups",
-				"label"=>"Group",
-				"multiple"=>"true",
-				"slimselect"=>"true",
-				"form"=>"searchform",
-				"select_options"=>$groupFieldOptions,
-				"default"=>json_encode($groups),
-			]);
-			$groupField->display();
-
-
-
-			$tagFieldOptions = array_map(Function($i) {
-				return (object) [
-					"text"=>$i->title,
-					"value"=>$i->id,
-				];
-			}, $applicable_tags);
-
-			$tagField = new Field_Select();
-			$tagField->loadFromConfig((object) [
-				"name"=>"coretags",
-				"id"=>"content_search_tags",
-				"label"=>"Tagged",
-				"multiple"=>"true",
-				"slimselect"=>"true",
-				"form"=>"searchform",
-				"select_options"=>$tagFieldOptions,
-				"default"=>json_encode($coretags),
-			]);
-			$tagField->display();
-		?>
-
-		<?php Hook::execute_hook_actions('render_custom_user_search_filters'); ?>
-		
-		<div class='field'>
-			<label class="label">&nbsp;</label>
-			<div class='control'>
-				<button form="searchform" type="submit" class="button is-info">
-					Search
-				</button>
-			</div>
-		</div>
-
-		<div class='field'>
-			<label class="label">&nbsp;</label>
-			<div class='control'>
-				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0]; return false;' class="button is-default">
-					Clear
-				</button>
-			</div>
-		</div>
-	</div>
+<form style="margin-bottom: 0;">
+	<?php
+		$searchForm->display();
+	?>
 </form>
 
 <form action='' method='post' name='user_action' id='user_action_form'>

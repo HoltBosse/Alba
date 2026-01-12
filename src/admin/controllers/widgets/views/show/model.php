@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Template, Content, Widget};
+Use HoltBosse\Alba\Core\{CMS, Template, Content, Widget, Hook, HookQueryResult};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Form;
 Use HoltBosse\Form\Input;
@@ -33,7 +33,7 @@ if(!is_numeric($widget_type_id)) {
 						
 						return (object) [
 							"text"=>$input->title,
-							"value"=>$input->location
+							"value"=>$input->id
 						];
 					} else {
 						return null;
@@ -45,6 +45,9 @@ if(!is_numeric($widget_type_id)) {
 				return !is_null($input);
 			}
 		),
+		"filter"=>[
+			"IntVal"=>[]
+		]
 	];
 }
 $searchFormObject->fields[] = (object) [
@@ -54,53 +57,64 @@ $searchFormObject->fields[] = (object) [
 				<button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
 			</div>"
 ];
+
+$searchFormObject = Hook::execute_hook_filters('admin_search_form_object', $searchFormObject);
+
 $searchForm = new Form($searchFormObject);
 
 if($searchForm->isSubmitted()) {
 	$searchForm->setFromSubmit();
 }
 
-$widget_type_title="";
-if ($widget_type_id && is_numeric($widget_type_id)) {
-	$widget_type_title = DB::fetch('SELECT title FROM widget_types WHERE id=?', [$widget_type_id])->title;
+//it is expected that this hook will return * from the respective table in queryResult->results
+$queryResult = Hook::execute_hook_filters('admin_search_form_results', (new HookQueryResult($searchForm)));
+
+if($queryResult->results !== null && $queryResult->totalCount !== null) {
+	$all_widgets = $queryResult->results;
+} else {
+	$widget_type_title="";
+	if ($widget_type_id && is_numeric($widget_type_id)) {
+		$widget_type_title = DB::fetch('SELECT title FROM widget_types WHERE id=?', [$widget_type_id])->title;
+	}
+	
+	$query = 'SELECT w.* FROM widgets w LEFT JOIN widget_types wt ON w.type=wt.id WHERE w.state>=0 AND (domain IS NULL OR domain=?)';
+	$params = [$_SESSION["current_domain"]];
+	
+	if(is_numeric($widget_type_id)) {
+		$query .= " AND w.type=?";
+		$params[] = $widget_type_id;
+	}
+	
+	$searchState = Input::getVar("state", v::numericVal(), null);
+	if($searchState) {
+		$query .= " AND w.state=?";
+		$params[] = $searchState;
+	}
+	
+	$searchTitle = Input::getVar("title", v::stringType()->length(1, null), null);
+	if($searchTitle) {
+		$query .= " AND w.title like ?";
+		$params[] = "%{$searchTitle}%";
+	}
+	
+	$searchType = Input::getVar("widget_type", v::stringType()->length(1, null), null);
+	if($searchType) {
+		$query .= " AND wt.id=?";
+		$params[] = $searchType;
+	}
+	
+	$searchPage = Input::getVar("page", v::numericVal(), null);
+	if($searchPage) {
+		$query .= " AND ((FIND_IN_SET(?, w.page_list) AND w.position_control=0) OR (NOT FIND_IN_SET(?, w.page_list) AND w.position_control=1))";
+		$params[] = $searchPage;
+		$params[] = $searchPage;
+	}
+	
+	$query .= ' ORDER BY id DESC';
+	
+	$all_widgets = DB::fetchAll($query, $params);
 }
 
-$query = 'SELECT w.* FROM widgets w LEFT JOIN widget_types wt ON w.type=wt.id WHERE w.state>=0 AND (domain IS NULL OR domain=?)';
-$params = [$_SESSION["current_domain"]];
-
-if(is_numeric($widget_type_id)) {
-	$query .= " AND w.type=?";
-	$params[] = $widget_type_id;
-}
-
-$searchState = Input::getVar("state", v::numericVal(), null);
-if($searchState) {
-	$query .= " AND w.state=?";
-	$params[] = $searchState;
-}
-
-$searchTitle = Input::getVar("title", v::stringType()->length(1, null), null);
-if($searchTitle) {
-	$query .= " AND w.title like ?";
-	$params[] = "%{$searchTitle}%";
-}
-
-$searchType = Input::getVar("widget_type", v::stringType()->length(1, null), null);
-if($searchType) {
-	$query .= " AND wt.location=?";
-	$params[] = $searchType;
-}
-
-$searchPage = Input::getVar("page", v::numericVal(), null);
-if($searchPage) {
-	$query .= " AND ((FIND_IN_SET(?, w.page_list) AND w.position_control=0) OR (NOT FIND_IN_SET(?, w.page_list) AND w.position_control=1))";
-	$params[] = $searchPage;
-	$params[] = $searchPage;
-}
-
-$query .= ' ORDER BY id DESC';
-
-$all_widgets = DB::fetchAll($query, $params);
 
 $contentTypeDomainCache = [];
 $all_widgets = array_filter($all_widgets, function($widget) use (&$contentTypeDomainCache) {
