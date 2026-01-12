@@ -23,31 +23,10 @@ Use HoltBosse\Form\Input;
 
 <section>
 
-	<form id="searchform" method="GET">
-		<div id="content_search_controls" class="flex">
-			<div class="field">
-				<label class="label">Search Title/Alt/Filename</label>
-				<div class="control">
-					<input value="<?=input::StringHtmlSafe($searchtext)?>" name="searchtext" form="searchform" class="input" type="text" placeholder="">
-				</div>
-			</div>
-			<div class="field">
-				<label class="label">&nbsp;</label>
-				<div class="control">
-					<button form="searchform" type="submit" class="button is-info">
-						Search
-					</button>
-				</div>
-			</div>
-			<div class="field">
-				<label class="label">&nbsp;</label>
-				<div class="control">
-					<button form="searchform" type="button" value="" onclick="window.location = window.location.href.split(&quot;?&quot;)[0]; return false;" class="button is-default">
-						Clear
-					</button>
-				</div>
-			</div>
-		</div>
+	<form style="margin-bottom: 0;">
+		<?php
+			$searchForm->display();
+		?>
 	</form>
 </section>
 

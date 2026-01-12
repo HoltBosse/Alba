@@ -7,8 +7,6 @@
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
 </style>
 
-<form id='searchform' action="" method="GET"></form>
-
 <?php
 	ob_start();
 	if ($content_type_filter) {
@@ -50,21 +48,11 @@
 	Component::addon_page_title($header, null, $rightContent);
 ?>
 
-	<div class="field has-addons">
-		<div class="control">
-			<input value="<?php echo Input::stringHtmlSafe($search); ?>" name="search" form="searchform" class="input" type="text" placeholder="Search title/note">
-		</div>
-		<div class="control">
-			<button form="searchform" type="submit" class="button is-info">
-			Search
-			</button>
-		</div>
-		<div class="control">
-			<button form="searchform" type="button" value="" onclick="window.location = window.location.href.split(&quot;?&quot;)[0]; return false;" class="button is-default">
-				Clear
-			</button>
-		</div>
-	</div>
+<form style="margin-bottom: 0;">
+	<?php
+		$searchForm->display();
+	?>
+</form>
 
 <form action='' method='post' name='content_action' id='content_action_form'>
 <input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
@@ -86,13 +74,6 @@
 		</thead>
 		<tbody>
 			<?php foreach ($all_categories as $content_item):?>
-				<?php if ($search) {
-					if (stripos($content_item->title,$search)===false) {
-						// skip, nothing matching 
-						continue;
-					}
-				}
-				?>
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<?php

@@ -3,9 +3,9 @@
     "fields": [
       {
         "type": "Text",
-        "label": "Search Title",
-        "name": "title",
-        "id": "title",
+        "label": "Search URL/Note",
+        "name": "search",
+        "id": "search",
         "filter":{
           "StringVal": [],
           "Length": [0, null]
@@ -25,19 +25,12 @@
           {
             "text": "Unpublished",
             "value": "0"
+          },
+          {
+            "text": "Deleted",
+            "value": "-1"
           }
         ],
-        "filter":{
-          "IntVal": []
-        }
-      },
-      {
-        "label":"Page Selection",
-        "name":"page",
-        "id":"page",
-        "type":"PageSelect",
-        "required":false,
-        "placeholder": "all",
         "filter":{
           "IntVal": []
         }

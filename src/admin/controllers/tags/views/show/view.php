@@ -8,42 +8,18 @@ Use HoltBosse\Form\Input;
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
 </style>
 
-<form id='searchform' action="" method="GET"></form>
-
 <?php
 	$header = "All Tags";
 	$rightContent = "<a class='pull-right button is-primary' href='" . $_ENV["uripath"] ."/admin/tags/edit/new'>New Tag</a>";
 	Component::addon_page_title($header, null, $rightContent);
 ?>
 
-	<div id='tag_search_controls' class='flex'>
+<form style="margin-bottom: 0;">
+	<?php
+		$searchForm->display();
+	?>
+</form>
 
-		<div class="field">
-			<label class="label">Search Title/Note</label>
-			<div class="control">
-				<input value="<?php echo Input::StringHtmlSafe($search); ?>" name="search" form="searchform" class="input" type="text" placeholder="">
-			</div>
-		</div>
-
-		<div class='field'>
-			<label class="label">&nbsp;</label>
-			<div class='control'>
-				<button form="searchform" type="submit" class="button is-info">
-					Search
-				</button>
-			</div>
-		</div>
-
-		<div class='field'>
-			<label class="label">&nbsp;</label>
-			<div class='control'>
-				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0]; return false;' class="button is-default">
-					Clear
-				</button>
-			</div>
-		</div>
-
-	</div>
 <form action='' method='post' name='tag_action' id='tag_action_form'>
 	<?php
 		$addonButtonGroupArgs = ["tag_operations", "tags"];
@@ -56,13 +32,6 @@ Use HoltBosse\Form\Input;
 		</thead>
 		<tbody>
 		<?php foreach ($all_tags as $tag):?>
-			<?php if ($search) {
-				if (stripos($tag->title,$search)===false && stripos($tag->note,$search)===false) {
-					// skip, nothing matching 
-					continue;
-				}
-			}
-			?>
 			<tr class='tag_admin_row'>
 				<td>
 					<?php

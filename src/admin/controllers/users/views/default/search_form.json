@@ -1,0 +1,65 @@
+{
+    "id": "search_form",
+    "fields": [
+      {
+        "type": "Text",
+        "label": "Search Name/Email",
+        "name": "search",
+        "id": "search",
+        "filter":{
+          "StringVal": [],
+          "Length": [0, null]
+        }
+      },
+      {
+        "type": "Select",
+        "label": "State",
+        "name": "state",
+        "id": "state",
+        "placeholder": "State",
+        "select_options": [
+          {
+            "text": "Enabled",
+            "value": "1"
+          },
+          {
+            "text": "Enabled - Pwd Reset Req",
+            "value": "2"
+          },
+          {
+            "text": "Disabled",
+            "value": "0"
+          },
+          {
+            "text": "Deleted",
+            "value": "-1"
+          }
+        ],
+        "filter":{
+          "IntVal": []
+        }
+      },
+      {
+        "type": "Select",
+        "label": "Group",
+        "name": "grouped",
+        "id": "grouped",
+        "slimselect": true,
+        "multiple": true,
+        "filter":{
+          "ArrayType": []
+        }
+      },
+      {
+        "type": "Select",
+        "label": "Tagged",
+        "name": "tagged",
+        "id": "tagged",
+        "slimselect": true,
+        "multiple": true,
+        "filter":{
+          "ArrayType": []
+        }
+      }
+    ]
+  }

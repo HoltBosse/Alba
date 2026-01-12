@@ -1,15 +1,41 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Tag};
+Use HoltBosse\Alba\Core\{CMS, Tag, Hook, HookQueryResult, Form};
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
-//$all_tags = Tag::get_all_tags();
+$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject->fields[] = (object) [
+	"type"=>"Html",
+	"html"=>"<div style='display: flex; gap: 1rem;'>
+				<button class='button is-info' type='submit'>Submit</button>
+				<button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
+			</div>"
+];
 
-$all_tags = Tag::get_all_tags_by_depth();
-$search = Input::getvar('search',v::StringVal(),null);
+$searchFormObject = Hook::execute_hook_filters('admin_search_form_object', $searchFormObject);
 
-//CMS::pprint_r($all_tags);
+$searchForm = new Form($searchFormObject);
+
+if($searchForm->isSubmitted()) {
+	$searchForm->setFromSubmit();
+}
+
+$queryResult = Hook::execute_hook_filters('admin_search_form_results', (new HookQueryResult($searchForm)));
+
+if($queryResult->results !== null && $queryResult->totalCount !== null) {
+	$all_tags = $queryResult->results;
+} else {
+    $all_tags = Tag::get_all_tags_by_depth();
+
+    $search = Input::getvar('search',v::StringVal(),null);
+    $all_tags = array_values(array_filter($all_tags, function($tag) use ($search) {
+        if($search === null) {
+            return true;
+        }
+        return (str_contains($tag->title,$search) || str_contains($tag->note,$search));
+    })); //filter tags by search term if provided
+}
 
 $all_tags = array_values(array_filter($all_tags, function($tag) {
     return ($tag->domain === null || $tag->domain === $_SESSION["current_domain"]);

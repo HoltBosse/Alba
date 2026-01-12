@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, User, UserSearch, Tag};
+Use HoltBosse\Alba\Core\{CMS, Configuration, User, UserSearch, Tag, Hook, Form, HookQueryResult};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
@@ -19,63 +19,110 @@ if (sizeof($segments)==2) {
 }
 
 $user = new User();
-
-/* if ($group_id) {
-    $all_users = $user->get_all_users_in_group($group_id);
-}
-else {
-    $all_users = $user->get_all_users();
-} */
-
-// new user search - based on improved content search
-
-$search = Input::getvar('search',v::StringVal(),null);
-$filters = Input::tuplesToAssoc( Input::getvar('filters',v::AlwaysValid(),null) );
-$coretags = Input::getvar('coretags',v::arrayType()->each(v::intVal()),[]);
-$groups = Input::getvar('groups',v::arrayType()->each(v::intVal()),[]); 
-$cur_page = Input::getvar('page',v::IntVal(),'1');
-
-$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
-
-// start new content search class call - experimental
-$user_search = new UserSearch();
-$user_search->searchtext = $search;
-$user_search->page = $cur_page;
-
-$domain = $_SESSION["current_domain"];
-
-//even if in shared mode, specific domain view as the search looks for null (all domains) or specific domain
-$user_search->domain = $domain;
+$all_groups = User::get_all_groups();
 
 $applicable_tags = Tag::get_tags_available_for_content_type (-2); // -2 = user content type
 $applicable_tags = array_values(array_filter($applicable_tags, function($tag) {
 	return ($tag->domain === null || $tag->domain === $_SESSION["current_domain"]);
 }));
-$all_groups = User::get_all_groups();
-if ($groups) {
-	$user_search->groups = $groups;
-}
-if ($filters) {
-	$user_search->filters = $filters;
-	if($filters["state"]) {
-		$user_search->disable_builtin_state_check = true;
-	}
-}
-if ($coretags) {
-	$user_search->tags = $coretags;
-}
 
-$all_users = $user_search->exec();
-$user_count = $user_search->get_count();
+$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
 
 $states = NULL;
-$content_list_fields = [];
-$customUserFieldsLookup = [];
 if(isset($_ENV["custom_user_fields_file_path"])) {
 	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
 	if($formObject->states) {
 		$states = $formObject->states;
 	}
+}
+if(!is_null($states)) {
+	$stateOptions = array_map(Function($i) {
+		return (object) [
+			"text"=>$i->name,
+			"value"=>$i->state,
+		];
+	}, $states);
+	$searchFormObject->fields[1]->select_options = array_merge($searchFormObject->fields[1]->select_options, $stateOptions);
+}
+
+$groupFieldOptions = array_map(Function($i) {
+	return (object) [
+		"text"=>$i->display,
+		"value"=>$i->id,
+	];
+}, $all_groups);
+$searchFormObject->fields[2]->select_options = $groupFieldOptions;
+
+$tagFieldOptions = array_map(Function($i) {
+	return (object) [
+		"text"=>$i->title,
+		"value"=>$i->id,
+	];
+}, $applicable_tags);
+$searchFormObject->fields[3]->select_options = $tagFieldOptions;
+
+$searchFormObject->fields[] = (object) [
+	"type"=>"Html",
+	"html"=>"<div style='display: flex; gap: 1rem;'>
+				<button class='button is-info' type='submit'>Submit</button>
+				<button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
+			</div>"
+];
+
+$searchFormObject = Hook::execute_hook_filters('admin_search_form_object', $searchFormObject);
+
+$searchForm = new Form($searchFormObject);
+
+if($searchForm->isSubmitted()) {
+	$searchForm->setFromSubmit();
+}
+
+$cur_page = Input::getvar('page',v::IntVal(),'1');
+$pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size');
+$domain = $_SESSION["current_domain"];
+
+$queryResult = Hook::execute_hook_filters('admin_search_form_results', (new HookQueryResult($searchForm, null, null, $cur_page)));
+
+if($queryResult->results !== null && $queryResult->totalCount !== null) {
+	$all_users = $queryResult->results;
+	$user_count = $queryResult->totalCount;
+} else {
+	// new user search - based on improved content search
+	$search = Input::getvar('search',v::StringVal(),null);
+	$state = Input::getvar('state',v::IntVal(),null);
+	$coretags = Input::getvar('tagged',v::arrayType()->each(v::intVal()),[]);
+	$groups = Input::getvar('grouped',v::arrayType()->each(v::intVal()),[]); 
+	
+	// start new content search class call - experimental
+	$user_search = new UserSearch();
+	$user_search->searchtext = $search;
+	$user_search->page = $cur_page;
+	
+	//even if in shared mode, specific domain view as the search looks for null (all domains) or specific domain
+	$user_search->domain = $domain;
+	
+	if ($groups) {
+		$user_search->groups = $groups;
+	}
+	if (!is_null($state)) {
+		$user_search->filters = [ "state" => $state ];
+	
+		$user_search->disable_builtin_state_check = true;
+	
+	}
+	if ($coretags) {
+		$user_search->tags = $coretags;
+	}
+	
+	$all_users = $user_search->exec();
+	$user_count = $user_search->get_count();
+}
+
+
+$content_list_fields = [];
+$customUserFieldsLookup = [];
+if(isset($_ENV["custom_user_fields_file_path"])) {
+	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
 
 	if (property_exists($formObject,'list')) {
 		foreach ($formObject->list as $fieldName) {

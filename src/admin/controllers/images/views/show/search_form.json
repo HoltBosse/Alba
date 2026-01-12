@@ -1,0 +1,15 @@
+{
+  "id": "search_form",
+  "fields": [
+    {
+      "type": "Text",
+      "label": "Search Title/Note",
+      "name": "searchtext",
+      "id": "searchtext",
+      "filter":{
+        "StringVal": [],
+        "Length": [0, null]
+      }
+    }
+  ]
+}

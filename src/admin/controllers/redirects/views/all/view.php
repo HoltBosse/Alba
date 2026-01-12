@@ -10,62 +10,16 @@ Use HoltBosse\DB\DB;
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
 </style>
 
-<form id='searchform' action="" method="GET"></form>
-
 <?php
 	$rightContent = "<a class='is-primary pull-right button btn' href='" . $_ENV["uripath"] . "/admin/redirects/edit/new'>New Redirect</a>";
 	Component::addon_page_title("Redirects", null, $rightContent);
 ?>
 
-	<div id='content_search_controls' class='flex'>
-
-		<div class="field">
-			<label class="label">Search URL/Note</label>
-			<div class="control">
-				<input value="<?php echo Input::StringHtmlSafe($search); ?>" name="search" form="searchform" class="input" type="text" placeholder="">
-			</div>
-		</div>
-
-		<div class='field'>
-			<label class="label">State</label>
-			<div class='control'>
-				<div class="select">
-					<input type='hidden' name='filters[2][key]' value='state' form='searchform'/>
-					<select name="filters[2][value]" form="searchform">
-						<option value=''>State</option>
-						<option <?php if (isset($filters['state']) && $filters['state']==='1') { echo " selected "; }?> value='1'>Published</option>
-						<option <?php if (isset($filters['state']) && $filters['state']==='0') { echo " selected "; }?> value='0'>Unpublished</option>
-						<option <?php if (isset($filters['state']) && $filters['state']==='-1') { echo " selected "; }?> value='-1'>Deleted</option>
-						<?php
-							foreach($custom_fields->states as $state) {
-								echo "<option " . ($filters['state']==$state->state ? "selected" : false) . " value='$state->state'>" . ucwords($state->name) . "</option>";
-							}
-						?>
-					</select>
-				</div>
-			</div>
-		</div>
-		
-		<div class='field'>
-			<label class="label">&nbsp;</label>
-			<div class='control'>
-				<button form="searchform" type="submit" class="button is-info">
-					Search
-				</button>
-			</div>
-		</div>
-
-		<div class='field'>
-			<label class="label">&nbsp;</label>
-			<div class='control'>
-				<button form="searchform" type="button" value="" onclick='window.location = window.location.href.split("?")[0]; return false;' class="button is-default">
-					Clear
-				</button>
-			</div>
-		</div>
-
-		
-	</div>
+<form style="margin-bottom: 0;">
+	<?php
+		$searchForm->display();
+	?>
+</form>
 
 <form action='' method='post' name='redirect_action' id='redirect_action_form'>
 

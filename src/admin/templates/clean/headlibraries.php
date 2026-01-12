@@ -9,6 +9,7 @@
     <?php
         echo file_get_contents(__DIR__ . "/css/dashboard.css");
         echo file_get_contents(__DIR__ . "/css/layout.css");
+        echo file_get_contents(__DIR__ . "/css/searchform.css");
         echo file_get_contents(__DIR__ . "/css/darkmode.css");
 
         if($_ENV["admin_show_ids_in_tables"]==="true") {
