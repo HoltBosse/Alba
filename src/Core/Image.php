@@ -69,7 +69,7 @@ class Image {
             }
         }
 
-        $imageCompontent = (new ComponentImage())->loadFromConfig((object)[
+        $imageComponent = (new ComponentImage())->loadFromConfig((object)[
             "imageId"=>$this->id,
             "fixedWidth"=>$w,
             "quality"=>$q,
@@ -85,11 +85,11 @@ class Image {
         ]);
 
         if ($output_immediately) {
-            $imageCompontent->display();
+            $imageComponent->display();
         }
         else {
             ob_start();
-            $imageCompontent->display();
+            $imageComponent->display();
             $markup = ob_get_clean();
 
             return $markup;
