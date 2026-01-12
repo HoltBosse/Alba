@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\DB\DB;
 Use \Exception;
+Use HoltBosse\Alba\Components\Image\Image as ComponentImage;
 
 class Image {
 	public $id;
@@ -34,6 +35,7 @@ class Image {
         }       
     }
     
+    #[\Deprecated(message: "use new oop component", since: "3.20.0")]
     public function render($size="", $class="", $output_immediately=true, $attributes=[]) {
         // size and class used in v <= 2.4.77
         // $w attribute supercedes $size
@@ -67,19 +69,29 @@ class Image {
             }
         }
 
-        // build url
-        $url_domain_path = $_ENV["uripath"] . "/image/" . $this->id . "?";
-        $url_params = [];
-        if ($w) {$url_params['w'] = $w; }
-        if ($q) {$url_params['q'] = $q; }
-        if ($fmt) {$url_params['fmt'] = $fmt; }
-        $url_params_string = http_build_query($url_params);
-        $url = $url_domain_path . $url_params_string;
-        $markup = "<img decode='async' width='{$width_param}' height='{$height_param}' loading='{$loading}' class='rendered_img {$class}' src='".$url."' alt='{$this->alt}' title='{$this->title}'/>";
+        $imageCompontent = (new ComponentImage())->loadFromConfig((object)[
+            "imageId"=>$this->id,
+            "fixedWidth"=>$w,
+            "quality"=>$q,
+            "fmt"=>$fmt,
+            "classList"=>explode(" ", trim($class)),
+            "attributes"=>[
+                "width"=>$width_param,
+                "height"=>$height_param,
+                "loading"=>$loading,
+                "alt"=>$this->alt,
+                "title"=>$this->title
+            ]
+        ]);
+
         if ($output_immediately) {
-            echo $markup;
+            $imageCompontent->display();
         }
         else {
+            ob_start();
+            $imageCompontent->display();
+            $markup = ob_get_clean();
+
             return $markup;
         }
     }
