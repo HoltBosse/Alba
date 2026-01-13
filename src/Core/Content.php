@@ -574,7 +574,7 @@ class Content {
 		}
 	}
 
-	public static function get_all_content_for_id (int $id, int $content_type): object {
+	public static function get_all_content_for_id (int $id, int $content_type) {
 		$table = Content::get_table_name_for_content_type($content_type);
 		return DB::fetch("SELECT * from `{$table}` where id=?", [$id]);
 	}
