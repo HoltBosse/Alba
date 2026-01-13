@@ -579,20 +579,11 @@ class Content {
 		return DB::fetch("SELECT * from `{$table}` where id=?", [$id]);
 	}
 
-	public static function get_table_name($content_id) {
-		$location = Content::get_content_location($content_id);
-		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
-		$table_name = "controller_" . $custom_fields->id ;
-		if ($table_name=="controller_") {
-			return false;
-		}
-		else {
-			return $table_name;
-		}
+	#[\Deprecated(message: "get_table_name_for_content_type", since: "3.20.0")]
+	public static function get_table_name(int $content_type_id) {
+		return Content::get_table_name_for_content_type($content_type_id);
 	}
 
-
-	//exists for legacy compat, please use new content_search for new code instead of this
 	#[\Deprecated(message: "use ContentSearch instead", since: "3.0.0")]
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
 		//add inputed filters, and then if id is present, add that to filters as well
