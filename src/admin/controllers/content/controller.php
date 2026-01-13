@@ -142,8 +142,8 @@ foreach ($all_content_types as $content_type) {
 		CMS::show_error('Unable to determine table name for content id ' . $content_type->id);
 	}
 	else {
-		$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{$table_name}'";
-		$cols = DB::fetchAll($query, [], ["mode"=>PDO::FETCH_COLUMN]);
+		$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{$table_name}' AND TABLE_SCHEMA = ?";
+		$cols = DB::fetchAll($query, [$_ENV["dbname"]], ["mode"=>PDO::FETCH_COLUMN]);
 		foreach ($custom_fields->fields as $f) {
 			if (!in_array($f->name, $cols)) {
 				// check if column is saveable

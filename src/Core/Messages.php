@@ -74,7 +74,7 @@ class Messages {
 		}
 
 		//get server messages - check that the table exists, else the install page will not be able to load
-		if(DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'messages' LIMIT 1")) {
+		if(DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'messages' AND TABLE_SCHEMA = ? LIMIT 1", [$_ENV["dbname"]])) {
 			$messages = DB::fetchAll("SELECT * FROM messages WHERE userid=? AND state=1", CMS::Instance()->user->id);
 			if(sizeof($messages) > 0) {
 				foreach($messages as $item) {

@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RedirectsTableMigration extends Migration {
     public function isNeeded(): Message {
         if($this->status == null) {
-            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'redirects' LIMIT 1");
+            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'redirects' AND TABLE_SCHEMA = ? LIMIT 1", [$_ENV["dbname"]]);
             if(!$result) {
                 $this->status = new Message(false, MessageType::Warning, "Tag table missing parent column");
             } else {

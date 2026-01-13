@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FormInstancesTableMigration extends Migration {
     public function isNeeded(): Message {
         if($this->status == null) {
-            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'form_instances' LIMIT 1");
+            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'form_instances' AND TABLE_SCHEMA = ? LIMIT 1", [$_ENV["dbname"]]);
             if(!$result) {
                 $this->status = new Message(false, MessageType::Warning, "Form Instances table missing");
             } else {

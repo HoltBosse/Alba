@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class MessagesTableMigration extends Migration {
     public function isNeeded(): Message {
         if($this->status == null) {
-            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'messages' LIMIT 1");
+            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'messages' AND TABLE_SCHEMA = ? LIMIT 1", [$_ENV["dbname"]]);
             if(!$result) {
                 $this->status = new Message(false, MessageType::Warning, "Messages table missing");
             } else {

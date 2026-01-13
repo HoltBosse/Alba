@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class TagCategoryMigration extends Migration {
     public function isNeeded(): Message {
         if($this->status == null) {
-            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'category'");
+            $result = DB::fetchAll("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'tags' AND COLUMN_NAME = 'category' AND TABLE_SCHEMA = ?", [$_ENV["dbname"]]);
             if(!$result) {
                 $this->status = new Message(false, MessageType::Warning, "Tag table missing category column");
             } else {

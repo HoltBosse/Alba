@@ -30,8 +30,8 @@ if (!$flat_custom_user_fields_table_exists) {
 $custom_fields = isset($_ENV["custom_user_fields_file_path"]) ? JSON::load_obj_from_file($_ENV["custom_user_fields_file_path"]) : null;
 if ($custom_fields) {
 	$cols_added = [];
-	$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'custom_user_fields'";
-	$cols = DB::fetchAll($query, [], ["mode"=>PDO::FETCH_COLUMN]);
+	$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'custom_user_fields' AND TABLE_SCHEMA = ?";
+	$cols = DB::fetchAll($query, [$_ENV["dbname"]], ["mode"=>PDO::FETCH_COLUMN]);
 	foreach ($custom_fields->fields as $f) {
 		if (!in_array($f->name, $cols)) {
 			// check if column is saveable
