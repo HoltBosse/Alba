@@ -574,42 +574,9 @@ class Content {
 		}
 	}
 
-	public static function get_all_content_for_id ($id, $content_type) {
-		// accept content id, return object with all named required fields (title, state) etc
-		// determine content type and parse content type custom_fields json
-		// obtain all content_fields for content and store in custom_fields object property
-		// loop over parsed json and create object properties starting with f_ (same as returned by get_all_content function)
-		// if no matched data from content_fields found, populate with default value from form
-		// - function is useful for complex content types that have not been 'fixed' (may have missing content_fields in DB)
-		// - todo: decide if it's worthwhile to also include in returned object all fields in db, not just those required by json form?
-
-		// NOW requires content_type since id is not unique - same id can exist in multiple content tables
-		
-		$location = Content::get_content_location($content_type);
-		$custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
-		$table_name = "controller_" . $custom_fields->id ;
-		$result = DB::fetch("SELECT * FROM `{$table_name}` WHERE id=?", [$id]);
-
-		// check if default needs to be filled in for any custom fields
-		foreach ($custom_fields->fields as $f) {
-			if (property_exists($f,'save')) {
-				if ($f->save===false) {
-					// skip if save property is false - assume any other value or save property missing indicates saveable value
-					continue;
-				}
-			}
-			// saveable field
-			// check if has content or we need to sub our default from json
-			$cur_val = $f->name ?? null;
-			if (!$cur_val) {
-				// not found, use default from form if exists
-				if (property_exists($f,'default')) {
-					$result->{$f->name} = $f->default;
-				}
-			}
-		}
-		return $result;
-		
+	public static function get_all_content_for_id (int $id, int $content_type): object {
+		$table = Content::get_table_name_for_content_type($content_type);
+		return DB::fetch("SELECT * from `{$table}` where id=?", [$id]);
 	}
 
 	public static function get_table_name($content_id) {
