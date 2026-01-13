@@ -8,7 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 //we explicitly do not use cms content registered types since this can be run outside of cms context
 class ContentDomainMigration extends Migration {
     private function getContentTables(): array {
-        $tables = DB::fetchAll("SELECT * FROM information_schema.tables WHERE table_name REGEXP '^controller_.*'");
+        $tables = DB::fetchAll("SELECT * FROM information_schema.tables WHERE table_name REGEXP '^controller_.*' AND TABLE_SCHEMA = ?", [$_ENV["dbname"]]);
         $tableNames = [];
         foreach($tables as $table) {
             $tableNames[] = $table->TABLE_NAME;
