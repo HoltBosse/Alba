@@ -4,58 +4,27 @@ namespace HoltBosse\Alba\Core;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
-Use \stdClass;
+use stdClass;
 
-class Mail {
-	private $to;
-	public $subject;
-	public $html;
-	public $text;
-	private $bcc;
-	private $cc;
-	public $attachments;
+class Mail extends PHPMailer {
+	private $legacy_to = false;
+	public $subject = false;
+	public $html = "";
+	public $text = "";
 
-	public function __construct() {
-		$this->to = [];
-		$this->subject = false;
-		$this->html = "";
-		$this->text = "";
-		$this->cc = [];
-		$this->bcc = [];
-		$this->attachments = [];
+	public function __construct($exceptions = true) {
+		parent::__construct($exceptions);
 	}
 
-	public function addAddress($address, $name=false) {
-		$add = new stdClass();
-		$add->address = $address;
-		$add->name = $name;
-		$this->to[] = $add;
+	// Legacy API: store addresses for backwards compatibility
+	public function addAddress($address, $name='') {
+		$this->legacy_to[] = true;
+		return parent::addAddress($address, $name);
 	}
 
-	public function addBCC($address, $name=false) {
-		$add = new stdClass();
-		$add->address = $address;
-		$add->name = $name;
-		$this->bcc[] = $add;
-	}
-
-	public function addCC($address, $name=false) {
-		$add = new stdClass();
-		$add->address = $address;
-		$add->name = $name;
-		$this->cc[] = $add;
-	}
-
-	public function addAttachment($attachment, $name=false) {
-		$add = new stdClass();
-		$add->attachment = $attachment;
-		$add->name = $name;
-		$this->attachments[] = $add;
-	}
-
+	// Keep legacy send() behaviour while leveraging PHPMailer internals
 	public function send() {
-
-		if (!$this->to || !$this->subject || !$this->html) {
+		if (!$this->legacy_to || !$this->subject || !$this->html) {
 			throw new Exception('No to, subject, or content provided to send email');
 		}
 
@@ -68,8 +37,7 @@ class Mail {
 		$encryption = Configuration::get_configuration_value ('general_options', 'encryption');
 		$authenticate = Configuration::get_configuration_value ('general_options', 'authenticate');
 		if ($encryption=="none") {
-			// ssl/tls already match constants in PHPMailer
-			$encryption=false; // set to false to $mail->SMTPSecure;
+			$encryption=false;
 			$port = false;
 		}
 		if ($encryption=="tls") {
@@ -79,86 +47,34 @@ class Mail {
 			$port=465;
 		}
 
-					
-
-		
-		// setup PHPMailer
-		//Instantiation and passing `true` enables exceptions
-		$mail = new PHPMailer(true);
-
-
 		try {
-			//Server settings
-			$mail->SMTPDebug = 0;                      //Enable verbose debug output with SMTP::DEBUG_SERVER
-			$mail->isSMTP();                                            //Send using SMTP
-			$mail->Host       = $smtp_server;                     //Set the SMTP server to send through
-			$mail->SMTPAuth   = $authenticate==true;                                   //Enable SMTP authentication if required
-			$mail->Username   = $smtp_username;                     //SMTP username
-			$mail->Password   = $smtp_password;  	 //SMTP password
-			$mail->SMTPSecure = $encryption;         //Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-			$mail->Port       = $port;                                    //TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
-			//Recipients
-			$mail->setFrom($smtp_from, $smtp_name);
-			$mail->addReplyTo($smtp_replyto, $smtp_name);
-			// To
-			foreach ($this->to as $add) {
-				if ($add->name) {
-					$mail->addAddress($add->address, $add->name);
-				}
-				else {
-					$mail->addAddress($add->address);
-				}
-			}
-			// CC
-			foreach ($this->cc as $add) {
-				if ($add->name) {
-					$mail->addCC($add->address, $add->name);
-				}
-				else {
-					$mail->addCC($add->address);
-				}
-			}
-			// BCC
-			foreach ($this->bcc as $add) {
-				if ($add->name) {
-					$mail->addBCC($add->address, $add->name);
-				}
-				else {
-					$mail->addBCC($add->address);
-				}
-			}
-			// attachments
-			foreach ($this->attachments as $add) {
-				if ($add->name) {
-					$mail->addAttachment($add->attachment, $add->name);
-				}
-				else {
-					$mail->addAttachment($add->attachment);
-				}
-			}
-		
-			//Content
-			$mail->isHTML(true);                                  //Set email format to HTML
-			$mail->Subject = $this->subject;
-			$mail->Body    = $this->html;
-			$mail->AltBody = $this->text ? $this->text : strip_tags($this->html);
+			// Configure PHPMailer (this)
+			$this->SMTPDebug = 0;
+			$this->isSMTP();
+			$this->Host = $smtp_server;
+			$this->SMTPAuth = $authenticate==true;
+			$this->Username = $smtp_username;
+			$this->Password = $smtp_password;
+			$this->SMTPSecure = $encryption;
+			$this->Port = $port;
+			$this->setFrom($smtp_from, $smtp_name);
+			$this->addReplyTo($smtp_replyto, $smtp_name);
 
-			$sent = $mail->send();
+			$this->isHTML(true);
+			$this->Subject = $this->subject;
+			$this->Body = $this->html;
+			$this->AltBody = $this->text ? $this->text : strip_tags($this->html);
 
-			if ($sent) {
-				return true;
-			} 
-			else {
-				return false;
-			}
+			$sent = parent::send();
 
-		} 
-		catch (Exception $e) {
-			CMS::log('Could not send email: ' . $mail->ErrorInfo);
+			return (bool) $sent;
+		} catch (Exception $e) {
+			CMS::log('Could not send email: ' . $this->ErrorInfo);
 			return false;
 		}
 	}
 
+	#[\Deprecated(message: "stop using this please", since: "3.0.0")]
 	public static function is_available() {
 		return true;
 	}
