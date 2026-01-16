@@ -18,7 +18,7 @@ class Mail extends PHPMailer {
 
 	// Legacy API: store addresses for backwards compatibility
 	public function addAddress($address, $name='') {
-		$this->legacy_to[] = true;
+		$this->legacy_to = true;
 		return parent::addAddress($address, $name);
 	}
 
