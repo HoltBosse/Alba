@@ -12,7 +12,7 @@ if(sizeof($segments)>0 && !CMS::isAdminController($segments[0])) {
 }
 
 if(Input::getvar('current_domain',v::intVal()) !== null) {
-	$_SESSION["current_domain"] = Input::getvar('current_domain');
+	$_SESSION["current_domain"] = (int) Input::getvar('current_domain');
 	header("Location: " . $_SERVER["SCRIPT_URL"]);
 	die();
 }
