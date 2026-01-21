@@ -1,7 +1,7 @@
 <?php
 
-Use HoltBosse\Alba\Core\{Component, Tag};
-Use HoltBosse\Form\Input;
+Use HoltBosse\Alba\Core\{Component, Tag, CMS};
+Use HoltBosse\Form\{Input, Form};
 
 ?>
 <style>
@@ -28,11 +28,21 @@ Use HoltBosse\Form\Input;
 
 	<table class='table'>
 		<thead>
-			<tr><th>State</th><th>Title</th><th>Available To Use On</th><th>Category</th><th>Front-End</th><th>Note</th>
+			<tr>
+				<th>State</th><th>Title</th>
+				<?php
+					if($content_list_fields) {
+						foreach($content_list_fields as $field) {
+							echo "<th>" . Input::stringHtmlSafe($field->label) . "</th>";
+						}
+					}
+				?>
+				<th>Available To Use On</th><th>Category</th><th>Front-End</th><th>Note</th>
+			</tr>
 		</thead>
 		<tbody>
 		<?php foreach ($all_tags as $tag):?>
-			<tr class='tag_admin_row'>
+			<tr class='tag_admin_row' data-itemid="<?php echo $tag->id;?>">
 				<td>
 					<?php
 						$customStates = [];
@@ -55,6 +65,26 @@ Use HoltBosse\Form\Input;
 					?>
 					<a href="<?php echo $_ENV["uripath"]; ?>/admin/tags/edit/<?php echo $tag->id;?>"><?php echo Input::stringHtmlSafe($tag->title); ?></a>
 				</td>
+
+				<?php if ($content_list_fields):?>
+						<?php
+							$customFieldsDataValues = $tag->custom_fields!="" ? json_decode($tag->custom_fields ?? "[]") : [];
+							$customFieldsDataValuesNormalized = array_combine(array_column($customFieldsDataValues, 'name'), array_column($customFieldsDataValues, 'value'));
+						?>
+						<?php foreach ($content_list_fields as $content_list_field):?>
+							<td dataset-name="<?php echo $content_list_field->label; ?>"><?php 
+								$propname = "{$content_list_field->name}"; 
+								$classname = Form::getFieldClass($content_list_field->type);
+								$curfield = new $classname();
+								$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
+								$curfield->default = $customFieldsDataValuesNormalized[$propname] ?? null; // set temp field value to current stored value
+								// TODO: pass precalc array of table names for content types to aid in performance of lookups 
+								// some fields will currently parse json config files to determine tables to query for friendly values
+								// PER row/field. not ideal.
+								echo $curfield->getFriendlyValue($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
+								?></td>
+						<?php endforeach; ?>
+					<?php endif; ?>
 			
 				<td class='usage'>
 				
