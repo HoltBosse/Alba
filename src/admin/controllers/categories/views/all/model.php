@@ -55,7 +55,11 @@ $all_content_types = Content::get_all_content_types();
 $contentTypeDomainCache = [];
 $all_categories = array_filter($all_categories, function($category) use (&$contentTypeDomainCache) {
 	if(!isset($contentTypeDomainCache[$category->content_type])) {
-		$contentTypeDomainCache[$category->content_type] = Content::isAccessibleOnDomain($category->content_type, $_SESSION["current_domain"]);
+		if($category->content_type > 0) {
+			$contentTypeDomainCache[$category->content_type] = Content::isAccessibleOnDomain($category->content_type, $_SESSION["current_domain"]);
+		} else {
+			$contentTypeDomainCache[$category->content_type] = true;
+		}
 	}
 
 	return $contentTypeDomainCache[$category->content_type] != false;
