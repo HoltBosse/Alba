@@ -4,7 +4,7 @@ on: [push]
  
 jobs:
   ci:
-    runs-on: ubuntu-latest-slim
+    runs-on: ubuntu-slim
  
     steps:
       - name: Checkout
