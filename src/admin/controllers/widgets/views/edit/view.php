@@ -4,6 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, Widget, Component};
 Use HoltBosse\Form\Form;
 Use HoltBosse\Form\Input;
 Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 ?>
 
@@ -30,12 +31,14 @@ Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 <h5 class='title'>Options</h5>
 
 <?php 
-$widget_options_form->display();
-$widget->render_custom_backend();
+	$widget_options_form->display();
+	$widget->render_custom_backend();
+
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
+
 ?>
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
 
 <hr>
 <h6 class='title'>Position Options</h6>

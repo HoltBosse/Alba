@@ -1,21 +1,18 @@
 <?php
+	Use HoltBosse\Alba\Core\{Component, Content, Page, Template};
+	Use HoltBosse\Form\{Input};
+	Use HoltBosse\DB\DB;
+	Use HoltBosse\Alba\Components\StateButton\StateButton;
+	Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
-Use HoltBosse\Alba\Core\{Component, Content, Page, Template};
-Use HoltBosse\Form\{Input};
-Use HoltBosse\DB\DB;
-Use HoltBosse\Alba\Components\StateButton\StateButton;
-Use HoltBosse\Alba\Components\Html\Html;
-Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
-Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
-Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
 
-?>
-
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
-
-<?php
 	$header = "All Pages";
 	$rightContent = "<a href='" . $_ENV["uripath"] . "/admin/pages/edit/0' class='button is-primary pull-right'>
 			<span class='icon is-small'>

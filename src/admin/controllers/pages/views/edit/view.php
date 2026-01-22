@@ -1,21 +1,19 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Config, Component, Content, Page, Template};
-Use HoltBosse\DB\DB;
-Use HoltBosse\Form\{Form, Input};
-Use HoltBosse\Form\Fields\Input\Input as Field_Text;
-Use HoltBosse\Form\Fields\Select\Select as Field_Select;
-Use Respect\Validation\Validator as v;
-Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
-Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Core\{CMS, Config, Component, Content, Page, Template};
+	Use HoltBosse\DB\DB;
+	Use HoltBosse\Form\{Form, Input};
+	Use HoltBosse\Form\Fields\Input\Input as Field_Text;
+	Use HoltBosse\Form\Fields\Select\Select as Field_Select;
+	Use Respect\Validation\Validator as v;
+	Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+	Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
-?>
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
 
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
-
-<?php
 //CMS::pprint_r ($page);
 ?>
 <h1 class='title is-1'>

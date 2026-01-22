@@ -1,16 +1,17 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Content, Hook, Component};
-Use HoltBosse\Form\{Form, Input};
-Use HoltBosse\DB\DB;
-Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
-Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Core\{CMS, Content, Hook, Component};
+	Use HoltBosse\Form\{Form, Input};
+	Use HoltBosse\DB\DB;
+	Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+	Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
+
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
 
 ?>
-
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
 
 <?php if ($new_content):?>
 	<h1 class='title'>New Content</h1>

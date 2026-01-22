@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{Content, Component};
 Use HoltBosse\Form\Input;
 Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 //CMS::pprint_r ($cat);
 ?>
@@ -32,13 +33,11 @@ Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
 <hr>
 
-
-
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
-
 <?php
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
+
 	(new AdminControlBar())->loadFromConfig((object)[])->display();
 ?>
 </form>

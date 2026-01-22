@@ -1,25 +1,26 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Tag, Component, Content};
-Use HoltBosse\Form\{Input, Form};
-Use HoltBosse\DB\DB;
-Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+	Use HoltBosse\Alba\Core\{CMS, Tag, Component, Content};
+	Use HoltBosse\Form\{Input, Form};
+	Use HoltBosse\DB\DB;
+	Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
-//terrible hack to hide inaccessible content types from the content type selector, but keep them there so that they get saved properly
-echo "<style>";
-	$contentTypes = DB::fetchAll("SELECT * FROM content_types");
-	foreach($contentTypes as $ct) {
-		if(Content::isAccessibleOnDomain($ct->id, $_SESSION["current_domain"])) {
-			continue;
-		}
-
-		echo "
-			label.checkbox[data-contenttype-id='$ct->id'] {
-				display: none;
+	//terrible hack to hide inaccessible content types from the content type selector, but keep them there so that they get saved properly
+	echo "<style>";
+		$contentTypes = DB::fetchAll("SELECT * FROM content_types");
+		foreach($contentTypes as $ct) {
+			if(Content::isAccessibleOnDomain($ct->id, $_SESSION["current_domain"])) {
+				continue;
 			}
-		";
-	}
-echo "</style>";
+
+			echo "
+				label.checkbox[data-contenttype-id='$ct->id'] {
+					display: none;
+				}
+			";
+		}
+	echo "</style>";
 
 ?>
 
@@ -47,9 +48,11 @@ echo "</style>";
 <hr>
 
 
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
+<?php
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
+?>
 
 <?php (new AdminControlBar())->loadFromConfig((object)[])->display(); ?>
 </form>
