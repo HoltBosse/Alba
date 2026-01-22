@@ -1,7 +1,8 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Plugin, Component};
-Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+	Use HoltBosse\Alba\Core\{CMS, Plugin, Component};
+	Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 ?>
 
@@ -17,14 +18,12 @@ Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 <h5 class='is-5 title'>Plugin Options</h5>
 
 <?php 
-$plugin_options_form->display();
+	$plugin_options_form->display();
 
-?>
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
 
-<?php
 	(new AdminControlBar())->loadFromConfig((object)[])->display();
 ?>
 </form>

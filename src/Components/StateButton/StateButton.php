@@ -3,6 +3,7 @@
 namespace HoltBosse\Alba\Components\StateButton;
 
 use HoltBosse\Alba\Core\Component;
+use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class StateButton extends Component {
     public ?string $itemId;
@@ -13,10 +14,11 @@ class StateButton extends Component {
     public ?int $contentType;
 
     public function display(): void {
+        (new CssFile())->loadFromConfig((object)[
+            "filePath"=>__DIR__ . "/style.css",
+            "injectIntoHead"=>false,
+        ])->display();
         ?>
-            <style>
-                <?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-            </style>
             <div class="center_state">
                 <input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $this->itemId; ?>'/>
                 <div class='<?php echo $this->states===NULL ? "" : "button state_button";?>'>

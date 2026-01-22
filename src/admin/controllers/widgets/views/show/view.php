@@ -1,19 +1,18 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Component, Hook, Page, Widget};
-Use HoltBosse\Form\Input;
-Use HoltBosse\Alba\Components\StateButton\StateButton;
-Use HoltBosse\Alba\Components\Html\Html;
-Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
-Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
-Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Core\{CMS, Component, Hook, Page, Widget};
+	Use HoltBosse\Form\Input;
+	Use HoltBosse\Alba\Components\StateButton\StateButton;
+	Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
-?>
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
 
-<?php
 	ob_start();
 	if ($widget_type_id) {
 ?>

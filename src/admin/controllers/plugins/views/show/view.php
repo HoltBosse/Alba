@@ -1,18 +1,17 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Component, JSON, Plugin};
-Use HoltBosse\Alba\Components\StateButton\StateButton;
-Use HoltBosse\Alba\Components\Html\Html;
-Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
-Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
-Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Core\{CMS, Component, JSON, Plugin};
+	Use HoltBosse\Alba\Components\StateButton\StateButton;
+	Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
-?>
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
 
-<?php
 	(new TitleHeader())->loadFromConfig((object)[
 		"header"=>"Plugins",
 	])->display();

@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Components\TitleHeader;
 
 use HoltBosse\Alba\Core\Component;
 use HoltBosse\Form\Input;
+use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class TitleHeader extends Component {
     public string $header;
@@ -11,10 +12,11 @@ class TitleHeader extends Component {
     public ?Component $rightContent;
 
     public function display(): void {
+        (new CssFile())->loadFromConfig((object)[
+            "filePath"=>__DIR__ . "/style.css",
+            "injectIntoHead"=>false,
+        ])->display();
         ?>
-            <style>
-                <?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-            </style>
             <div <?php echo $this->renderAttributes(); ?>>
                 <div>
                     <h1 class="title is-1"><?php echo Input::stringHtmlSafe($this->header); ?></h1>

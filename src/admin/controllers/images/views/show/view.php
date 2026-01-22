@@ -3,6 +3,8 @@
 Use HoltBosse\Alba\Core\{CMS, Tag, Component};
 Use HoltBosse\Form\Input;
 Use HoltBosse\Alba\Components\Pagination\Pagination;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 ?>
 
@@ -96,9 +98,11 @@ Use HoltBosse\Alba\Components\Pagination\Pagination;
 
 <?php endif; ?>
 
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
+<?php
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
+?>
 
 
 <?php if (!$filter=='upload'):?>

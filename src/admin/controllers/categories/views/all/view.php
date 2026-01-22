@@ -6,13 +6,14 @@
 	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
 	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 ?>
 
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
-
 <?php
+	(new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
+
 	ob_start();
 	if ($content_type_filter) {
 ?>

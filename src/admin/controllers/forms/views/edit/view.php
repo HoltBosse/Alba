@@ -1,11 +1,12 @@
 <?php
     use HoltBosse\Alba\Core\{CMS, Component};
     use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
-?>
+    use HoltBosse\Alba\Components\CssFile\CssFile;
 
-<style>
-    <?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-</style>
+    (new CssFile())->loadFromConfig((object)[
+		"filePath"=>__DIR__ . "/style.css",
+	])->display();
+?>
 
 <form action="" method="post">
 
