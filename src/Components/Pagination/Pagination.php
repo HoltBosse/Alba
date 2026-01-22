@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Components\Pagination;
 
 use HoltBosse\Alba\Core\Component;
 use HoltBosse\Alba\Core\CMS;
+use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class Pagination extends Component {
     public int $itemCount = 0;
@@ -27,9 +28,12 @@ class Pagination extends Component {
         ?>
 
         <?php if ($this->itemCount>$this->itemsPerPage):?>
-            <style>
-                <?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-            </style>
+            <?php
+                (new CssFile())->loadFromConfig((object)[
+                    "filePath"=>__DIR__ . "/style.css",
+                    "injectIntoHead"=>false,
+                ])->display();    
+            ?>
             <nav <?php echo $this->renderAttributes(); ?>>
                 <ul class="pagination-list small-pagination-list">
                     <?php

@@ -1,5 +1,6 @@
 <?php
 	Use HoltBosse\Alba\Core\CMS;
+	Use HoltBosse\Alba\Components\CssFile\CssFile;
 ?>
 
 <!DOCTYPE html>
@@ -10,9 +11,12 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<!--CMSHEAD-->
 	
-	<style>
-		<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-	</style>
+	<?php
+		(new CssFile())->loadFromConfig((object)[
+			"filePath"=>__DIR__ . "/style.css",
+			"injectIntoHead"=>false,
+		])->display();
+	?>
 </head>
 <body>
 	<nav>

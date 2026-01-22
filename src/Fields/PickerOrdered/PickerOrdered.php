@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Fields\PickerOrdered;
 
 Use HoltBosse\Form\{Field, Input};
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class PickerOrdered extends Field {
 
@@ -19,10 +20,12 @@ class PickerOrdered extends Field {
             echo "<div class='control'>";
 
 			$loaded_lis = "";
+
+			(new CssFile())->loadFromConfig((object)[
+				"filePath"=>__DIR__ . "/style.css",
+				"injectIntoHead"=>false,
+			])->display();
                 ?>
-                <style>
-                    <?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-                </style>
                 
                 <hr>
                 <h5 class="title"><?php echo $this->label;?></h5>

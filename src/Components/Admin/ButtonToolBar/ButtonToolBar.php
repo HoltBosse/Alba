@@ -4,16 +4,18 @@ namespace HoltBosse\Alba\Components\Admin\ButtonToolBar;
 
 use HoltBosse\Alba\Core\Component;
 use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup;
+use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class ButtonToolBar extends Component {
     public StateButtonGroup $stateButtonGroup;
     public Component $leftContent;
 
     public function display(): void {
+        (new CssFile())->loadFromConfig((object)[
+            "filePath"=>__DIR__ . "/style.css",
+            "injectIntoHead"=>false,
+        ])->display();
         ?>
-            <style>
-                <?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-            </style>
             <script>
                 document.addEventListener("adminRowSelected", (e)=>{
                     document.querySelectorAll("#<?php echo $this->stateButtonGroup->id; ?> button").forEach((el)=>{

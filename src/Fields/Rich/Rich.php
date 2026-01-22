@@ -2,6 +2,7 @@
 namespace HoltBosse\Alba\Fields\Rich;
 
 Use HoltBosse\Form\Field;
+Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class Rich extends Field {
 	public $listing_endpoint;
@@ -15,9 +16,12 @@ class Rich extends Field {
 				<label for="<?php echo $this->id; ?>" class="label"><?php echo $this->label; ?></label>
 			</div>
 			<section class="editor_root_node">
-				<style>
-					<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-				</style>
+				<?php
+					(new CssFile())->loadFromConfig((object)[
+						"filePath"=>__DIR__ . "/style.css",
+						"injectIntoHead"=>false,
+					])->display();
+				?>
 				<div style="display: none;">
 					<div class="link-bubble-bar">
 						<div>
