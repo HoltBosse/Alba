@@ -3,6 +3,7 @@
 Use HoltBosse\Form\Input;
 Use HoltBosse\Alba\Core\{CMS, User, Hook, Component, Tag};
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
 function in_group ($group_id, $edit_user) {
 	foreach ($edit_user->groups as $group) {
@@ -82,6 +83,6 @@ function in_group ($group_id, $edit_user) {
 
 	<?php Hook::execute_hook_actions('display_user_fields_form',$edit_user); ?>
 
-	<?php Component::create_fixed_control_bar(); ?>
+	<?php (new AdminControlBar())->loadFromConfig((object)[])->display(); ?>
 
 </form>

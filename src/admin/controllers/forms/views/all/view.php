@@ -3,6 +3,12 @@
 Use HoltBosse\Alba\Core\{CMS, User, Component};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\Pagination\Pagination;
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 
@@ -12,14 +18,30 @@ Use HoltBosse\DB\DB;
 
 <?php
 	$rightContent = "<a class='is-primary pull-right button btn' href='" . $_ENV["uripath"] . "/admin/forms/edit/new'>New Form</a>";
-	Component::addon_page_title("Forms", null, $rightContent);
+	
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"Forms",
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <form action='' method='post' name='form_action' id='form_action_form'>
 
 <?php
-	$addonButtonGroupArgs = ["content_operations", "forms"];
-	Component::addon_button_toolbar($addonButtonGroupArgs);
+	(new AdminButtonToolBar())->loadFromConfig((object)[
+		"stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+			"id"=>"content_operations",
+			"location"=>"forms",
+			"buttons"=>["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]
+		]),
+		"leftContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div></div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <?php if (!$forms):?>
@@ -40,7 +62,14 @@ Use HoltBosse\DB\DB;
 				<tr id='row_id_<?php echo $item->id;?>' data-itemid="<?php echo $item->id;?>" data-ordering="<?php echo $item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<?php
-							Component::state_toggle($item->id, $item->state, "forms", NULL, -1);
+							(new StateButton())->loadFromConfig((object)[
+								"itemId"=>$item->id,
+								"state"=>$item->state,
+								"multiStateFormAction"=>$_ENV["uripath"] . "/admin/forms/action/togglestate",
+								"dualStateFormAction"=>$_ENV["uripath"] . "/admin/forms/action/toggle",
+								"states"=>NULL,
+								"contentType"=>-1
+							])->display();
 						?>
 					</td>
 					<td>
@@ -84,7 +113,14 @@ if ($cur_page) {
 
 ?>
 
-<?php Component::create_pagination($formCount, $pageSize, $cur_page); ?>
+<?php
+	(new Pagination())->loadFromConfig((object)[
+		"id"=>"pagination_component",
+		"itemCount"=>$formCount,
+		"itemsPerPage"=>$pageSize,
+		"currentPage"=>$cur_page
+	])->display();
+?>
 
 <script type="module">
 	import {handleAdminRows} from "/js/admin_row.js";

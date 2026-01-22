@@ -2,6 +2,7 @@
 
 Use HoltBosse\Alba\Core\{Content, Component};
 Use HoltBosse\Form\Input;
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
 //CMS::pprint_r ($cat);
 ?>
@@ -37,6 +38,8 @@ Use HoltBosse\Form\Input;
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
 </style>
 
-<?php Component::create_fixed_control_bar(); ?>
+<?php
+	(new AdminControlBar())->loadFromConfig((object)[])->display();
+?>
 </form>
 

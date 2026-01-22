@@ -1,6 +1,8 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Content, Component};
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 Use HoltBosse\Form\{Input, Form};
 
 ?>
@@ -26,9 +28,16 @@ Use HoltBosse\Form\{Input, Form};
 
 <?php
     $header = "Order &ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; Content";
-    $byline = "Drag and drop items into your preferred order.";
     $rightContent = "<a class='is-primary button btn' href='" . $_ENV["uripath"] . "/admin/content/all/$content_type'>Back To All &ldquo;" . Content::get_content_type_title($content_type) . "&rdquo; Content</a>";
-    Component::addon_page_title($header, $byline, $rightContent);
+
+    (new TitleHeader())->loadFromConfig((object)[
+        "header"=>html_entity_decode($header),
+        "byline"=>"Drag and drop items into your preferred order.",
+        "rightContent"=>(new Html())->loadFromConfig((object)[
+            "html"=>"<div>" . $rightContent . "</div>",
+            "wrap"=>false
+        ])
+    ])->display();
 ?>
 
 <table class='table is-fullwidth' id="orderitems">

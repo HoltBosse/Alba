@@ -3,12 +3,16 @@
 Use HoltBosse\Alba\Core\{CMS, Configuration, Actions, Component};
 Use HoltBosse\Form\Form;
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\Pagination\Pagination;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
 echo "<style>";
     echo file_get_contents(__DIR__ . "/style.css");
 echo "</style>";
 
-Component::addon_page_title("Audit Log");
+(new TitleHeader())->loadFromConfig((object)[
+	"header"=>"Audit Log",
+])->display();
 ?>
 
 <br>
@@ -43,4 +47,11 @@ Component::addon_page_title("Audit Log");
 
 <br><br>
 
-<?php Component::create_pagination($item_count, $pagination_size, $cur_page); ?>
+<?php
+	(new Pagination())->loadFromConfig((object)[
+		"id"=>"pagination_component",
+		"itemCount"=>$item_count,
+		"itemsPerPage"=>$pagination_size,
+		"currentPage"=>$cur_page
+	])->display();
+?>

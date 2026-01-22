@@ -5,6 +5,12 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Alba\Components\Pagination\Pagination;
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 
@@ -34,9 +40,15 @@ Use Respect\Validation\Validator as v;
 	$content_type_fields = Content::get_content_type_fields($content_type_filter);
 
 	$header = "All &ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; Content";
-	$byline = $content_type_fields->description;
 	$rightContent = "<a class='is-primary button btn' href='" . $_ENV["uripath"] . "/admin/content/edit/new/$content_type_filter'>New &ldquo;" . Content::get_content_type_title($content_type_filter) . "&rdquo; Content</a>";
-	Component::addon_page_title($header, $byline, $rightContent);
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>html_entity_decode($header),
+		"byline"=>$content_type_fields->description,
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <form style="margin-bottom: 0;">
@@ -54,8 +66,18 @@ Use Respect\Validation\Validator as v;
 	<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
 	<?php
 		$leftContent = "<a class='button is-primary is-outlined is-small' href='" . $_ENV["uripath"] . "/admin/content/order/{$content_type_filter}'>MANAGE ORDERING</a>";
-		$addonButtonGroupArgs = ["content_operations", "content", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]];
-		Component::addon_button_toolbar($addonButtonGroupArgs, $leftContent);
+
+		(new AdminButtonToolBar())->loadFromConfig((object)[
+            "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+                "id"=>"content_operations",
+                "location"=>"content",
+                "buttons"=>["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]
+            ]),
+            "leftContent"=>(new Html())->loadFromConfig((object)[
+                "html"=>"<div>" . $leftContent . "</div>",
+                "wrap"=>false
+            ])
+        ])->display();
 	?>
 
 	<table class='table can-have-ids'>
@@ -116,7 +138,14 @@ Use Respect\Validation\Validator as v;
 					<?php if(!in_array("state", $hidden_list_fields)) { ?>
 						<td class='drag_td state-wrapper'>
 							<?php
-								Component::state_toggle($content_item->id, $content_item->state, "content", $custom_fields->states ?? [], $content_item->content_type);
+								(new StateButton())->loadFromConfig((object)[
+									"itemId"=>$content_item->id,
+									"state"=>$content_item->state,
+									"multiStateFormAction"=>$_ENV["uripath"] . "/admin/content/action/togglestate",
+									"dualStateFormAction"=>$_ENV["uripath"] . "/admin/content/action/toggle",
+									"states"=>$custom_fields->states ?? [],
+									"contentType"=>$content_item->content_type
+								])->display();
 							?>
 						</td>
 					<?php } ?>
@@ -216,7 +245,14 @@ if ($cur_page) {
 
 ?>
 
-<?php Component::create_pagination($content_count, $pagination_size, $cur_page);?>
+<?php
+	(new Pagination())->loadFromConfig((object)[
+		"id"=>"pagination_component",
+		"itemCount"=>$content_count,
+		"itemsPerPage"=>$pagination_size,
+		"currentPage"=>$cur_page
+	])->display();
+?>
 
 <script>
 	window.content_type_filter = <?php echo $content_type_filter; ?>;

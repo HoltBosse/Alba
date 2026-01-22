@@ -2,6 +2,11 @@
 
 Use HoltBosse\Alba\Core\{Component, Tag, CMS};
 Use HoltBosse\Form\{Input, Form};
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 <style>
@@ -11,7 +16,14 @@ Use HoltBosse\Form\{Input, Form};
 <?php
 	$header = "All Tags";
 	$rightContent = "<a class='pull-right button is-primary' href='" . $_ENV["uripath"] ."/admin/tags/edit/new'>New Tag</a>";
-	Component::addon_page_title($header, null, $rightContent);
+
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"All Tags",
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <form style="margin-bottom: 0;">
@@ -22,8 +34,17 @@ Use HoltBosse\Form\{Input, Form};
 
 <form action='' method='post' name='tag_action' id='tag_action_form'>
 	<?php
-		$addonButtonGroupArgs = ["tag_operations", "tags"];
-		Component::addon_button_toolbar($addonButtonGroupArgs);
+		(new AdminButtonToolBar())->loadFromConfig((object)[
+            "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+                "id"=>"tag_operations",
+                "location"=>"tags",
+                "buttons"=>["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]
+            ]),
+            "leftContent"=>(new Html())->loadFromConfig((object)[
+                "html"=>"<div></div>",
+                "wrap"=>false
+            ])
+        ])->display();
 	?>
 
 	<table class='table'>
@@ -52,7 +73,14 @@ Use HoltBosse\Form\{Input, Form};
 								$customStates = $customFieldsFormObject->states;
 							}
 						}
-						Component::state_toggle($tag->id, $tag->state, "tags", $customStates, -1);
+						(new StateButton())->loadFromConfig((object)[
+							"itemId"=>$tag->id,
+							"state"=>$tag->state,
+							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/tags/action/togglestate",
+							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/tags/action/toggle",
+							"states"=>$customStates,
+							"contentType"=>-1
+						])->display();
 					?>
 				</td>
 				<td>

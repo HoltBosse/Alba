@@ -3,6 +3,9 @@
 Use HoltBosse\Alba\Core\{CMS, Component};
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Alba\Components\Pagination\Pagination;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
 echo "<style>";
     echo file_get_contents(__DIR__ . "/style.css");
@@ -21,7 +24,14 @@ $urlPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 $exportUrl = $urlPath . "?" . http_build_query($urlQueryParams);
 
 $rightContent = "<a href='$exportUrl' class='button'>Export All</a>";
-Component::addon_page_title($titleText, null, $rightContent);
+
+(new TitleHeader())->loadFromConfig((object)[
+    "header"=>html_entity_decode($titleText),
+    "rightContent"=>(new Html())->loadFromConfig((object)[
+        "html"=>"<div>" . $rightContent . "</div>",
+        "wrap"=>false
+    ])
+])->display();
 
 echo "<form>";
     $searchFieldsForm->display();
@@ -100,7 +110,12 @@ if($countResults > 0) {
 
 if($countResults > 0) {
     echo "<br>";
-    Component::create_pagination($countResults, $paginationSize, $curPage);
+    (new Pagination())->loadFromConfig((object)[
+		"id"=>"pagination_component",
+		"itemCount"=>$countResults,
+		"itemsPerPage"=>$paginationSize,
+		"currentPage"=>$curPage
+	])->display();
     echo "<br>";
 }
 

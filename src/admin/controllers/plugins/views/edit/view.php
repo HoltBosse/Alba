@@ -1,6 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Plugin, Component};
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
 ?>
 
@@ -23,6 +24,8 @@ $plugin_options_form->display();
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
 </style>
 
-<?php Component::create_fixed_control_bar(); ?>
+<?php
+	(new AdminControlBar())->loadFromConfig((object)[])->display();
+?>
 </form>
 

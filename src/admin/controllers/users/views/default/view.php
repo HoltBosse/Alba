@@ -3,6 +3,12 @@
 Use HoltBosse\Alba\Core\{CMS, Component, Hook, User, Tag, Form};
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 Use HoltBosse\Form\Input;
+Use HoltBosse\Alba\Components\Pagination\Pagination;
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 
@@ -24,14 +30,20 @@ Use HoltBosse\Form\Input;
 </style>
 
 <?php
-	$header = "Users: " . $group_name;
 	$rightContent = "<a href='" . $_ENV["uripath"] . "/admin/users/edit' class='button is-primary'>
 		<span class='icon is-small'>
 			<i class='fas fa-check'></i>
 		</span>
 		<span>New User</span>
 	</a>";
-	Component::addon_page_title($header, null, $rightContent);
+
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"Users: " . $group_name,
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <form style="margin-bottom: 0;">
@@ -42,8 +54,17 @@ Use HoltBosse\Form\Input;
 
 <form action='' method='post' name='user_action' id='user_action_form'>
 	<?php
-		$addonButtonGroupArgs = ["user_operations", "users", ["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]];
-		Component::addon_button_toolbar($addonButtonGroupArgs);
+		(new AdminButtonToolBar())->loadFromConfig((object)[
+            "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+                "id"=>"user_operations",
+                "location"=>"users",
+                "buttons"=>["publish"=>"primary","unpublish"=>"warning","duplicate"=>"info","delete"=>"danger"]
+            ]),
+            "leftContent"=>(new Html())->loadFromConfig((object)[
+                "html"=>"<div></div>",
+                "wrap"=>false
+            ])
+        ])->display();
 	?>
 	<table id='all_users_table can-have-ids' class="table">
 		<thead>
@@ -75,7 +96,14 @@ Use HoltBosse\Form\Input;
 							$statesForToggle = [];
 						}
 						$statesForToggle = array_merge([(object) ["state"=>2,"name"=>"Published - Pwd Reset Req", "color"=>"lime"]], $statesForToggle);
-						Component::state_toggle($user->id, $user->state, "users", $statesForToggle, -1);
+						(new StateButton())->loadFromConfig((object)[
+							"itemId"=>$user->id,
+							"state"=>$user->state,
+							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/users/action/togglestate",
+							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/users/action/toggle",
+							"states"=>$statesForToggle,
+							"contentType"=>-1
+						])->display();
 					?>
 				</td>
 				<?php
@@ -139,7 +167,14 @@ Use HoltBosse\Form\Input;
 
 </form>
 
-<?php Component::create_pagination($user_count, $pagination_size, $cur_page);?>
+<?php
+	(new Pagination())->loadFromConfig((object)[
+		"id"=>"pagination_component",
+		"itemCount"=>$user_count,
+		"itemsPerPage"=>$pagination_size,
+		"currentPage"=>$cur_page
+	])->display();
+?>
 
 <script type="module">
 	import {handleAdminRows} from "/js/admin_row.js";

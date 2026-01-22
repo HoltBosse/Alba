@@ -1,8 +1,12 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Component};
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
-Component::addon_page_title("Backups");
+(new TitleHeader())->loadFromConfig((object)[
+	"header"=>"Backups",
+])->display();
 ?>
 
 <?php if (class_exists("ZipArchive",false)):?>

@@ -6,6 +6,8 @@ Use HoltBosse\Form\{Form, Input};
 Use HoltBosse\Form\Fields\Input\Input as Field_Text;
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+Use HoltBosse\Alba\Components\Html\Html;
 
 ?>
 
@@ -255,7 +257,13 @@ Use Respect\Validation\Validator as v;
 
 	<?php
 		$otherButton = '<button title=\'Save and keep working!\' class="button is-info" name="quicksave" value="quicksave" type="submit">Quick Save</button>';
-		Component::create_fixed_control_bar($otherButton);
+
+		(new AdminControlBar())->loadFromConfig((object)[
+            "middleButton"=>(new Html())->loadFromConfig((object)[
+                "html"=>$otherButton,
+                "wrap"=>false
+            ]),
+        ])->display();
 	?>
 	
 </form>

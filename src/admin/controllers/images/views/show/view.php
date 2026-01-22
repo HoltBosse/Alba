@@ -2,6 +2,7 @@
 
 Use HoltBosse\Alba\Core\{CMS, Tag, Component};
 Use HoltBosse\Form\Input;
+Use HoltBosse\Alba\Components\Pagination\Pagination;
 
 ?>
 
@@ -136,7 +137,14 @@ Use HoltBosse\Form\Input;
 	<?php endforeach; ?>
 </div>
 
-<?php Component::create_pagination($images_count, $pagination_size, $cur_page); ?>
+<?php
+	(new Pagination())->loadFromConfig((object)[
+		"id"=>"pagination_component",
+		"itemCount"=>$images_count,
+		"itemsPerPage"=>$pagination_size,
+		"currentPage"=>$cur_page
+	])->display();
+?>
 
 <?php endif; // skipped display of all images if filter==upload ?>
 

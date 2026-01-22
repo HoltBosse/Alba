@@ -1,6 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Mail, Component};
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
 // TODO: move this to admin function
 function show_message ($heading, $text, $class) {
@@ -49,7 +50,9 @@ function embedded_phpinfo()
         ";
 }
 
-Component::addon_page_title("System Information");
+(new TitleHeader())->loadFromConfig((object)[
+    "header"=>"System Information",
+])->display();
 
 if ($native_zip) {
 	show_message ('Native Zip','Native zip handling is available. This is required for automatic update installation.','is-success');
