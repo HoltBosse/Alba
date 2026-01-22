@@ -1,18 +1,36 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Component, JSON, Plugin};
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 <style>
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
 </style>
 
-<?php Component::addon_page_title("Plugins"); ?>
+<?php
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"Plugins",
+	])->display();
+?>
 	
 <form action='' method='post' name='plugin_action' id='plugin_action_form'>
 	<?php
-		$addonButtonGroupArgs = ["plugin_operations", "plugins"];
-		Component::addon_button_toolbar($addonButtonGroupArgs);
+		(new AdminButtonToolBar())->loadFromConfig((object)[
+            "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+                "id"=>"plugin_operations",
+                "location"=>"plugins",
+                "buttons"=>["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]
+            ]),
+            "leftContent"=>(new Html())->loadFromConfig((object)[
+                "html"=>"<div></div>",
+                "wrap"=>false
+            ])
+        ])->display();
 	?>
 
 	<table class='table'>
@@ -29,7 +47,14 @@ Use HoltBosse\Alba\Core\{CMS, Component, JSON, Plugin};
 			<tr class='plugin_admin_row'>
 				<td>
 					<?php
-						Component::state_toggle($a_plugin->id, $a_plugin->state, "plugins", NULL, -1);
+						(new StateButton())->loadFromConfig((object)[
+							"itemId"=>$a_plugin->id,
+							"state"=>$a_plugin->state,
+							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/plugins/action/togglestate",
+							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/plugins/action/toggle",
+							"states"=>NULL,
+							"contentType"=>-1
+						])->display();
 					?>
 				</td>
 				<td><a href="<?php echo $_ENV["uripath"]; ?>/admin/plugins/edit/<?php echo $a_plugin->id;?>"><?php echo $a_plugin_config->title; ?></a></td>

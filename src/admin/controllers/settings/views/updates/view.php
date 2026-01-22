@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Content, Component};
 Use HoltBosse\DB\DB;
 use HoltBosse\Alba\Migrations\{RunAllMigration};
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
 function show_message (string $heading, string $text, string $class) {
 	echo "<article class=\"message $class\">
@@ -16,7 +17,9 @@ function show_message (string $heading, string $text, string $class) {
 </article>";
 }
 
-Component::addon_page_title("System Version and Updates");
+(new TitleHeader())->loadFromConfig((object)[
+	"header"=>"System Version and Updates",
+])->display();
 ?>
 
 <hr>

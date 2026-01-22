@@ -2,6 +2,8 @@
 
 Use HoltBosse\Alba\Core\{CMS, Widget, Component};
 Use HoltBosse\Form\Form;
+Use HoltBosse\Form\Input;
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
 ?>
 
@@ -48,6 +50,6 @@ $widget->render_custom_backend();
 </script>
 
 <hr>
-<?php Component::create_fixed_control_bar(); ?>
+<?php (new AdminControlBar())->loadFromConfig((object)[])->display(); ?>
 </form>
 

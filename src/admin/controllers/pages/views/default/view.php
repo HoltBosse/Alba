@@ -3,6 +3,11 @@
 Use HoltBosse\Alba\Core\{Component, Content, Page, Template};
 Use HoltBosse\Form\{Input};
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 
@@ -18,15 +23,31 @@ Use HoltBosse\DB\DB;
 			</span>
 			<span>New Page</span>
 		</a>";
-	Component::addon_page_title($header, null, $rightContent);
+
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"All Pages",
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 
 	$domainLookup = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
 ?>
 
 <form action='' method='post' name='page_action' id='page_action_form'>
 	<?php
-		$addonButtonGroupArgs = ["page_operations", "pages"];
-		Component::addon_button_toolbar($addonButtonGroupArgs);
+		(new AdminButtonToolBar())->loadFromConfig((object)[
+            "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+                "id"=>"page_operations",
+                "location"=>"pages",
+                "buttons"=>["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]
+            ]),
+            "leftContent"=>(new Html())->loadFromConfig((object)[
+                "html"=>"<div></div>",
+                "wrap"=>false
+            ])
+        ])->display();
 	?>
 
 	<table id='all_pages_table' class="table">
@@ -47,7 +68,14 @@ Use HoltBosse\DB\DB;
 			<tr class='page_admin_row'>
 				<td>
 					<?php
-						Component::state_toggle($page->id, $page->state, "pages", NULL, -1);
+						(new StateButton())->loadFromConfig((object)[
+							"itemId"=>$page->id,
+							"state"=>$page->state,
+							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/pages/action/togglestate",
+							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/pages/action/toggle",
+							"states"=>NULL,
+							"contentType"=>-1
+						])->display();
 					?>
 				</td>
 				<td>

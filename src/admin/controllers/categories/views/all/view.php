@@ -1,6 +1,11 @@
 <?php
 	Use HoltBosse\Alba\Core\{Content, Component, CMS};
 	Use HoltBosse\Form\Input;
+	Use HoltBosse\Alba\Components\StateButton\StateButton;
+	Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 ?>
 
 <style>
@@ -44,8 +49,13 @@
 <?php
 	}
 	$rightContent = ob_get_clean();
-	$header = "All Categories";
-	Component::addon_page_title($header, null, $rightContent);
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"All Categories",
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <form style="margin-bottom: 0;">
@@ -57,8 +67,17 @@
 <form action='' method='post' name='content_action' id='content_action_form'>
 <input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
 <?php
-	$addonButtonGroupArgs = ["content_operations", "categories"];
-	Component::addon_button_toolbar($addonButtonGroupArgs);
+	(new AdminButtonToolBar())->loadFromConfig((object)[
+		"stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+			"id"=>"content_operations",
+			"location"=>"categories",
+			"buttons"=>["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]
+		]),
+		"leftContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div></div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <?php if (!$all_categories):?>
@@ -77,7 +96,14 @@
 				<tr id='row_id_<?php echo $content_item->id;?>' data-itemid="<?php echo $content_item->id;?>" data-ordering="<?php echo $content_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<?php
-							Component::state_toggle($content_item->id, $content_item->state, "categories", NULL, -1);
+							(new StateButton())->loadFromConfig((object)[
+								"itemId"=>$content_item->id,
+								"state"=>$content_item->state,
+								"multiStateFormAction"=>$_ENV["uripath"] . "/admin/categories/action/togglestate",
+								"dualStateFormAction"=>$_ENV["uripath"] . "/admin/categories/action/toggle",
+								"states"=>NULL,
+								"contentType"=>-1
+							])->display();
 						?>
 					</td>
 					<td>

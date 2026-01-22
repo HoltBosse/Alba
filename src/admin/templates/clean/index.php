@@ -5,6 +5,7 @@ Use HoltBosse\Form\Input;
 Use HoltBosse\Form\Fields\Select\Select;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Alba\Components\Admin\Nav\Nav as AdminNav;
 
 $segments = CMS::Instance()->uri_segments;
 if(sizeof($segments)>0 && !CMS::isAdminController($segments[0])) {
@@ -78,7 +79,9 @@ if(!isset($_SESSION["current_domain"])) {
 				<div class="navbar-start">
 					<?php
 						require_once(__DIR__ . "/navigation.php");
-						Component::render_admin_nav($navigation);
+						(new AdminNav())->loadFromConfig((object)[
+							"navigation"=>$navigation
+						])->display();
 					?>
 				</div>
 

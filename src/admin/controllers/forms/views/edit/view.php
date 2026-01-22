@@ -1,5 +1,6 @@
 <?php
     use HoltBosse\Alba\Core\{CMS, Component};
+    use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 ?>
 
 <style>
@@ -58,7 +59,7 @@
     <input type="hidden" name="form_configuration_submission" value='1'>
 
     <?php
-        Component::create_fixed_control_bar();
+        (new AdminControlBar())->loadFromConfig((object)[])->display();
     ?>
 </form>
 

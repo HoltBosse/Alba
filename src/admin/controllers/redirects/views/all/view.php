@@ -3,6 +3,12 @@
 Use HoltBosse\Alba\Core\{CMS, User, Component};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\Pagination\Pagination;
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 
@@ -12,7 +18,14 @@ Use HoltBosse\DB\DB;
 
 <?php
 	$rightContent = "<a class='is-primary pull-right button btn' href='" . $_ENV["uripath"] . "/admin/redirects/edit/new'>New Redirect</a>";
-	Component::addon_page_title("Redirects", null, $rightContent);
+
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"Redirects",
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <form style="margin-bottom: 0;">
@@ -24,8 +37,17 @@ Use HoltBosse\DB\DB;
 <form action='' method='post' name='redirect_action' id='redirect_action_form'>
 
 <?php
-	$addonButtonGroupArgs = ["content_operations", "redirects"];
-	Component::addon_button_toolbar($addonButtonGroupArgs);
+	(new AdminButtonToolBar())->loadFromConfig((object)[
+		"stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+			"id"=>"content_operations",
+			"location"=>"redirects",
+			"buttons"=>["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]
+		]),
+		"leftContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div></div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <?php if (!$redirects):?>
@@ -53,7 +75,14 @@ Use HoltBosse\DB\DB;
 				<tr id='row_id_<?php echo $redirect_item->id;?>' data-itemid="<?php echo $redirect_item->id;?>" data-ordering="<?php echo $redirect_item->ordering;?>" class='content_admin_row'>
 					<td class='drag_td'>
 						<?php
-							Component::state_toggle($redirect_item->id, $redirect_item->state, "redirects", NULL, -1);
+							(new StateButton())->loadFromConfig((object)[
+								"itemId"=>$redirect_item->id,
+								"state"=>$redirect_item->state,
+								"multiStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/togglestate",
+								"dualStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/toggle",
+								"states"=>NULL,
+								"contentType"=>-1
+							])->display();
 						?>
 					</td>
 					<td class='limitwidth'><a href='<?php echo $_ENV["uripath"]; ?>/admin/redirects/edit/<?php echo $redirect_item->id;?>/'><?php echo $redirect_item->old_url; ?></a></td>
@@ -95,7 +124,14 @@ if ($cur_page) {
 
 ?>
 
-<?php Component::create_pagination($redirect_count, $page_size, $cur_page); ?>
+<?php
+	(new Pagination())->loadFromConfig((object)[
+		"id"=>"pagination_component",
+		"itemCount"=>$redirect_count,
+		"itemsPerPage"=>$page_size,
+		"currentPage"=>$cur_page
+	])->display();
+?>
 
 <script type="module">
 	import {handleAdminRows} from "/js/admin_row.js";

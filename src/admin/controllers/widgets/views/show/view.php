@@ -2,6 +2,11 @@
 
 Use HoltBosse\Alba\Core\{CMS, Component, Hook, Page, Widget};
 Use HoltBosse\Form\Input;
+Use HoltBosse\Alba\Components\StateButton\StateButton;
+Use HoltBosse\Alba\Components\Html\Html;
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 
 ?>
 <style>
@@ -43,7 +48,14 @@ Use HoltBosse\Form\Input;
 <?php
 	}
 	$rightContent = ob_get_clean();
-	Component::addon_page_title("Widgets", null, $rightContent);
+
+	(new TitleHeader())->loadFromConfig((object)[
+		"header"=>"Widgets",
+		"rightContent"=>(new Html())->loadFromConfig((object)[
+			"html"=>"<div>" . $rightContent . "</div>",
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <form style="margin-bottom: 0;">
@@ -54,8 +66,17 @@ Use HoltBosse\Form\Input;
 
 <form action='' method='post' name='widget_action' id='widget_action_form'>
 	<?php
-		$addonButtonGroupArgs = ["widget_operations", "widgets"];
-		Component::addon_button_toolbar($addonButtonGroupArgs);
+		(new AdminButtonToolBar())->loadFromConfig((object)[
+            "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
+                "id"=>"widget_operations",
+				"location"=>"widgets",
+				"buttons"=>["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"]
+            ]),
+            "leftContent"=>(new Html())->loadFromConfig((object)[
+                "html"=>"<div></div>",
+                "wrap"=>false
+            ])
+        ])->display();
 	?>
 
 	<table class='table'>
@@ -67,7 +88,14 @@ Use HoltBosse\Form\Input;
 			<tr class='widget_admin_row'>
 				<td>
 					<?php
-						Component::state_toggle($widget->id, $widget->state, "widgets", NULL, -1);
+						(new StateButton())->loadFromConfig((object)[
+							"itemId"=>$widget->id,
+							"state"=>$widget->state,
+							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/widgets/action/togglestate",
+							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/widgets/action/toggle",
+							"states"=>NULL,
+							"contentType"=>-1
+						])->display();
 					?>
 				</td>
 				<td><a href="<?php echo $_ENV["uripath"]; ?>/admin/widgets/edit/<?php echo $widget->id;?>"><?php echo $widget->title; ?></a></td>

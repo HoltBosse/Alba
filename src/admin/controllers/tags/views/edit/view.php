@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Tag, Component, Content};
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
 //terrible hack to hide inaccessible content types from the content type selector, but keep them there so that they get saved properly
 echo "<style>";
@@ -50,6 +51,6 @@ echo "</style>";
 	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
 </style>
 
-<?php Component::create_fixed_control_bar(); ?>
+<?php (new AdminControlBar())->loadFromConfig((object)[])->display(); ?>
 </form>
 

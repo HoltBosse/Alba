@@ -3,6 +3,8 @@
 Use HoltBosse\Alba\Core\{CMS, Content, Hook, Component};
 Use HoltBosse\Form\{Form, Input};
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
+Use HoltBosse\Alba\Components\Html\Html;
 
 ?>
 
@@ -46,7 +48,17 @@ Use HoltBosse\DB\DB;
 	} else {
 		$endBarHtml = "";
 	}
-	Component::create_fixed_control_bar($otherButton, $endBarHtml);
+
+	(new AdminControlBar())->loadFromConfig((object)[
+		"middleButton"=>(new Html())->loadFromConfig((object)[
+			"html"=>$otherButton,
+			"wrap"=>false
+		]),
+		"endBar"=>(new Html())->loadFromConfig((object)[
+			"html"=>$endBarHtml,
+			"wrap"=>false
+		])
+	])->display();
 ?>
 
 <div class="version-menu">

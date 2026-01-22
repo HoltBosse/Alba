@@ -4,6 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, Component};
 Use HoltBosse\Form\Form;
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
 ?>
 
@@ -35,7 +36,7 @@ div.flex > * {min-width:2rem;}
 </style>
 
 
-<?php Component::create_fixed_control_bar(); ?>
+<?php (new AdminControlBar())->loadFromConfig((object)[])->display(); ?>
 
 
 </form>

@@ -1,8 +1,11 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Configuration, Component};
+Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
-Component::addon_page_title("General Options");
+(new TitleHeader())->loadFromConfig((object)[
+	"header"=>"General Options",
+])->display();
 ?>
 
 <?php 
