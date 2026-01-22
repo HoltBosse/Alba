@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   phpstan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-slim
 
     steps:
       - uses: actions/checkout@v4
