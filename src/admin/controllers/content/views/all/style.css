@@ -32,13 +32,6 @@ span.position_single {
 span.page_list, td.note_td, .lighter_note, .usage {
 	font-size:70%; opacity:0.6;
 }
-
-.state1 {
-	color:#00d1b2;
-}
-.state0 {
-	color:#f66;
-}
 .hidden_multi_edit {
 	display:none;
 }

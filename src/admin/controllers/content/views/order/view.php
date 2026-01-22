@@ -24,6 +24,12 @@ Use HoltBosse\Form\{Input, Form};
     [data-hidestate="true"] {
         display: none !important;
     }
+    .state1 {
+        color:#00d1b2;
+    }
+    .state0 {
+        color:#f66;
+    }
 </style>
 
 <?php
