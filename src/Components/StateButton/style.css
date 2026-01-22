@@ -45,6 +45,14 @@
     background-color: hsl(var(--bulma-navbar-dropdown-item-h),var(--bulma-navbar-dropdown-item-s),calc(var(--bulma-navbar-dropdown-item-background-l) + var(--bulma-navbar-item-background-l-delta))) !important;
 }
 
+.state1 {
+	color:#00d1b2;
+}
+
+.state0 {
+	color:#f66;
+}
+
 @media screen and (max-width: 1024px) {
     /* disabled on mobile due to bulma lack of support */
     .state_button .navbar-item.has-dropdown, .state_button hr {

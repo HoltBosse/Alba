@@ -26,12 +26,6 @@ span.position_single {
     font-weight:bold;
 }
 
-.state1 {
-    color:#00d1b2;
-}
-.state0 {
-    color:#f66;
-}
 .hidden_multi_edit {
     display:none;
     /* display:inline-block; */
