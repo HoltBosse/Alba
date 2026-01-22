@@ -20,7 +20,31 @@ class StateButton extends Component {
             <div class="center_state">
                 <input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $this->itemId; ?>'/>
                 <div class='<?php echo $this->states===NULL ? "" : "button state_button";?>'>
-                    <button <?php if($this->state==0 || $this->state==1) { echo "type='submit' formaction='$this->dualStateFormAction' name='id[]' value='$this->itemId'"; } else { echo "style='pointer-events: none;'"; } ?> class="<?php echo $this->states===NULL ? "button" : "";?>">
+                    <button
+                        <?php
+                            if($this->state==0 || $this->state==1) {
+                                echo "type='submit' formaction='$this->dualStateFormAction' name='id[]' value='$this->itemId'";
+                            } else {
+                                echo "disabled";
+                            }
+                        ?>
+                        class="<?php echo $this->states===NULL ? "button" : "";?>"
+                        <?php
+                            if($this->state==0) {
+                                echo "title='Unpublished - Click to publish'";
+                            } elseif($this->state==1) {
+                                echo "title='Published - Click to unpublish'";
+                            } else {
+                                $stateName = "Unknown state";
+                                foreach($this->states as $stateDetails) {
+                                    if($this->state==$stateDetails->state) {
+                                        $stateName = $stateDetails->name;
+                                    }
+                                }
+                                echo "title='State: $stateName'";
+                            }
+                        ?>
+                    >
                         <?php 
                             if ($this->state==1) { 
                                 echo '<i class="state1 is-success fas fa-check-circle" aria-hidden="true"></i>';
