@@ -80,14 +80,10 @@ $navigation = [
         ]
     ],
     "plugins"=>[
-        "type"=>"addition_menu",
-        "menu"=>[
+        "type"=>"addition_link",
+        "link"=>[
             "label"=>"plugins",
-            "links"=>array_merge(
-                DB::fetchAll("SELECT title, CONCAT('/admin/plugins/edit/', id) FROM plugins", [], ["mode"=>PDO::FETCH_KEY_PAIR]),
-                ["hr"=>"hr"],
-                ["all plugins"=>"/admin/plugins/show"],
-            )
+            "url"=>"/admin/plugins/show",
         ]
     ],
     "tags"=>[
