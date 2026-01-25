@@ -26,10 +26,6 @@ span.position_single {
     font-weight:bold;
 }
 
-.hidden_multi_edit {
-    display:none;
-    /* display:inline-block; */
-}
 .user_admin_row.selected {
     background:rgba(200,255,200,0.3);
 }

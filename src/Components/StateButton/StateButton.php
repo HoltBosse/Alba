@@ -19,7 +19,7 @@ class StateButton extends Component {
             "injectIntoHead"=>false,
         ])->display();
         ?>
-            <div class="center_state">
+            <div class="sb_center_state">
                 <input class='hidden_multi_edit' type='checkbox' name='id[]' value='<?php echo $this->itemId; ?>'/>
                 <div class='<?php echo $this->states===NULL ? "" : "button state_button";?>'>
                     <button

@@ -53,6 +53,17 @@
 	color:#f66;
 }
 
+.hidden_multi_edit {
+	display:none;
+}
+
+.sb_center_state {
+	height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 @media screen and (max-width: 1024px) {
     /* disabled on mobile due to bulma lack of support */
     .state_button .navbar-item.has-dropdown, .state_button hr {

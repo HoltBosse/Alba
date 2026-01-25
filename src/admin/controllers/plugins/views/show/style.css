@@ -19,10 +19,6 @@ span.page_list, td.note_td, .lighter_note {
 	margin-right:2rem;
 }
 
-.hidden_multi_edit {
-	display:none;
-	/* display:inline-block; */
-}
 .plugin_admin_row.selected {
 	background:rgba(200,255,200,0.3);
 }

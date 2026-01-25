@@ -34,10 +34,6 @@ span.position_single {
 	margin-right:2rem;
 }
 
-.hidden_multi_edit {
-	display:none;
-	/* display:inline-block; */
-}
 .page_admin_row.selected {
 	background:rgba(200,255,200,0.3);
 }

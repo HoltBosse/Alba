@@ -14,10 +14,6 @@ span.position_single {
 span.page_list, td.note_td, .lighter_note, .usage {
 	font-size:70%; opacity:0.6;
 }
-.hidden_multi_edit {
-	display:none;
-	/* display:inline-block; */
-}
 .content_admin_row.selected {
 	background:rgba(200,255,200,0.3);
 }
@@ -47,12 +43,6 @@ table.dragging tr.droppable.ready {
 }
 .drag_td {
 	height: 0;
-}
-.center_state {
-	height: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 .order_drop {
 	color: white;
