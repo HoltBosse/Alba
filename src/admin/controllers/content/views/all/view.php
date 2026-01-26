@@ -96,7 +96,7 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 						$stateButton->display();
 					}
 				},
-				"tdAttributes"=>["class"=>"drag_td state-wrapper"]
+				"tdAttributes"=>["class"=>"drag_td state-wrapper"],
 			]),
 			//Id column added conditionally in table header below
 			(new AdminTableField())->loadFromConfig((object)[

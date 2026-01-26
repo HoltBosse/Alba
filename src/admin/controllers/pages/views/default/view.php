@@ -8,10 +8,8 @@
 	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
 	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
-
-	(new CssFile())->loadFromConfig((object)[
-		"filePath"=>__DIR__ . "/style.css",
-	])->display();
+	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
+	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 
 	$header = "All Pages";
 	$rightContent = "<a href='" . $_ENV["uripath"] . "/admin/pages/edit/0' class='button is-primary pull-right'>
@@ -45,93 +43,128 @@
                 "wrap"=>false
             ])
         ])->display();
-	?>
 
-	<table id='all_pages_table' class="table">
-		<thead>
-			<th>Status</th>
-			<th>Title</th>
-			<?php
-				if(sizeof($domainLookup)>1) {
-					echo "<th>Domain</th>";
-				}
-			?>
-			<th>URL</th>
-			<th>Template</th>
-			<th>ID</th>
-		</thead>
-		<tbody> 
-			<?php foreach($all_pages as $page):?>
-			<tr class='page_admin_row'>
-				<td>
-					<?php
-						(new StateButton())->loadFromConfig((object)[
-							"itemId"=>$page->id,
-							"state"=>$page->state,
+		$all_pages = array_map(function($i) use ($all_templates) {
+			$i->stateComposite = [$i->id, $i->state, NULL];
+			$i->titleComposite = $i;
+			$i->urlComposite = [$i->id, $i->domain];
+			$i->templateComposite = [$i->template, $i->id, get_template_title($i->template, $all_templates)];
+			return $i;
+		}, $all_pages);
+
+		$columns = [
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"State",
+				"sortable"=>false,
+				"rowAttribute"=>"stateComposite",
+				"rendererAttribute"=>"state",
+				"renderer"=>new class extends Component {
+					public array $state;
+
+					public function display(): void {
+						$stateButton = (new StateButton())->loadFromConfig((object)[
+							"itemId"=>$this->state[0],
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/pages/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/pages/action/toggle",
-							"states"=>NULL,
+							"states"=>$this->state[2],
 							"contentType"=>-1
-						])->display();
-					?>
-				</td>
-				<td>
-					<?php
-					for ($n=0; $n<$page->depth; $n++) {
-						echo "<span class='child_indicator'>-&nbsp;</span>";
+						]);
+						$stateButton->state = $this->state[1];
+						$stateButton->display();
 					}
-					?>
-					<a href='<?php echo $_ENV["uripath"] . "/admin/pages/edit/" . $page->id . "/" . $page->content_type . "/" . $page->content_view;?>'><?php echo Input::stringHtmlSafe($page->title); ?></a>
-					<br>
-					<?php 
-					if ($page->content_type > 0) {
-						echo "<span class='unimportant'>" . Content::get_content_type_title($page->content_type) ;
-						echo " &raquo; ";
-						echo Content::get_view_title($page->content_view) . "</span>";
-						$component_path = Content::get_content_location($page->content_type);
-						$component_view = Content::get_view_location($page->content_view);
-					}
-					else {
-						echo "<span class='unimportant'>Widgets only</span>";
-					}
-					?>
-				</td>
+				},
+				"tdAttributes"=>["class"=>"drag_td state-wrapper"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Title",
+				"sortable"=>false,
+				"rowAttribute"=>"titleComposite",
+				"rendererAttribute"=>"title",
+				"renderer"=>new class extends Component {
+					public object $title;
 
-				<?php
-					if(sizeof($domainLookup)>1) {
-						echo "<td class='unimportant'>{$domainLookup[$page->domain]}</td>";
+					public function display(): void {
+						echo "<div>";
+							for ($n=0; $n<$this->title->depth; $n++) {
+								echo "<span class='child_indicator'>-&nbsp;</span>";
+							}
+							$url = $_ENV["uripath"] . "/admin/pages/edit/" . $this->title->id . "/" . $this->title->content_type . "/" . $this->title->content_view;
+							echo "<a href='" . $url . "'>" . Input::stringHtmlSafe($this->title->title) . "</a>";
+						echo "</div>";
+						if ($this->title->content_type > 0) {
+							echo "<span class='unimportant'>" . Content::get_content_type_title($this->title->content_type) ;
+							echo " &raquo; ";
+							echo Content::get_view_title($this->title->content_view) . "</span>";
+						}
+						else {
+							echo "<span class='unimportant'>Widgets only</span>";
+						}
 					}
-				?>
+				},
+				"tdAttributes"=>["class"=>"title-wrapper"],
+				"columnSpan"=>3
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"URL",
+				"sortable"=>false,
+				"rowAttribute"=>"urlComposite",
+				"rendererAttribute"=>"iid",
+				"renderer"=>new class extends Component {
+					public array $iid;
 
-				<td>
-					<?php
+					public function display(): void {
 						$pageInstance = new Page();
-						$pageInstance->load_from_id($page->id);
+						$pageInstance->load_from_id($this->iid[0]);
 						$url = $pageInstance->get_url();
 						$displayUrl = $url;
-						if($page->domain!=$_SERVER["HTTP_HOST"]) {
-							$url = "https://" . $domainLookup[$page->domain] . $url;
+						if($pageInstance->domain!=$_SERVER["HTTP_HOST"]) {
+							$url = "https://" . DB::fetch("SELECT * FROM domains WHERE id = ?", $this->iid[1])->value . $url;
 						}
-					?>
-					<a style="color: var(--bulma-table-color);" target="_blank" class='unimportant' href="<?php echo $url; ?>"><?php echo $displayUrl; ?></a>
-				</td>
-				
-				<td class='unimportant'>
-					<span class=''><?php echo  get_template_title($page->template, $all_templates); ?></span>
-					<?php if (Page::has_overrides($page->id)) {
-						echo "<br><span class='has-text-info widget_override_indicator'>Has Widget Overrides</span>";
-					}?>
-				</td>
-				<td class='unimportant'>
-					<span class=''><?php echo $page->id; ?></span>
-				</td>
-			</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
-</form>
+						echo "<div><a style='color: var(--bulma-table-color);' target='_blank' class='unimportant' href='" . $url . "'>" . $displayUrl . "</a></div>";
+					}
+				},
+				"tdAttributes"=>["class"=>"url-wrapper"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Template",
+				"sortable"=>false,
+				"rowAttribute"=>"templateComposite",
+				"rendererAttribute"=>"data",
+				"renderer"=>new class extends Component {
+					public array $data;
 
-<script type="module">
-	import {handleAdminRows} from "/js/admin_row.js";
-	handleAdminRows(".page_admin_row");
-</script>
+					public function display(): void {
+						echo "<div>";
+							echo "<span class=''>" . $this->data[2] . "</span>";
+							if (Page::has_overrides($this->data[1])) {
+								echo "<br><span class='has-text-info widget_override_indicator'>Has Widget Overrides</span>";
+							}
+						echo "</div>";
+					}
+				},
+				"tdAttributes"=>["class"=>"template-wrapper unimportant"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"ID",
+				"sortable"=>false,
+				"rowAttribute"=>"id",
+				"rendererAttribute"=>"iid",
+				"renderer"=>new class extends Component {
+					public int $iid;
+
+					public function display(): void {
+						echo "<span class=''>" . $this->iid . "</span>";
+					}
+				},
+				"tdAttributes"=>["class"=>"id-wrapper unimportant"]
+			])
+		];
+
+		(new AdminTable())->loadFromConfig((object)[
+			"id"=>"all_pages_table",
+			"columns"=>$columns,
+			"rows"=>$all_pages,
+			"trClass"=>"page_admin_row",
+		])->display();
+	?>
+</form>
