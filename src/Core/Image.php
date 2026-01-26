@@ -159,7 +159,7 @@ class Image {
         return false;
     }
 
-    public static function processUploadedFiles(array $files, array $alts, array $titles, array $tags, array $web_friendly_array, string $directory): object {
+    public static function processUploadedFiles(array $files, array $alts, array $titles, array $tags, string $directory): object {
         $image_types_data = File::$image_types;
         $uploaded_files = [];
         $n=0;
@@ -182,26 +182,12 @@ class Image {
                 //  get file info and put in db
                 $title = $titles[$n];
                 $alt = $alts[$n];
-                $web_friendly = $web_friendly_array[$n];
-                // TODO: further filtering on title and alt just in case
-                if ($file->width > 1920 && $web_friendly[$n]) {
-                    $file->original_width = $file->width;
-                    $file->recalc_height(1920);
-                }
                 $in_db_ok = DB::exec(
                     "INSERT INTO media (width, height, title, alt, filename, mimetype, domain) VALUES (?,?,?,?,?,?,?)",
                     [$file->width, $file->height, $title, $alt, $file->filename, $file->mimetype, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]
                 );
                 $img_ids[] = DB::getLastInsertedId();
                 if ($in_db_ok) {
-                    $thumbdest = $_ENV["images_directory"] . '/processed/' . "web_" . $file->filename;
-                    // make web friendly if required
-                    if ($file->original_width > 1920 && $web_friendly[$n] && $image_types_data[$file->mimetype]==1) {
-                        Image::makeThumb($dest, $thumbdest, 1920, $file);
-                        //unlink($src);
-                    }
-                    //$processed[] = $all_image_files[$n];
-
                     foreach(json_decode($tags[$n]) as $tag_id) {
                         DB::exec("insert into tagged (content_id, tag_id, content_type_id) values (?,?,-1)", [$img_ids[sizeof($img_ids)-1], $tag_id]);
                     }

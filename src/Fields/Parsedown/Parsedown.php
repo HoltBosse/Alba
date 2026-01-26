@@ -475,7 +475,6 @@ class Parsedown extends Field {
 						formData.append("file-upload[]", file);
 						formData.append("alt[]", [""]);
 						formData.append("title[]", [""]);
-						formData.append("web_friendly[]", [0]);
 
 						console.log(file);
 						const startPosition = editor_textarea.selectionStart;

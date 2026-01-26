@@ -18,7 +18,6 @@ $uploaded_files_array = $_FILES['file-upload'];
 $alts = Input::getvar('alt',v::arrayType()->each(v::StringVal()));
 $titles = Input::getvar('title',v::arrayType()->each(v::StringVal()));
 $tags = Input::getvar('tags',v::arrayType()->each(v::StringVal()));
-$web_friendly_array = Input::getvar('web_friendly',v::arrayType()->each(v::intVal()));
 $directory = $_ENV["images_directory"] . '/processed';
 
 $result = Image::processUploadedFiles(
@@ -26,7 +25,6 @@ $result = Image::processUploadedFiles(
 	$alts,
 	$titles,
 	$tags,
-	$web_friendly_array,
 	$directory
 );
 
