@@ -72,7 +72,8 @@
 						echo "<div><a href='" . $_ENV["uripath"] . "/admin/plugins/edit/" . $this->title[0] . "'>" . Input::stringHtmlSafe($this->title[1]) . "</a></div>";
 					}
 				},
-				"columnSpan"=>3
+				"columnSpan"=>3,
+				"tdAttributes"=>["class"=>"title-wrapper" ],
 			]),
 			(new AdminTableField())->loadFromConfig((object)[
 				"label"=>"Description",
@@ -86,7 +87,8 @@
 						echo "<div>" . Input::stringHtmlSafe($this->description) . "</div>";
 					}
 				},
-				"columnSpan"=>3
+				"columnSpan"=>3,
+				"tdAttributes"=>["dataset-name"=>"Desc" ],
 			]),
 		];
 
