@@ -96,14 +96,17 @@ class Image {
         }
     }
 
-    public static function makeThumb(string $src, string $dest, int $desired_width, File $file): bool {
-        /* read the source image */
+    public static function MakeResizedImage(string $src, string $dest, int $desired_width, object $file, float $quality, string $mimetype): bool {
         if ($file->mimetype=='image/jpeg') {
             $source_image = imagecreatefromjpeg($src);
         } elseif ($file->mimetype=='image/webp') {
             $source_image = imagecreatefromwebp($src);
+            imageAlphaBlending($source_image, false);
+            imageSaveAlpha($source_image, true);
         } else {
             $source_image = imagecreatefrompng($src);
+            imageAlphaBlending($source_image, false);
+            imageSaveAlpha($source_image, true);
         }
         $width = imagesx($source_image);
         $height = imagesy($source_image);
@@ -112,12 +115,18 @@ class Image {
         /* create a new, "virtual" image */
         $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
         /* copy source image at a resized size */
+        if ($mimetype=='image/png'||$mimetype=='image/webp') {
+            imageAlphaBlending($virtual_image, false);
+            imageSaveAlpha($virtual_image, true);
+        }
         imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
         /* create the physical thumbnail image to its destination */
-        if ($file->mimetype=='image/jpeg') {
-            return imagejpeg($virtual_image, $dest);
-        } elseif ($file->mimetype=='image/webp') {
-            return imagewebp($virtual_image, $dest);
+        if ($mimetype=='image/jpeg') {
+            return imagejpeg($virtual_image, $dest, (int)$quality);
+        } elseif ($mimetype=='image/webp') {
+            // scale webp quality to 3/4 of jpeg quality
+            // TODO: trust that folks will use a good q for webp? :)
+            return imagewebp($virtual_image, $dest, (int) floor($quality*0.75));
         } else {
             return imagepng($virtual_image, $dest);
         }
