@@ -153,8 +153,19 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 				"label"=>"Category",
 				"sortable"=>true,
 				"rowAttribute"=>"catname",
+				"rendererAttribute"=>"catname",
+				"renderer"=>new class extends Component {
+					public ?string $catname;
+
+					public function display(): void {
+						if ($this->catname) {
+							echo Input::stringHtmlSafe($this->catname);
+						}
+					}
+				},
 				"hideAttribute"=>"category",
-				"tdAttributes"=>["dataset-name"=>"Cat"]
+				"tdAttributes"=>["dataset-name"=>"Cat"],
+				"columnSpan"=>2
 			]),
 			(new AdminTableField())->loadFromConfig((object)[
 				"label"=>"Start",
