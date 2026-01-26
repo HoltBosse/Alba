@@ -7,6 +7,8 @@
 	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
 	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
+	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 	(new CssFile())->loadFromConfig((object)[
@@ -78,58 +80,123 @@
         ])->display();
 	?>
 
-	<table class='table'>
-		<thead>
-			<tr><th>State</th><th>Title</th><th>Type</th><th>Pages/Positions</th><!-- <th>Options</th> --><th>Note</th>
-		</thead>
-		<tbody>
-		<?php foreach ($all_widgets as $widget):?>
-			<tr class='widget_admin_row'>
-				<td>
-					<?php
-						(new StateButton())->loadFromConfig((object)[
-							"itemId"=>$widget->id,
-							"state"=>$widget->state,
+	<?php
+		$all_widgets = array_map(function($w) {
+			$w->stateComposite = [$w->id, $w->state, -1, []];
+			$w->titleComposite = [$w->id, $w->title];
+			$w->pagesComposite = $w;
+			return $w;
+		}, $all_widgets);
+
+		$columns = [
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"State",
+				"sortable"=>false,
+				"rowAttribute"=>"stateComposite",
+				"rendererAttribute"=>"state",
+				"renderer"=>new class extends Component {
+					public array $state;
+
+					public function display(): void {
+						$stateButton = (new StateButton())->loadFromConfig((object)[
+							"itemId"=>$this->state[0],
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/widgets/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/widgets/action/toggle",
 							"states"=>NULL,
 							"contentType"=>-1
-						])->display();
-					?>
-				</td>
-				<td><a href="<?php echo $_ENV["uripath"]; ?>/admin/widgets/edit/<?php echo $widget->id;?>"><?php echo $widget->title; ?></a></td>
-				<td><?php echo Widget::get_widget_type_title($widget->type); ?></td>
-				<td>
-				<?php 
-				if ($widget->position_control==0) {$position_control_description="Only On Marked Pages";} 
-				elseif ($widget->position_control==1) {$position_control_description="On All Pages Except Marked";}
-				elseif ($widget->position_control==2) {$position_control_description="Controlled by Pages";}
-				else {$position_control_description="Unknown position control";}
-				echo "<span class='position_control'>{$position_control_description}</span>";
-				if ($widget->page_list && $widget->position_control!=2) {
-					echo "<br><span class='page_list'>";
-					$page_list_pages = Page::get_pages_from_id_array (explode(',',$widget->page_list));
-					$comma="";
-					foreach ($page_list_pages as $page_list_page) {
-						echo $comma . $page_list_page->title ;
-						$comma = ", ";
+						]);
+						$stateButton->state = $this->state[1];
+						$stateButton->display();
 					}
-					echo "</span>";
-				}
-				if ($widget->position_control!=2) {
-					echo "<br><div class='position_single_wrap'>Position: <span class='position_single'>" . $widget->global_position . "</span></div>";
-				}
-				?>
-				</td>
-				<!-- <td><?php //CMS::pprint_r ($widget->options);?></td> -->
-				<td class='note_td'><?php echo $widget->note; ?></td>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-	</table>
-</form>
+				},
+				"tdAttributes"=>["class"=>"state-wrapper"],
+			]),
 
-<script type="module">
-	import {handleAdminRows} from "/js/admin_row.js";
-	handleAdminRows(".widget_admin_row");
-</script>
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Title",
+				"sortable"=>false,
+				"rowAttribute"=>"titleComposite",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public array $defaultvalue;
+
+					public function display(): void {
+						$contentId = $this->defaultvalue[0];
+						$contentTitle = $this->defaultvalue[1];
+						?>
+							<a href="<?php echo $_ENV["uripath"]; ?>/admin/widgets/edit/<?php echo $contentId;?>"><?php echo Input::stringHtmlSafe($contentTitle); ?></a>
+						<?php
+					}
+				},
+				"columnSpan"=>5,
+				"tdAttributes"=>["class"=>"title-wrapper"],
+			]),
+
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Type",
+				"sortable"=>false,
+				"rowAttribute"=>"type",
+				"rendererAttribute"=>"type",
+				"renderer"=>new class extends Component {
+					public int $type;
+
+					public function display(): void {
+						echo Widget::get_widget_type_title($this->type);
+					}
+				},
+				"columnSpan"=>2,
+			]),
+
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Pages/Positions",
+				"sortable"=>false,
+				"rowAttribute"=>"pagesComposite",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public object $defaultvalue;
+
+					public function display(): void {
+						echo "<div>";
+							$widget = $this->defaultvalue;
+							if ($widget->position_control==0) {$position_control_description="Only On Marked Pages";} 
+							elseif ($widget->position_control==1) {$position_control_description="On All Pages Except Marked";}
+							elseif ($widget->position_control==2) {$position_control_description="Controlled by Pages";}
+							else {$position_control_description="Unknown position control";}
+							echo "<span class='position_control'>{$position_control_description}</span>";
+							if ($widget->page_list && $widget->position_control!=2) {
+								echo "<br><span class='page_list'>";
+								$page_list_pages = Page::get_pages_from_id_array (explode(',',$widget->page_list));
+								$comma="";
+								foreach ($page_list_pages as $page_list_page) {
+									echo $comma . $page_list_page->title ;
+									$comma = ", ";
+								}
+								echo "</span>";
+							}
+							if ($widget->position_control!=2) {
+								echo "<br><div class='position_single_wrap'>Position: <span class='position_single'>" . $widget->global_position . "</span></div>";
+							}
+						echo "</div>";
+					}
+				},
+				"columnSpan"=>2,
+				"tdAttributes"=>["dataset-name"=>"Pos"]
+			]),
+
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Note",
+				"sortable"=>false,
+				"rowAttribute"=>"note",
+				"tdAttributes"=>["class"=>"note_td"],
+				"columnSpan"=>2,
+			])
+		];
+
+		(new AdminTable())->loadFromConfig((object)[
+			"columns"=>$columns,
+			"rows"=>$all_widgets,
+			"trClass"=>"widget_admin_row",
+		])->display();
+
+	?>
+</form>
