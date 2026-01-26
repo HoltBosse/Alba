@@ -11,10 +11,6 @@
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
 
-	(new CssFile())->loadFromConfig((object)[
-		"filePath"=>__DIR__ . "/style.css",
-	])->display();
-
 	ob_start();
 	if ($widget_type_id) {
 ?>
