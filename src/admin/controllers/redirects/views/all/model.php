@@ -29,10 +29,10 @@ $search = Input::getvar('search',v::StringVal(),null);
 $filters = Input::tuplesToAssoc( Input::getvar('filters',v::AlwaysValid(),null) );
 $cur_page = Input::getvar('page',v::IntVal(),'1');
 $page_size = Configuration::get_configuration_value ('general_options', 'pagination_size'); 
-$order_by = Input::getvar('order_by',v::StringVal(),'');
+$order_by = Input::getvar('Hits_order',v::StringVal(),'');
 $order_by_snippet = " ORDER BY created DESC ";
 $state = Input::getVar('state',v::IntVal(),null);
-if ($order_by && $order_by=="hits") {
+if ($order_by && $order_by=="desc") {
     $order_by_snippet = " ORDER BY hits DESC ";
 }
 

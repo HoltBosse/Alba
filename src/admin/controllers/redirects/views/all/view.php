@@ -10,10 +10,8 @@
 	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
 	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
-
-	(new CssFile())->loadFromConfig((object)[
-		"filePath"=>__DIR__ . "/style.css",
-	])->display();
+	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
+	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 
 	$rightContent = "<a class='is-primary pull-right button btn' href='" . $_ENV["uripath"] . "/admin/redirects/edit/new'>New Redirect</a>";
 
@@ -31,6 +29,8 @@
 		$searchForm->display();
 	?>
 </form>
+
+<form style="margin: 0;" id='orderform' action="" method="GET"></form>
 
 <form action='' method='post' name='redirect_action' id='redirect_action_form'>
 
@@ -52,52 +52,102 @@
 	<h2>No redirects found.</h2>
 <?php else:?>
 
-	<table class='table'>
-		<thead>
-			<tr>
-				<th>State</th>
-				<th>Source</th>
-				<th>Destination</th>
-				<th>Referer</th>
-				<th>Created</th>
-				<th>Created By</th>
-				<th>Updated</th>
-				<th>Updated By</th>
-				<th><a href="?order_by=hits">Hits</a></th>
-				<th>Header</th>
-				<th>Note</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ($redirects as $redirect_item):?>
-				<tr id='row_id_<?php echo $redirect_item->id;?>' data-itemid="<?php echo $redirect_item->id;?>" data-ordering="<?php echo $redirect_item->ordering;?>" class='content_admin_row'>
-					<td class='drag_td'>
-						<?php
-							(new StateButton())->loadFromConfig((object)[
-								"itemId"=>$redirect_item->id,
-								"state"=>$redirect_item->state,
-								"multiStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/togglestate",
-								"dualStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/toggle",
-								"states"=>NULL,
-								"contentType"=>-1
-							])->display();
+	<?php
+		$redirects = array_map(function($r){
+			$r->stateComposite = [$r->id, $r->state];
+			$r->sourceComposite = [$r->id, $r->old_url];
+			return $r;
+		}, $redirects);
+
+		$columns = [
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"State",
+				"sortable"=>false,
+				"rowAttribute"=>"stateComposite",
+				"rendererAttribute"=>"state",
+				"renderer"=>new class extends Component {
+					public array $state;
+
+					public function display(): void {
+						$stateButton = (new StateButton())->loadFromConfig((object)[
+							"itemId"=>$this->state[0],
+							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/togglestate",
+							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/toggle",
+							"states"=>NULL,
+							"contentType"=>-1
+						]);
+						$stateButton->state = $this->state[1];
+						$stateButton->display();
+					}
+				},
+				"tdAttributes"=>["class"=>"drag_td state-wrapper"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Source",
+				"sortable"=>false,
+				"rowAttribute"=>"sourceComposite",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public array $defaultvalue;
+
+					public function display(): void {
+						$id = $this->defaultvalue[0];
+						$url = $this->defaultvalue[1];
 						?>
-					</td>
-					<td class='limitwidth'><a href='<?php echo $_ENV["uripath"]; ?>/admin/redirects/edit/<?php echo $redirect_item->id;?>/'><?php echo $redirect_item->old_url; ?></a></td>
-					<td class='limitwidth'><?php echo $redirect_item->new_url; ?></td>
-					<td class='limitwidth unimportant'><?php echo $redirect_item->referer; ?></td>
-					<td class='unimportant'><?php echo $redirect_item->created; ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($redirect_item->created_by); ?></td>
-					<td class='unimportant'><?php echo $redirect_item->updated; ?></td>
-					<td class='unimportant'><?php echo User::get_username_by_id($redirect_item->updated_by); ?></td>
-					<td class='unimportant'><?php echo $redirect_item->hits; ?></td>
-					<td class='unimportant'><?php echo $redirect_item->header; ?></td>
-					<td class='unimportant'><?php echo $redirect_item->note; ?></td>
-				</tr>
-				
-			<?php endforeach; ?>
-		</tbody>
-	</table>
+							<div>
+								<a href="<?php echo $_ENV["uripath"]; ?>/admin/redirects/edit/<?php echo $id; ?>/"><?php echo Input::stringHtmlSafe($url); ?></a>
+							</div>
+						<?php
+					}
+				},
+				"tdAttributes"=>["class"=>"limitwidth title-wrapper"],
+				"columnSpan"=>3
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Destination",
+				"sortable"=>false,
+				"rowAttribute"=>"new_url",
+				"tdAttributes"=>["class"=>"limitwidth"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Referer",
+				"sortable"=>false,
+				"rowAttribute"=>"referer",
+				"tdAttributes"=>["class"=>"limitwidth unimportant"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Created",
+				"sortable"=>false,
+				"rowAttribute"=>"created",
+				"tdAttributes"=>["class"=>"unimportant"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Hits",
+				"sortable"=>true,
+				"rowAttribute"=>"hits",
+				"tdAttributes"=>["class"=>"unimportant"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Header",
+				"sortable"=>false,
+				"rowAttribute"=>"header",
+				"tdAttributes"=>["class"=>"unimportant"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Note",
+				"sortable"=>false,
+				"rowAttribute"=>"note",
+				"tdAttributes"=>["class"=>"unimportant"]
+			])
+		];
+
+		(new AdminTable())->loadFromConfig((object)[
+			"columns"=>$columns,
+			"rows"=>$redirects,
+			"trClass"=>"redirect_admin_row",
+		])->display();
+	?>
+
 <?php endif; ?>
 
 </form>

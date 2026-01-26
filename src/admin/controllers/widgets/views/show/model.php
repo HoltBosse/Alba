@@ -86,7 +86,7 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
 	}
 	
 	$searchState = Input::getVar("state", v::numericVal(), null);
-	if($searchState) {
+	if(!is_null($searchState)) {
 		$query .= " AND w.state=?";
 		$params[] = $searchState;
 	}

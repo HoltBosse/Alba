@@ -10,6 +10,8 @@
 	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
 	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
+	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
+	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 
 	(new CssFile())->loadFromConfig((object)[
 		"filePath"=>__DIR__ . "/style.css",
@@ -46,47 +48,101 @@
 	<h2>No forms found.</h2>
 <?php else:?>
 
-	<table class='table'>
-		<thead>
-			<tr>
-				<th>State</th>
-				<th>Title</th>
-				<th>Created By</th>
-				<th>Updated By</th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ($forms as $item):?>
-				<tr id='row_id_<?php echo $item->id;?>' data-itemid="<?php echo $item->id;?>" data-ordering="<?php echo $item->ordering;?>" class='content_admin_row'>
-					<td class='drag_td'>
-						<?php
-							(new StateButton())->loadFromConfig((object)[
-								"itemId"=>$item->id,
-								"state"=>$item->state,
-								"multiStateFormAction"=>$_ENV["uripath"] . "/admin/forms/action/togglestate",
-								"dualStateFormAction"=>$_ENV["uripath"] . "/admin/forms/action/toggle",
-								"states"=>NULL,
-								"contentType"=>-1
-							])->display();
+	<?php
+		// compose composite fields for table rendering
+		$forms = array_map(function($item) {
+			$item->stateComposite = [$item->id, $item->state, -1, NULL];
+			$item->titleComposite = [$item->id, $item->title, $item->alias, $item->content_type, $item];
+			return $item;
+		}, $forms);
+
+		$columns = [
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"State",
+				"sortable"=>false,
+				"rowAttribute"=>"stateComposite",
+				"rendererAttribute"=>"state",
+				"renderer"=>new class extends Component {
+					public array $state;
+
+					public function display(): void {
+						$stateButton = (new StateButton())->loadFromConfig((object)[
+							"itemId"=>$this->state[0],
+							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/forms/action/togglestate",
+							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/forms/action/toggle",
+							"states"=>NULL,
+							"contentType"=>-1
+						]);
+						$stateButton->state = $this->state[1];
+						$stateButton->display();
+					}
+				},
+				"tdAttributes"=>["class"=>"drag_td state-wrapper"],
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Title",
+				"sortable"=>false,
+				"rowAttribute"=>"titleComposite",
+				"hideAttribute"=>"title",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public array $defaultvalue;
+
+					public function display(): void {
+						$contentId = $this->defaultvalue[0];
+						$contentTitle = $this->defaultvalue[1];
+						$contentAlias = $this->defaultvalue[2];
+						$contentType = $this->defaultvalue[3];
 						?>
-					</td>
-					<td>
-						<div>
-							<a href="<?php echo $_ENV["uripath"]; ?>/admin/forms/edit/<?php echo $item->id;?>/<?php echo $item->content_type;?>"><?php echo Input::stringHtmlSafe($item->title); ?></a>
-						</div>
-						<span class='unimportant'>
-							<?php
-								echo $item->alias;
-							?>
-						</span>
-					</td>
-					<td><?php echo User::get_username_by_id($item->created_by); ?></td>
-					<td><?php echo User::get_username_by_id($item->updated_by); ?></td>
-				</tr>
-				
-			<?php endforeach; ?>
-		</tbody>
-	</table>
+							<div>
+								<a href="<?php echo $_ENV["uripath"]; ?>/admin/forms/edit/<?php echo $contentId;?>/<?php echo $contentType;?>"><?php echo Input::stringHtmlSafe($contentTitle); ?></a>
+							</div>
+							<span class='unimportant'>
+								<?php echo $contentAlias; ?>
+							</span>
+						<?php
+					}
+				},
+				"tdAttributes"=>["class"=>"title-wrapper"],
+				"columnSpan"=>3,
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Created By",
+				"sortable"=>false,
+				"rowAttribute"=>"created_by",
+				"rendererAttribute"=>"created_by",
+				"renderer"=>new class extends Component {
+					public int $created_by;
+
+					public function display(): void {
+						echo User::get_username_by_id($this->created_by);
+					}
+				},
+				"tdAttributes"=>["class"=>"unimportant"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Updated By",
+				"sortable"=>false,
+				"rowAttribute"=>"updated_by",
+				"rendererAttribute"=>"updated_by",
+				"renderer"=>new class extends Component {
+					public int $updated_by;
+
+					public function display(): void {
+						echo User::get_username_by_id($this->updated_by);
+					}
+				},
+				"tdAttributes"=>["class"=>"unimportant"]
+			]),
+		];
+
+		(new AdminTable())->loadFromConfig((object)[
+			"columns"=>$columns,
+			"rows"=>$forms,
+			"trClass"=>"form_admin_row",
+		])->display();
+	?>
+
 <?php endif; ?>
 
 </form>
@@ -119,8 +175,3 @@ if ($cur_page) {
 		"currentPage"=>$cur_page
 	])->display();
 ?>
-
-<script type="module">
-	import {handleAdminRows} from "/js/admin_row.js";
-	handleAdminRows(".content_admin_row");
-</script>

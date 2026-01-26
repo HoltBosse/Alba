@@ -8,7 +8,6 @@ Use HoltBosse\Form\{Input, Form};
 ?>
 
 <style>
-    <?php echo file_get_contents(__DIR__ . "/../all/style.css"); ?>
     .orderitem:hover {
         cursor:move;
     }

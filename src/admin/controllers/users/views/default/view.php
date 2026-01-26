@@ -1,35 +1,17 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Component, Hook, User, Tag, Form};
-Use HoltBosse\Form\Fields\Select\Select as Field_Select;
-Use HoltBosse\Form\Input;
-Use HoltBosse\Alba\Components\Pagination\Pagination;
-Use HoltBosse\Alba\Components\StateButton\StateButton;
-Use HoltBosse\Alba\Components\Html\Html;
-Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
-Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
-Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Core\{CMS, Component, Hook, User, Tag, Form};
+	Use HoltBosse\Form\Fields\Select\Select as Field_Select;
+	Use HoltBosse\Form\{Field, Input};
+	Use HoltBosse\Alba\Components\Pagination\Pagination;
+	Use HoltBosse\Alba\Components\StateButton\StateButton;
+	Use HoltBosse\Alba\Components\Html\Html;
+	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
+	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
+	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
+	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 
-?>
-
-<style>
-	<?php echo file_get_contents(__DIR__ . "/style.css"); ?>
-	<?php if($_ENV["admin_show_ids_in_tables"]==="true") { ?>
-		@media screen and (max-width: 1023px) {
-			table.table th:nth-of-type(1), table.table th:nth-of-type(3), table.table td:nth-of-type(1), table.table td:nth-of-type(3) {
-				display: block;
-			}
-			table.table th:nth-of-type(2), table.table td:nth-of-type(2) {
-				display: none;
-			}
-			table.table th:nth-of-type(3), table.table td:nth-of-type(3) {
-				width: 100%;
-			}
-		}
-	<?php } ?>
-</style>
-
-<?php
 	$rightContent = "<a href='" . $_ENV["uripath"] . "/admin/users/edit' class='button is-primary'>
 		<span class='icon is-small'>
 			<i class='fas fa-check'></i>
@@ -65,105 +47,178 @@ Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonTo
                 "wrap"=>false
             ])
         ])->display();
-	?>
-	<table id='all_users_table can-have-ids' class="table">
-		<thead>
-			<th>Status</th>
-			<?php
-				if($_ENV["admin_show_ids_in_tables"]==="true") {
-					echo "<th>Id</th>";
-				}
-			?>
-			<th>Name</th>
-			<th>Email</th>
-			<?php if ($content_list_fields):?>
-				<?php foreach ($content_list_fields as $content_list_field):?>
-					<th><?php echo $content_list_field->label; ?></th>
-				<?php endforeach; ?>
-			<?php endif; ?>
-			<?php if (!$group_id):?><th>Group(s)</th><?php endif; ?>
-			<th>Tags</th>
-			<!-- <th>Created</th>
-			<th>ID</th> -->
-		</thead>
-		<tbody>
-			<?php foreach($all_users as $user):?> 
-			<tr class='user_admin_row'>
-				<td>
-					<?php
-						$statesForToggle = $states;
-						if(!is_array($statesForToggle)) {
-							$statesForToggle = [];
-						}
-						$statesForToggle = array_merge([(object) ["state"=>2,"name"=>"Published - Pwd Reset Req", "color"=>"lime"]], $statesForToggle);
-						(new StateButton())->loadFromConfig((object)[
-							"itemId"=>$user->id,
-							"state"=>$user->state,
+
+		$statesForToggle = $states;
+		if(!is_array($statesForToggle)) {
+			$statesForToggle = [];
+		}
+		$statesForToggle = array_merge([(object) ["state"=>2,"name"=>"Published - Pwd Reset Req", "color"=>"lime"]], $statesForToggle);
+
+		$all_users = array_map(Function($i) use ($statesForToggle) {
+			$i->stateComposite = [$i->id, $i->state, $statesForToggle];
+			$i->usernameComposite = [$i->id, $i->username];
+			$i->groupComposite = User::get_all_groups_for_user($i->id);
+			$i->tagComposite = Tag::get_tags_for_content($i->id, -2);
+			return $i;
+		}, $all_users);
+
+		$columns = [
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"State",
+				"sortable"=>false,
+				"rowAttribute"=>"stateComposite",
+				"rendererAttribute"=>"state",
+				"renderer"=>new class extends Component {
+					public array $state;
+
+					public function display(): void {
+						$stateButton = (new StateButton())->loadFromConfig((object)[
+							"itemId"=>$this->state[0],
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/users/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/users/action/toggle",
-							"states"=>$statesForToggle,
+							"states"=>$this->state[2],
 							"contentType"=>-1
-						])->display();
-					?>
-				</td>
-				<?php
-					if($_ENV["admin_show_ids_in_tables"]==="true") {
-						echo "<td>$user->id</td>";
+						]);
+						$stateButton->state = $this->state[1];
+						$stateButton->display();
 					}
-				?>
-				<td>
-					<a class='edit_user' href='<?php echo $_ENV["uripath"];?>/admin/users/edit/<?php echo $user->id;?>'><?php echo Input::stringHtmlSafe($user->username); ?></a>
-				</td>
-				<td>
-					<?php echo Input::stringHtmlSafe($user->email); ?>
-				</td>
-				<?php if ($content_list_fields):?>
-					<?php $named_custom_fields = array_column(json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]))->fields, null, 'name'); ?>
-					<?php foreach ($content_list_fields as $content_list_field):?>
-						<td dataset-name="<?php echo $content_list_field->label; ?>"><?php 
-							$propname = "{$content_list_field->name}"; 
-							$classname = Form::getFieldClass($content_list_field->type);
-							$curfield = new $classname();
-							$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
-							$curfield->default = $customUserFieldsLookup[$user->id]->$propname; // set temp field value to current stored value
-							// TODO: pass precalc array of table names for content types to aid in performance of lookups 
-							// some fields will currently parse json config files to determine tables to query for friendly values
-							// PER row/field. not ideal.
-							echo $curfield->getFriendlyValue($named_custom_fields[$propname]); // pass named field custom field config to help determine friendly value
-							?></td>
-					<?php endforeach; ?>
-				<?php endif; ?>
-				<?php if (!$group_id):?>
-					<td>
-						<?php 
-						$groups = User::get_all_groups_for_user($user->id);
-						echo '<div class="tags are-small are-light">';
-						foreach ($groups as $group) {
-							echo '<span class="tag is-info is-light">' . $group->display . '</span>';
-						}
-						echo '</div>';
+				},
+				"tdAttributes"=>["class"=>"drag_td state-wrapper"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Name",
+				"sortable"=>false,
+				"rowAttribute"=>"usernameComposite",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public array $defaultvalue;
+
+					public function display(): void {
 						?>
-					</td>
-				<?php endif; ?>
-				<td><?php 
-					$tags = Tag::get_tags_for_content($user->id, -2);
-					echo '<div class="tags are-small are-light">';
-					foreach ($tags as $tag) {
-						echo '<span class="tag is-info is-light">' . $tag->title . '</span>';
+							<div>
+								<a class='edit_user' href='<?php echo $_ENV["uripath"];?>/admin/users/edit/<?php echo $this->defaultvalue[0];?>'><?php echo Input::stringHtmlSafe($this->defaultvalue[1]); ?></a>
+							</div>
+						<?php
 					}
-					echo '</div>';
-					?>
-				</td>
-				<!-- <td>
-					<?php echo $user->created; ?>
-				</td>
-				<td>
-					<?php echo $user->id; ?>
-				</td> -->
-			</tr>
-			<?php endforeach; ?>
-		</tbody>
-	</table>
+				},
+				"columnSpan"=>3,
+				"tdAttributes"=>["class"=>"title-wrapper"],
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Email",
+				"sortable"=>false,
+				"rowAttribute"=>"email",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public string $defaultvalue;
+
+					public function display(): void {
+						echo Input::stringHtmlSafe($this->defaultvalue);
+					}
+				},
+				"columnSpan"=>2,
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Group(s)",
+				"sortable"=>false,
+				"rowAttribute"=>"groupComposite",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public array $defaultvalue;
+
+					public function display(): void {
+						if(sizeof($this->defaultvalue) > 0) { // we use css empty, so cant have blank tags inside
+							echo '<div class="tags are-small are-light">';
+								foreach ($this->defaultvalue as $group) {
+									echo '<span class="tag is-info is-light">' . $group->display . '</span>';
+								}
+							echo '</div>';
+						}
+					}
+				},
+				"columnSpan"=>2,
+				"tdAttributes"=>["dataset-name"=>"Grp(s)"]
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Tags",
+				"sortable"=>false,
+				"rowAttribute"=>"tagComposite",
+				"rendererAttribute"=>"defaultvalue",
+				"renderer"=>new class extends Component {
+					public array $defaultvalue;
+
+					public function display(): void {
+						if(sizeof($this->defaultvalue) > 0) { // we use css empty, so cant have blank tags inside
+							echo '<div class="tags are-small are-light">';
+								foreach ($this->defaultvalue as $tag) {
+									echo '<span class="tag is-info is-light">' . $tag->title . '</span>';
+								}
+							echo '</div>';
+						}
+					}
+				},
+				"columnSpan"=>2,
+			]),
+		];
+
+		$listColumns = [];
+		if ($content_list_fields) {
+			foreach ($content_list_fields as $content_list_field) {
+				$listColumns[] = (new AdminTableField())->loadFromConfig((object)[
+					"label"=>$content_list_field->label,
+					"sortable"=>false,
+					"rowAttribute"=>"id",
+					"rendererAttribute"=>"defaultvalue",
+					"renderer"=>new class extends Component {
+						public mixed $defaultvalue;
+						public Field $formfield;
+						public mixed $named_custom_fields;
+						public mixed $customUserFieldsLookup;
+
+						public function display(): void {
+							$this->formfield->default = $this->customUserFieldsLookup[$this->defaultvalue]->{$this->formfield->name}; // set temp field value to current stored value
+
+							echo $this->formfield->getFriendlyValue($this->named_custom_fields[$this->formfield->name]); // pass named field custom field config to help determine friendly value
+						}
+					},
+					"columnSpan"=>2,
+				]);
+
+				$named_custom_fields = array_column(json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]))->fields, null, 'name'); 
+
+				$propname = "{$content_list_field->name}"; 
+				$classname = Form::getFieldClass($content_list_field->type);
+				$curfield = new $classname();
+				$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
+
+				$lastField = $listColumns[count($listColumns)-1];
+				//@phpstan-ignore-next-line
+				$lastField->renderer->formfield = $curfield;
+				//@phpstan-ignore-next-line
+				$lastField->renderer->named_custom_fields = $named_custom_fields;
+				//@phpstan-ignore-next-line
+				$lastField->renderer->customUserFieldsLookup = $customUserFieldsLookup;
+			}
+		}
+		array_splice($columns, 3, 0, $listColumns);
+
+		if($_ENV["admin_show_ids_in_tables"]==="true") {
+			array_splice($columns, 1, 0, [(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Id",
+				"sortable"=>false,
+				"rowAttribute"=>"id",
+				"tdAttributes"=>["class"=>"id-wrapper"]
+			])]);
+		}
+
+		//todo: hide fields
+
+		(new AdminTable())->loadFromConfig((object)[
+			"columns"=>$columns,
+			"rows"=>$all_users,
+			"trClass"=>"user_admin_row",
+		])->display();
+	?>
 
 </form>
 
@@ -175,8 +230,3 @@ Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonTo
 		"currentPage"=>$cur_page
 	])->display();
 ?>
-
-<script type="module">
-	import {handleAdminRows} from "/js/admin_row.js";
-	handleAdminRows(".user_admin_row");
-</script>
