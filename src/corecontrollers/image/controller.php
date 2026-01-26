@@ -26,64 +26,47 @@ if ($segments[1]=='list_images') {
 	if ($searchtext=='null') {
 		$searchtext=null;
 	}
-	if ($searchtext) {
-		$query = "SELECT * FROM `media` WHERE (`title` LIKE ? OR alt LIKE ?)";
-		$params = ["%$searchtext%","%$searchtext%"];
-		if ($mimetypes) {
-			$query.=" AND mimetype IN (";
-			$result = "'" . implode ( "', '", $mimetypes ) . "'";
-			$query .= $result;
-			$query.=")";
-		}
-		if($tags) {
-			$explodedTags = explode(",", $tags);
-			foreach($explodedTags as &$tag) {
-				$tag = $dbInstance->getPdo()->quote($tag);
-				unset($tag);
-			}
-			$wrappedTags = implode(",", $explodedTags);
-			
-			$query.= " AND id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
-		}
-		$query .= " AND (domain=? OR domain IS NULL) ";
-		$params[] = ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']));
 
-		$query.=" LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page;
-		$list = DB::fetchAll($query, $params);
+	$query = "SELECT * FROM `media` WHERE id>0";
+	$params = [];
+	if($searchtext) {
+		$query .= " AND (title LIKE ? OR alt LIKE ?)";
+		$params[] = "%$searchtext%";
+		$params[] = "%$searchtext%";
 	}
-	else {
-		$query = "SELECT * FROM `media` WHERE id>0";
-		$params = [];
-		if ($mimetypes) {
-			// TODO: ensure valid mimetypes from JSON?
-			$query.=" AND mimetype in (";
-			for ($n=0; $n < sizeof($mimetypes); $n++) {
-				if ($n>0) {
-					$query .= ",";
-				}
-				$query .= $dbInstance->getPdo()->quote($mimetypes[$n]);
+	if ($mimetypes) {
+		// TODO: ensure valid mimetypes from JSON?
+		$query.=" AND mimetype in (";
+		for ($n=0; $n < sizeof($mimetypes); $n++) {
+			if ($n>0) {
+				$query .= ",";
 			}
-			$query.=") ";
+			$query .= $dbInstance->getPdo()->quote($mimetypes[$n]);
 		}
-		if($tags && !$mimetypes) {
-			$explodedTags = explode(",", $tags);
-			foreach($explodedTags as &$tag) {
-				$tag = $dbInstance->getPdo()->quote($tag);
-				unset($tag);
-			}
-			$wrappedTags = implode(",", $explodedTags);
-			
-			$query.= " AND id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
-		}
-		$query .= " AND (domain=? OR domain IS NULL) ";
-		$params[] = ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']));
-
-		$query .= " ORDER BY id DESC LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page; // newest first, honor (safe) page limit
-		$list = DB::fetchAll($query, $params);
+		$query.=") ";
 	}
+	if($tags && !$mimetypes) {
+		$explodedTags = explode(",", $tags);
+		foreach($explodedTags as &$tag) {
+			$tag = $dbInstance->getPdo()->quote($tag);
+			unset($tag);
+		}
+		$wrappedTags = implode(",", $explodedTags);
 		
-	//$list = $stmt->fetchAll();
-	echo '{"success":1,"msg":"Images found ok","images":'.json_encode($list).', "tags": "' . ($tags ?? "none") . '", "query": "' . $query . '"}';
+		$query.= " AND id IN (SELECT content_id FROM tagged WHERE content_type_id=-1 AND tag_id IN ($wrappedTags)) "; 
+	}
+	$query .= " AND (domain=? OR domain IS NULL) ";
+	$params[] = ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']));
+
+	$query .= " ORDER BY id DESC LIMIT " . $images_per_page . " OFFSET " . ($page-1)*$images_per_page; // newest first, honor (safe) page limit
+	$list = DB::fetchAll($query, $params);
+		
+	echo json_encode((object)[
+		"success"=>1,
+		"msg"=>"Images found ok",
+		"images"=>$list,
+		"tags"=>$tags ?? "none"
+	]);;
 	exit(0);
 } elseif($segments[1]=='gettags') {
 	header('Content-Type: application/json; charset=utf-8');
