@@ -139,7 +139,7 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 
 					public function display(): void {
 						$tags = $this->defaultvalue;
-						if(sizeof($tags) > 0) { //wee use css empty, so cant have blank tags inside
+						if(sizeof($tags) > 0) { // we use css empty, so cant have blank tags inside
 							echo '<div class="tags are-small are-light">';
 								foreach ($tags as $tag) {
 									echo '<span class="tag is-info is-light">' . Input::stringHtmlSafe($tag->title) . '</span>';

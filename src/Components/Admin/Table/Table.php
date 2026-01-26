@@ -48,6 +48,10 @@ class Table extends Component {
         echo "<style>";
             echo file_get_contents(__DIR__ . "/style.css");
 
+            echo ".$this->trClass.selected {
+                background:rgba(200,255,200,0.3);
+            }";
+
             echo "@media screen and (min-width: 1024px) {";
                 $baseGridCount = 0;
                 foreach($this->columns as $index=>$column) {

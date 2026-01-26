@@ -49,10 +49,6 @@ table.table {
     th:has(input[value="desc"]:checked) i.fas.fa-sort-down {
         display: inline-block;
     }
-    
-    .content_admin_row.selected {
-        background:rgba(200,255,200,0.3);
-    }
 }
 
 
