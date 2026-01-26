@@ -171,7 +171,6 @@ function crop_image() {
 				formData.append("file-upload[]", result);
 				formData.append("alt[]", [title]);
 				formData.append("title[]", [alt]);
-				formData.append("web_friendly[]", [0]);
 
 				fetch(`${window.uripath}/admin/images/uploadv2`, {
 					method: "POST",

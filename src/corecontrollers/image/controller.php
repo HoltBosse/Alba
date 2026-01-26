@@ -164,46 +164,6 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 	exit(0);
 }
 
-function image_make_thumb ($src, $dest, $desired_width, $file, $quality, $mimetype) {
-	if ($file->mimetype=='image/jpeg') {
-		$source_image = imagecreatefromjpeg($src);
-	}
-	elseif ($file->mimetype=='image/webp') {
-		$source_image = imagecreatefromwebp($src);
-		imageAlphaBlending($source_image, false);
-		imageSaveAlpha($source_image, true);
-	}
-	else {
-		$source_image = imagecreatefrompng($src);
-		imageAlphaBlending($source_image, false);
-		imageSaveAlpha($source_image, true);
-	}
-	$width = imagesx($source_image);
-	$height = imagesy($source_image);
-	/* find the "desired height" of this thumbnail, relative to the desired width  */
-	$desired_height = (int) floor($height * ($desired_width / $width)); //floor returns a float, cast to int, cause php is weird
-	/* create a new, "virtual" image */
-	$virtual_image = imagecreatetruecolor($desired_width, $desired_height);
-	/* copy source image at a resized size */
-	if ($mimetype=='image/png'||$mimetype=='image/webp') {
-		imageAlphaBlending($virtual_image, false);
-		imageSaveAlpha($virtual_image, true);
-	}
-	imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
-	/* create the physical thumbnail image to its destination */
-	if ($mimetype=='image/jpeg') {
-		imagejpeg($virtual_image, $dest, (int)$quality);
-	}
-	elseif ($mimetype=='image/webp') {
-		// scale webp quality to 3/4 of jpeg quality
-		// TODO: trust that folks will use a good q for webp? :)
-		imagewebp($virtual_image, $dest, (int) floor($quality*0.75));
-	}
-	else {
-		imagepng($virtual_image, $dest);
-	}
-}
-
 function get_image ($id) {
 	return DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
 }
@@ -274,7 +234,7 @@ if ($segsize==2 && !$req_width && !$req_format && $req_quality==75) {
 			$newsize_path = $_ENV["images_directory"] . "/processed/q_" . $req_quality . "_" . $size . "w_" . $image->filename . $newsize_path_suffix;
 			//echo "<h5>Path: " . $newsize_path . "</h5>"; CMS::pprint_r ($mimetype); exit(0);
 			if (!file_exists($newsize_path)) {
-				image_make_thumb($original_path, $newsize_path, $size, $image, $req_quality, $mimetype); 
+				Image::MakeResizedImage($original_path, $newsize_path, $size, $image, $req_quality, $mimetype); 
 			}
 			// set mimetype in image object to match requested mimetype (might already be same...)
 			// this makes sure header is correct 

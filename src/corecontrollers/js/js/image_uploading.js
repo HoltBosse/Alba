@@ -130,14 +130,6 @@ function doUpload(e) {
 
 						</select>
 					</div>
-                    <div class='field' style='${(webFriendlyBlacklist[myfiles[i].type] ? "display:none;" : "")}'>
-                        <label>Web Friendly</label>
-                        <select name='web_friendly[]'>
-                            <option selected value='1'>Yes</option>
-                            <option value='0'>No</option>
-                        </select>
-                        <p class='help'>Resize large images for web</p>
-                    </div>
                 </div>
             </div>
             `;

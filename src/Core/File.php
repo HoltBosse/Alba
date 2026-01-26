@@ -10,6 +10,7 @@ class File {
 	public $title;
 	public $alt;
 	public $filename;
+	public $filepath;
 	public $mimetype;
 	public $original_width;
 	
@@ -46,7 +47,9 @@ class File {
 		$this->alt = "";
 		$this->title = "";
 		$this->filename = "";
+		$this->filepath = "";
 		if ($filepath && is_file($filepath)) {
+			$this->filepath = $filepath;
 			$this->filename = basename ($filepath);
 			$this->mimetype = mime_content_type ($filepath);
 			if ($this->is_image()) {

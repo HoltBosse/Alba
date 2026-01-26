@@ -128,7 +128,6 @@ class Image extends Field {
 					formData.append("file-upload[]", result);
 					formData.append("alt[]", [preview.alt]);
 					formData.append("title[]", [preview.title]);
-					formData.append("web_friendly[]", [0]);
 
 					fetch('<?php echo $_ENV["uripath"]; ?>/admin/images/uploadv2', {
 						method: "POST",
