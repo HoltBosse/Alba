@@ -24,7 +24,7 @@ $result = Image::processUploadedFiles(
 	$uploaded_files_array,
 	$alts,
 	$titles,
-	$tags,
+	$tags ?? [],
 	$directory
 );
 
