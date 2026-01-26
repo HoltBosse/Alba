@@ -120,7 +120,9 @@
 						$contentId = $this->defaultvalue[0];
 						$contentTitle = $this->defaultvalue[1];
 						?>
-							<a href="<?php echo $_ENV["uripath"]; ?>/admin/widgets/edit/<?php echo $contentId;?>"><?php echo Input::stringHtmlSafe($contentTitle); ?></a>
+							<div>
+								<a href="<?php echo $_ENV["uripath"]; ?>/admin/widgets/edit/<?php echo $contentId;?>"><?php echo Input::stringHtmlSafe($contentTitle); ?></a>
+							</div>
 						<?php
 					}
 				},
