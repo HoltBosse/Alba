@@ -77,7 +77,7 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
 		$widget_type_title = DB::fetch('SELECT title FROM widget_types WHERE id=?', [$widget_type_id])->title;
 	}
 	
-	$query = 'SELECT w.* FROM widgets w LEFT JOIN widget_types wt ON w.type=wt.id WHERE w.state>=0 AND (domain IS NULL OR domain=?)';
+	$query = 'SELECT w.* FROM widgets w LEFT JOIN widget_types wt ON w.type=wt.id WHERE w.state>=0 AND (domain IS NULL OR domain=?) AND w.type IN (SELECT id FROM widget_types)';
 	$params = [$_SESSION["current_domain"]];
 	
 	if(is_numeric($widget_type_id)) {
