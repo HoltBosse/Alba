@@ -7,10 +7,9 @@
 	Use HoltBosse\Alba\Components\Admin\StateButtonGroup\StateButtonGroup as AdminStateButtonGroup;
 	Use HoltBosse\Alba\Components\Admin\ButtonToolBar\ButtonToolBar as AdminButtonToolBar;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
-
-	(new CssFile())->loadFromConfig((object)[
-		"filePath"=>__DIR__ . "/style.css",
-	])->display();
+	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
+	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
+	use HoltBosse\Form\Input;
 
 	(new TitleHeader())->loadFromConfig((object)[
 		"header"=>"Plugins",
@@ -30,44 +29,71 @@
                 "wrap"=>false
             ])
         ])->display();
-	?>
 
-	<table class='table'>
-		<thead>
-			<tr><th>State</th><th>Title</th><th>Description</th><th>Version</th><th>Author</th><th>Website</th>
-		</thead>
-		<tbody>
-		<?php foreach ($all_plugins as $a_plugin):?>
-			<?php
-			// load config json for each plugin
-			$a_plugin_config = JSON::load_obj_from_file (Plugin::getPluginPath($a_plugin->location) . '/plugin_config.json');
-			//CMS::pprint_r ($a_plugin_config);
-			?>
-			<tr class='plugin_admin_row'>
-				<td>
-					<?php
-						(new StateButton())->loadFromConfig((object)[
-							"itemId"=>$a_plugin->id,
-							"state"=>$a_plugin->state,
+		$all_plugins = array_map(function($i) {
+			$i->stateComposite = [$i->id, $i->state, null];
+			$i->titleComposite = [$i->id, $i->title];
+
+			return $i;
+		}, $all_plugins);
+
+		$columns = [
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"State",
+				"sortable"=>false,
+				"rowAttribute"=>"stateComposite",
+				"rendererAttribute"=>"state",
+				"renderer"=>new class extends Component {
+					public array $state;
+
+					public function display(): void {
+						$stateButton = (new StateButton())->loadFromConfig((object)[
+							"itemId"=>$this->state[0],
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/plugins/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/plugins/action/toggle",
-							"states"=>NULL,
+							"states"=>$this->state[2],
 							"contentType"=>-1
-						])->display();
-					?>
-				</td>
-				<td><a href="<?php echo $_ENV["uripath"]; ?>/admin/plugins/edit/<?php echo $a_plugin->id;?>"><?php echo $a_plugin_config->title; ?></a></td>
-				<td><?php echo $a_plugin_config->description; ?></td>
-				<td><?php echo $a_plugin_config->version; ?></td>
-				<td><?php echo $a_plugin_config->author; ?></td>
-				<td><a href='<?php echo $a_plugin_config->website; ?>'>link</a></td>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-	</table>
-</form>
+						]);
+						$stateButton->state = $this->state[1];
+						$stateButton->display();
+					}
+				},
+				"tdAttributes"=>["class"=>"drag_td state-wrapper"],
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Title",
+				"sortable"=>false,
+				"rowAttribute"=>"titleComposite",
+				"rendererAttribute"=>"title",
+				"renderer"=>new class extends Component {
+					public array $title;
 
-<script type="module">
-	import {handleAdminRows} from "/js/admin_row.js";
-	handleAdminRows(".plugin_admin_row");
-</script>
+					public function display(): void {
+						echo "<div><a href='" . $_ENV["uripath"] . "/admin/plugins/edit/" . $this->title[0] . "'>" . Input::stringHtmlSafe($this->title[1]) . "</a></div>";
+					}
+				},
+				"columnSpan"=>3
+			]),
+			(new AdminTableField())->loadFromConfig((object)[
+				"label"=>"Description",
+				"sortable"=>false,
+				"rowAttribute"=>"description",
+				"rendererAttribute"=>"description",
+				"renderer"=>new class extends Component {
+					public string $description;
+
+					public function display(): void {
+						echo "<div>" . Input::stringHtmlSafe($this->description) . "</div>";
+					}
+				},
+				"columnSpan"=>3
+			]),
+		];
+
+		(new AdminTable())->loadFromConfig((object)[
+			"columns"=>$columns,
+			"rows"=>$all_plugins,
+			"trClass"=>"plugin_admin_row",
+		])->display();
+	?>
+</form>
