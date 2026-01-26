@@ -48,7 +48,7 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 <?php if (!$all_content):?>
 	<h2>No content to show!</h2>
 <?php else:?>
-	<form style="margin: 0;" id='orderform' action="" methpd="GET"></form>
+	<form style="margin: 0;" id='orderform' action="" method="GET"></form>
 
 	<form action='' method='post' name='content_action' id='content_action_form'>
 	<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
