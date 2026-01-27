@@ -313,3 +313,26 @@ document.querySelector("[data-clickaction='delete_items']").addEventListener("cl
 	delete_items();
 });
 
+window.addEventListener('load',()=> {
+	document.body.addEventListener('click',(e)=> {
+		if (e.target.classList.contains('state_indicator')) {
+			const submit_url = e.target.dataset.submiturl;
+			// do fetch to toggle state
+			fetch(submit_url, {
+				method: "POST",
+			}).then(response=>response.json()).then((response)=>{
+				console.log(response);
+				// update icon
+				if (response.new_state==1) {
+					e.target.innerHTML = '<i class="fa-solid fa-eye"></i>';
+				} else if(response.new_state==0) {
+					e.target.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+				}
+			}).catch((e)=>{
+				console.log(e);
+				console.log("error");
+			});
+		}
+	});
+});
+

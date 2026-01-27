@@ -383,10 +383,6 @@ final class CMS {
 		$this->request = str_ireplace($to_remove, "", $this->request);
 		// split into array of segments
 		$this->uri_segments = $this->parseUrlToSegments($this->request);
-		
-		if (@$this->uri_segments[0]=='image') {
-			$this->need_session=false; // don't need session for image api
-		}
 
 		//load admin controllers
 		CMS::registerAdminControllerDir(__DIR__ . "/../admin/controllers");

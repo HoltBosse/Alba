@@ -140,6 +140,19 @@ if ($action=='rename_image') {
 	}
 }
 
+if($action=="toggle_image_state") {
+	$id = Input::getvar('id',v::IntVal());
+
+	Actions::add_action("mediaupdate", (object) [
+		"affected_media"=>$id,
+	]);
+
+	DB::exec("update media set state=1-state where id=?", [$id]);
+	$state = DB::fetch("select state from media where id=?", [$id])->state;
+	echo '{"success":1,"msg":"Image state toggled","new_state":' . $state . '}';
+	exit(0);
+}
+
 echo '{"success":0,"msg":"Unknown operation requested"}';
 exit(0);
 

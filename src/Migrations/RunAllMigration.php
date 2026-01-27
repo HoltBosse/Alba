@@ -46,6 +46,7 @@ class RunAllMigration extends Migration {
             ['Media Table - Domain Column', new MediaDomainMigration()],
             ['Configurations Table - Domain Column', new ConfigurationDomainMigration()],
             ['Templates Table - Domain Column', new TemplateDomainMigration()],
+            ['Media Table - State Column', new MediaStateMigration()],
         ];
     }
 }
