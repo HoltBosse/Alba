@@ -3,6 +3,7 @@
         "Text",
         "Textarea",
         "Checkbox",
+        "Image",
         "Antispam",
         "Honeypot"
     ]

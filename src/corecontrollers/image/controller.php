@@ -98,6 +98,31 @@ if ($segments[1]=='list_images') {
 		"data"=>$tags
 	]);
 	exit(0);
+} elseif($segments[1]=="frontend_upload") {
+	// frontend upload endpoint for public image fields
+	// check session var set by field display
+	if (!isset($_SESSION["public_accessible_image_field_loaded"]) || !$_SESSION["public_accessible_image_field_loaded"]) {
+		http_response_code(401);
+		exit(0);
+	}
+	unset($_SESSION["public_accessible_image_field_loaded"]); // reset for next time
+
+	$info = [];
+	array_map(function($a) use (&$info) { $info[] = ""; }, $_FILES['file-upload']['name']);
+
+	$result = Image::processUploadedFiles(
+		$_FILES['file-upload'],
+		$info,
+		$info,
+		[],
+		$_ENV["images_directory"] . "/processed"
+	);
+	foreach(explode($result->ids, ",") as $id) {
+		DB::exec("UPDATE media SET state=0 WHERE id=?", [$id]);
+	}
+
+	echo json_encode($result);
+	exit(0);
 }
 
 // end list api
