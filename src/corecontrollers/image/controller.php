@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, File, Image};
+Use HoltBosse\Alba\Core\{CMS, File, Image, User};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
@@ -27,7 +27,7 @@ if ($segments[1]=='list_images') {
 		$searchtext=null;
 	}
 
-	$query = "SELECT * FROM `media` WHERE id>0";
+	$query = "SELECT * FROM `media` WHERE id>0 AND state>0";
 	$params = [];
 	if($searchtext) {
 		$query .= " AND (title LIKE ? OR alt LIKE ?)";
@@ -129,7 +129,7 @@ else {
 // quality fixed for url param version
 $req_quality = Input::getVar("q", v::numericVal(), 75);
 
-function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
+function serve_file ($media_obj, $fullpath, $seconds_to_cache=86400) {
 	$seconds_to_cache = $seconds_to_cache;
 	$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
 	header("Expires: $ts");
@@ -148,7 +148,27 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=31536000) {
 }
 
 function get_image ($id) {
-	return DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
+	$image = DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
+
+	if($image->state==0) {
+		$userGroups = User::get_all_groups_for_user(CMS::Instance()->user->id);
+		//check that user has backend access
+		$hasBackendAccess = in_array(1, array_column($userGroups, 'backend'));
+		if(!$hasBackendAccess) {
+			http_response_code(401);
+			exit(0);
+		}
+
+		//we already know this is on our domain, else the group check would have failed
+		if(!$_SERVER["HTTP_REFERER"] || CMS::parseUrlToSegments( parse_url($_SERVER["HTTP_REFERER"], PHP_URL_PATH) )[0] != "admin") {
+			http_response_code(401);
+			exit(0);
+		}
+
+		//CMS::pprint_r($_SERVER["HTTP_REFERER"]); die;
+	}
+
+	return $image;
 }
 
 if ($segsize<2 || !is_numeric($segments[1]) ) {

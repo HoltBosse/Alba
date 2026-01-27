@@ -116,6 +116,13 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 					<span class='bigger imgtitle'><?php echo $image->title; ?></span><br><span class='imgalt'><?php echo $image->alt; ?></span><br>
 					<?php echo $image->width . "x" . $image->height; ?> / <?php echo $image->mimetype; ?> 
 				</div>
+				<div class="state_indicator" data-submiturl="<?php echo $_ENV["uripath"] . '/admin/images/api?action=toggle_image_state&id=' . $image->id; ?>" title="State Toggle" alt="State Toggle">
+					<?php if($image->state==1) { ?>
+						<i class="fa-solid fa-eye"></i>
+					<?php } else { ?>
+						<i class="fa-solid fa-eye-slash"></i>
+					<?php } ?>
+				</div>
 			</div>
 			<div class='image_tags_wrap'>
 				<?php $image_tags = Tag::get_tags_for_content($image->id); ?>
