@@ -40,6 +40,17 @@ class FormInstance extends Widget {
                     $logoSrc = "https://" . $_SERVER['SERVER_NAME'] . "/image/" . $adminLogoId;
 
                     $mail->html = $form->createEmailHtml($logoSrc);
+                    $mail->html = str_replace("Please visit admin to view the image.", "See Attachments", $mail->html);
+
+                    foreach($form->fields as $field) {
+                        if($field instanceof \HoltBosse\Alba\Fields\Image\Image) {
+                            if(is_numeric($field->default) && $field->public_accessible==true) {
+                                $image = new \HoltBosse\Alba\Core\Image($field->default);
+                                $filePath = $_ENV["images_directory"] . "/processed/" . $image->filename;
+                                $mail->addAttachment($filePath, $image->title ?: basename($image->filename));
+                            }
+                        }
+                    }
 
                     $mail->send();
                 }
