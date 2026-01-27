@@ -1,9 +1,10 @@
 <?php
 namespace HoltBosse\Alba\Fields\Image;
 
-Use HoltBosse\Form\Field;
+Use HoltBosse\Form\{Field, FormBuilderAttribute, FormBuilderDataType};
 Use HoltBosse\Alba\Core\{CMS, File, Image as CmsImage, Hook};
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class Image extends Field {
 
@@ -15,8 +16,92 @@ class Image extends Field {
 	public $coltype;
 	public $upload_endpoint;
 	public $listing_endpoint;
+	#[FormBuilderAttribute(fieldType: "Select", dataType: FormBuilderDataType::Bool, required: true, description: "Is this field publicly accessible on the front-end?")]
+	public bool $public_accessible = false;
 
 	public function display($repeatable_template=false) {
+		if(!$this->public_accessible) {
+			$this->trustedDisplay($repeatable_template);
+		} else {
+			$this->unTrustedDisplay($repeatable_template);
+		}
+	}
+
+	public function unTrustedDisplay($repeatable_template=false) {
+		$_SESSION["public_accessible_image_field_loaded"] = true;
+
+		(new CssFile())->loadFromConfig((object)[
+            "filePath"=>__DIR__ . "/untrusted.css",
+            "injectIntoHead"=>false,
+        ])->display();
+		
+		echo "<div class='field " . ($this->required ? "required" : "") . "'>";
+			echo "<label class='label'>" . $this->label . "</label>";
+		echo "</div>";
+		echo "<div>";
+			echo "<div class='image_dropzone'><span style='pointer-events: none;'>Drag & Drop New Images Here</span></div>";
+			echo "<input type='hidden' oninvalid='this.setCustomValidity(\"A valid image is required\")' value='{$this->default}' " . ($this->required ? " required " : "") . " id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()} data-repeatableindex='{{replace_with_index}}'>";
+		echo "</div>";
+		?>
+			<script type="module">
+				const imageInput = document.querySelector(`[<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"]`);
+				const dropZone = imageInput.parentNode.querySelector(".image_dropzone");
+
+				dropZone.addEventListener("dragover", (e) => {
+					e.preventDefault();
+
+					if(e.target.classList.contains("submission_complete")) {
+						return;
+					}
+
+					dropZone.classList.add("dragover");
+				});
+				dropZone.addEventListener("dragleave", (e) => {
+					e.preventDefault();
+
+					if(e.target.classList.contains("submission_complete")) {
+						return;
+					}
+
+					dropZone.classList.remove("dragover");
+				});
+				dropZone.addEventListener("drop", (e) => {
+					e.preventDefault();
+					dropZone.classList.remove("dragover");
+
+					if(e.target.classList.contains("submission_complete")) {
+						return;
+					}
+
+					const files = e.dataTransfer.files;
+					if (files.length > 0) {
+						const formData = new FormData();
+						for (let i = 0; i < files.length; i++) {
+							formData.append("file-upload[]", files[i]);
+						}
+						function updateField() {
+							dropZone.classList.add("submission_complete");
+							dropZone.querySelector("span").innerHTML = "Upload Complete!";
+						}
+
+						fetch('<?php echo $this->upload_endpoint; ?>', {
+							method: "POST",
+							body: formData,
+						}).then((response) => response.json()).then((data) => {
+							console.log(data);
+							imageInput.value = data.ids;
+							updateField();
+						}).catch((error) => {
+							console.error("Error uploading image:", error);
+							updateField();
+						});
+					}
+				});
+			</script>
+		<?php
+	}
+
+	public function trustedDisplay($repeatable_template=false) {
 		echo "<script>";
 			echo "window.max_upload_size_bytes = " . File::get_max_upload_size_bytes() . ";";
 		echo "</script>";
@@ -180,11 +265,28 @@ class Image extends Field {
 
 	public function getFriendlyValue($helpful_info) {
 		if($helpful_info && $helpful_info->return_in_text_form==true) {
-			return "https://" . $_SERVER["HTTP_HOST"] . "/image/" . $this->default;
+			if (is_numeric($this->default)) {
+				return "https://" . $_SERVER["HTTP_HOST"] . "/image/" . $this->default;
+			} else {
+				return "No Image";
+			}
 		} else {
 			if (is_numeric($this->default)) {
-				$img = new CmsImage($this->default);
-				return $img->render('thumb','backend', false);
+				if($this->public_accessible) {
+					if($helpful_info->return_in_email_html_form ?? false) {
+						return "Please visit admin to view the image.";
+					}
+
+					$image = DB::fetch("SELECT * FROM media WHERE id=?", $this->default);
+
+					//this images are uploaded to state 0, also prevents xss
+					$img_data = base64_encode(file_get_contents($_ENV["images_directory"] . "/processed/" . $image->filename));
+					$img_src = "data:" . $image->mimetype . ";base64," . $img_data;
+					echo "<img src='" . $img_src . "'>";
+				} else {
+					$img = new CmsImage($this->default);
+					return $img->render('thumb','backend', false);
+				}
 			}
 			else {
 				return "<span>No Image</span>";
@@ -200,7 +302,8 @@ class Image extends Field {
 		$this->mimetypes = $config->mimetypes ?? null;
 		$this->images_per_page = $config->images_per_page ?? 50;
 		$this->tags = $config->tags ?? null;
-		$this->upload_endpoint = $config->upload_endpoint ?? $_ENV["uripath"] . "/admin/images/uploadv2";
+		$this->public_accessible = $config->public_accessible ?? false;
+		$this->upload_endpoint = $config->upload_endpoint ?? ($config->public_accessible ? $_ENV["uripath"] . "/image/frontend_upload" : $_ENV["uripath"] . "/admin/images/uploadv2");
 		$this->listing_endpoint = $config->listing_endpoint ?? $_ENV["uripath"] . "/image/list_images";
 	}
 

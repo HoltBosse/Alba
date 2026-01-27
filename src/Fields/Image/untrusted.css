@@ -1,0 +1,13 @@
+div.image_dropzone {
+    border: 1px dashed black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10rem;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+div.image_dropzone.droppable_file {
+    background-color: #e0e0e0;
+}
