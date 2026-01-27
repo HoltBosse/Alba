@@ -6,6 +6,23 @@ use HoltBosse\Form\FormBuilderDataType;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
+//recursively order properties by inheritance
+function getOrderedProperties(ReflectionClass $rc): array {
+    $properties = [];
+    $parent = $rc->getParentClass();
+    if ($parent) {
+        $properties = getOrderedProperties($parent);
+    }
+
+    foreach ($rc->getProperties() as $prop) {
+        if ($prop->getDeclaringClass()->getName() === $rc->getName()) {
+            $properties[] = $prop;
+        }
+    }
+
+    return $properties;
+}
+
 function generateFormForFieldType($fieldType): Form {
     $formObject = (object) [
         "id"=>"fieldconfig",
@@ -14,7 +31,7 @@ function generateFormForFieldType($fieldType): Form {
 
     $reflection = new ReflectionClass(Form::getFieldClass($fieldType));
 
-    foreach ($reflection->getProperties() as $property) {
+    foreach(getOrderedProperties($reflection) as $property) {
         $attributes = $property->getAttributes();
         if(sizeof($attributes) == 0) {
             continue;
