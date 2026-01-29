@@ -20,6 +20,17 @@ function getOrderedProperties(ReflectionClass $rc): array {
         }
     }
 
+    //filter out duplicate properties, prefering the child class version
+    $seen = [];
+    $properties = array_reverse(array_values(array_filter(array_reverse($properties), function($prop) use (&$seen) {
+        $name = $prop->getName();
+        if (isset($seen[$name])) {
+            return false;
+        }
+        $seen[$name] = true;
+        return true;
+    })));
+
     return $properties;
 }
 
@@ -43,13 +54,15 @@ function generateFormForFieldType($fieldType): Form {
                 $attrInstance = $attribute->newInstance();
                 //CMS::pprint_r($attrInstance);
 
-                $field = (object) [
+                $field = [
                     "name"=>$property->getName(),
                     "type"=>$attrInstance->fieldType,
                     "label"=>$attrInstance->label ?? ucwords(str_replace("_", " ", $property->getName())),
                     "required"=>$attrInstance->required,
                     "description"=>$attrInstance->description ?? null,
                 ];
+
+                $field = (object) array_merge($field, $attrInstance->config ?? []);
 
                 if($attrInstance->dataType === FormBuilderDataType::Bool && $attrInstance->fieldType == "Select") {
                     $field->select_options = [

@@ -74,7 +74,7 @@ document.addEventListener('keydown', (e)=>{
 });
 
 document.addEventListener('click', (e)=>{
-    if (!e.target.closest('.field-item') && !e.target.closest('.control-panel')) {
+    if (!e.target.closest('.field-item') && !e.target.closest('.control-panel') && !e.target.classList.contains("sf_close")) {
         clear_selection();
     }
 });

@@ -4,6 +4,8 @@
         "Textarea",
         "Checkbox",
         "Image",
+        "Select",
+        "ContentSelector",
         "Antispam",
         "Honeypot"
     ]

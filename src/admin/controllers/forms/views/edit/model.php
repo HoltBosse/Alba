@@ -107,7 +107,7 @@ if($requiredDetailsForm->isSubmitted()) {
                     continue;
                 }
 
-                CMS::pprint_r($normalizedDetails);
+                //CMS::pprint_r($normalizedDetails);
 
                 if(!empty(Form::getFieldClass($fieldType))) {
                     $fieldReflection = new ReflectionClass(Form::getFieldClass($fieldType));
@@ -117,7 +117,33 @@ if($requiredDetailsForm->isSubmitted()) {
                     foreach ($fieldReflection->getProperties() as $property) {
                         $attributes = $property->getAttributes(FormBuilderAttribute::class);
                         if (!empty($attributes)) {
-                            $fieldInstance[$property->getName()] = $normalizedDetails[$property->getName()] ?? null;
+                            CMS::pprint_r($property);
+
+                            $value = $normalizedDetails[$property->getName()] ?? null;
+                            if($property->getName()=="select_options" && is_string($value) && json_validate($value)) {
+                                $value = json_decode($value);
+                                
+                                // Convert nested array structure to proper select options format
+                                if(is_array($value)) {
+                                    $selectOptions = [];
+                                    foreach($value as $option) {
+                                        if(is_array($option)) {
+                                            $optionData = [];
+                                            foreach($option as $prop) {
+                                                if(is_object($prop) && isset($prop->name) && isset($prop->value)) {
+                                                    $optionData[$prop->name] = $prop->value;
+                                                }
+                                            }
+                                            if(!empty($optionData)) {
+                                                $selectOptions[] = (object) $optionData;
+                                            }
+                                        }
+                                    }
+                                    $value = $selectOptions;
+                                }
+                            }
+
+                            $fieldInstance[$property->getName()] = $value;
                         }
                     }
 

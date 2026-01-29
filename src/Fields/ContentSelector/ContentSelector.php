@@ -5,14 +5,15 @@ Use HoltBosse\Form\Fields\Select\Select;
 Use HoltBosse\Alba\Core\{Content, JSON, CMS};
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, FormBuilderAttribute, FormBuilderDataType};
 
 class ContentSelector extends Select {
-
+	public $select_options; //shadow selects property so that we dont have attribute
 	public $list_unpublished;
 	public $tags;
 	public $order_by_field;
 	public $order_by_direction;
+	#[FormBuilderAttribute(fieldType: "Input", dataType: FormBuilderDataType::String, required: true, label: "Content ID")]
 	public $content_type;
 	public $domain;
 
