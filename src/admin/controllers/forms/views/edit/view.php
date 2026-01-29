@@ -39,8 +39,23 @@
                             }
 
                             if($formId) {
-                                $formFields = file_get_contents($_ENV["root_path_to_forms"] . "/forms/form_instance_" . $formId . ".json");
-                                echo "<script> window.existingFormData = $formFields;</script>";
+                                $formFields = json_decode(file_get_contents($_ENV["root_path_to_forms"] . "/forms/form_instance_" . $formId . ".json"));
+                                foreach($formFields->fields as &$field) {
+                                    if(isset($field->select_options)) {
+                                        $convertedOptions = [];
+                                        foreach($field->select_options as $option) {
+                                            $convertedOptions[] = [
+                                                (object)['name' => 'text', 'value' => $option->text ?? ''],
+                                                (object)['name' => 'value', 'value' => $option->value ?? '']
+                                            ];
+                                        }
+                                        $field->select_options = json_encode($convertedOptions);
+                                    }
+
+                                    unset($field);
+                                }
+
+                                echo "<script> window.existingFormData = " . json_encode($formFields) . ";</script>";
                             }
                         ?>
                     </select>
