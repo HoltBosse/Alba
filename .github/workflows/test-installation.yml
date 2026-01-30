@@ -11,17 +11,17 @@ jobs:
     
     services:
       mysql:
-        image: mariadb:latest
+        image: mariadb:11.2
         env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: alba_test
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: alba_test
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
       - name: Checkout alba repository
@@ -35,6 +35,17 @@ jobs:
           php-version: '8.3'
           extensions: mbstring, xml, ctype, json, pdo, pdo_mysql, dom, fileinfo
           coverage: none
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            if php -r "try { new PDO('mysql:host=127.0.0.1;dbname=alba_test', 'root', 'root'); exit(0); } catch(Exception \$e) { exit(1); }"; then
+              echo "MySQL is ready!"
+              break
+            fi
+            echo "Waiting for MySQL... ($i/30)"
+            sleep 2
+          done
 
       - name: Create test project directory
         run: |
@@ -138,15 +149,20 @@ jobs:
             kill $(cat /tmp/php-server.pid) || true
           fi
 
-      - name: Show PHP server logs on failure
+      - name: Show debug info on failure
         if: failure()
-        working-directory: test-project/public
         run: |
+          echo "=== Workspace structure ==="
+          ls -la
+          
+          echo "=== Test project structure ==="
+          ls -la test-project/ || echo "test-project directory not found"
+          
+          echo "=== Public directory ==="
+          ls -la test-project/public/ || echo "public directory not found"
+          
           echo "=== Checking if index.php exists ==="
-          ls -la index.php || echo "index.php not found"
+          ls -la test-project/public/index.php || echo "index.php not found"
           
           echo "=== Checking database connection ==="
           php -r "try { new PDO('mysql:host=127.0.0.1;dbname=alba_test', 'root', 'root'); echo 'DB connection OK'; } catch(Exception \$e) { echo 'DB Error: ' . \$e->getMessage(); }"
-          
-          echo "=== Directory structure ==="
-          ls -la
