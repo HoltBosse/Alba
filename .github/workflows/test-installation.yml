@@ -156,20 +156,25 @@ jobs:
       - name: Fix database after template copy
         run: |
           php -r "
-          require 'test-project/vendor/autoload.php';
-          use HoltBosse\DB\DB;
           \$pdo = new PDO('mysql:host=127.0.0.1;dbname=alba_test;charset=utf8mb4', 'root', 'root');
           \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
           
-          echo 'Fixing pages table...' . PHP_EOL;
-          \$pdo->exec('UPDATE pages SET alias = \"\", template = 1, state = 1 WHERE id = 1');
-          
-          // Verify
+          echo 'Before fix:' . PHP_EOL;
           \$stmt = \$pdo->query('SELECT id, title, alias, template, state FROM pages WHERE id = 1');
           \$page = \$stmt->fetch(PDO::FETCH_ASSOC);
-          echo 'Page after fix: ' . json_encode(\$page) . PHP_EOL;
+          echo 'Page: ' . json_encode(\$page) . PHP_EOL;
           
-          \$stmt = \$pdo->query('SELECT * FROM templates WHERE id = 1');
+          // Delete and recreate the page with correct values
+          \$pdo->exec('DELETE FROM pages WHERE id = 1');
+          \$stmt = \$pdo->prepare('INSERT INTO pages (id, title, alias, content_type, parent, template, page_options, domain, state) VALUES (1, ?, ?, -1, -1, 1, ?, 0, 1)');
+          \$stmt->execute(['Home', '', '{}']);
+          
+          echo 'After fix:' . PHP_EOL;
+          \$stmt = \$pdo->query('SELECT id, title, alias, template, state FROM pages WHERE id = 1');
+          \$page = \$stmt->fetch(PDO::FETCH_ASSOC);
+          echo 'Page: ' . json_encode(\$page) . PHP_EOL;
+          
+          \$stmt = \$pdo->query('SELECT id, title, folder FROM templates WHERE id = 1');
           \$template = \$stmt->fetch(PDO::FETCH_ASSOC);
           echo 'Template: ' . json_encode(\$template) . PHP_EOL;
           "
