@@ -1,0 +1,154 @@
+name: Test Installation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  test-install:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: alba_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout alba repository
+        uses: actions/checkout@v4
+        with:
+          path: alba-source
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, json, pdo, pdo_mysql, dom, fileinfo
+          coverage: none
+
+      - name: Create test project directory
+        run: |
+          mkdir -p test-project/public
+          cd test-project
+
+      - name: Initialize composer project
+        working-directory: test-project
+        run: |
+          composer init \
+            --name="test/alba-project" \
+            --description="Test Alba Installation" \
+            --type="project" \
+            --require="php:^8.2" \
+            --stability="dev" \
+            --no-interaction
+          
+          # Add PSR-4 autoload
+          composer config autoload.psr-4.TestAlba\\\\ src/
+          
+          # Create src directory
+          mkdir -p src
+
+      - name: Add alba as repository and require it
+        working-directory: test-project
+        run: |
+          # Add local repository
+          composer config repositories.alba path ../alba-source
+          
+          # Require alba from the local repository
+          composer require holtbosse/alba:dev-main --no-interaction
+          
+          composer dump-autoload
+
+      - name: Create .env file
+        working-directory: test-project
+        run: |
+          cat > .env << 'EOF'
+          dbhost=127.0.0.1
+          dbname=alba_test
+          dbuser=root
+          dbpass=root
+          dbchar=utf8mb4
+          sitename="Test Alba Site"
+          uripath=
+          debug=false
+          debugwarnings=false
+          domain=auto
+          admintemplate=clean
+          frontendlogin=false
+          dev_banner=false
+          EOF
+
+      - name: Run alba init command
+        working-directory: test-project/public
+        run: |
+          # Provide inputs for alba init:
+          # 1. Press enter for default project root (current directory)
+          # 2. Admin username
+          # 3. Admin email
+          # 4. Admin password
+          printf "\nadmin\nadmin@example.com\nTestPassword123\n" | ../vendor/bin/alba init
+
+      - name: Run alba migrate command
+        working-directory: test-project/public
+        run: |
+          ../vendor/bin/alba migrate
+
+      - name: Start PHP built-in server
+        working-directory: test-project/public
+        run: |
+          php -S localhost:8000 > /dev/null 2>&1 &
+          echo $! > /tmp/php-server.pid
+          # Wait for server to start
+          sleep 3
+
+      - name: Test root home page
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/)
+          echo "Root page returned: $response"
+          if [ "$response" != "200" ]; then
+            echo "Error: Expected 200, got $response"
+            exit 1
+          fi
+          echo "✓ Root page test passed"
+
+      - name: Test admin page
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/admin)
+          echo "Admin page returned: $response"
+          if [ "$response" != "200" ]; then
+            echo "Error: Expected 200, got $response"
+            exit 1
+          fi
+          echo "✓ Admin page test passed"
+
+      - name: Stop PHP server
+        if: always()
+        run: |
+          if [ -f /tmp/php-server.pid ]; then
+            kill $(cat /tmp/php-server.pid) || true
+          fi
+
+      - name: Show PHP server logs on failure
+        if: failure()
+        working-directory: test-project/public
+        run: |
+          echo "=== Checking if index.php exists ==="
+          ls -la index.php || echo "index.php not found"
+          
+          echo "=== Checking database connection ==="
+          php -r "try { new PDO('mysql:host=127.0.0.1;dbname=alba_test', 'root', 'root'); echo 'DB connection OK'; } catch(Exception \$e) { echo 'DB Error: ' . \$e->getMessage(); }"
+          
+          echo "=== Directory structure ==="
+          ls -la
