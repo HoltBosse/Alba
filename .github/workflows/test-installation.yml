@@ -112,6 +112,22 @@ jobs:
           # 4. Admin password
           printf "\nadmin\nadmin@example.com\nTestPassword123\n" | ./vendor/bin/alba init
 
+      - name: Setup domains table
+        run: |
+          # Create domains table and insert localhost entry
+          php -r "
+          require 'test-project/vendor/autoload.php';
+          use HoltBosse\DB\DB;
+          DB::createInstance(
+            'mysql:host=127.0.0.1;dbname=alba_test;charset=utf8mb4',
+            'root',
+            'root'
+          );
+          DB::exec('CREATE TABLE IF NOT EXISTS domains (id INT AUTO_INCREMENT PRIMARY KEY, value VARCHAR(255) NOT NULL)');
+          DB::exec('INSERT INTO domains (value) VALUES (?)' , ['localhost']);
+          echo 'Domains table created and localhost added\\n';
+          "
+
       - name: Run alba migrate command
         working-directory: test-project
         run: |
