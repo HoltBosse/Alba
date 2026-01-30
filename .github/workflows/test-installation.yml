@@ -125,27 +125,40 @@ jobs:
       - name: Start PHP built-in server
         working-directory: test-project/public
         run: |
-          php -S localhost:8000 > /dev/null 2>&1 &
+          php -S localhost:8000 > /tmp/php-server.log 2>&1 &
           echo $! > /tmp/php-server.pid
           # Wait for server to start
           sleep 3
 
       - name: Test root home page
         run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/)
-          echo "Root page returned: $response"
-          if [ "$response" != "200" ]; then
-            echo "Error: Expected 200, got $response"
+          # Get full response for debugging
+          response_code=$(curl -s -o /tmp/response.html -w "%{http_code}" http://localhost:8000/)
+          echo "Root page returned: $response_code"
+          
+          if [ "$response_code" != "200" ]; then
+            echo "Error: Expected 200, got $response_code"
+            echo "=== Response body ==="
+            cat /tmp/response.html
+            echo ""
+            echo "=== PHP Server Log ==="
+            cat /tmp/php-server.log || echo "No server log found"
             exit 1
           fi
           echo "✓ Root page test passed"
 
       - name: Test admin page
         run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/admin)
-          echo "Admin page returned: $response"
-          if [ "$response" != "200" ]; then
-            echo "Error: Expected 200, got $response"
+          response_code=$(curl -s -o /tmp/admin-response.html -w "%{http_code}" http://localhost:8000/admin)
+          echo "Admin page returned: $response_code"
+          
+          if [ "$response_code" != "200" ]; then
+            echo "Error: Expected 200, got $response_code"
+            echo "=== Admin response body ==="
+            cat /tmp/admin-response.html
+            echo ""
+            echo "=== PHP Server Log ==="
+            cat /tmp/php-server.log || echo "No server log found"
             exit 1
           fi
           echo "✓ Admin page test passed"
