@@ -136,41 +136,12 @@ jobs:
             DB::exec('INSERT INTO domains (value) VALUES (?)', ['localhost:8000']);
             echo 'localhost:8000 domain added\n';
           }
-          \$domains = DB::fetchAll('SELECT * FROM domains');
-          echo 'All domains: ' . json_encode(\$domains) . '\n';
           "
 
       - name: Run alba migrate command
         working-directory: test-project
         run: |
           ./vendor/bin/alba migrate
-
-      - name: Verify and fix database setup
-        run: |
-          php -r "
-          require 'test-project/vendor/autoload.php';
-          use HoltBosse\DB\DB;
-          DB::createInstance(
-            'mysql:host=127.0.0.1;dbname=alba_test;charset=utf8mb4',
-            'root',
-            'root'
-          );
-          
-          echo 'Before fix:' . PHP_EOL;
-          \$page = DB::fetch('SELECT id, title, alias, template FROM pages WHERE id = 1');
-          echo json_encode(\$page) . PHP_EOL;
-          
-          // Delete the home page with alias 'home' and recreate it properly for root
-          DB::exec('DELETE FROM pages WHERE id = 1');
-          DB::exec('INSERT INTO pages (id, title, alias, content_type, parent, template, page_options, domain, state) VALUES (1, ?, ?, -1, -1, 1, ?, 0, 1)', ['Home', '', '{}']);
-          
-          echo 'After fix:' . PHP_EOL;
-          \$page = DB::fetch('SELECT id, title, alias, template, state FROM pages WHERE id = 1');
-          echo json_encode(\$page) . PHP_EOL;
-          
-          \$template = DB::fetch('SELECT * FROM templates WHERE id = 1');
-          echo 'Template: ' . json_encode(\$template) . PHP_EOL;
-          "
 
       - name: Copy basic template
         run: |
@@ -181,6 +152,27 @@ jobs:
           # Copy the basic_article controller
           mkdir -p test-project/src/controllers/basic_article
           cp -r alba-source/src/controllers/basic_article/* test-project/src/controllers/basic_article/
+
+      - name: Fix database after template copy
+        run: |
+          php -r "
+          require 'test-project/vendor/autoload.php';
+          use HoltBosse\DB\DB;
+          \$pdo = new PDO('mysql:host=127.0.0.1;dbname=alba_test;charset=utf8mb4', 'root', 'root');
+          \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          
+          echo 'Fixing pages table...' . PHP_EOL;
+          \$pdo->exec('UPDATE pages SET alias = \"\", template = 1, state = 1 WHERE id = 1');
+          
+          // Verify
+          \$stmt = \$pdo->query('SELECT id, title, alias, template, state FROM pages WHERE id = 1');
+          \$page = \$stmt->fetch(PDO::FETCH_ASSOC);
+          echo 'Page after fix: ' . json_encode(\$page) . PHP_EOL;
+          
+          \$stmt = \$pdo->query('SELECT * FROM templates WHERE id = 1');
+          \$template = \$stmt->fetch(PDO::FETCH_ASSOC);
+          echo 'Template: ' . json_encode(\$template) . PHP_EOL;
+          "
 
       - name: Start PHP built-in server
         working-directory: test-project
