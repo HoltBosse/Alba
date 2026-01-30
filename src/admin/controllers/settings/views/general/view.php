@@ -17,6 +17,15 @@ Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 	//CMS::pprint_r ($general_options_form);
 	$general_options_form->display();
 	?>
-	<br><br>
 	<button class='btn button is-success' type='submit'>Save</button>
 </form>
+
+<br><br><hr><br><br>
+
+<?php
+
+(new TitleHeader())->loadFromConfig((object)[
+	"header"=>"Test Email Settings",
+])->display();
+
+echo "<form><button type='submit' class='btn button is-info' name='send_test_email' value='true'>Send Test Email</button></form>";
