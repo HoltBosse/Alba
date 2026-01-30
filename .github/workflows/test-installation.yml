@@ -55,16 +55,24 @@ jobs:
       - name: Initialize composer project
         working-directory: test-project
         run: |
-          composer init \
-            --name="test/alba-project" \
-            --description="Test Alba Installation" \
-            --type="project" \
-            --require="php:^8.2" \
-            --stability="dev" \
-            --no-interaction
-          
-          # Add PSR-4 autoload
-          composer config autoload.psr-4.TestAlba\\\\ src/
+          # Create composer.json manually
+          cat > composer.json << 'EOF'
+          {
+              "name": "test/alba-project",
+              "description": "Test Alba Installation",
+              "type": "project",
+              "require": {
+                  "php": "^8.2"
+              },
+              "autoload": {
+                  "psr-4": {
+                      "TestAlba\\": "src/"
+                  }
+              },
+              "minimum-stability": "dev",
+              "prefer-stable": true
+          }
+          EOF
           
           # Create src directory
           mkdir -p src
