@@ -49,8 +49,7 @@ jobs:
 
       - name: Create test project directory
         run: |
-          mkdir -p test-project/public
-          cd test-project
+          mkdir -p test-project
 
       - name: Initialize composer project
         working-directory: test-project
@@ -73,9 +72,6 @@ jobs:
               "prefer-stable": true
           }
           EOF
-          
-          # Create src directory
-          mkdir -p src
 
       - name: Add alba as repository and require it
         working-directory: test-project
@@ -89,7 +85,6 @@ jobs:
           composer dump-autoload
 
       - name: Create .env file
-        working-directory: test-project
         run: |
           cat > .env << 'EOF'
           dbhost=127.0.0.1
@@ -108,22 +103,22 @@ jobs:
           EOF
 
       - name: Run alba init command
-        working-directory: test-project/public
+        working-directory: test-project
         run: |
           # Provide inputs for alba init:
           # 1. Press enter for default project root (current directory)
-          # 2. Admin username
+          # 2. Admin username (since .env exists, it skips env config and goes straight to user creation)
           # 3. Admin email
           # 4. Admin password
-          printf "\nadmin\nadmin@example.com\nTestPassword123\n" | ../vendor/bin/alba init
+          printf "\nadmin\nadmin@example.com\nTestPassword123\n" | ./vendor/bin/alba init
 
       - name: Run alba migrate command
-        working-directory: test-project/public
+        working-directory: test-project
         run: |
-          ../vendor/bin/alba migrate
+          ./vendor/bin/alba migrate
 
       - name: Start PHP built-in server
-        working-directory: test-project/public
+        working-directory: test-project
         run: |
           php -S localhost:8000 > /tmp/php-server.log 2>&1 &
           echo $! > /tmp/php-server.pid
@@ -179,11 +174,14 @@ jobs:
           echo "=== Test project structure ==="
           ls -la test-project/ || echo "test-project directory not found"
           
-          echo "=== Public directory ==="
-          ls -la test-project/public/ || echo "public directory not found"
-          
           echo "=== Checking if index.php exists ==="
-          ls -la test-project/public/index.php || echo "index.php not found"
+          ls -la test-project/index.php || echo "index.php not found"
+          
+          echo "=== Index.php content (first 30 lines) ==="
+          head -30 test-project/index.php || echo "Cannot read index.php"
           
           echo "=== Checking database connection ==="
           php -r "try { new PDO('mysql:host=127.0.0.1;dbname=alba_test', 'root', 'root'); echo 'DB connection OK'; } catch(Exception \$e) { echo 'DB Error: ' . \$e->getMessage(); }"
+          
+          echo "=== PHP Server Log ==="
+          cat /tmp/php-server.log || echo "No server log found"
