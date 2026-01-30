@@ -124,8 +124,20 @@ jobs:
             'root'
           );
           DB::exec('CREATE TABLE IF NOT EXISTS domains (id INT AUTO_INCREMENT PRIMARY KEY, value VARCHAR(255) NOT NULL)');
-          DB::exec('INSERT INTO domains (value) VALUES (?)' , ['localhost']);
-          echo 'Domains table created and localhost added\\n';
+          // Check if localhost already exists
+          \$exists = DB::fetch('SELECT COUNT(*) as c FROM domains WHERE value = ?', ['localhost']);
+          if (\$exists->c == 0) {
+            DB::exec('INSERT INTO domains (value) VALUES (?)', ['localhost']);
+            echo 'localhost domain added\n';
+          }
+          // Also add localhost:8000 for the dev server
+          \$exists = DB::fetch('SELECT COUNT(*) as c FROM domains WHERE value = ?', ['localhost:8000']);
+          if (\$exists->c == 0) {
+            DB::exec('INSERT INTO domains (value) VALUES (?)', ['localhost:8000']);
+            echo 'localhost:8000 domain added\n';
+          }
+          \$domains = DB::fetchAll('SELECT * FROM domains');
+          echo 'All domains: ' . json_encode(\$domains) . '\n';
           "
 
       - name: Run alba migrate command
