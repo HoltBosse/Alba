@@ -145,6 +145,39 @@ jobs:
         run: |
           ./vendor/bin/alba migrate
 
+      - name: Verify database setup
+        run: |
+          php -r "
+          require 'test-project/vendor/autoload.php';
+          use HoltBosse\DB\DB;
+          DB::createInstance(
+            'mysql:host=127.0.0.1;dbname=alba_test;charset=utf8mb4',
+            'root',
+            'root'
+          );
+          echo '=== Pages ===' . PHP_EOL;
+          \$pages = DB::fetchAll('SELECT * FROM pages');
+          foreach(\$pages as \$page) {
+            echo json_encode(\$page) . PHP_EOL;
+          }
+          echo '=== Templates ===' . PHP_EOL;
+          \$templates = DB::fetchAll('SELECT * FROM templates');
+          foreach(\$templates as \$template) {
+            echo json_encode(\$template) . PHP_EOL;
+          }
+          echo '=== Domains ===' . PHP_EOL;
+          \$domains = DB::fetchAll('SELECT * FROM domains');
+          foreach(\$domains as \$domain) {
+            echo json_encode(\$domain) . PHP_EOL;
+          }
+          "
+
+      - name: Copy basic template
+        run: |
+          # Copy the basic template from alba source to project
+          mkdir -p test-project/src/templates/basic
+          cp -r alba-source/src/templates/basic/* test-project/src/templates/basic/
+
       - name: Start PHP built-in server
         working-directory: test-project
         run: |
