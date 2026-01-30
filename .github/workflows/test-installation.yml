@@ -156,12 +156,17 @@ jobs:
             'root'
           );
           
-          // Update homepage to work as root page with valid template
-          DB::exec('UPDATE pages SET alias = ?, template = ?, state = 1, page_options = ? WHERE id = 1', ['', 1, json_encode([])]);
+          echo 'Before fix:' . PHP_EOL;
+          \$page = DB::fetch('SELECT id, title, alias, template FROM pages WHERE id = 1');
+          echo json_encode(\$page) . PHP_EOL;
           
-          // Verify the fix
-          \$page = DB::fetch('SELECT * FROM pages WHERE id = 1');
-          echo 'Homepage: ' . json_encode(\$page) . PHP_EOL;
+          // Delete the home page with alias 'home' and recreate it properly for root
+          DB::exec('DELETE FROM pages WHERE id = 1');
+          DB::exec('INSERT INTO pages (id, title, alias, content_type, parent, template, page_options, domain, state) VALUES (1, ?, ?, -1, -1, 1, ?, 0, 1)', ['Home', '', '{}']);
+          
+          echo 'After fix:' . PHP_EOL;
+          \$page = DB::fetch('SELECT id, title, alias, template, state FROM pages WHERE id = 1');
+          echo json_encode(\$page) . PHP_EOL;
           
           \$template = DB::fetch('SELECT * FROM templates WHERE id = 1');
           echo 'Template: ' . json_encode(\$template) . PHP_EOL;
