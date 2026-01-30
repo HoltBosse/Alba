@@ -170,6 +170,10 @@ jobs:
           foreach(\$domains as \$domain) {
             echo json_encode(\$domain) . PHP_EOL;
           }
+          
+          // Fix homepage template - it's set to 0 but should be 1 (the basic template)
+          DB::exec('UPDATE pages SET template = 1 WHERE id = 1');
+          echo '=== Fixed homepage template to use template id 1 ===' . PHP_EOL;
           "
 
       - name: Copy basic template
@@ -177,6 +181,10 @@ jobs:
           # Copy the basic template from alba source to project
           mkdir -p test-project/src/templates/basic
           cp -r alba-source/src/templates/basic/* test-project/src/templates/basic/
+          
+          # Copy the basic_article controller
+          mkdir -p test-project/src/controllers/basic_article
+          cp -r alba-source/src/controllers/basic_article/* test-project/src/controllers/basic_article/
 
       - name: Start PHP built-in server
         working-directory: test-project
