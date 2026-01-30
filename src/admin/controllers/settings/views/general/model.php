@@ -1,7 +1,8 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration};
+Use HoltBosse\Alba\Core\{CMS, Configuration, Mail};
 Use HoltBosse\Form\{Form, Input};
+Use Respect\Validation\Validator as v;
 
 // any variables created here will be available to the view
 
@@ -28,4 +29,16 @@ if ($submitted) {
 	else {
 		CMS::Instance()->queue_message('Error saving general options','danger',$_ENV["uripath"]."/admin/settings/general");
 	}
+}
+
+$sendTestEmail = Input::getvar('send_test_email', v::StringVal());
+
+if($sendTestEmail=="true") {
+	$mail = new Mail();
+	$mail->addAddress(CMS::Instance()->user->email);
+	$mail->subject = "Test Email from " . $_ENV["sitename"];
+	$mail->html = "This is a test email sent from the admin settings page of " . $_ENV["sitename"] . ". If you have received this email, your email settings are working correctly.";
+	$status = $mail->send();
+
+	CMS::Instance()->queue_message(($status ? 'Test email sent successfully, please check your inbox' : 'Failed to send test email: ' . $mail->ErrorInfo),'info',$_ENV["uripath"]."/admin/settings/general");
 }
