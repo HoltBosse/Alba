@@ -32,7 +32,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: mbstring, xml, ctype, json, pdo, pdo_mysql, dom, fileinfo
           coverage: none
 
@@ -62,7 +62,7 @@ jobs:
               "description": "Test Alba Installation",
               "type": "project",
               "require": {
-                  "php": "^8.2"
+                  "php": "^8.4"
               },
               "autoload": {
                   "psr-4": {
