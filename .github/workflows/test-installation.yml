@@ -80,18 +80,11 @@ jobs:
       - name: Add alba as repository and require it
         working-directory: test-project
         run: |
-          # Get the current branch name from the checked out alba source
-          cd ../alba-source
-          BRANCH_NAME=$(git branch --show-current)
-          cd ../test-project
-          
-          echo "Using branch: $BRANCH_NAME"
-          
           # Add local repository
           composer config repositories.alba path ../alba-source
           
-          # Require alba from the local repository using the current branch
-          composer require "holtbosse/alba:dev-$BRANCH_NAME" --no-interaction
+          # Require alba from the local repository using @dev to match any dev version
+          composer require "holtbosse/alba:@dev" --no-interaction
           
           composer dump-autoload
 
