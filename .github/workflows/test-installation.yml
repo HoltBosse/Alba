@@ -171,9 +171,10 @@ jobs:
             echo json_encode(\$domain) . PHP_EOL;
           }
           
-          // Fix homepage template - it's set to 0 but should be 1 (the basic template)
-          DB::exec('UPDATE pages SET template = 1 WHERE id = 1');
-          echo '=== Fixed homepage template to use template id 1 ===' . PHP_EOL;
+          // Fix homepage - change alias from 'home' to empty string for root page
+          // and set template to 1 (the basic template)
+          DB::exec('UPDATE pages SET alias = ?, template = ? WHERE id = 1', ['', 1]);
+          echo '=== Fixed homepage alias and template ===' . PHP_EOL;
           "
 
       - name: Copy basic template
