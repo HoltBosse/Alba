@@ -96,7 +96,7 @@ jobs:
           uripath=
           debug=false
           debugwarnings=false
-          domain=auto
+          domain=localhost
           admintemplate=clean
           frontendlogin=false
           dev_banner=false
