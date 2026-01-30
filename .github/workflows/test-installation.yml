@@ -94,8 +94,8 @@ jobs:
           dbchar=utf8mb4
           sitename="Test Alba Site"
           uripath=
-          debug=false
-          debugwarnings=false
+          debug=true
+          debugwarnings=true
           domain=localhost
           admintemplate=clean
           frontendlogin=false
@@ -145,7 +145,7 @@ jobs:
         run: |
           ./vendor/bin/alba migrate
 
-      - name: Verify database setup
+      - name: Verify and fix database setup
         run: |
           php -r "
           require 'test-project/vendor/autoload.php';
@@ -155,26 +155,16 @@ jobs:
             'root',
             'root'
           );
-          echo '=== Pages ===' . PHP_EOL;
-          \$pages = DB::fetchAll('SELECT * FROM pages');
-          foreach(\$pages as \$page) {
-            echo json_encode(\$page) . PHP_EOL;
-          }
-          echo '=== Templates ===' . PHP_EOL;
-          \$templates = DB::fetchAll('SELECT * FROM templates');
-          foreach(\$templates as \$template) {
-            echo json_encode(\$template) . PHP_EOL;
-          }
-          echo '=== Domains ===' . PHP_EOL;
-          \$domains = DB::fetchAll('SELECT * FROM domains');
-          foreach(\$domains as \$domain) {
-            echo json_encode(\$domain) . PHP_EOL;
-          }
           
-          // Fix homepage - change alias from 'home' to empty string for root page
-          // and set template to 1 (the basic template)
-          DB::exec('UPDATE pages SET alias = ?, template = ? WHERE id = 1', ['', 1]);
-          echo '=== Fixed homepage alias and template ===' . PHP_EOL;
+          // Update homepage to work as root page with valid template
+          DB::exec('UPDATE pages SET alias = ?, template = ?, state = 1, page_options = ? WHERE id = 1', ['', 1, json_encode([])]);
+          
+          // Verify the fix
+          \$page = DB::fetch('SELECT * FROM pages WHERE id = 1');
+          echo 'Homepage: ' . json_encode(\$page) . PHP_EOL;
+          
+          \$template = DB::fetch('SELECT * FROM templates WHERE id = 1');
+          echo 'Template: ' . json_encode(\$template) . PHP_EOL;
           "
 
       - name: Copy basic template
