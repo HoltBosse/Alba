@@ -160,6 +160,8 @@ class FileUploader extends Field {
 		$this->input_type = $config->input_type ?? 'file';
 		$this->attribute_list = $config->attribute_list ?? "";
 		$this->placeholder = $config->placeholder ?? "";
+
+		return $this;
 	}
 
 	public function validate() {

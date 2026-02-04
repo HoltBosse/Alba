@@ -16,6 +16,8 @@ class Category extends Select {
 
 		$this->content_type = $config->content_type ?? 1;
 		$this->domain = $config->domain ?? $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
+
+		return $this;
 	}
 
 	public function display() {

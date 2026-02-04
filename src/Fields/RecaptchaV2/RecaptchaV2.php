@@ -24,6 +24,8 @@ class RecaptchaV2 extends Field {
 		parent::loadFromConfig($config);
 		
 		$this->filter = $config->filter ?? v::StringVal();
+
+		return $this;
 	}
 
 	public function validate() {

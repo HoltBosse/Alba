@@ -305,6 +305,8 @@ class Image extends Field {
 		$this->public_accessible = $config->public_accessible ?? false;
 		$this->upload_endpoint = $config->upload_endpoint ?? ($config->public_accessible ? $_ENV["uripath"] . "/image/frontend_upload" : $_ENV["uripath"] . "/admin/images/uploadv2");
 		$this->listing_endpoint = $config->listing_endpoint ?? $_ENV["uripath"] . "/image/list_images";
+
+		return $this;
 	}
 
 	public function validate() {

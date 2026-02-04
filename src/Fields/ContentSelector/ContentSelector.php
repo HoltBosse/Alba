@@ -110,6 +110,8 @@ class ContentSelector extends Select {
 		}
 
 		$this->select_options = $options_all_articles;
+
+		return $this;
 	}
 
 }

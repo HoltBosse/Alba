@@ -15,5 +15,7 @@ class TagParent extends TagSingle {
 				"value"=>0,
 			]
 		);
+
+		return $this;
 	}
 }

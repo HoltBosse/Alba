@@ -64,5 +64,7 @@ class TagSingle extends Select {
 				"disabled"=>$tag->state ? false : true
 			];
 		}
+
+		return $this;
 	}
 }

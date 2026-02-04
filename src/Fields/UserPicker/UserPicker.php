@@ -15,6 +15,8 @@ class UserPicker extends Select {
 		$this->slimselect = $config->slimselect ?? true;
 		$this->placeholder = $config->placeholder ?? "User";
 		$this->select_options=DB::fetchAll('SELECT id AS value, CONCAT(username, " (", email, ")") AS text FROM users WHERE state=1 AND domain=? ORDER BY username ASC', [$this->domain]);
+
+		return $this;
 	}
 
 }

@@ -77,6 +77,8 @@ class ContentTypeSelector extends Field {
 
 		$this->showmedia = $config->showmedia ?? true;
 		$this->showusers = $config->showusers ?? false;
+
+		return $this;
 	}
 
 	public function validate() {

@@ -22,6 +22,8 @@ class PageSelect extends Select {
 		}
 
 		$this->select_options = $page_array;
+
+		return $this;
 	}
 
 }

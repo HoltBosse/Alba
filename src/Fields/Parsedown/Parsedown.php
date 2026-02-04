@@ -543,5 +543,7 @@ class Parsedown extends Field {
 				if in admin use admin image uploader
 				else null(disabled)
 		*/
+
+		return $this;
 	}
 }

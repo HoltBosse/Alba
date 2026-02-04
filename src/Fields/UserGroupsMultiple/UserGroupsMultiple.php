@@ -13,5 +13,7 @@ class UserGroupsMultiple extends Select {
 		$this->multiple = $config->multiple ?? true;
 
 		$this->select_options = DB::fetchAll("SELECT id AS value, display AS text FROM `groups` ORDER BY display ASC");
+
+		return $this;
 	}
 }

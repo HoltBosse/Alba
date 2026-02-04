@@ -81,6 +81,8 @@ class ContentPickerOrdered extends PickerOrdered {
 		}
 
 		$this->select_options = $options_all_articles;
+
+		return $this;
 	}
 
 	public function validate() {

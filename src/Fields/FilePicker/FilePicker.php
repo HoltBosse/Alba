@@ -29,5 +29,7 @@ class FilePicker extends Select {
 				'value' => basename($file),
 			];
 		}
+
+		return $this;
 	}
 }

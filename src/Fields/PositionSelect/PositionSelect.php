@@ -19,6 +19,8 @@ class PositionSelect extends Select {
 				"text"=>$position
 			];
 		}
+
+		return $this;
 	}
 
 }

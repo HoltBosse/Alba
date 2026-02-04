@@ -14,6 +14,8 @@ class ContentPicker extends ContentSelector {
 		$this->content_type = $config->content_type ?? false;
 		$this->slimselect = $config->slimselect ?? true;
 		$this->multiple = $config->multiple ?? true;
+
+		return $this;
 	}
 
 }

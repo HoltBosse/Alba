@@ -93,6 +93,8 @@ class PageSelector extends Field {
 		$this->filter = $config->filter ?? v::arrayType()->each(v::intVal());
 		$this->multiple = $config->multiple ?? true;
 		$this->domain = $config->domain ?? null;
+
+		return $this;
 	}
 
 	public function validate() {

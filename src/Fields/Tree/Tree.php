@@ -400,6 +400,8 @@ class Tree extends Field {
 		$this->sql = $config->sql ?? 'SELECT id AS value, title AS text FROM pages WHERE state=1';
 		$this->dataset = DB::fetchAll($this->sql);
 		$this->default = $config->default ?? '{"parent":null,"value":"-1","text":"Root","children":[]}';
+
+		return $this;
 	}
 
 	public function validate() {

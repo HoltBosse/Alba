@@ -191,6 +191,8 @@ class Repeatable extends Field {
 		$this->type = 'Repeatable';
 		$this->form_path = $config->form_path ?? false;
 		$this->repeatable = true; // always!!!
+
+		return $this;
 	}
 
 	public function validate() {

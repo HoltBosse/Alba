@@ -22,6 +22,8 @@ class SqlSelector extends Select {
 		$this->params = $config->params ?? [];
 
 		$this->select_options = DB::fetchall($this->query, $this->params);
+
+		return $this;
 	}
 
 }

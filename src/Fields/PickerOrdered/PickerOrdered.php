@@ -117,6 +117,8 @@ class PickerOrdered extends Field {
 		$this->type = $config->type ?? 'error!!!';
 		$this->searchable = $config->searchable ?? true;
 		$this->select_options = $config->select_options ?? [];
+
+		return $this;
 	}
 
 	public function validate() {

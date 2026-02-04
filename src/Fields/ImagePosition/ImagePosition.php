@@ -143,5 +143,6 @@ class ImagePosition extends TextInput {
             }
         };
 		
+        return $this;
 	}
 }

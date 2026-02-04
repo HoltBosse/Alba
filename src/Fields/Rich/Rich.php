@@ -1084,6 +1084,7 @@ class Rich extends Field {
 
 		$this->listing_endpoint = $config->listing_endpoint ?? $_ENV["uripath"] . "/image/list_images";
 
+		return $this;
 	}
 
 	public function validate() {

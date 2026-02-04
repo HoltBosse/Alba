@@ -10,5 +10,7 @@ class TagMultiple extends TagSingle {
 
 		$this->multiple = $config->multiple ?? true;
 		$this->slimselect = $config->slimselect ?? true;
+
+		return $this;
 	}
 }

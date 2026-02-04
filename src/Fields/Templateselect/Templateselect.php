@@ -10,5 +10,7 @@ class Templateselect extends Select {
 		parent::loadFromConfig($config);
 
 		$this->select_options = DB::fetchAll("SELECT id AS value, title AS text FROM templates");
+
+		return $this;
 	}
 }
