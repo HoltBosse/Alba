@@ -28,7 +28,7 @@ if(!is_numeric($widget_type_id)) {
 		"select_options"=>array_filter(
 			array_map(
 				function($input) {
-					if(Widget::isAccessibleOnDomain($input->id)) {
+					if(Widget::isAccessibleOnDomain($input->id, $_SESSION["current_domain"])) {
 						//CMS::pprint_r($input);
 						
 						return (object) [
@@ -119,7 +119,7 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
 $contentTypeDomainCache = [];
 $all_widgets = array_filter($all_widgets, function($widget) use (&$contentTypeDomainCache) {
 	if(!isset($contentTypeDomainCache[$widget->type])) {
-		$contentTypeDomainCache[$widget->type] = Widget::isAccessibleOnDomain($widget->type);
+		$contentTypeDomainCache[$widget->type] = Widget::isAccessibleOnDomain($widget->type, $_SESSION["current_domain"]);
 	}
 
 	return $contentTypeDomainCache[$widget->type] != false;

@@ -15,7 +15,7 @@ if (!$content_type) {
 	CMS::Instance()->queue_message('Unknown content type','danger', $_SERVER['HTTP_REFERER']);
 }
 
-if(!Content::isAccessibleOnDomain($content_type)) {
+if(!Content::isAccessibleOnDomain($content_type, $_SESSION["current_domain"])) {
 	CMS::raise_404();
 }
 
