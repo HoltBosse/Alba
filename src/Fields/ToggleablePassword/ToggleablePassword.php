@@ -1,14 +1,14 @@
 <?php
-namespace HoltBosse\Alba\Fields\ToggablePassword;
+namespace HoltBosse\Alba\Fields\ToggleablePassword;
 
 use HoltBosse\Form\Fields\Input\Input as Text;
 
-class ToggablePassword extends Text {
+class ToggleablePassword extends Text {
     public function display() {
         parent::display();
         ?>
             <style>
-                .field_id_<?php echo $this->id; ?> span.is-right {
+                .bind_field_<?php echo $this->id; ?> span.is-right {
                     pointer-events: auto !important;
                     cursor: pointer;
 
@@ -18,7 +18,7 @@ class ToggablePassword extends Text {
                 }
             </style>
             <script type='module'>
-                document.querySelector('.field_id_<?php echo $this->id; ?> span.is-right').addEventListener('click', (e)=>{
+                document.querySelector('.bind_field_<?php echo $this->id; ?> span.is-right').addEventListener('click', (e)=>{
                     const input = document.getElementById('<?php echo $this->id; ?>');
                     if (input.type === 'password') {
                         input.type = 'text';
@@ -41,9 +41,11 @@ class ToggablePassword extends Text {
         $this->icon_status = $config->icon_status ?? true;
 
         $this->icon_parent_class = $config->icon_parent_class ?? "";
-        $this->icon_parent_class = $this->icon_parent_class . " has-icons-right";
+        $this->icon_parent_class = $this->icon_parent_class . " has-icons-right bind_field_" . $this->id;
 
         $this->icon_markup = $config->icon_markup ?? "";
         $this->icon_markup = $this->icon_markup . "<span class='icon is-small is-right'><i class='fas fa-eye'></i></span>";
+
+        return $this;
     }
 }

@@ -56,7 +56,7 @@
         {
 			"name":"password",
 			"id":"password",
-			"type":"ToggablePassword",
+			"type":"ToggleablePassword",
 			"label":"Password",
 			"input_type":"password",
 			"required":true,

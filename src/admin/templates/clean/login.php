@@ -4,6 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, Hook, User, Mail};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Alba\Fields\ToggleablePassword\ToggleablePassword;
 
 $view = Input::getvar('view',v::StringVal(),'');
 
@@ -143,16 +144,19 @@ if ($protocol=="http") {
 						<p class="help">Required</p>
 					</div>
 					
-					<div class='field'>
-						<label class="label" for='password'>Password</label>
-						<div class="control has-icons-left">
-							<input class='input' type="password" name="password" required>
-							<span class="icon is-small is-left">
-								<i class="fas fa-unlock"></i>
-							</span>
-						</div>
-						<p class="help">Required</p>
-					</div>
+					<?php
+						(new ToggleablePassword())->loadFromConfig((object)[
+							'id' => 'password',
+							'name' => 'password',
+							'label' => 'Password',
+							'required' => true,
+							'description' => 'Required',
+							'input_type' => 'password',
+							'icon_status' => true,
+							'icon_parent_class' => 'has-icons-left',
+							'icon_markup' => "<span class='icon is-small is-left'><i class='fas fa-unlock'></i></span>"
+						])->display();
+					?>
 
 					<button class="button is-primary" type="submit">Log In</button>
 
