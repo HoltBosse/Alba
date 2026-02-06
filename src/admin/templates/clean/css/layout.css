@@ -187,9 +187,6 @@ span.user_list, td.note_td, .lighter_note, .unimportant, .usage, td.tag_parent_t
 .toggle_wrap {
 	margin-top:1rem;
 }
-.toggle_wrap.hidden {
-	display:none;
-}
 
 /* image selector */
 

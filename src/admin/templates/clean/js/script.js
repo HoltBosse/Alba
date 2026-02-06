@@ -51,40 +51,6 @@ auto_filters.forEach(auto_filter => {
 	})
 });
 
-/* TOGGLE ADMIN PANELS */
-// biome-ignore lint: not solving now
-function hide(el) {
-	el.style.display = "none";
-}
-
-// biome-ignore lint: not solving now
-function show(el, value) {
-	el.style.display = value;
-}
-
-function toggle(el, value) {
-	const display = (window.getComputedStyle
-		? getComputedStyle(el, null)
-		: el.currentStyle
-	).display;
-	if (display == "none") el.style.display = value;
-	else el.style.display = "none";
-}
-
-const showhide_anchors = document.querySelectorAll(".toggle_siblings");
-
-showhide_anchors.forEach(showhide_anchor => {
-	showhide_anchor.addEventListener("click", (e) => {
-		//console.log("clicked toggle");
-		e.preventDefault();
-		const next = e.target.nextElementSibling;
-		//console.log(next);
-		if (next) {
-			toggle(next, "block");
-		}
-	});
-});
-
 // ALERT CODE
 
 document.addEventListener('DOMContentLoaded', () => {
