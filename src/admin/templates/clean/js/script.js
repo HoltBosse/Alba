@@ -1,17 +1,4 @@
-// ALERT CODE
-
-document.addEventListener('DOMContentLoaded', () => {
-  (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
-    const $notification = $delete.parentNode;
-
-    $delete.addEventListener('click', () => {
-      $notification.parentNode.removeChild($notification);
-    });
-  });
-});
-
 // TABS
-
 
 function getTabIndex(el) {
 	return [...el.parentElement.children].indexOf(el);	

@@ -5,7 +5,7 @@ Use HoltBosse\DB\DB;
 
 class Messages {
 	protected $msgClass = 'alert';
-	protected $msgWrapper = "<div class='%s notification is-%s' role='alert'><button type='button' class='close delete' data-dismiss='alert' aria-label='Close'></button>\n%s</div>\n";
+	protected $msgWrapper = "<div class='%s notification is-%s' role='alert'><button type='button' onclick='this.parentNode.remove()' class='close delete' data-dismiss='alert' aria-label='Close'></button>\n%s</div>\n";
 	protected $msgBefore = '<p>';
 	protected $msgAfter = "</p>\n";
 
