@@ -55,28 +55,10 @@ $navigation = [
         ]
     ],
     "widgets"=>[
-        "type"=>"addition_menu",
-        "menu"=>[
+        "type"=>"addition_link",
+        "link"=>[
             "label"=>"widgets",
-            "links"=>array_merge(
-                array_filter(
-                    array_map(
-                        function($input) {
-                            if(Widget::isAccessibleOnDomain($input[0]->id, $_SESSION["current_domain"])) {
-                                return $input[0]->link;
-                            } else {
-                                return null;
-                            }
-                        },
-                        DB::fetchAll("SELECT title, CONCAT('/admin/widgets/show/', id) AS link, id FROM widget_types", [], ["mode"=>PDO::FETCH_GROUP])
-                    ),
-                    function($input) {
-                        return !is_null($input);
-                    }
-                ),
-                ["hr"=>"hr"],
-                ["all widgets"=>"/admin/widgets/show"],
-            )
+            "url"=>"/admin/widgets/show",
         ]
     ],
     "plugins"=>[

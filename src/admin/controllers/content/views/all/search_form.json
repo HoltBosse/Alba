@@ -41,6 +41,7 @@
         "name": "category",
         "id": "category",
         "placeholder": "Select Category",
+        "slimselect": true,
         "filter":{
           "ArrayType": []
         }
@@ -51,6 +52,7 @@
         "name": "creator",
         "id": "creator",
         "placeholder": "Select Creator",
+        "slimselect": true,
         "filter":{
           "ArrayType": []
         }
