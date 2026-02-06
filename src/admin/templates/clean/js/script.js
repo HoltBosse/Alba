@@ -118,28 +118,6 @@ alltabs.forEach(tabs => {
 
 // END TABS
 
-/* LAZYLOAD IMAGES */
-
-function lazyload(target) {
-	const image_selector_container = target.closest(".image_selector");
-	console.log(image_selector_container);
-	const obs = new IntersectionObserver((entries, observer) => {
-		entries.forEach(entry => {
-			if (entry.isIntersecting) {
-				const img = entry.target;
-				const src = img.dataset.src;
-				img.setAttribute("src", src);
-				img.classList.add("loaded");
-				observer.disconnect();
-			}
-		});
-	}, image_selector_container); // use closest image_selector or null = document
-	obs.observe(target);
-}
-
-const lazyTargets = document.querySelectorAll(".lazy");
-lazyTargets.forEach(lazyload);
-
 const hamburger = document.querySelector("a.navbar-burger.burger");
 if(hamburger) {
 	hamburger.addEventListener("click", ()=>{

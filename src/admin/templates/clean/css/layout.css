@@ -189,14 +189,6 @@ span.user_list, td.note_td, .lighter_note, .unimportant, .usage, td.tag_parent_t
 }
 
 /* image selector */
-
-img.lazy {
-	height:0;
-}
-img.lazy.loaded {
-	height:auto;
-	padding-bottom:0;
-}
 .image_selector.hidden {
 	display:none;
 }
