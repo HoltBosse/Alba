@@ -38,6 +38,7 @@
         "type":"PageSelect",
         "required":false,
         "placeholder": "all",
+        "slimselect": true,
         "filter":{
           "IntVal": []
         }

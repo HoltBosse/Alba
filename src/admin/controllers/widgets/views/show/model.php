@@ -24,6 +24,7 @@ if(!is_numeric($widget_type_id)) {
         "name"=>"widget_type",
         "id"=>"widget_type",
         "placeholder"=>"widget",
+		"slimselect"=>true,
         //"select_options"=>DB::fetchAll("SELECT title AS text, location AS value FROM widget_types"),
 		"select_options"=>array_filter(
 			array_map(
