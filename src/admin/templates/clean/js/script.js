@@ -75,10 +75,10 @@ const showhide_anchors = document.querySelectorAll(".toggle_siblings");
 
 showhide_anchors.forEach(showhide_anchor => {
 	showhide_anchor.addEventListener("click", (e) => {
-		console.log("clicked toggle");
+		//console.log("clicked toggle");
 		e.preventDefault();
 		const next = e.target.nextElementSibling;
-		console.log(next);
+		//console.log(next);
 		if (next) {
 			toggle(next, "block");
 		}
