@@ -1,2 +1,20 @@
 div.flex {display:flex;}
 div.flex > div:first-child {padding-left:0;}
+div.flex > .form_contain#required_widget_fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 0.5rem 2rem;
+    width: 100%;
+
+    select {
+        width: 100%;
+    }
+
+    div.form_field {
+        margin-bottom: 0;
+    }
+
+    div.field_id_tags, div.field_id_category {
+        grid-column: span 2;
+    }
+}

@@ -21,7 +21,7 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 <form method="POST" action="">
 <input type="hidden" name="http_referer_form" value="<?php echo $_SERVER['HTTP_REFERER'];?>">
 <a href='#' class='toggle_siblings'>show/hide required fields</a>
-<div class='toggle_wrap <?php if (!$new_widget) { echo " hidden ";}?>'>
+<div class='toggle_wrap'>
 	<div class='flex'>
 		<?php $required_details_form->display(); ?>
 	</div>
