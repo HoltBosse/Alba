@@ -12,6 +12,11 @@ class Tab extends Field {
 	public $input_type;
 
 	public function display() {
+		$tabsJs = "<script type='module'>" . file_get_contents(__DIR__ . "/script.js") . "</script>";
+		if(!in_array($tabsJs, CMS::Instance()->head_entries)) {
+			CMS::Instance()->head_entries[] = $tabsJs;
+		}
+
 		//CMS::pprint_r ($this);
 		if ($this->mode=="tabs"):?>
 		<div id="<?php echo $this->id;?>_tabs_wrap" class='tabs-wrap'>
