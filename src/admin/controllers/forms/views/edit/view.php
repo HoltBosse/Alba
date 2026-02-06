@@ -10,7 +10,6 @@
 
 <form action="" method="post">
 
-    <a href='#' class='toggle_siblings'>show/hide required fields</a>
     <div class='toggle_wrap '>
         <div class='flex'>
             <?php $requiredDetailsForm->display(); ?>

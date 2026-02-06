@@ -28,7 +28,6 @@
 		<input name="id" type="hidden" value="<?php echo $page->id;?>"/>
 		<input name="state" type="hidden" value="<?php echo $page->state;?>"/>
 
-<a href='#' class='toggle_siblings'>show/hide required fields</a>
 <div class='toggle_wrap'>		
 <div class='fields-horizontal core-page-fields'>
 	<?php
