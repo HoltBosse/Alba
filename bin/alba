@@ -15,9 +15,10 @@ include($_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php');
 Use Symfony\Component\Dotenv\Dotenv;
 Use HoltBosse\DB\DB;
 Use Symfony\Component\Console\Application;
-use HoltBosse\Alba\Commands\{InitCommand, MigrateCommand};
+use HoltBosse\Alba\Commands\{InitCommand, MigrateCommand, CreateCommand};
 
 $application = new Application("Alba Project Creator");
 $application->add(new InitCommand());
 $application->add(new MigrateCommand());
+$application->add(new CreateCommand());
 $application->run();
