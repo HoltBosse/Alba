@@ -423,3 +423,14 @@ div:has(> .autogrowingtextarea) {
 		resize: none;
 	}
 }
+
+.upload_details input.is-success {
+    border-color: #48c78e;
+    box-shadow: 0 0 0 0.125em rgba(72, 199, 142, 0.25);
+    transition: all 0.3s ease;
+}
+
+.ai-generate-title, .ai-generate-alt {
+    white-space: nowrap;
+    min-width: 60px;
+}

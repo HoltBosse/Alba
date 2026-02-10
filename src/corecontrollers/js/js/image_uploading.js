@@ -1,5 +1,36 @@
 import SlimSelect from 'https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.12.0/slimselect.es.js'; //WHEN UPDATING, CHANGE CSS AS WELL
 
+import { aiTextGenerator } from './ai_text_generator.js';
+let aiAvailable = false;
+
+// Initialize AI when the module loads
+(async () => {
+    try {
+        aiAvailable = await aiTextGenerator.initialize();
+        if (aiAvailable) {
+            const status = aiTextGenerator.getAvailability();
+            console.log('✨ AI text generation is available');
+            console.log('   Status:', status);
+            
+            if (status === 'readily') {
+                console.log('   ✅ Model ready to use immediately');
+            } else if (status === 'after-download') {
+                console.log('   ⏳ Model will download on first use (~1.5GB)');
+            }
+            else if (status === 'downloadable') {
+                console.log('   ⏳ Model will MAYBE download on first use (~1.5GB)');
+            }
+        } else {
+            console.log('ℹ️ AI not available');
+            console.log('   Enable at: chrome://flags/#prompt-api-for-gemini-nano');
+            console.log('   And: chrome://flags/#optimization-guide-on-device-model');
+        }
+    } catch (error) {
+        console.error('AI initialization error:', error);
+        aiAvailable = false;
+    }
+})();
+
 const validImageTypes = {
 	"image/png": true,
 	"image/webp": true,
@@ -31,7 +62,15 @@ function getValidImageTypes(webFriendly=false) {
 	return imageTypes;
 }
 
+async function initializeAI() {
+    aiAvailable = await aiTextGenerator.initialize();
+    return aiAvailable;
+}
+
 function doUpload(e) {
+    (async () => {
+        await initializeAI();
+    })();
 	// check method
 	let myfiles;
 	if (e.type=="drop") {
@@ -99,6 +138,8 @@ function doUpload(e) {
 	});
 	document.body.appendChild(modal);
 
+    
+
     const upload_form = modal.querySelector('form');
 	// empty form except for hidden submit button - this is clicked via js from the 'upload' modal button
 	// this allows browser html form checking to trigger
@@ -109,31 +150,136 @@ function doUpload(e) {
             continue;
         }
 		const id = `img_id_${i}`;
+        const aiButtonsMarkup = aiAvailable ? `
+            <button class='button is-small is-info ai-generate-title' type='button' data-target='title_${id}' title='Generate with AI'>
+                <i class='fa fa-wand-magic-sparkles'></i> AI
+            </button>
+            <button class='button is-small is-info ai-generate-alt' type='button' data-target='alt_${id}' title='Generate with AI'>
+                <i class='fa fa-wand-magic-sparkles'></i> AI
+            </button>
+        ` : '';
 		markup = `
-            <div class='upload_field'>
-				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.12.0/slimselect.min.css"/>
+            <div class='upload_field' data-field-index='${i}'>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/2.12.0/slimselect.min.css"/>
                 <div class='upload_preview'>
                     <img id='${id}' src=''>
                 </div>
                 <div class='upload_details'>
                     <div class='field'>
                         <label>Title</label>
-                        <input name='title[]' required/>
+                        <div style='display: flex; gap: 0.5rem;'>
+                            <input name='title[]' id='title_${id}' style='flex: 1;' required/>
+                            ${aiAvailable ? `<button class='button is-small is-info ai-generate-title' type='button' data-target='title_${id}' data-field-index='${i}' title='Generate with AI'>
+                                <i class='fa fa-wand-magic-sparkles'></i> AI
+                            </button>` : ''}
+                        </div>
                     </div>
                     <div class='field'>
                         <label>Alt</label>
-                        <input name='alt[]' required/>
+                        <div style='display: flex; gap: 0.5rem;'>
+                            <input name='alt[]' id='alt_${id}' style='flex: 1;' required/>
+                            ${aiAvailable ? `<button class='button is-small is-info ai-generate-alt' type='button' data-target='alt_${id}' data-field-index='${i}' title='Generate with AI'>
+                                <i class='fa fa-wand-magic-sparkles'></i> AI
+                            </button>` : ''}
+                        </div>
                     </div>
-					<div class='field' style='display: flex;'>
-						<label style='flex-shrink: 0;'>Tags</label>
-						<select multiple id="upload_dialog_ss_${id}" class="slimselectme" name='itags[]'>
-
-						</select>
-					</div>
+                    <div class='field' style='display: flex;'>
+                        <label style='flex-shrink: 0;'>Tags</label>
+                        <select multiple id="upload_dialog_ss_${id}" class="slimselectme" name='itags[]'>
+                        </select>
+                    </div>
                 </div>
             </div>
-            `;
+        `;
         upload_form.innerHTML = upload_form.innerHTML + markup;
+
+        // After the modal is appended to document.body, add AI button handlers
+        if (aiAvailable) {
+            // Handle AI generate buttons
+            document.querySelectorAll('.ai-generate-title, .ai-generate-alt').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const btn = e.target.closest('button');
+                    const targetInputId = btn.dataset.target;
+                    const fieldIndex = btn.dataset.fieldIndex;
+                    const input = document.getElementById(targetInputId);
+                    const isTitle = btn.classList.contains('ai-generate-title');
+                    
+                    // Show loading state
+                    const originalHTML = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                    
+                    try {
+                        // Get the image data
+                        const imgElement = document.getElementById(`img_id_${fieldIndex}`);
+                        const filename = myfiles[fieldIndex].name;
+                        
+                        // Generate text
+                        let generatedText;
+                        if (isTitle) {
+                            generatedText = await aiTextGenerator.generateTitle(imgElement.src, filename);
+                        } else {
+                            generatedText = await aiTextGenerator.generateAltText(imgElement.src, filename);
+                        }
+                        
+                        // Fill the input
+                        input.value = generatedText;
+                        
+                        // Visual feedback
+                        input.classList.add('is-success');
+                        setTimeout(() => input.classList.remove('is-success'), 2000);
+                        
+                    } catch (error) {
+                        console.error('AI generation failed:', error);
+                        alert('Failed to generate text. Please try again or enter manually.');
+                    } finally {
+                        // Restore button
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
+                    }
+                });
+            });
+            
+            // Optional: Add a "Generate All" button
+            const generateAllBtn = document.createElement('button');
+            generateAllBtn.className = 'button is-primary';
+            generateAllBtn.type = 'button';
+            generateAllBtn.innerHTML = '<i class="fa fa-wand-magic-sparkles"></i> Generate All Alt & Title';
+            generateAllBtn.style.margin = '1rem';
+            
+            generateAllBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const btn = e.target.closest('button');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Generating...';
+                
+                try {
+                    const fields = upload_form.querySelectorAll('.upload_field');
+                    for (let i = 0; i < fields.length; i++) {
+                        const titleInput = document.getElementById(`title_img_id_${i}`);
+                        const altInput = document.getElementById(`alt_img_id_${i}`);
+                        const imgElement = document.getElementById(`img_id_${i}`);
+                        const filename = myfiles[i].name;
+                        
+                        if (!titleInput.value) {
+                            titleInput.value = await aiTextGenerator.generateTitle(imgElement.src, filename);
+                        }
+                        if (!altInput.value) {
+                            altInput.value = await aiTextGenerator.generateAltText(imgElement.src, filename);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Batch generation failed:', error);
+                    alert('Some generations failed. Please check and fill in missing fields.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa fa-wand-magic-sparkles"></i> Generate All Alt & Title';
+                }
+            });
+            
+            upload_form.insertBefore(generateAllBtn, upload_form.firstChild);
+        }
 	}
 	for (let i = 0; i < myfiles.length; i++) {
 		const reader = new FileReader();
