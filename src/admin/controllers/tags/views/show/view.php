@@ -106,10 +106,12 @@
 						$contentTitle = $this->defaultvalue[1];
 						$depth = $this->defaultvalue[2];
 						$tagObj = $this->defaultvalue[3];
-						for ($n=0; $n<$depth; $n++) {
-							echo "&nbsp&#x21B3;&nbsp";
-						}
-						echo '<div><a href="' . $_ENV["uripath"] . '/admin/tags/edit/' . $contentId . '">' . Input::stringHtmlSafe($contentTitle) . '</a></div>';
+						echo "<div style='display:flex; align-items:center; gap:5px;'>";
+							for ($n=0; $n<$depth; $n++) {
+								echo "&nbsp&#x21B3;&nbsp";
+							}
+							echo '<div><a href="' . $_ENV["uripath"] . '/admin/tags/edit/' . $contentId . '">' . Input::stringHtmlSafe($contentTitle) . '</a></div>';
+						echo "</div>";
 					}
 				},
 				"tdAttributes"=>["class"=>"title-wrapper"],
