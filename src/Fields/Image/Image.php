@@ -40,12 +40,14 @@ class Image extends Field {
 		echo "</div>";
 		echo "<div>";
 			echo "<div class='image_dropzone'><span style='pointer-events: none;'>Drag & Drop New Images Here</span></div>";
+			echo "<input type='file' accept='image/*''>";
 			echo "<input type='hidden' oninvalid='this.setCustomValidity(\"A valid image is required\")' value='{$this->default}' " . ($this->required ? " required " : "") . " id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()} data-repeatableindex='{{replace_with_index}}'>";
 		echo "</div>";
 		?>
 			<script type="module">
 				const imageInput = document.querySelector(`[<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"]`);
 				const dropZone = imageInput.parentNode.querySelector(".image_dropzone");
+				const inputUpload = imageInput.parentNode.querySelector("input[type='file']");
 
 				dropZone.addEventListener("dragover", (e) => {
 					e.preventDefault();
@@ -96,6 +98,20 @@ class Image extends Field {
 							updateField();
 						});
 					}
+				});
+				inputUpload.addEventListener("change", (e)=>{
+					//take file, and drop event onto dropzone
+					const files = e.target.files;
+					const dataTransfer = new DataTransfer();
+					for(let i=0; i<files.length; i++) {
+						dataTransfer.items.add(files[i]);
+					}
+					const event = new DragEvent("drop", {
+						dataTransfer: dataTransfer,
+						bubbles: true,
+						cancelable: true,
+					});
+					dropZone.dispatchEvent(event);
 				});
 			</script>
 		<?php
