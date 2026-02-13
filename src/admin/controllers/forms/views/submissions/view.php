@@ -15,7 +15,9 @@ $currentForm = Input::getVar("form", v::StringVal()->length(1, null), null) ?? $
 
 $titleText = "Form Submissions";
 if($currentForm) {
-    $titleText = 'All “' . Input::stringHtmlSafe($currentForm) . '” form submissions';
+    $formTitleLookup = array_combine(array_column($formSelectOptions, 'value'), array_column($formSelectOptions, 'text'));
+    $currentFormTitle = $formTitleLookup[$currentForm] ?? $currentForm;
+    $titleText = 'All “' . Input::stringHtmlSafe($currentFormTitle) . '” form submissions';
 }
 
 $urlQueryParams = $_GET;
