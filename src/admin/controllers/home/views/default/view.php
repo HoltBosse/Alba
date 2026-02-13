@@ -2,24 +2,30 @@
 	Home
 </h1>
 
+<style>
+	#content.content > ul > li > strong > a {
+		color: unset;
+		text-decoration: underline;
+	}
+</style>
 <section id='content' class='content'>
-	<p>Welcome to <span title="Holt Bosse Content Management System"><?php echo $_ENV["sitename"]; ?></span>
+	<p>Welcome to <?php echo $_ENV["sitename"]; ?></p>
 	<p>Here's a quick explanation of how things are organised:</p>
 	<ul>
 		<li>
-			<strong>Pages</strong> - this is the map of your entire site. The URL and content of each page on your site is decided here.
+			<strong><a href="/admin/pages">Pages</a></strong> - this is the map of your entire site. The URL and content of each page on your site is decided here.
 		</li>
 		<li>
-			<strong>Content</strong> - this is where you create the main content of your site. 
+			<strong><a href="/admin/content/all/1">Content</a></strong> - this is where you create the main content of your site. 
 		</li>
 		<li>
-			<strong>Widgets</strong> - these are anything that needs to appear on more than one page or in a specific position within one or more pages. This includes things like menus, slideshow, contact forms etc.
+			<strong><a href="/admin/widgets/show">Widgets</a></strong> - these are anything that needs to appear on more than one page or in a specific position within one or more pages. This includes things like menus, slideshow, contact forms etc.
 		</li>
 		<li>
-			<strong>Tags</strong> - content or images can be tagged with tags you make here. You are in full control of which tags can be applied to which content/media types.
+			<strong><a href="/admin/tags">Tags</a></strong> - content or images can be tagged with tags you make here. You are in full control of which tags can be applied to which content/media types.
 		</li>
 		<li>
-			<strong>Images</strong> - upload and organise the images used by your site.
+			<strong><a href="/admin/images/show">Images</a></strong> - upload and organise the images used by your site.
 		</li>
 	</ul>
 
