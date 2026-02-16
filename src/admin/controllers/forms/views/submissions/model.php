@@ -97,10 +97,14 @@ if(!$formExists) {
     $countResults = 0;
 }
 
-$paginationQuery = " LIMIT $paginationSize";
-
-$offset = ($curPage-1) * $paginationSize;
-$paginationQuery .= " OFFSET $offset";
+if(Input::getVar("exportcsv", v::NumericVal(), 0) != 1) {
+    $paginationQuery = " LIMIT $paginationSize";
+    
+    $offset = ($curPage-1) * $paginationSize;
+    $paginationQuery .= " OFFSET $offset";
+} else {
+    $paginationQuery = "";
+}
 
 $results = DB::fetchAll($query . $queryWhereFilters . $paginationQuery, $params);
 
