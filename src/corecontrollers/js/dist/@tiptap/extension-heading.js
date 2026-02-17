@@ -1,6 +1,1 @@
-import { i as index_default } from "../index-BLoaGNOQ.mjs";
-import { H } from "../index-BLoaGNOQ.mjs";
-export {
-  H as Heading,
-  index_default as default
-};
+import{i}from"../index-Cao00vVX.mjs";import{H as m}from"../index-Cao00vVX.mjs";export{m as Heading,i as default};

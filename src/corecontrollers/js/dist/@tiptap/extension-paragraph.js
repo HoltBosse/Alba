@@ -1,6 +1,1 @@
-import { i as index_default } from "../index-pTU3zJzP.mjs";
-import { P } from "../index-pTU3zJzP.mjs";
-export {
-  P as Paragraph,
-  index_default as default
-};
+import{i as a}from"../index-CgCy3Ufd.mjs";import{P as r}from"../index-CgCy3Ufd.mjs";export{r as Paragraph,a as default};

@@ -17,8 +17,7 @@ if(sizeof($segments) == 2 && file_get_contents(__DIR__ . "/js/" . $segments[1]))
 
     $reqFile = __DIR__ . "/dist/" . implode("/", $newSegments);
     if(file_exists($reqFile)) {
-        $mimetype = mime_content_type($reqFile);
-        header("Content-Type: $mimetype");
+        header("Content-Type: application/javascript; charset=utf-8");
         echo file_get_contents($reqFile);
         exit();
     } else {
