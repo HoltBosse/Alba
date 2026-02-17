@@ -325,6 +325,11 @@ final class CMS {
 	}
 
 	public static function parseUrlToSegments(string $url): array {
+		//if string starts with //, change to /
+		if (substr($url, 0, 2) === "//") {
+			$url = substr($url, 1);
+		}
+
 		return preg_split('@/@', parse_url($url, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
 	}
 
