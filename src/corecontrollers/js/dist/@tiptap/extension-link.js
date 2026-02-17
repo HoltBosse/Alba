@@ -1,8 +1,1 @@
-import { i as index_default } from "../index-G4lzJV12.mjs";
-import { L, a, p } from "../index-G4lzJV12.mjs";
-export {
-  L as Link,
-  index_default as default,
-  a as isAllowedUri,
-  p as pasteRegex
-};
+import{i as s}from"../index-D4gsv7cx.mjs";import{L as e,a as i,p as a}from"../index-D4gsv7cx.mjs";export{e as Link,s as default,i as isAllowedUri,a as pasteRegex};

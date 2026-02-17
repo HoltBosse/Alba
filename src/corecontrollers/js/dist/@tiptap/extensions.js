@@ -1,13 +1,1 @@
-import { E as Extensions } from "../index-BrLiHPUA.mjs";
-import { C, D, F, G, P, S, T, U } from "../index-BrLiHPUA.mjs";
-export {
-  C as CharacterCount,
-  D as Dropcursor,
-  F as Focus,
-  G as Gapcursor,
-  P as Placeholder,
-  S as Selection,
-  T as TrailingNode,
-  U as UndoRedo,
-  Extensions as default
-};
+import{E as a}from"../index-OiUusuK4.mjs";import{C as r,D as e,F as o,G as s,P as t,S as d,T as i,U as c,p as l}from"../index-OiUusuK4.mjs";export{r as CharacterCount,e as Dropcursor,o as Focus,s as Gapcursor,t as Placeholder,d as Selection,i as TrailingNode,c as UndoRedo,a as default,l as preparePlaceholderAttribute};
