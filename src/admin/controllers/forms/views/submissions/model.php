@@ -111,11 +111,11 @@ $results = DB::fetchAll($query . $queryWhereFilters . $paginationQuery, $params)
 $headerFields = [];
 if($results[0]) {
     $currentSelectedObject = json_decode(file_get_contents($_ENV["root_path_to_forms"] . $results[0]->form_path));
-    if($currentSelectedObject->list) {
+    if(isset($currentSelectedObject->list)) {
         $headerFields = $currentSelectedObject->list;
     } else {
         foreach($currentSelectedObject->fields as $field) {
-            if($field->save!==false) {
+            if((isset($field->save) ? $field->save : true)!==false) {
                 $headerFields[] = $field->name;
             }
         }

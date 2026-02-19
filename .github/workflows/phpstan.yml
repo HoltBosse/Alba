@@ -14,10 +14,10 @@ jobs:
 
       - uses: php-actions/composer@v6
         with:
-          php_version: 8.4
+          php_version: 8.5
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
         with:
           version: '^2.1'
-          php_version: 8.4
+          php_version: 8.5

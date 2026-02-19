@@ -38,6 +38,8 @@ class ImagePosition extends TextInput {
             "version"=>"1.0",
             "author"=>"workaj",
             "website"=>"https://alba.holtbosse.com",
+            "state"=>1,
+            "options"=>"[]",
         ];
 
         $fakeplugin = new class($pluginConfig, $this) extends Plugin {
