@@ -47,7 +47,7 @@ class Cache {
             $filetime = filemtime($fullpath);
             $config_time = 30;
             if(isset($_ENV["cache_time"]) && is_numeric($_ENV["cache_time"])) {
-                $config_time = (double) $_ENV["cache_time"];
+                $config_time = (float) $_ENV["cache_time"];
             }
             $file_stale_time = $filetime + ($config_time * 60);
             // @phpstan-ignore-next-line
