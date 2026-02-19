@@ -5,6 +5,7 @@ Use HoltBosse\Form\{Field, FormBuilderAttribute, FormBuilderDataType};
 Use HoltBosse\Alba\Core\{CMS, File, Image as CmsImage, Hook};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Alba\Components\CssFile\CssFile;
+Use HoltBosse\Alba\Components\Image\Image as ComponentImage;
 
 class Image extends Field {
 
@@ -280,7 +281,7 @@ class Image extends Field {
 	} // end display
 
 	public function getFriendlyValue($helpful_info) {
-		if($helpful_info && $helpful_info->return_in_text_form==true) {
+		if($helpful_info && (isset($helpful_info->return_in_text_form) ? $helpful_info->return_in_text_form : false) == true) {
 			if (is_numeric($this->default)) {
 				return "https://" . $_SERVER["HTTP_HOST"] . "/image/" . $this->default;
 			} else {
@@ -300,8 +301,15 @@ class Image extends Field {
 					$img_src = "data:" . $image->mimetype . ";base64," . $img_data;
 					echo "<img src='" . $img_src . "'>";
 				} else {
-					$img = new CmsImage($this->default);
-					return $img->render('thumb','backend', false);
+					/* $img = new CmsImage($this->default);
+					return $img->render('thumb','backend', false); */
+					ob_start();
+						(new ComponentImage())->loadFromConfig((object)[
+							"imageId"=>$this->default,
+							"fixedWidth"=>200,
+							"classList"=>["backend"],
+						])->display();
+					return ob_get_clean();
 				}
 			}
 			else {
@@ -319,7 +327,7 @@ class Image extends Field {
 		$this->images_per_page = $config->images_per_page ?? 50;
 		$this->tags = $config->tags ?? null;
 		$this->public_accessible = $config->public_accessible ?? false;
-		$this->upload_endpoint = $config->upload_endpoint ?? ($config->public_accessible ? $_ENV["uripath"] . "/image/frontend_upload" : $_ENV["uripath"] . "/admin/images/uploadv2");
+		$this->upload_endpoint = $config->upload_endpoint ?? ($this->public_accessible ? $_ENV["uripath"] . "/image/frontend_upload" : $_ENV["uripath"] . "/admin/images/uploadv2");
 		$this->listing_endpoint = $config->listing_endpoint ?? $_ENV["uripath"] . "/image/list_images";
 
 		return $this;

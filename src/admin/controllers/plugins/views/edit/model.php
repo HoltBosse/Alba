@@ -41,7 +41,7 @@ if ($plugin_options_form->isSubmitted()) {
 }
 else {
 	// set defaults if needed
-	foreach ($plugin->options as $option) {
+	foreach (($plugin->options ?? []) as $option) {
 		//echo "$key => $value\n";
 		$field = $plugin_options_form->getFieldByName($option->name);
 		if ($field) {

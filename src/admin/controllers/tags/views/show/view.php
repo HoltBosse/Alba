@@ -226,11 +226,6 @@
 			"tdAttributes"=>["class"=>"note_td"]
 		]);
 
-		// filter out any hidden fields
-		$columns = array_values(array_filter($columns, function($col) use ($hidden_list_fields) {
-			return !in_array($col->hideAttribute ?? null, $hidden_list_fields ?? []);
-		}));
-
 		(new AdminTable())->loadFromConfig((object)[
 			"columns"=>$columns,
 			"rows"=>$all_tags,

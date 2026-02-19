@@ -67,9 +67,9 @@ class DataExport {
             }
 
             $output = fopen('php://output', 'w');
-            fputcsv($output, array_keys($this->data[0]));
+            fputcsv($output, array_keys($this->data[0]), escape: "");
             foreach($this->data as $row) {
-                fputcsv($output, $row);
+                fputcsv($output, $row, escape: "");
             }
             fclose($output);
         } elseif($this->format == "xml") {

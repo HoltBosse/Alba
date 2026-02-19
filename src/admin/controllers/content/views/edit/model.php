@@ -81,23 +81,19 @@ if(!Content::isAccessibleOnDomain($content_type, $_SESSION["current_domain"])) {
 	CMS::raise_404();
 }
 
-// update CMS instance with this content information
-// this allows custom form fields etc to easily access information such as
-// content id/type
-CMS::Instance()->editing_content = $content;
-
-
 // inject custom content states into form
 $custom_fields = json_decode(file_get_contents(Content::getContentControllerPath($content->content_location) . "/custom_fields.json"));
 $required_details_obj = json_decode(file_get_contents(__DIR__ . '/required_fields_form.json'));
 
 foreach($required_details_obj->fields as $field) {
 	if($field->name == "state") {
-		foreach($custom_fields->states as $state) {
-			$field->select_options[] = (object) [
-				"value"=>$state->state,
-				"text"=>$state->name,
-			];
+		if(isset($custom_fields->states)) {
+			foreach($custom_fields->states as $state) {
+				$field->select_options[] = (object) [
+					"value"=>$state->state,
+					"text"=>$state->name,
+				];
+			}
 		}
 	}
 	if($field->name == "tags") {

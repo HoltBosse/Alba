@@ -13,7 +13,7 @@ class TagSingle extends Select {
 
 	private function get_parent_tag($input) {
 		if ($input->parent != 0) {
-			if($this->tag_cache[$input->parent]) {
+			if(isset($this->tag_cache[$input->parent])) {
 				return $this->tag_cache[$input->parent];
 			} else {
 				$parent_tag = DB::fetch("SELECT * FROM tags WHERE id=?", $input->parent);

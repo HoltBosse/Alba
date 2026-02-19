@@ -12,6 +12,7 @@
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
 	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
+	Use Respect\Validation\Validator as v;
 
 	(new CssFile())->loadFromConfig((object)[
 		"filePath"=>__DIR__ . "/style.css",
@@ -52,7 +53,7 @@
 		// compose composite fields for table rendering
 		$forms = array_map(function($item) {
 			$item->stateComposite = [$item->id, $item->state, -1, NULL];
-			$item->titleComposite = [$item->id, $item->title, $item->alias, $item->content_type, $item];
+			$item->titleComposite = [$item->id, $item->title, $item->alias];
 			return $item;
 		}, $forms);
 
@@ -92,10 +93,9 @@
 						$contentId = $this->defaultvalue[0];
 						$contentTitle = $this->defaultvalue[1];
 						$contentAlias = $this->defaultvalue[2];
-						$contentType = $this->defaultvalue[3];
 						?>
 							<div>
-								<a href="<?php echo $_ENV["uripath"]; ?>/admin/forms/edit/<?php echo $contentId;?>/<?php echo $contentType;?>"><?php echo Input::stringHtmlSafe($contentTitle); ?></a>
+								<a href="<?php echo $_ENV["uripath"]; ?>/admin/forms/edit/<?php echo $contentId;?>"><?php echo Input::stringHtmlSafe($contentTitle); ?></a>
 							</div>
 							<span class='unimportant'>
 								<?php echo $contentAlias; ?>
@@ -149,28 +149,26 @@
 
 <?php 
 
-$num_pages = ceil($formsCount/$pageSize);
+	$num_pages = ceil($formsCount/$pageSize);
 
-//$url_query_params = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
-$url_query_params = $_GET;
-$url_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+	//$url_query_params = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+	$url_query_params = $_GET;
+	$url_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
-if ($cur_page) {
-	// not ordering view and page url is either 1 or no passed and assumed to be 1 in model
-	$url_query_params['page'] = $cur_page+1;
-	$next_url_params = http_build_query($url_query_params);
-	$url_query_params['page'] = $cur_page-1;
-	$prev_url_params = http_build_query($url_query_params);
-	/* CMS::pprint_r ($url_query_params);
-	CMS::pprint_r ($next_url_params); */
-}
+	$cur_page = Input::getVar("page", v::numericVal(), 1);
+	if ($cur_page) {
+		// not ordering view and page url is either 1 or no passed and assumed to be 1 in model
+		$url_query_params['page'] = $cur_page+1;
+		$next_url_params = http_build_query($url_query_params);
+		$url_query_params['page'] = $cur_page-1;
+		$prev_url_params = http_build_query($url_query_params);
+		/* CMS::pprint_r ($url_query_params);
+		CMS::pprint_r ($next_url_params); */
+	}
 
-?>
-
-<?php
 	(new Pagination())->loadFromConfig((object)[
 		"id"=>"pagination_component",
-		"itemCount"=>$formCount,
+		"itemCount"=>$formsCount,
 		"itemsPerPage"=>$pageSize,
 		"currentPage"=>$cur_page
 	])->display();
