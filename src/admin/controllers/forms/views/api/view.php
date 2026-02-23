@@ -116,7 +116,9 @@ if(sizeof($segments)==4 && $segments[2]=="fieldoptions") {
         $submittedFieldTypes = Input::getVar("fieldtypes", v::ArrayType(), []);
 
         $form = generateFormForFieldType($segments[3]);
-        $form->deserializeJson($submittedFieldTypes[$index]);
+        if($submittedFieldTypes[$index]) {
+            $form->deserializeJson($submittedFieldTypes[$index]);
+        }
         echo getFieldOptionsForm($form, $segments[3]);
     } else {
         echo "<p>Unknown Field Type</p>";

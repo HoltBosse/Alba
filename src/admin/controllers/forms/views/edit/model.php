@@ -117,9 +117,14 @@ if($requiredDetailsForm->isSubmitted()) {
                     foreach ($fieldReflection->getProperties() as $property) {
                         $attributes = $property->getAttributes(FormBuilderAttribute::class);
                         if (!empty($attributes)) {
-                            CMS::pprint_r($property);
+                            //CMS::pprint_r($property);
 
                             $value = $normalizedDetails[$property->getName()] ?? null;
+                            if($property->getType() instanceof \ReflectionNamedType && $property->getType()->getName() == "bool") {
+                                $value = (int) $value;
+                                $value = $value === 1 ? true : false;
+                            }
+
                             if($property->getName()=="select_options" && is_string($value) && json_validate($value)) {
                                 $value = json_decode($value);
                                 
