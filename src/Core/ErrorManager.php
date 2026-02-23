@@ -5,7 +5,7 @@ use \Exception;
 use \Throwable;
 
 Class ErrorManager {
-    public static function initPhpErrorLevels() {
+    public static function initPhpErrorLevels(): void {
         if ($_ENV['debug'] === 'true') {
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
@@ -17,7 +17,7 @@ Class ErrorManager {
         }
     }
 
-    public static function exceptionHandler($e) {
+    public static function exceptionHandler(Throwable $e): void {
         http_response_code(500);
         echo "<div style='
             background: #ffeeee;
