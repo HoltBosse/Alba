@@ -7,9 +7,8 @@ use HoltBosse\DB\DB;
 use \Exception;
 
 class SqlSelector extends Select {
-
-	public string $query;
-	public array $params;
+	public ?string $query = null;
+	public array $params = [];
 
 	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
