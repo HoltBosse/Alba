@@ -7,7 +7,7 @@ use HoltBosse\Form\Input;
 
 class PageUpdate extends Actions {
 
-    public function display() {
+    public function display(): void {
         $affectedPageDetails = DB::fetch("SELECT * FROM pages WHERE id=?", $this->options->affected_page);
 
         $this->render_row(null, "Updated Page: " . Input::stringHtmlSafe($affectedPageDetails->title));

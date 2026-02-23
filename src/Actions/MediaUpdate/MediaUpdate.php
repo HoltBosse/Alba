@@ -6,7 +6,7 @@ use HoltBosse\DB\DB;
 
 class MediaUpdate extends Actions {
 
-    public function display() {
+    public function display(): void {
         $affectedMediaDetails = DB::fetch("SELECT * FROM media WHERE id=?", $this->options->affected_media);
 
         $this->render_row(null, "Updated Media: $affectedMediaDetails->title");

@@ -7,7 +7,7 @@ use HoltBosse\Form\Input;
 
 class UserUpdate extends Actions {
 
-    public function display() {
+    public function display(): void {
         $affectedUserDetails = DB::fetch("SELECT * FROM users WHERE id=?", $this->options->affected_user);
 
         $url = null;

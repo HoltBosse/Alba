@@ -6,13 +6,12 @@ Use HoltBosse\Form\Input;
 Use \DateTime;
 
 class Actions {
+    public ?string $id = null;
+    public ?string $userid = null;
+    public ?string $date = null;
+    public mixed $options = null;
 
-    public $id;
-    public $userid;
-    public $date;
-    public $options;
-
-    private static $actionsRegistry = [
+    private static array $actionsRegistry = [
         "contentcreate" => "HoltBosse\\Alba\\Actions\\ContentCreate\\ContentCreate",
         "contentdelete" => "HoltBosse\\Alba\\Actions\\ContentDelete\\ContentDelete",
         "contentupdate" => "HoltBosse\\Alba\\Actions\\ContentUpdate\\ContentUpdate",
@@ -31,7 +30,7 @@ class Actions {
         "userupdate" => "HoltBosse\\Alba\\Actions\\UserUpdate\\UserUpdate",
     ];
 
-    function __construct($action) {
+    function __construct(object $action) {
 		$this->id = $action->id;
         $this->userid = $action->userid;
         $this->date = $action->date;
@@ -59,20 +58,25 @@ class Actions {
         return array_keys(self::$actionsRegistry);
     }
 
-    public static function add_action($type, $action, $userid=0) {
+    public static function add_action(string $type, object $action, int $userid=0): string {
         if ($userid==0) {$userid=CMS::Instance()->user->id;}
         if (!is_numeric($userid)) {$userid=0;} //triple check - cms can be dumb when a user is timed out
 
         DB::exec("INSERT INTO user_actions (userid, type, json) VALUES (?, ?, ?)", [$userid, $type, json_encode($action)]);
+        $id = DB::getLastInsertedId();
 
-        return DB::getLastInsertedId();
+        if($id===false) {
+            throw new \Exception("Failed to insert action into database");
+        }
+
+        return $id;
     }
 
-    public static function add_action_details($actionid, $details) {
+    public static function add_action_details(string $actionid, object $details): void {
         DB::exec("INSERT INTO user_actions_details (action_id, json) VALUES (?, ?)", [$actionid, json_encode($details)]);
     }
 
-    public function render_user() {
+    public function render_user(): string {
         $user = DB::fetch("SELECT * FROM users WHERE id=?", $this->userid);
         if($user->id) {
             $safeUsername = Input::stringHtmlSafe($user->username);
@@ -82,7 +86,7 @@ class Actions {
         }
     }
 
-    public function render_time() {
+    public function render_time(): string {
         $time1 = new DateTime($this->date);
         $now = new DateTime(DB::fetch("SELECT NOW() as currentime")->currentime); //get now from sql which honors the server timezone while php does not
         $interval = $time1->diff($now,true);
@@ -102,7 +106,7 @@ class Actions {
         }
     }
 
-    public function render_row($url, $message) {
+    public function render_row(?string $url, string $message): void {
         $viewmore = DB::fetch("SELECT * FROM user_actions_details WHERE action_id=?", $this->id);
 
         echo "<tr>";
@@ -125,11 +129,11 @@ class Actions {
         echo "</tr>";
     }
 
-    public function display() {
-        $this->render_row(false, "unknown action occured");
+    public function display(): void {
+        $this->render_row(null, "unknown action occured");
     }
 
-    public function display_diff($viewmore) {
+    public function display_diff(object $viewmore): string {
         return "
             <tr>
                 <td>unknown</td>

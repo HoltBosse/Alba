@@ -6,7 +6,7 @@ use HoltBosse\Alba\Core\Actions;
 
 class TagCreate extends Actions {
 
-    public function display() {
+    public function display(): void {
         $affectedTagDetails = DB::fetch("SELECT * FROM tags WHERE id=?", $this->options->affected_tag);
 
         $url = null;

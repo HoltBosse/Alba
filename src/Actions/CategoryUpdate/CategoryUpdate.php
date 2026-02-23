@@ -6,7 +6,7 @@ use HoltBosse\DB\DB;
 
 class CategoryUpdate extends Actions {
 
-    public function display() {
+    public function display(): void {
         $affectedCategoryDetails = DB::fetch("SELECT * FROM categories WHERE id=?", $this->options->affected_category);
 
         $url = null;

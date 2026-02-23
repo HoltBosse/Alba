@@ -7,7 +7,7 @@ use HoltBosse\DB\DB;
 
 class ContentDelete extends Actions {
 
-    public function display() {
+    public function display(): void {
         $contentTableName = Content::get_table_name_for_content_type($this->options->content_type);
         $contentDetails = DB::fetch("SELECT * FROM `{$contentTableName}` WHERE id=?", $this->options->content_id);
 

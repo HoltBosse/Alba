@@ -7,7 +7,7 @@ use HoltBosse\Form\Input;
 
 class UserLogin extends Actions {
 
-    public function display() {
+    public function display(): void {
         $userDetails = DB::fetch("SELECT * FROM users WHERE id=?", $this->options->user);
 
         $url = null;
