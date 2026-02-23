@@ -6,7 +6,7 @@ use HoltBosse\Form\{Form as FormForm, Input};
 use \Exception;
 
 class Form extends FormForm {
-    public function saveToDb() {
+    public function saveToDb(): void {
 		//if the form was loaded from an object and the path not set afterwords.....
 		if(gettype($this->formPath)!="string") {
 			throw new Exception("Failed to save form submission, bad form path!");
