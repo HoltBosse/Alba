@@ -71,7 +71,7 @@ class FormInstance extends Widget {
 
                 $niceBadFields = sizeof($niceBadFields) > 0 ? $niceBadFields : ["Unknown fields"];
 
-                CMS::Instance()->queue_message("Errors where found in the following fields: " . implode(", ", $niceBadFields) . ". Please correct them and try again.","danger", $_SERVER["HTTP_REFERER"] ?? $_SERVER["REQUEST_URI"]);
+                CMS::Instance()->queue_message("Errors were found in the following fields: " . implode(", ", $niceBadFields) . ". Please correct them and try again.","danger", $_SERVER["HTTP_REFERER"] ?? $_SERVER["REQUEST_URI"]);
                 die; //just in case to stop further processing
             }
         } else {
