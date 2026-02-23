@@ -10,6 +10,7 @@ Use HoltBosse\Alba\Components\Admin\Nav\Nav as AdminNav;
 Use HoltBosse\Alba\Components\StateButton\StateButton;
 Use HoltBosse\Alba\Components\Html\Html;
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
+Use HoltBosse\Form\Input;
 
 class Component {
     public ?string $id = null;
@@ -39,13 +40,16 @@ class Component {
         $attributesString = "";
         
         if($this->id) {
-            $attributesString .= " id='" . $this->id . "' ";
+            $attributesString .= " id='" . Input::stringHtmlSafe($this->id) . "' ";
         }
 
         $classes = $this->classList ?? [];
         $additionalClasses = isset($this->attributes["class"]) ? explode(" ", $this->attributes["class"]) : [];
         unset($this->attributes["class"]);
         $classes = array_merge($classes, $additionalClasses);
+        $classes = array_map(function($class) {
+            return Input::stringHtmlSafe($class);
+        }, $classes);
 
         if(sizeof($classes) > 0) {
             $attributesString .= " class='" . implode(" ", $classes) . "' ";
@@ -53,7 +57,7 @@ class Component {
 
         if($this->attributes) {
             foreach($this->attributes as $key=>$value) {
-                $attributesString .= " $key='$value' ";
+                $attributesString .= " $key='" . Input::stringHtmlSafe($value) . "' ";
             }
         }
 
