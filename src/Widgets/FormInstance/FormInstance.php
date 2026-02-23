@@ -60,7 +60,18 @@ class FormInstance extends Widget {
 
                 CMS::Instance()->queue_message('Form submitted successfully','success', $redirectToPage->get_url());
             } else {
-                CMS::Instance()->queue_message('There were errors with your submission, please correct them and try again.','danger', $_SERVER["HTTP_REFERER"] ?? $_SERVER["REQUEST_URI"]);
+                $badFields = $form->getFailedValidationFields();                
+                $badFields = array_values(array_filter($badFields, function($field) use ($form) {
+                    return $form->fields[$field]->save;
+                }));
+
+                $niceBadFields = array_map(function($field) use ($form) {
+                    return $form->fields[$field]->label !='' ? $form->fields[$field]->label : $form->fields[$field]->name;
+                }, $badFields);
+
+                $niceBadFields = sizeof($niceBadFields) > 0 ? $niceBadFields : ["Unknown fields"];
+
+                CMS::Instance()->queue_message("Errors were found in the following fields: " . implode(", ", $niceBadFields) . ". Please correct them and try again.","danger", $_SERVER["HTTP_REFERER"] ?? $_SERVER["REQUEST_URI"]);
                 die; //just in case to stop further processing
             }
         } else {
