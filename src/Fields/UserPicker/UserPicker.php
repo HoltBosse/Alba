@@ -6,9 +6,9 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Alba\Core\CMS;
 
 class UserPicker extends Select {
-	public $domain;
+	public mixed $domain;
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->domain = $config->domain ?? $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);

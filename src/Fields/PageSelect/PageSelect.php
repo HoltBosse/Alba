@@ -6,7 +6,7 @@ Use HoltBosse\Alba\Core\Page;
 
 class PageSelect extends Select {
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$page_array = [];

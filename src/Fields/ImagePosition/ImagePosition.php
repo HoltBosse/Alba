@@ -7,9 +7,9 @@ Use HoltBosse\Alba\Core\{CMS, Plugin, Hook};
 Use HoltBosse\DB\DB;
 
 class ImagePosition extends TextInput {
-    public $fieldname;
+    public ?string $fieldname = null;
 
-    public function display() {
+    public function display(): void {
         ?>
             <style>
                 [data-field_id]:has([<?php echo $this->getRenderedName(); ?>]) {
@@ -25,7 +25,7 @@ class ImagePosition extends TextInput {
         echo "</div>";
     }
 
-    public function loadFromConfig($config) {
+    public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
         $this->fieldname = $config->fieldname ?? null;

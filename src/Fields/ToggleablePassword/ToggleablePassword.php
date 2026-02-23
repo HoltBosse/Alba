@@ -4,7 +4,7 @@ namespace HoltBosse\Alba\Fields\ToggleablePassword;
 use HoltBosse\Form\Fields\Input\Input as Text;
 
 class ToggleablePassword extends Text {
-    public function display() {
+    public function display(): void {
         parent::display();
         ?>
             <style>
@@ -34,7 +34,7 @@ class ToggleablePassword extends Text {
         <?php
     }
 
-    public function loadFromConfig($config) {
+    public function loadFromConfig(object $config): self {
         parent::loadFromConfig($config);
         
         $this->input_type = $config->input_type ?? 'password';

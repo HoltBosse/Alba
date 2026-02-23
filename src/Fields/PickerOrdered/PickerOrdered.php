@@ -6,11 +6,10 @@ Use Respect\Validation\Validator as v;
 Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class PickerOrdered extends Field {
+	public array $select_options = [];
+	public bool $searchable = true;
 
-	public $select_options;
-	public $searchable;
-
-	public function display() {
+	public function display(): void {
 		$required="";
 		$existing_arr = explode(",",$this->default);
 
@@ -110,7 +109,7 @@ class PickerOrdered extends Field {
 
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->filter = $config->filter ?? v::StringVal();
@@ -121,7 +120,7 @@ class PickerOrdered extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		if ($this->isMissing()) {
 			return false;
 		}

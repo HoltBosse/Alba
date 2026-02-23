@@ -6,12 +6,10 @@ Use HoltBosse\Alba\Core\Content;
 
 class ContentTypeSelector extends Field {
 
-	public $showmedia;
-	public $showusers;
-	public $maxlength;
-	public $minlength;
+	public mixed $showmedia = null;
+	public mixed $showusers = null;
 
-	public function display() {
+	public function display(): void {
 		$all_contenttypes = Content::get_all_content_types();
 		/* CMS::pprint_r ($this); */
 		echo "<style>label.checkbox {display:block; margin-bottom:1rem;} label.checkbox input {margin-right:1rem;}</style>";
@@ -60,7 +58,7 @@ class ContentTypeSelector extends Field {
 		echo "</div>";
 	}
 
-	public function setFromSubmit() {
+	public function setFromSubmit(): void {
 		// override default field function
 		$filter = Input::isValidatorRule($this->filter) ? Input::buildValidatorFromArray((array) $this->filter) : $this->filter;
 		$value = Input::getvar($this->name, $filter);
@@ -72,7 +70,7 @@ class ContentTypeSelector extends Field {
 		}
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->showmedia = $config->showmedia ?? true;
@@ -81,7 +79,7 @@ class ContentTypeSelector extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		// TODO: enhance validation
 		if ($this->isMissing()) {
 			return false;

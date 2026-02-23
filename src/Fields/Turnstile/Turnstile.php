@@ -8,7 +8,7 @@ Use Respect\Validation\Validator as v;
 
 class Turnstile extends Field {
 
-	public function display() {
+	public function display(): void {
 		$cf_sitekey = Configuration::get_configuration_value ('general_options', 'cf_sitekey');
 		if ($cf_sitekey) {
 			echo '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
@@ -19,7 +19,7 @@ class Turnstile extends Field {
 		}
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		
 		$this->default = Input::getvar('cf-turnstile-response',v::StringVal(),false);
 		if ($this->isMissing()) {
@@ -58,7 +58,7 @@ class Turnstile extends Field {
 		}
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->filter = $config->filter ?? v::AlwaysValid();

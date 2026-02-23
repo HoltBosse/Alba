@@ -6,7 +6,7 @@ Use HoltBosse\Alba\Core\Template;
 
 class PositionSelect extends Select {
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->placeholder = $config->placeholder ?? "Template Position: (required)";

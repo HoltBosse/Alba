@@ -7,9 +7,9 @@ Use HoltBosse\DB\DB;
 
 class TagSingle extends Select {
 
-	public $tag_cache = [];
-	public $content_type;
-	public $domain;
+	public mixed $tag_cache = [];
+	public mixed $content_type;
+	public mixed $domain;
 
 	private function get_parent_tag($input) {
 		if ($input->parent != 0) {
@@ -36,7 +36,7 @@ class TagSingle extends Select {
 		return $title;
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? false;

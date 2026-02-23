@@ -8,16 +8,16 @@ Use Respect\Validation\Validator as v;
 Use HoltBosse\Form\{Input, FormBuilderAttribute, FormBuilderDataType};
 
 class ContentSelector extends Select {
-	public $select_options; //shadow selects property so that we dont have attribute
-	public $list_unpublished;
-	public $tags;
-	public $order_by_field;
-	public $order_by_direction;
+	public array $select_options = []; //shadow selects property so that we dont have attribute
+	public bool $list_unpublished = false;
+	public mixed $tags = null;
+	public mixed $order_by_field = null;
+	public mixed $order_by_direction = null;
 	#[FormBuilderAttribute(fieldType: "Input", dataType: FormBuilderDataType::String, required: true, label: "Content ID")]
-	public $content_type;
-	public $domain;
+	public mixed $content_type = null;
+	public mixed $domain = null;
 
-	public function getFriendlyValue($helpful_info) {
+	public function getFriendlyValue(mixed $helpful_info): mixed {
 		// content_type already checked for being numeric in load_from_config function
 		$content_type = $this->content_type ?? $helpful_info->content_type;
 		$table_name = Content::get_table_name_for_content_type($content_type);
@@ -28,6 +28,7 @@ class ContentSelector extends Select {
 			if ($val) {
 				return $val;
 			}
+			return null;
 		}
 		elseif (is_array($field_value)) {
 			$title_arr = [];
@@ -45,7 +46,7 @@ class ContentSelector extends Select {
 		}
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? false;
@@ -105,7 +106,7 @@ class ContentSelector extends Select {
 			// content type was not able to be established
 			if ($_ENV["debug"]) {
 				echo "<h5>Error determining content type</h5>";
-				return false;
+				return $this;
 			}
 		}
 

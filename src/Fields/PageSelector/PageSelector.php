@@ -6,13 +6,10 @@ Use HoltBosse\Alba\Core\{CMS, Page};
 Use Respect\Validation\Validator as v;
 
 class PageSelector extends Field {
+	public bool $multiple = true;
+	public mixed $domain = null;
 
-	public $maxlength;
-	public $minlength;
-	public $multiple;
-	public $domain;
-
-	public function display() {
+	public function display(): void {
 		$all_pages = Page::get_all_pages_by_depth();
 		//CMS::pprint_r ($this);
 		if ($this->multiple) {
@@ -75,7 +72,7 @@ class PageSelector extends Field {
 		}
 	}
 
-	public function setFromSubmit() {
+	public function setFromSubmit(): void {
 		// override default field function
 		$filter = Input::isValidatorRule($this->filter) ? Input::buildValidatorFromArray((array) $this->filter) : $this->filter;
 		$value = Input::getvar($this->name, $filter);
@@ -87,7 +84,7 @@ class PageSelector extends Field {
 		}
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->filter = $config->filter ?? v::arrayType()->each(v::intVal());
@@ -97,7 +94,7 @@ class PageSelector extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		// TODO: enhance validation
 		if ($this->isMissing()) {
 			return false;
