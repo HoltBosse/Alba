@@ -7,7 +7,7 @@ Use HoltBosse\Form\Form;
 
 class ContentCreate extends Actions {
 
-    public function display() {
+    public function display(): void {
         $contentTableName = Content::get_table_name_for_content_type($this->options->content_type);
         $contentDetails = DB::fetch("SELECT * FROM `{$contentTableName}` WHERE id=?", $this->options->content_id);
 
@@ -21,7 +21,7 @@ class ContentCreate extends Actions {
         $this->render_row($url, "Created \"$contentTypeLabel->title\" Content: " . $contentDetails->title);
     }
 
-    public function display_diff($viewmore) {
+    public function display_diff(object $viewmore): string {
         ob_start();
 
         $customFields = json_decode(file_get_contents(Content::getContentControllerPath(Content::get_content_location($this->options->content_type)) . "/custom_fields.json"))->fields;
