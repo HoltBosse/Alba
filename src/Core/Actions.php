@@ -130,7 +130,7 @@ class Actions {
     }
 
     public function display(): void {
-        $this->render_row(null, "unknown action occured");
+        $this->render_row(null, "unknown action occurred");
     }
 
     public function display_diff(object $viewmore): string {

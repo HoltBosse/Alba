@@ -302,7 +302,7 @@ class User {
 				}
 			}
 		} else {
-			return new Message(false, MessageType::Danger, "An Error occured, Please contact the system administrator.", $baseUrl);
+			return new Message(false, MessageType::Danger, "An Error occurred, Please contact the system administrator.", $baseUrl);
 		}
 	}
 
