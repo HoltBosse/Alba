@@ -5,7 +5,7 @@ Use HoltBosse\Alba\Fields\TagSingle\TagSingle;
 
 class TagParent extends TagSingle {
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		array_unshift(

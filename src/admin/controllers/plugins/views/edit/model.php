@@ -44,12 +44,7 @@ else {
 	foreach (($plugin->options ?? []) as $option) {
 		//echo "$key => $value\n";
 		$field = $plugin_options_form->getFieldByName($option->name);
-		if ($field) {
-			$field->default = $option->value;
-		}
-		else {
-			// do nothing, leave default from form json
-		}
+		$field->default = $option->value;
 	}
 	
 }

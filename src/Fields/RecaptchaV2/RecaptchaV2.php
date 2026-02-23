@@ -6,10 +6,7 @@ use HoltBosse\Alba\Core\{CMS, Configuration};
 Use Respect\Validation\Validator as v;
 
 class RecaptchaV2 extends Field {
-
-	public $maxlength;
-
-	public function display() {
+	public function display(): void {
 		$rc_sitekey = Configuration::get_configuration_value ('general_options', 'rc_sitekey');
 		if ($rc_sitekey) {
 			echo "<script src='https://www.google.com/recaptcha/api.js' async defer></script>";
@@ -20,7 +17,7 @@ class RecaptchaV2 extends Field {
 		}
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->filter = $config->filter ?? v::StringVal();
@@ -28,7 +25,7 @@ class RecaptchaV2 extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		if ($this->isMissing()) {
 			return false;
 		}

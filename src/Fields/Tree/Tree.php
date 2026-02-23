@@ -6,10 +6,10 @@ Use HoltBosse\DB\DB;
 
 class Tree extends Field {
 
-	public $dataset;
-	public $sql;
+	public mixed $dataset;
+	public mixed $sql;
 
-	public function display() {
+	public function display(): void {
 		echo "<h1>{$this->label}</h1>";
 		if ($this->description) {
 			echo "<p class='help'>" . $this->description . "</p>";
@@ -394,7 +394,7 @@ class Tree extends Field {
 		<?php
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->sql = $config->sql ?? 'SELECT id AS value, title AS text FROM pages WHERE state=1';
@@ -404,7 +404,7 @@ class Tree extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		// TODO: enhance validation
 		if ($this->isMissing()) {
 			return false;

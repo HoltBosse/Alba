@@ -5,11 +5,10 @@ Use HoltBosse\Form\Field;
 Use HoltBosse\Alba\Core\CMS;
 
 class Parsedown extends Field {
-	public $imageapi;
-	public $parsedownapi;
-	public $placeholder;
+	public mixed $imageapi = null;
+	public mixed $parsedownapi = null;
 
-	public function display() {
+	public function display(): void {
 		$wrapper_id = uniqid();
 
 		?>
@@ -532,7 +531,7 @@ class Parsedown extends Field {
 		<?php
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->parsedownapi = $config->parsedownapi ?? "/api/parsedown";

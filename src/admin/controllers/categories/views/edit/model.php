@@ -3,6 +3,7 @@
 Use HoltBosse\Alba\Core\{CMS, Category, Content};
 Use HoltBosse\Form\{Form, Input};
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Fields\Category\Category as CategoryField;
 
 $segments = CMS::Instance()->uri_segments;
 
@@ -95,8 +96,10 @@ else {
 		$required_details_form->getFieldByName('state')->default = $cat->state;
 		$required_details_form->getFieldByName('title')->default = $cat->title;
 		$required_details_form->getFieldByName('parent')->default = $cat->parent;
-		$required_details_form->getFieldByName('parent')->content_type = $cat->content_type;
-		$required_details_form->getFieldByName('parent')->self_id = $cat->id; // set self_id so don't show in dropdown
+		if($required_details_form->getFieldByName('parent') instanceof CategoryField) {
+			$required_details_form->getFieldByName('parent')->content_type = $cat->content_type;
+			$required_details_form->getFieldByName('parent')->self_id = $cat->id; // set self_id so don't show in dropdown
+		}
 		$required_details_form->getFieldByName('content_type')->default = $cat->content_type;
 
 		if ($custom_fields_form) {
@@ -107,7 +110,9 @@ else {
 	}
 	else {
 		// always know for new cat what content type is
-		$required_details_form->getFieldByName('parent')->content_type = $cat->content_type;
+		if($required_details_form->getFieldByName('parent') instanceof CategoryField) {
+			$required_details_form->getFieldByName('parent')->content_type = $cat->content_type;
+		}
 		$required_details_form->getFieldByName('content_type')->default = $cat->content_type;
 	}
 }

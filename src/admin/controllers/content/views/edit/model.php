@@ -4,6 +4,8 @@ Use HoltBosse\Alba\Core\{CMS, Content, Hook};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Alba\Fields\TagMultiple\TagMultiple;
+Use HoltBosse\Alba\Fields\Category\Category as CategoryField;
 
 $segments = CMS::Instance()->uri_segments;
 
@@ -108,7 +110,9 @@ $required_details_form = new Form($required_details_obj);
 $content_form = new Form ($custom_fields);
 // set content_type for tag field based on content type of new/editing content
 $tags_field = $required_details_form->getFieldByName('tags');
-$tags_field->content_type = $content->content_type;
+if($tags_field instanceof TagMultiple) {
+	$tags_field->content_type = $content->content_type;
+}
 
 // check if submitted or show defaults/data from db
 if ($required_details_form->isSubmitted()) {
@@ -152,7 +156,9 @@ if ($required_details_form->isSubmitted()) {
 }
 else {
 	// set category field content_type based on current new/edited content type
-	$required_details_form->getFieldByName('category')->content_type = $contentItem ? $contentItem->content_type : $content->content_type;
+	if($required_details_form->getFieldByName('category') instanceof CategoryField) {
+		$required_details_form->getFieldByName('category')->content_type = $contentItem ? $contentItem->content_type : $content->content_type;
+	}
 	// set defaults if needed
 	if (!$new_content) {
 		$required_details_form->getFieldByName('state')->default = $contentItem->state;

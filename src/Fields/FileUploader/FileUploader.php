@@ -8,21 +8,16 @@ Use HoltBosse\Form\Input;
 
 // TODO: test in repeatable
 class FileUploader extends Field {
-
-	public $select_options;
-	public $mime_type;
-	public $placeholder;
-	public $max_size;
-	public $post_max_size;
-	public $multiple;
-	public $input_type;
-	public $max;
-	public $minlength;
-	public $maxlength;
-	public $attribute_list;
+	public mixed $mime_type = null;
+	public mixed $max_size = null;
+	public mixed $post_max_size = null;
+	public mixed $multiple = null;
+	public ?string $input_type = null;
+	public mixed $max = null;
+	public mixed $attribute_list = null;
 
 	// for converting .ini config value to bytes. see https://www.php.net/manual/en/function.ini-get.php
-	public function get_bytes($val) {
+	public function get_bytes(mixed $val): int {
 		$val = strtolower($val);
 		$val = trim($val);
 		$last = substr($val, -1);
@@ -41,7 +36,7 @@ class FileUploader extends Field {
 		return $val;
 	}
 
-	public function display() {
+	public function display(): void {
 		$hidden = "";
 		$required="";
 		if ($this->required) {$required=" required ";}
@@ -147,7 +142,7 @@ class FileUploader extends Field {
 		<?php
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->multiple = $config->multiple ?? "";
@@ -164,7 +159,7 @@ class FileUploader extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 
 		// validation built to always handle array even if only one file in array
 		$num_files = count($_FILES[$this->name]['name'] ?? []);

@@ -6,7 +6,7 @@ Use HoltBosse\DB\DB;
 
 class UserGroupsMultiple extends Select {
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->slimselect = $config->slimselect ?? true;

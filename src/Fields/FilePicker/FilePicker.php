@@ -5,10 +5,10 @@ Use HoltBosse\Form\Fields\Select\Select;
 
 class FilePicker extends Select {
 
-	public $root_folder;
-	public $mode;
+	public mixed $root_folder = null;
+	public mixed $mode = null;
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->root_folder = $config->root_folder;

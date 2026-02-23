@@ -9,12 +9,11 @@ class Repeatable extends Field {
 
 	// $this->default = saved serialized json from repeated form 
 
-	public $form_path;
-	public $form;
-	public $forms;
-	public $repeatable;
+	public mixed $form_path = null;
+	public mixed $forms = null;
+	public mixed $repeatable = null;
 
-	public function display() {
+	public function display(): void {
 		/* 
 			get default saved repeatable form stuff
 			specifically loading $saved_data this way because olf how page view options are stored
@@ -26,7 +25,7 @@ class Repeatable extends Field {
 		}
 
 		// get example repeatable for js rendering
-		$this->form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true); 
+		$this->form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true);
 		// loop over existing data and render
 		$this->forms = [];
 
@@ -44,10 +43,7 @@ class Repeatable extends Field {
 				$repeatable_form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true); // second parameter is boolean for repeatable or not
 				foreach (($repeatable_form_data->fields ?? $repeatable_form_data->value) as $field_info) {
 					$field = $repeatable_form->getFieldByName($field_info->name);
-					if ($field) {
-						//CMS::pprint_r ($field_info);
-						$field->default = $field_info->default ?? $field_info->value;
-					}
+					$field->default = $field_info->default ?? $field_info->value;
 				}
 				?>
 				<div class='repeatable'>
@@ -150,7 +146,7 @@ class Repeatable extends Field {
 
 	}
 
-	public function setFromSubmit() {
+	public function setFromSubmit(): void {
 		// create base repeatable form
 		$forms=[];
 		$repeatable_form = new Form($_ENV["root_path_to_forms"] . $this->form_path, true); // must be true / repeatable
@@ -185,7 +181,7 @@ class Repeatable extends Field {
 	}
 
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->type = 'Repeatable';
@@ -195,7 +191,7 @@ class Repeatable extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		// assume $this->forms has been set by set_from_submit
 		$all_valid=true;
 		foreach ($this->forms as $subform) {

@@ -8,7 +8,7 @@ use \stdClass;
 
 class SubForm extends BaseSubForm {
 
-    public function loadFromConfig($config) {
+    public function loadFromConfig(object $config): self {
         parent::loadFromConfig($config);
         $this->form_base_path = $config->form_base_path ?? $_ENV["root_path_to_forms"];
 

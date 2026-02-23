@@ -6,16 +6,13 @@ Use HoltBosse\Alba\Core\{CMS, Content, JSON};
 Use HoltBosse\DB\DB;
 
 class ContentPickerOrdered extends PickerOrdered {
+	public mixed $list_unpublished = null;
+	public mixed $tags = null;
+	public mixed $empty_string = null;
+	public mixed $content_type = null;
+	public mixed $domain = null;
 
-	public $select_options;
-	public $list_unpublished;
-	public $tags;
-	public $searchable;
-	public $empty_string;
-	public $content_type;
-	public $domain;
-
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? 1; // default to articles if not provided
@@ -76,7 +73,7 @@ class ContentPickerOrdered extends PickerOrdered {
 			// content type was not able to be established
 			if ($_ENV["debug"]==="true") {
 				echo "<h5>Error determining content type</h5>";
-				return false;
+				return $this;
 			}
 		}
 
@@ -85,7 +82,7 @@ class ContentPickerOrdered extends PickerOrdered {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		if ($this->isMissing()) {
 			return false;
 		}

@@ -5,9 +5,9 @@ Use HoltBosse\Form\Field;
 Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class Rich extends Field {
-	public $listing_endpoint;
+	public mixed $listing_endpoint;
 
-	public function display() {
+	public function display(): void {
 		//$this->getRenderedName()
 		//$this->name
 
@@ -1079,7 +1079,7 @@ class Rich extends Field {
 		<?php
 	}
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->listing_endpoint = $config->listing_endpoint ?? $_ENV["uripath"] . "/image/list_images";
@@ -1087,7 +1087,7 @@ class Rich extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		// TODO: enhance validation
 		if ($this->isMissing()) {
 			return false;

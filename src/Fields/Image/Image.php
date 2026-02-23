@@ -8,19 +8,17 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 Use HoltBosse\Alba\Components\Image\Image as ComponentImage;
 
 class Image extends Field {
-
-	public $select_options;
-	public $mimetypes;
-	public $image_id;
-	public $images_per_page;
-	public $tags;
-	public $coltype;
-	public $upload_endpoint;
-	public $listing_endpoint;
+	public mixed $mimetypes = null;
+	public mixed $image_id = null;
+	public mixed $images_per_page = null;
+	public mixed $tags = null;
+	public mixed $coltype = null;
+	public mixed $upload_endpoint = null;
+	public mixed $listing_endpoint = null;
 	#[FormBuilderAttribute(fieldType: "Select", dataType: FormBuilderDataType::Bool, required: true, description: "Is this field publicly accessible on the front-end?")]
 	public bool $public_accessible = false;
 
-	public function display($repeatable_template=false) {
+	public function display($repeatable_template=false): void {
 		if(!$this->public_accessible) {
 			$this->trustedDisplay($repeatable_template);
 		} else {
@@ -28,7 +26,7 @@ class Image extends Field {
 		}
 	}
 
-	public function unTrustedDisplay($repeatable_template=false) {
+	public function unTrustedDisplay($repeatable_template=false): void {
 		$_SESSION["public_accessible_image_field_loaded"] = true;
 
 		(new CssFile())->loadFromConfig((object)[
@@ -118,7 +116,7 @@ class Image extends Field {
 		<?php
 	}
 
-	public function trustedDisplay($repeatable_template=false) {
+	public function trustedDisplay($repeatable_template=false): void {
 		echo "<script>";
 			echo "window.max_upload_size_bytes = " . File::get_max_upload_size_bytes() . ";";
 		echo "</script>";
@@ -280,7 +278,7 @@ class Image extends Field {
 	<?php
 	} // end display
 
-	public function getFriendlyValue($helpful_info) {
+	public function getFriendlyValue(mixed $helpful_info): mixed {
 		if($helpful_info && (isset($helpful_info->return_in_text_form) ? $helpful_info->return_in_text_form : false) == true) {
 			if (is_numeric($this->default)) {
 				return "https://" . $_SERVER["HTTP_HOST"] . "/image/" . $this->default;
@@ -300,6 +298,7 @@ class Image extends Field {
 					$img_data = base64_encode(file_get_contents($_ENV["images_directory"] . "/processed/" . $image->filename));
 					$img_src = "data:" . $image->mimetype . ";base64," . $img_data;
 					echo "<img src='" . $img_src . "'>";
+					return null;
 				} else {
 					/* $img = new CmsImage($this->default);
 					return $img->render('thumb','backend', false); */
@@ -319,7 +318,7 @@ class Image extends Field {
 	}
 
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->coltype = $config->coltype ?? '';
@@ -333,7 +332,7 @@ class Image extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		if ($this->isMissing()) {
 			return false;
 		}

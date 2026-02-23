@@ -7,11 +7,11 @@ Use HoltBosse\Alba\Core\CMS;
 
 class Category extends Select {
 
-	public $self_id;
-	public $content_type;
-	public $domain;
+	public mixed $self_id = null;
+	public mixed $content_type = null;
+	public mixed $domain = null;
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? 1;
@@ -20,7 +20,7 @@ class Category extends Select {
 		return $this;
 	}
 
-	public function display() {
+	public function display(): void {
 		//we have to do this here, rather than the config method as the property is set o nthe field after the config is loaded
 		$query = "SELECT id AS value, title as text FROM categories WHERE content_type=? AND (domain=? OR domain IS NULL)";
 		$params = [$this->content_type, $this->domain];

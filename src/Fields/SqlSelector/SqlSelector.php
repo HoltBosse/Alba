@@ -8,10 +8,10 @@ use \Exception;
 
 class SqlSelector extends Select {
 
-	public $query;
-	public $params;
+	public string $query;
+	public array $params;
 
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		if(!isset($config->query) || $config->query=="" || $config->query==null) {

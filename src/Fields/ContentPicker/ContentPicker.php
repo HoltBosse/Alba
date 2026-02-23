@@ -6,9 +6,9 @@ Use HoltBosse\Alba\Fields\ContentSelector\ContentSelector;
 //shim for legacy reasons.
 class ContentPicker extends ContentSelector {
 
-	public $content_type;
+	public mixed $content_type = null;
 	
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? false;

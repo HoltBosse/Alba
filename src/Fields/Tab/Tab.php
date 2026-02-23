@@ -6,12 +6,12 @@ Use HoltBosse\Alba\Core\CMS;
 
 class Tab extends Field {
 
-	public $tabs;
-	public $mode;
-	public $tabsid;
-	public $input_type;
+	public mixed $tabs = null;
+	public mixed $mode = null;
+	public mixed $tabsid = null;
+	public mixed $input_type = null;
 
-	public function display() {
+	public function display(): void {
 		$tabsJs = "<script type='module'>" . file_get_contents(__DIR__ . "/script.js") . "</script>";
 		if(!in_array($tabsJs, CMS::Instance()->head_entries)) {
 			CMS::Instance()->head_entries[] = $tabsJs;
@@ -67,9 +67,7 @@ class Tab extends Field {
 		<?php endif; 
 	}
 
-
-
-	public function loadFromConfig($config) {
+	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
 		$this->tabs = $config->tabs ?? $this->tabs;
@@ -79,7 +77,7 @@ class Tab extends Field {
 		return $this;
 	}
 
-	public function validate() {
+	public function validate(): bool {
 		// not a real field, just displays stuff :)
 		return true;
 	}
