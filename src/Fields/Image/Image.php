@@ -83,7 +83,7 @@ class Image extends Field {
 						}
 						function updateField() {
 							dropZone.classList.add("submission_complete");
-							dropZone.querySelector("span").innerHTML = "Upload Complete!";
+							dropZone.querySelector("span").innerHTML = "Process Complete!";
 						}
 						
 						const dialog = document.createElement("dialog");
@@ -107,9 +107,14 @@ class Image extends Field {
 							method: "POST",
 							body: formData,
 						}).then((response) => response.json()).then((data) => {
-							console.log(data);
-							imageInput.value = data.ids;
-							updateField();
+							if(data.errors) {
+								updateField();
+								alert(data.msg);
+							} else {
+								console.log(data);
+								imageInput.value = data.ids;
+								updateField();
+							}
 						}).catch((error) => {
 							console.error("Error uploading image:", error);
 							updateField();

@@ -117,7 +117,7 @@ if ($segments[1]=='list_images') {
 		[],
 		$_ENV["images_directory"] . "/processed"
 	);
-	foreach(explode($result->ids, ",") as $id) {
+	foreach(explode(",", $result->ids) as $id) {
 		DB::exec("UPDATE media SET state=0 WHERE id=?", [$id]);
 	}
 
