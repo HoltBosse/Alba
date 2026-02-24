@@ -47,6 +47,7 @@ class Image extends Field {
 				const imageInput = document.querySelector(`[<?php echo $this->getRenderedName(); ?>][data-repeatableindex="{{replace_with_index}}"]`);
 				const dropZone = imageInput.parentNode.querySelector(".image_dropzone");
 				const inputUpload = imageInput.parentNode.querySelector("input[type='file']");
+				const dialogId = "processing_dialog_<?php echo uniqid(); ?>";
 
 				dropZone.addEventListener("dragover", (e) => {
 					e.preventDefault();
@@ -84,6 +85,23 @@ class Image extends Field {
 							dropZone.classList.add("submission_complete");
 							dropZone.querySelector("span").innerHTML = "Upload Complete!";
 						}
+						
+						const dialog = document.createElement("dialog");
+						dialog.id = dialogId;
+						dialog.classList.add("processing_dialog");
+						dialog.innerHTML = "<p>Processing Image. Please Wait...</p>";
+						dialog.addEventListener("cancel", (e)=>{
+							e.preventDefault();
+						});
+						dialog.addEventListener('keydown', (event) => {
+							if (event.key === 'Escape') {
+								event.preventDefault();
+							}
+						});
+						dialog.closedBy = "none";
+						dialog.dataset.time = new Date().getTime();
+						document.body.appendChild(dialog);
+						dialog.showModal();
 
 						fetch('<?php echo $this->upload_endpoint; ?>', {
 							method: "POST",
@@ -95,6 +113,16 @@ class Image extends Field {
 						}).catch((error) => {
 							console.error("Error uploading image:", error);
 							updateField();
+						}).finally(() => {
+							if((new Date().getTime() - parseInt(dialog.dataset.time)) < 1000) {
+								setTimeout(() => {
+									dialog.close();
+									dialog.remove();
+								}, 1000);
+							} else {
+								dialog.close();
+								dialog.remove();
+							}
 						});
 					}
 				});

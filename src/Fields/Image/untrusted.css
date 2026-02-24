@@ -11,3 +11,7 @@ div.image_dropzone {
 div.image_dropzone.droppable_file {
     background-color: #e0e0e0;
 }
+
+.processing_dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+}

@@ -215,11 +215,6 @@ class Image {
             ]);
         }
 
-
-        // return json to javascript uploaded and
-        CMS::Instance()->queue_message('Images uploaded','success');
-        //echo '{"success":1,"msg":"Images uploaded","files":"'.$uploaded_files.'","ids":"'.implode(",",$img_ids).'"}';
-
         return (object) [
             "success"=>1,
             "msg"=>"Images uploaded",
