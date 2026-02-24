@@ -173,6 +173,7 @@ class Image {
         $uploaded_files = [];
         $n=0;
         $img_ids = [];
+        $errorMessages = [];
         foreach ($files["error"] as $key => $error) {
             if ($error == UPLOAD_ERR_OK) {
                 $tmp_name = $files["tmp_name"][$key];
@@ -204,6 +205,9 @@ class Image {
                 else {
                     // TODO: handle db insert error - shouldn't happen, but need to return an appropriate JSON string to be handled
                 }
+            } else {
+                $errorMessage = ($error < 3) ? "File too large" : "Server error during upload";
+                $errorMessages[] = $files["name"][$key] . " (" . $errorMessage . ")";
             }
             $n++;
         }
@@ -215,9 +219,18 @@ class Image {
             ]);
         }
 
+        $message = "Images Uploaded";
+        $totalFiles = sizeof($files["error"]);
+        if($totalFiles > 1 && sizeof($errorMessages) > 0) {
+            $message = ($totalFiles - sizeof($errorMessages)) . " of " . $totalFiles . " images uploaded. Errors: " . implode(", ", $errorMessages);
+        } elseif(sizeof($errorMessages) > 0) {
+            $message = "Image upload failed. Errors: " . implode(", ", $errorMessages);
+        }
+
         return (object) [
             "success"=>1,
-            "msg"=>"Images uploaded",
+            "errors"=>sizeof($errorMessages) > 0 ? 1 : 0,
+            "msg"=>$message,
             "files"=>$uploaded_files,
             "ids"=>implode(",",$img_ids),
             "tags"=>json_encode($tags),
