@@ -33,7 +33,7 @@ class ImagePosition extends TextInput {
         $pluginConfig = (object) [
             "title"=>"fake plugin from ImagePosition",
             "location"=>"",
-            "id"=>"ImagePositionPlugin",
+            "id"=>-999,
             "description"=>"ImagePosition Field Plugin",
             "version"=>"1.0",
             "author"=>"workaj",
