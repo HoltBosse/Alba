@@ -85,7 +85,7 @@ class Access {
         );
     }
 
-    public static function handleLogin(string $email, string $password, ?int $domain=null): Message {
+    public static function handleLogin(?string $email, ?string $password, ?int $domain=null): Message {
         // check for login attempt
         $loginUser = new User();
         $redirectPath = $_ENV["uripath"] . "/";
