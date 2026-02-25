@@ -4,17 +4,18 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 Use \stdClass;
 Use \Exception;
+Use HoltBosse\Form\{Form, Input};
 
 class Plugin {
-	public $id;
-	public $title;
-	public $state;
-    public $options;
-    public $location;
-    public $description;
-	public $form;
+	public int $id;
+	public string $title;
+	public int $state;
+    public ?array $options;
+    public string $location;
+    public string $description;
+	public ?Form $form;
 
-	private static $pluginRegistry = [
+	private static array $pluginRegistry = [
 		"AutoYear" => [
 			"path" => __DIR__ . '/../Plugins/AutoYear',
 			"class" => "HoltBosse\\Alba\\Plugins\\AutoYear\\AutoYear"
@@ -37,7 +38,7 @@ class Plugin {
 		],
 	];
 
-    public function __construct($plugin_info) {
+    public function __construct(object $plugin_info) {
         // $plugin_info should be object containing select * info from plugins table for this plugin
         $this->state = $plugin_info->state;
         $this->title = $plugin_info->title;
@@ -91,12 +92,12 @@ class Plugin {
 		return array_keys(self::$pluginRegistry);
 	}
     
-    public static function get_all_plugins() {
+    public static function get_all_plugins(): array {
 		return DB::fetchAll('select * from plugins where state > -1');
     }
 
 
-	public function get_option($option_name) {
+	public function get_option(string $option_name): mixed {
 		foreach ($this->options as $option) {
             if ($option->name==$option_name) {
 				return $option->value;
@@ -105,24 +106,24 @@ class Plugin {
 		return false;
     } 
     
-    public function init() {
+    public function init(): void {
         throw new Exception('Default plugin init called - should never happen');
     }
 
-    public function execute_action(...$args) {
+    public function execute_action(mixed ...$args): void {
         throw new Exception('Default plugin execute_action called - should never happen');
     }
 
-    public function execute_filter($data, ...$args) {
+    public function execute_filter(mixed $data, mixed ...$args): void {
         throw new Exception('Default plugin execute_filter called - should never happen');
     }
 
-	public static function get_plugin_title ($id) {
-		return DB::fetch("select title from plugins where id=?", [$id])->title;
+	public static function get_plugin_title(int $id): string {
+		return DB::fetch("SELECT title from plugins where id=?", [$id])->title;
 	}
 
-	public function load($id) {
-		$info = DB::fetch('SELECT * FROM plugins WHERE id=' . $id);
+	public function load(int $id): void {
+		$info = DB::fetch('SELECT * FROM plugins WHERE id=?', [$id]);
 		$this->id = $info->id;
 		$this->title = $info->title;
 		$this->state = $info->state;
@@ -132,7 +133,7 @@ class Plugin {
 	}
 
 
-	public function save($plugin_options_form) {
+	public function save(Form $plugin_options_form): void {
 		// update this object with submitted and validated form info
 		$this->options = [];
 		foreach ($plugin_options_form->fields as $option) {

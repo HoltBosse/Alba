@@ -7,11 +7,11 @@ Use \PDO;
 Use HoltBosse\DB\DB;
 
 class FrontEndEditButton extends Plugin {
-    public function init() {
+    public function init(): void {
         CMS::add_action("on_widget_render",$this,'handle_widget_render'); // label, function, priority 
     }
 
-    private function get_data() {
+    private function get_data(): object {
         $pluginOptions = array_combine(array_column($this->options, 'name'), array_column($this->options, 'value'));
         $groupOptionsArray = json_decode($pluginOptions["access"] ?? "") ?? [];
         $userGroups = DB::fetchAll("SELECT group_id FROM user_groups WHERE user_id=?", CMS::Instance()->user->id, ["mode"=>PDO::FETCH_COLUMN]);
@@ -23,7 +23,7 @@ class FrontEndEditButton extends Plugin {
         ];
     }
 
-    private function validateGroup($groupOptions, $userGroups) {
+    private function validateGroup(array $groupOptions, array $userGroups): bool {
         foreach($userGroups as $item) {
             if(in_array($item, $groupOptions)) {
                 return true;
@@ -32,7 +32,7 @@ class FrontEndEditButton extends Plugin {
         return false;
     }
 
-    public function handle_widget_render($page_contents, $params) {
+    public function handle_widget_render(string $page_contents, mixed $params): string {
         $data = $this->get_data();
         if($this->validateGroup($data->groupOptionsArray, $data->userGroups) && !CMS::Instance()->isAdmin()) {
             $page_contents = "

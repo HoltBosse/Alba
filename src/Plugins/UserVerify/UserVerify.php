@@ -8,13 +8,13 @@ Use Respect\Validation\Validator as v;
 
 class UserVerify extends Plugin {
 
-    public function init() {
+    public function init(): void {
         // add to system hooks
         CMS::add_action("verify_user", $this, 'user_verification');
         CMS::add_action("on_user_save", $this, 'new_user_mail');
     }
 
-    public function make_message($message="", $extra_html="") {
+    public function make_message(string $message="", string $extra_html=""): void {
         ?>
             <section style="display: flex; justify-content:center; align-items: center;">
                 <div>
@@ -25,7 +25,7 @@ class UserVerify extends Plugin {
         <?php
     }
 
-    public function send_email($email, $username, $key, $redirect) {
+    public function send_email(string $email, string $username, string $key, ?string $redirect): void {
         
         $mail = new Mail();
         $mail->addAddress($email,$username);
@@ -94,7 +94,7 @@ class UserVerify extends Plugin {
         $mail->send();
     }
 
-    public function user_verification() {
+    public function user_verification(): void {
         if(!$_GET) {
             //we want details via post
             $username = Input::getvar("username", v::StringVal(), '');
@@ -141,7 +141,7 @@ class UserVerify extends Plugin {
         }
     }
 
-    public function new_user_mail(...$args) {
+    public function new_user_mail(mixed ...$args): void {
         if($this->get_option('admin_emails')=="yes" && (strpos($args[0][0]->registered, date("Y-m-d H:i")) !== false)) {
             $user = $args[0][0];
             DB::exec("UPDATE users SET state=0 WHERE id=?", $user->id); //disable the user
