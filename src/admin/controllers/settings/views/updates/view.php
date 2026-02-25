@@ -4,18 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, Content, Component};
 Use HoltBosse\DB\DB;
 use HoltBosse\Alba\Migrations\{RunAllMigration};
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
-
-function show_message(string $heading, string $text, string $class): void {
-	echo "<article class=\"message $class\">
-	<div class=\"message-header\">
-		<p>$heading</p>
-		<button class=\"delete\" aria-label=\"delete\"></button>
-	</div>
-	<div class=\"message-body\">
-		$text
-	</div>
-</article>";
-}
+Use HoltBosse\Alba\Components\Admin\MessageBox\MessageBox;
 
 (new TitleHeader())->loadFromConfig((object)[
 	"header"=>"System Version and Updates",
@@ -29,5 +18,11 @@ function show_message(string $heading, string $text, string $class): void {
 foreach(RunAllMigration::getAllMigrations() as $migrationDetails) {
 	$migrationInstance = $migrationDetails[1];
 	$migrationStatus = $migrationInstance->run();
-	show_message($migrationDetails[0], $migrationStatus->message, $migrationStatus->type->toCssClass());
+
+	(new MessageBox())->loadFromConfig((object)[
+		"heading" => $migrationDetails[0],
+		"text" => $migrationStatus->message,
+		"classList" => [$migrationStatus->type->toCssClass()],
+	])->display();
+
 }
