@@ -6,32 +6,32 @@ Use HoltBosse\DB\DB;
 Use \Exception;
 
 class Content {
-	public $id;
-	public $title;
-	public $state;
-	public $description;
-	public $configuration;
-	public $updated;
-	public $content_type;
-	public $created_by;
-	public $updated_by;
-	public $note;
-	public $tags;
-	public $alias;
-	public $category;
-	public $custom_fields;
-	public $table_name;
-	public $start;
-	public $end;
-	public $content_location;
-	public $domain;
+	public ?int $id;
+	public string $title;
+	public int $state;
+	public string $description;
+	public mixed $configuration;
+	public string $updated;
+	public int $content_type;
+	public string $created_by;
+	public string $updated_by;
+	public string $note;
+	public mixed $tags;
+	public string $alias;
+	public int $category;
+	public mixed $custom_fields;
+	public ?string $table_name;
+	public mixed $start;
+	public mixed $end;
+	public string $content_location;
+	public ?int $domain;
 
-	private static $controllerRegistry = [
+	private static array $controllerRegistry = [
 		"basic_article" => __DIR__ . '/../controllers/basic_article',
 	];
 
 	public function __construct(?int $content_type=0) {
-		$this->id = false;
+		$this->id = null;
 		$this->title = "";
 		$this->description = "";
 		$this->state = 1;
@@ -107,7 +107,7 @@ class Content {
 		}
 	}
 
-	private function make_alias_unique() {
+	private function make_alias_unique(): void {
 		$is_unique = false;
 		while (!$is_unique) {
 			$results = DB::fetchAll("SELECT * from `{$this->table_name}` where alias=? and content_type=?", [$this->alias, $this->content_type] );
@@ -143,7 +143,7 @@ class Content {
 		}
 	}
 
-	public function get_field($field_name): mixed {
+	public function get_field(string $field_name): mixed {
 		//CMS::pprint_r ($this);
 		if (!$this->table_name) {			
 			throw new Exception('Unknown table name');
@@ -216,7 +216,7 @@ class Content {
 		// remember original id
 		$original_id = $this->id;
 		// make current duplicate id blank
-		$this->id = false;
+		$this->id = null;
 		// add copy to title
 		$this->title = $this->title . " - Copy";
 		$this->make_alias_unique();
@@ -228,7 +228,7 @@ class Content {
 		$params = [$this->state, $ordering, $this->title, $this->alias, $this->content_type, $this->updated_by, $this->updated_by, $this->note, $this->start, $this->end, $this->category, $this->domain];
 		$required_result = DB::exec("INSERT into `{$table_name}` (state,ordering,title,alias,content_type, created_by, updated_by, note, start, end, category, domain) values(?,?,?,?,?,?,?,?,?,?,?,?)", $params);
 		if ($required_result) {
-			$this->id = DB::getLastInsertedId();
+			$this->id = (int) DB::getLastInsertedId();
 
 			Actions::add_action("contentcreate", (object) [
 				"content_id"=>$this->id,
@@ -266,7 +266,7 @@ class Content {
 		}
 	}
 
-	public function save($required_details_form, $content_form, $return_url=''): bool {
+	public function save(Form $required_details_form, Form $content_form, string $return_url=''): bool {
 		// return URL not used anymore - left for now for legacy
 
 		$userActionDiff = [];
@@ -371,7 +371,7 @@ class Content {
 			$required_result = DB::exec($query, $params);
 			if ($required_result) {
 				// update object id with inserted id
-				$this->id = DB::getLastInsertedId();
+				$this->id = (int) DB::getLastInsertedId();
 
 				$actionId = Actions::add_action("contentcreate", (object) [
 					"content_id"=>$this->id,
@@ -456,17 +456,17 @@ class Content {
 		return $result ? $result : [];
 	}
 	
-	public static function get_content_type_title($content_type) {
+	public static function get_content_type_title(int $content_type): ?string {
 		if (!$content_type) {
-			return false;
+			return null;
 		}
-		if ($content_type=="-1") {
+		if ($content_type==-1) {
 			return "User";
 		}
-		if ($content_type=="-2") {
+		if ($content_type==-2) {
 			return "Image/Media";
 		}
-		if ($content_type=="-3") {
+		if ($content_type==-3) {
 			return "Tag";
 		}
 		$result = DB::fetch("SELECT title from content_types where id=?", [$content_type]);
@@ -474,26 +474,26 @@ class Content {
 			return $result->title;
 		}
 		else {
-			return false;
+			return null;
 		}
 	}
 
-	public static function get_content_type_fields($content_type) {
+	public static function get_content_type_fields(int $content_type): ?object {
 		if (!$content_type) {
-			return false;
+			return null;
 		}
 		$result = DB::fetch("SELECT * from content_types where id=?", [$content_type]);
 		if ($result) {
 			return $result;
 		}
 		else {
-			return false;
+			return null;
 		}
 	}
 
-	public static function get_content_type_id($controller_location) {
+	public static function get_content_type_id($controller_location): ?int {
 		if (!$controller_location) {
-			return false;
+			return null;
 		}
 		$result = DB::fetch("SELECT id from content_types where controller_location=?", [$controller_location]);
 		if ($result) {
@@ -501,11 +501,11 @@ class Content {
 		}
 		else {
 			//CMS::Instance()->queue_message('Failed to determine content type id for controller_location: ' . $controller_location, "error");
-			return false;
+			return null;
 		}
 	}
 
-	public static function get_config_value ($config, $key) {
+	public static function get_config_value (mixed $config, mixed $key): mixed {
 		// $config is array of {name:"",value:""} pairs
 		foreach ($config as $config_pair) {
 			if ($config_pair->name==$key) {
@@ -561,16 +561,16 @@ class Content {
 		return $result ? $result->content_type_id : null;
 	}
 
-	public static function get_view_title($view_id) {
+	public static function get_view_title(int $view_id): ?string {
 		if (!$view_id) {
-			return false;
+			return null;
 		}
 		$result = DB::fetch("SELECT title from content_views where id=?", [$view_id]);
 		if ($result) {
 			return $result->title;
 		}
 		else {
-			return false;
+			return null;
 		}
 	}
 
