@@ -2,19 +2,7 @@
 
 Use HoltBosse\Alba\Core\{CMS, Mail, Component};
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
-
-// TODO: move this to admin function
-function show_message(string $heading, string $text, string $class): void {
-	echo "<article class=\"message $class\">
-		<div class=\"message-header\">
-			<p>$heading</p>
-			<button class=\"delete\" aria-label=\"delete\"></button>
-		</div>
-		<div class=\"message-body\">
-			$text
-		</div>
-	</article>";
-}
+Use HoltBosse\Alba\Components\Admin\MessageBox\MessageBox;
 
 function embedded_phpinfo(): void {
     ob_start();
@@ -53,47 +41,41 @@ function embedded_phpinfo(): void {
     "header"=>"System Information",
 ])->display();
 
-if ($native_zip) {
-	show_message ('Native Zip','Native zip handling is available. This is required for automatic update installation.','is-success');
-}
-else {
-	show_message ('Native Zip','Native zip handling is <em>not</em> available. This is required for automatic update installation.','is-warning');
-}
+(new MessageBox())->loadFromConfig((object)[
+    "heading" => 'Native Zip',
+    "text" => $native_zip ? 'Native zip handling is available. This is required for automatic update installation.' : 'Native zip handling is <em>not</em> available. This is required for automatic update installation.',
+    "classList" => [$native_zip ? 'is-success' : 'is-warning'],
+])->display();
 
-if ($allow_fopen) {
-	show_message ('PHP fopen Allowed','fopen is available. This is required for automatic updates and Google reCAPTCHA.','is-success');
-}
-else {
-	show_message ('PHP fopen Allowed','fopen is <em>not</em> available. This is required for automatic updates and Google reCAPTCHA.','is-warning');
-}
+(new MessageBox())->loadFromConfig((object)[
+    "heading" => 'PHP fopen Allowed',
+    "text" => $allow_fopen ? 'fopen is available. This is required for automatic updates and Google reCAPTCHA.' : 'fopen is <em>not</em> available. This is required for automatic updates and Google reCAPTCHA.',
+    "classList" => [$allow_fopen ? 'is-success' : 'is-warning'],
+])->display();
 
-if ($gd_available) {
-	show_message ('GD Graphics Library Available','GD is available. This is required for image manipulation.','is-success');
-}
-else {
-	show_message ('GD Graphics Library Available','GD is <em>not</em> available. This is required for image manipulation.','is-warning');
-}
+(new MessageBox())->loadFromConfig((object)[
+    "heading" => 'GD Graphics Library Available',
+    "text" => $gd_available ? 'GD is available. This is required for image manipulation.' : 'GD is <em>not</em> available. This is required for image manipulation.',
+    "classList" => [$gd_available ? 'is-success' : 'is-warning'],
+])->display();
 
-if ($virtual_available) {
-	show_message ('Virtual Available','virtual is available. This enables fast file-serving in PHP on Apache.','is-success');
-}
-else {
-	show_message ('Virtual Unavailable','virtual is <em>not</em> available. This enables fast file-serving in PHP on Apache, but is not required.','is-warning');
-}
+(new MessageBox())->loadFromConfig((object)[
+    "heading" => 'Virtual Available',
+    "text" => $virtual_available ? 'virtual is available. This enables fast file-serving in PHP on Apache.' : 'virtual is <em>not</em> available. This enables fast file-serving in PHP on Apache, but is not required.',
+    "classList" => [$virtual_available ? 'is-success' : 'is-warning'],
+])->display();
 
-if ($mysqldump_available) {
-	show_message ('MySQL Dump Available','MySQL Dump is available. This is required for backups.','is-success');
-}
-else {
-	show_message ('MySQL Dump Available','MySQL Dump is <em>not</em> available. This is required for backups.','is-warning');
-}
+(new MessageBox())->loadFromConfig((object)[
+    "heading" => 'MySQL Dump Available',
+    "text" => $mysqldump_available ? 'MySQL Dump is available. This is required for backups.' : 'MySQL Dump is <em>not</em> available. This is required for backups.',
+    "classList" => [$mysqldump_available ? 'is-success' : 'is-warning'],
+])->display();
 
-if ($curl_available) {
-	show_message ('CURL Available','CURL is available. ','is-success');
-}
-else {
-	show_message ('CURL Available','CURL is <em>not</em> available.','is-warning');
-}
+(new MessageBox())->loadFromConfig((object)[
+    "heading" => 'CURL Available',
+    "text" => $curl_available ? 'CURL is available.' : 'CURL is <em>not</em> available.',
+    "classList" => [$curl_available ? 'is-success' : 'is-warning'],
+])->display();
 
 ?>
 
