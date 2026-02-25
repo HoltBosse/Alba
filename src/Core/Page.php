@@ -5,22 +5,23 @@ Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
 Use \PDOException;
 Use Respect\Validation\Validator as v;
+Use HoltBosse\Form\Field;
 
 class Page {
-	public $id;
-	public $state;
-	public $title;
-	public $alias;
-	public $template_id;
-	public $template;
-	public $parent;
-	public $content_type;
-	public $view;
-	public $updated;
-	public $view_configuration;
-	public $page_options; // json string from db / or serialized from form submission
-	public $page_options_form;
-	public $domain;
+	public int $id;
+	public int $state;
+	public string $title;
+	public string $alias;
+	public int $template_id;
+	public ?object $template;
+	public ?int $parent;
+	public ?int $content_type;
+	public ?int $view;
+	public ?string $updated;
+	public ?string $view_configuration;
+	public ?string $page_options; // json string from db / or serialized from form submission
+	public ?Form $page_options_form;
+	public ?int $domain;
 
 	public function __construct() {
 		$this->id = 0;
@@ -29,17 +30,17 @@ class Page {
 		$this->alias = "";
 		$this->template_id = 1;
 		$this->template = null;
-		$this->parent = false;
+		$this->parent = null;
 		$this->updated = date('Y-m-d H:i:s');
 		$this->content_type = null;
 		$this->view = null;
-		$this->view_configuration = false;
+		$this->view_configuration = null;
 		$this->page_options_form = new Form(realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json"));
 		$this->page_options = null;
 		$this->domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 	}
 
-	public function get_url() {
+	public function get_url(): string {
 		// TODO: save url in new column on page save/update
 		$segments = [$this->alias];
 		$parent = $this->parent;
@@ -56,27 +57,16 @@ class Page {
 		return $url;
 	}
 
-	public function get_page_option_value($option_name) {
-		$field = $this->page_options_form->getFieldByName($option_name);
-		if ($field) {
-			return $field->default;
-		}
-        return false;
+	public function get_page_option_value(string $option_name): mixed {
+		return $this->page_options_form->getFieldByName($option_name)->default;
 	}
 
-	public function set_page_option_value($option_name, $value) {
-		$field = $this->page_options_form->getFieldByName($option_name);
-		if ($field) {
-			$field->default = $value;
-			return true;
-		}
-		else {
-			return false;
-		}
+	public function set_page_option_value(string $option_name, mixed $value): bool {
+		$this->page_options_form->getFieldByName($option_name)->default = $value;
+		return true;
 	}
 	
-
-	public static function get_page_depth($id) {
+	public static function get_page_depth(int $id): int {
 		$parent_root = false;
 		$parent=$id;
 		$depth = 0;
@@ -92,12 +82,12 @@ class Page {
 	}
 
 	// $pdo->prepare($sql)->execute([$name, $id]);
-	public static function get_all_pages() {
+	public static function get_all_pages(): array {
 		$result = DB::fetchAll("SELECT * FROM pages WHERE state>-1");
 		return $result;
 	}
 
-	public static function get_all_pages_by_depth($parent=-1, $depth=-1) {
+	public static function get_all_pages_by_depth(int $parent=-1, int $depth=-1): array {
 		$depth = $depth+1;
 		$result=[];
 		$children = DB::fetchAll("SELECT * FROM pages WHERE state>-1 AND parent=? ORDER BY domain", [$parent]);
@@ -110,25 +100,20 @@ class Page {
 	}
 
 
-	public static function get_pages_from_id_array ($id_array) {
-		if (is_array($id_array)) {
-			$in_string = implode(',',$id_array);
-			$query = "select * from pages where id in ({$in_string})";
-			$result = DB::fetchAll($query);
-			return  $result;
-		}
-		else {
-			CMS::Instance()->queue_message('Expected array in function get_pages_from_id_array', 'danger', $_ENV["uripath"] . "/admin");
-		}
+	public static function get_pages_from_id_array(array $id_array): array {
+		$in_string = implode(',',$id_array);
+		$query = "select * from pages where id in ({$in_string})";
+		$result = DB::fetchAll($query);
+		return  $result;
 	}
 
-	public static function has_overrides ($page) {
+	public static function has_overrides ($page): array {
 		$w = DB::fetchAll("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", [$page]);
 		//CMS::pprint_r ($w);
 		return $w;
 	}
 
-	public function load_from_post() {
+	public function load_from_post(): bool {
 		$this->title = Input::getvar('title', v::StringVal());
 		$this->state = Input::getvar('state',v::IntVal(), 1);
 		$this->template_id = Input::getvar('template',v::IntVal());
@@ -157,7 +142,7 @@ class Page {
 		return true;
 	}
 
-	public function load_from_id($id) {
+	public function load_from_id(int $id): bool {
 		$result = DB::fetch("select * from pages where id=?", [$id] );
 		if ($result) {
 			$this->id = $result->id;
@@ -182,7 +167,7 @@ class Page {
 	}
 
 
-	public function load_from_alias($alias) {
+	public function load_from_alias(string $alias): bool {
 		$result = DB::fetch("select * from pages where alias=?", [$alias]);
 		if ($result) {
 			$this->id = $result->id;
@@ -207,7 +192,7 @@ class Page {
 
 
 
-	public function save() {
+	public function save(): bool {
 		if ($this->id) {
 			Actions::add_action("pagecreate", (object) [
 				"affected_page"=>$this->id,
@@ -267,7 +252,7 @@ class Page {
 			}
 			if ($result) {
 				// update page id with last pdo insert
-				$this->id = DB::getLastInsertedId();
+				$this->id = (int) DB::getLastInsertedId();
 				Actions::add_action("pagecreate", (object) [
 					"affected_page"=>$this->id,
 				]);

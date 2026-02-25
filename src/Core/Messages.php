@@ -4,12 +4,12 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 
 class Messages {
-	protected $msgClass = 'alert';
-	protected $msgWrapper = "<div class='%s notification is-%s' role='alert'><button type='button' onclick='this.parentNode.remove()' class='close delete' data-dismiss='alert' aria-label='Close'></button>\n%s</div>\n";
-	protected $msgBefore = '<p>';
-	protected $msgAfter = "</p>\n";
+	protected string $msgClass = 'alert';
+	protected string $msgWrapper = "<div class='%s notification is-%s' role='alert'><button type='button' onclick='this.parentNode.remove()' class='close delete' data-dismiss='alert' aria-label='Close'></button>\n%s</div>\n";
+	protected string $msgBefore = '<p>';
+	protected string $msgAfter = "</p>\n";
 
-	public static function add(MessageType $type, string $message, ?string $redirect_to=null) {
+	public static function add(MessageType $type, string $message, ?string $redirect_to=null): bool {
 		// Create the session array if it doesnt already exist
 		if(!array_key_exists('flash_messages', $_SESSION)) {
 			$_SESSION['flash_messages'] = [];
@@ -25,7 +25,7 @@ class Messages {
 		return true;
 	}
 
-	public static function save_message($users, string $message, MessageType $type=MessageType::Info) {
+	public static function save_message(mixed $users, string $message, MessageType $type=MessageType::Info): bool {
         $users = is_array($users) ? $users : [$users];
         $users = array_filter($users, function($user) {
             return is_numeric($user);
@@ -59,7 +59,7 @@ class Messages {
         return true;
     }
 
-	public function display() {
+	public function display(): bool {
 		$messages = '';
 		$data = '';
 		
@@ -89,10 +89,12 @@ class Messages {
 		// Clear ALL of the messages
 		$this->clear();
 
-		echo $data; 
+		echo $data;
+
+		return true;
 	}
 
-	public function clear(?MessageType $type=null) { 
+	public function clear(?MessageType $type=null): bool { 
 		if(isset($type)) {
 			unset($_SESSION['flash_messages'][$type->value]); 
 		} else {

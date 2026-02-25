@@ -21,7 +21,7 @@ class DataExport {
         ];
     }
 
-    public function exec() {
+    public function exec(): void {
         if(empty($this->data)) {
             throw new Exception("no data to export");
         }

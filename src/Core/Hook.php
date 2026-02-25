@@ -2,16 +2,15 @@
 namespace HoltBosse\Alba\Core;
 
 class Hook {
-	public $label;
-    public $actions;
-    public $arg_count;
+	public ?string $label;
+    public array $actions;
 
 	public function __construct() {
-		$this->label = false;
+		$this->label = null;
 		$this->actions = [];
 	}
 
-	static public function count_actions_for_hook ($hook_label) {
+	static public function count_actions_for_hook (string $hook_label): int {
 		if (isset($GLOBALS['hooks'][$hook_label])) {
 			return sizeof($GLOBALS['hooks'][$hook_label]->actions);
 		}
@@ -19,7 +18,7 @@ class Hook {
 	}
 
 	
-	static public function execute_hook_actions ($hook_label, ...$args) {
+	static public function execute_hook_actions (string $hook_label, mixed ...$args): bool {
 		if (isset($GLOBALS['hooks'][$hook_label])) {
 			foreach ($GLOBALS['hooks'][$hook_label]->actions as $action) {
 				/* $function_name = $action->function_name;
@@ -32,7 +31,7 @@ class Hook {
 		return true; // for now assume all good and that plugin(s) will handle execution termination if error happens
 	}
 
-	static public function execute_hook_filters ($hook_label, $data, ...$args) {
+	static public function execute_hook_filters (string $hook_label, mixed $data, mixed ...$args): mixed {
 		// same as action, but performs work on data and returns data
 		if (isset($GLOBALS['hooks'][$hook_label])) {
 			foreach ($GLOBALS['hooks'][$hook_label]->actions as $action) {

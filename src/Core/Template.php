@@ -5,22 +5,22 @@ Use HoltBosse\DB\DB;
 Use \Exception;
 
 class Template {
-	public $id;
-	public $title;
-	public $folder;
-	public $description;
-	public $layout;
-	public $page_id;
-	public $positions; // array of tuples - position alias, position title
+	public int $id;
+	public string $title;
+	public string $folder;
+	public string $description;
+	public mixed $layout;
+	public ?int $page_id;
+	public mixed $positions; // array of tuples - position alias, position title
 
-	private static $templateRegistry = [
+	private static array $templateRegistry = [
 		"basic" => __DIR__ . '/../templates/basic',
 	];
-	private static $adminTemplateRegistry = [
+	private static array $adminTemplateRegistry = [
 		"clean" => __DIR__ . '/../admin/templates/clean',
 	];
 
-	public function __construct($id=1) {
+	public function __construct(int $id=1) {
 		if ($id===0) {
 			$id = $this->get_default_template()->id;
 		}
@@ -72,7 +72,7 @@ class Template {
 		return null;
 	}
 
-	public function get_position_title($position_alias) {
+	public function get_position_title(string $position_alias): string {
 		for ($n=0; $n<sizeof($this->positions); $n++) {
 			if ($this->positions[$n][0]==$position_alias) {
 				return $this->positions[$n][1];
@@ -81,14 +81,14 @@ class Template {
 		return "";
 	}
 
-	static public function get_all_templates() {
+	static public function get_all_templates(): array {
 		return DB::fetchAll(
 			"SELECT * FROM templates WHERE (domain IS NULL OR domain=?)",
 			[(CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"])]
 		);
 	}
 
-	static public function get_default_template() {
+	static public function get_default_template(): Template {
 		$result = DB::fetch(
 			"SELECT *
 			FROM templates
@@ -104,7 +104,7 @@ class Template {
 		}
 	}
 
-	public function output_widget_admin($position, $page_id) {
+	public function output_widget_admin(mixed $position, int $page_id): void {
 		// takes a position name (ostensibly given in a layout.php file within a template)
 		// and lists/details widgets that are valid for current page/layout combination
 		// if $this->page_id is null - probably creating a new page, so return any widgets 

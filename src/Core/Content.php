@@ -241,7 +241,7 @@ class Content {
 			foreach ($this->tags as $curtag) {
 				$tag_id_array[] = $curtag->id;
 			}
-			Tag::set_tags_for_content($this->id, $tag_id_array, $this->content_type);
+			Tag::set_tags_for_content((int) $this->id, $tag_id_array, $this->content_type);
 			// copy content fields
 			foreach ($content_form->fields as $field) {
 				if (isset($field->save)) {

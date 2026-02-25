@@ -5,15 +5,15 @@ Use HoltBosse\DB\DB;
 Use \Exception;
 
 class Controller {
-	public $path;
-	public $view;
+	public string $path;
+	public string $view;
 
-	public function __construct($path, $view) {
+	public function __construct(string $path, string $view) {
 		$this->path = $path;
 		$this->view = $view;
 	}
 
-	public function load_view ($view, $controllervars=null) {
+	public function load_view(string $view, mixed $controllervars=null): void {
 		// first check folder exists
 		// then load model (this then loads the view)
 		$CMS = CMS::Instance();
@@ -48,7 +48,7 @@ class Controller {
 		}
 	}
 
-	public function get_controller_config() {
+	public function get_controller_config(): object {
 		$ePath = explode("/", $this->path);
 		$controllerLocation = $ePath[sizeof($ePath)-1];
 

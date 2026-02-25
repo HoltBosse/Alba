@@ -8,30 +8,30 @@ use \PDOException;
 Use Respect\Validation\Validator as v;
 
 class User {
-	public $id;
-	public $groups;
-	public $username;
-	public $password;
-	public $email;
-	public $tags;
-	public $state;
-	public $registered;
-	public $created;
+	public ?int $id;
+	public array $groups;
+	public string $username;
+	public ?string $password;
+	public ?string $email;
+	public array $tags;
+	public int $state;
+	public string $registered;
+	public string $created;
 	public ?int $domain;
 
 	public function __construct() {
-		$this->email = false;
-		$this->password = false;
+		$this->email = null;
+		$this->password = null;
 		$this->groups = [];
 		$this->username = 'guest';
 		$this->registered = date('Y-m-d H:i:s');
-		$this->id = false;
+		$this->id = null;
 		$this->tags = [];
 		$this->state = 1;
 		$this->domain = null;
 	}
 
-	public static function create_new ($username, $password, $email, $groups=[], $state=0, $domain=null) {
+	public static function create_new (string $username, string $password, string $email, array $groups=[], int $state=0, ?int $domain=null) {
 		if(is_null($domain)) {
 			$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
@@ -55,7 +55,7 @@ class User {
 		}
 	}
 
-	public static function get_all_users() {
+	public static function get_all_users(): array {
 		return DB::fetchAll(
 			"SELECT u.*, group_concat(DISTINCT g.display) AS `groups`, group_concat(DISTINCT t.title) AS tags 
 			FROM users u 
@@ -67,7 +67,7 @@ class User {
 		);
 	}
 
-	public function get_all_users_in_group($group_id) {
+	public function get_all_users_in_group(int $group_id): array {
 		$query = "Select u.*, group_concat(g.display) as `groups` from users u 
 					Left Join user_groups ug on ug.user_id = u.id  
 					Left Join `groups` g on ug.group_id = g.id 
@@ -76,26 +76,26 @@ class User {
 		return DB::fetchAll($query, [$group_id]);
 	}
 
-	public static function get_all_groups_for_user($user_id) {
+	public static function get_all_groups_for_user(int $user_id): array {
 		$query = "SELECT * from `groups` where id in (select group_id from user_groups where user_id=?) ORDER BY display ASC";
 		return DB::fetchAll($query, $user_id);
 	}
 
-	public static function get_group_name ($group_id) {
+	public static function get_group_name (int $group_id): array {
 		$query = "select display from `groups` where id=?";
 		$result = DB::fetch($query, [$group_id]);
 		return $result->display;
 	}
 
 
-	public function update_password ($new_password) {
+	public function update_password (string $new_password): bool {
 		$hash = password_hash ($new_password, PASSWORD_DEFAULT);
 		$query = "update users set password=? where id=?";
 		DB::exec($query, [$hash, $this->id]);
 		return true;
 	}
 
-	public function is_member_of ($group_value) {
+	public function is_member_of (mixed $group_value): bool {
 		if (is_numeric($group_value)) {
 			$query = "select * from user_groups where group_id=? and user_id=?";
 		}
@@ -125,7 +125,7 @@ class User {
 		return !empty($result);
 	}
 
-	public function load_from_post() {
+	public function load_from_post(): bool {
 		$this->username = Input::getvar('username',v::StringVal());
 
 		$submittedPassword = Input::getvar('password',v::StringVal(),null);
@@ -149,7 +149,7 @@ class User {
 		return true;
 	}
 
-	public function load_from_id($id) {
+	public function load_from_id(int $id): bool {
 		$query = "select * from users where id=?";
 		$result = DB::fetch($query, [$id]);
 		if ($result) {
@@ -179,18 +179,18 @@ class User {
 	}
 
 	
-	public static function get_username_by_id($id): ?string {
+	public static function get_username_by_id(int $id): ?string {
 		$result = DB::fetch("select username from users where id=?", [$id]);
 		return $result ? $result->username : null;
 	}
 
-	public function check_password($password) {
+	public function check_password(string $password): bool {
 		$query = "select password from users where id=?";
 		$hash = DB::fetch($query, [$this->id]);
 		return password_verify($password, $hash->password);
 	}
 
-	public function load_from_email($email, ?int $domain=null) {
+	public function load_from_email(string $email, ?int $domain=null): User|bool {
 		if($domain==null) {
 			$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
@@ -205,7 +205,7 @@ class User {
 		}
 	}
 
-	public function generate_reset_key() {
+	public function generate_reset_key(): string {
 		$key = md5((2418*2) . $this->email);
    		$addKey = substr(md5(uniqid((string) rand(),true)),3,10);
 		$key = $key . $addKey;
@@ -218,7 +218,7 @@ class User {
 		return $key;
 	}
 
-	public function remove_reset_key() {
+	public function remove_reset_key(): bool {
 		$query = "update users set reset_key=null, reset_key_expires=null where id=?";
 		$ok = DB::exec($query, [$this->id]); 
 		if (!$ok) {
@@ -229,7 +229,7 @@ class User {
 		}
 	}
 
-	public function get_user_by_reset_key ($key) {
+	public function get_user_by_reset_key (string $key): User|bool {
 		// get used for reset key - only returns anything if reset key has not expired
 		$query = "select * from users where reset_key=? and reset_key_expires>NOW() LIMIT 1";
 		$result = DB::fetch($query, [$key]);
@@ -273,7 +273,7 @@ class User {
 		return new Message($status, MessageType::Success, 'If your email was associated with a user, you should receive a message with further instructions shortly.', $baseUrl);
 	}
 
-	public function resetPassword($password1, $password2, $resetkey, $baseUrl=null): Message {
+	public function resetPassword(string $password1, string $password2, string $resetkey, mixed $baseUrl=null): Message {
 		if(!isset($baseUrl)) {
 			$baseUrl = "{$_ENV["uripath"]}/admin";
 		}
@@ -306,7 +306,7 @@ class User {
 		}
 	}
 
-	public function save() {
+	public function save(): bool {
 		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		
 		//run last
@@ -393,7 +393,7 @@ class User {
 			}
 			if ($result) {
 				$new_user_id = DB::getLastInsertedId();
-				$this->id = $new_user_id;
+				$this->id = (int) $new_user_id;
 
 				Actions::add_action("usercreate", (object) [
 					"affected_user"=>$this->id,
@@ -423,7 +423,7 @@ class User {
 		}
 	}
 
-	public static function get_all_groups(?int $domain=null) {
+	public static function get_all_groups(?int $domain=null): array {
 		if($domain==null) {
 			$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}

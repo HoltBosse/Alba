@@ -4,7 +4,7 @@ namespace HoltBosse\Alba\Core;
 Use \Exception;
 
 class JSON {
-	static public function load_obj_from_file ($file) {
+	static public function load_obj_from_file (string $file): mixed {
 		if (is_file($file)) {
 			if (is_readable($file)) {
 				$json = file_get_contents($file);
