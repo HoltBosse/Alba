@@ -3,19 +3,20 @@ namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\DB\DB;
 Use \Exception;
+Use HoltBosse\Form\Form;
 
 class Category {
-	public $id;
-	public $title;
-	public $state;
-	public $content_type;
-	public $parent;
-	public $custom_fields;
-	public $content_location = null;
+	public ?int $id = null;
+	public ?string $title = null;
+	public ?int $state = null;
+	public ?int $content_type = null;
+	public ?int $parent = null;
+	public ?string $custom_fields = null;
+	public ?string $content_location = null;
 	public ?int $domain = null;
 
-	public function __construct($content_type) {
-		$this->id = false;
+	public function __construct(int $content_type) {
+		$this->id = null;
 		$this->title = "";
 		$this->state = 1;
 		$this->parent = 0;
@@ -27,7 +28,7 @@ class Category {
 		}
 	}
 
-	public static function get_all_categories_by_depth($content_type, $parent=0, $depth=-1) {
+	public static function get_all_categories_by_depth(?int $content_type, int $parent=0, int $depth=-1): array {
 		
 		$depth = $depth+1;
 		$result=[];
@@ -45,7 +46,7 @@ class Category {
 		return $result;
 	}
 
-	public static function get_category_count($content_type, $search="") {
+	public static function get_category_count(int|string|null $content_type, string $search=""): object {
 		if ($search) {
 			$like = '%' . $search . '%';
 			if (!$content_type) {
@@ -79,8 +80,8 @@ class Category {
 
 
 
-	public function load($id) {
-		$info = DB::fetch('select * from categories where id=?',[$id]);
+	public function load(int $id): bool {
+		$info = DB::fetch('SELECT * from categories where id=?',[$id]);
 		if ($info) {
 			$this->id = $info->id;
 			$this->title = $info->title;
@@ -96,7 +97,7 @@ class Category {
 		}
 	}
 
-	public function save($required_details_form, $custom_fields_form = "") {
+	public function save(Form $required_details_form, ?Form $custom_fields_form = null): bool {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->getFieldByName('title')->default;
 		$this->state = $required_details_form->getFieldByName('state')->default;
@@ -135,7 +136,12 @@ class Category {
 			$required_result = DB::exec("insert into categories (state,title,content_type, parent, custom_fields) values(?,?,?,?,?)", [$this->state, $this->title, $this->content_type, $this->parent, $this->custom_fields]);
 			if ($required_result) {
 				// update object id with inserted id
-				$this->id = DB::getLastInsertedId();
+				$id = DB::getLastInsertedId();
+				if($id===false) {
+					throw new Exception("Failed to retrieve last inserted id after category insert");
+				}
+
+				$this->id = (int) $id;
 
 				Actions::add_action("categorycreate", (object) [
 					"affected_category"=>$this->id,

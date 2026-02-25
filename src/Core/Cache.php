@@ -9,7 +9,7 @@ class Cache {
         }
     }
 
-    public function ignore($request, $type=null) {
+    public function ignore(string $request, ?string $type=null): bool {
         if(isset($_ENV["cache_ignore"])) {
             foreach (explode(",", $_ENV["cache_ignore"]) as $partial_path) {
                 if (strpos($request, $partial_path)===0) {
@@ -22,13 +22,14 @@ class Cache {
                 }
             }
         }
+        return false;
     }
 
-    private function gen_cache_filename($identifier, $type) {
+    private function gen_cache_filename(string $identifier, string $type): string {
         return $type . "_" . hash('md4', $identifier);
     }
 
-    public function is_cached($identifier, $type) {
+    public function is_cached(string $identifier, string $type): string|bool {
         // checks if cache file for an identifier/type exists 
         // and that it isn't stale
         // if it's good, returns full path to cache file
@@ -65,7 +66,7 @@ class Cache {
         return false;
     }
 
-    public function create_cache($identifier, $type='url', $content="") {
+    public function create_cache(string $identifier, string $type='url', string $content=""): void {
         // content agnostic - type commonly 'url' for full page
         // but can be extended to create cache for anything
         $filename = $this->gen_cache_filename($identifier, $type);
@@ -73,15 +74,15 @@ class Cache {
         file_put_contents($fullpath, $content);
     }
 
-    public function get_cache($filepath) {
+    public function get_cache(string $filepath): string {
         return file_get_contents($filepath);
     }
 
-    public function serve_cache($filepath) {
+    public function serve_cache(string $filepath): void {
         readfile($filepath);
     }
 
-    public function serve_page($filepath) {
+    public function serve_page(string $filepath): void {
         echo "<!-- Alba cache: " . date('F j, Y, g:i a', filemtime($filepath)) . " -->\n";
         readfile($filepath);
         exit();

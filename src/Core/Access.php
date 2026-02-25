@@ -4,7 +4,7 @@ namespace HoltBosse\Alba\Core;
 use HoltBosse\Form\Input;
 
 class Access {
-    private static $adminAccessRegistry = [
+    private static array $adminAccessRegistry = [
         "" => [1,2],
         "content" => [1, 2],
         "tags" => [1, 2],
@@ -22,7 +22,7 @@ class Access {
         return false;
     }
 
-    public static function registerAdminAccessRuleOverride(string $path, array $groups) {
+    public static function registerAdminAccessRuleOverride(string $path, array $groups): void {
         self::$adminAccessRegistry[$path] = $groups;
     }
 
@@ -30,7 +30,7 @@ class Access {
         return isset(self::$adminAccessRegistry[$path]) ? self::$adminAccessRegistry[$path] : null;
     }
 
-    public static function can_access($page_groups=[], $user_groups=[]) {
+    public static function can_access(?array $page_groups=[], ?array $user_groups=[]): bool {
         //prep and parse the inputs
         if (!$user_groups) {
             $user_groups = CMS::Instance()->user->groups;
@@ -55,7 +55,7 @@ class Access {
         return false;
     }
 
-    public static function onLoginSuccess($redirectPath): Message {
+    public static function onLoginSuccess(string $redirectPath): Message {
         //check if they need to change their password on first login
         if(CMS::Instance()->user->state==2) {
             return new Message(
@@ -85,7 +85,7 @@ class Access {
         );
     }
 
-    public static function handleLogin($email, $password, ?int $domain=null): Message {
+    public static function handleLogin(string $email, string $password, ?int $domain=null): Message {
         // check for login attempt
         $loginUser = new User();
         $redirectPath = $_ENV["uripath"] . "/";

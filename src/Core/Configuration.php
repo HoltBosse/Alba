@@ -3,15 +3,17 @@ namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\DB\DB;
 Use \stdClass;
+Use HoltBosse\Form\Form;
+Use \PDO;
 
 class Configuration {
-	public $id;
-	public $name; 
-	public $configuration;
-	public $form;
+	public ?string $id = null;
+	public ?string $name = null; 
+	public ?stdClass $configuration = null;
+	public ?Form $form = null;
 	public int $domain;
 
-	static public function get_configuration_value ($form_name, $setting_name, $pdo=null) {
+	static public function get_configuration_value (string $form_name, string $setting_name, ?PDO $pdo=null): mixed {
 		// pdo param is a spot left for legacy reasons, but not actually used
 		// TODO - fix json query
 		// this is unsafe - not preparing $setting_name is BAD
@@ -53,7 +55,7 @@ class Configuration {
 		return false; // got here, got nuthin
 	}
 
-	function __construct($form, ?int $domain=null) {
+	function __construct(Form $form, ?int $domain=null) {
 		$this->id = null;
 		$this->name = $form->id;
 		$this->form = $form;
@@ -67,14 +69,14 @@ class Configuration {
 		$this->load_from_form($this->form);
 	}
 
-	public function load_from_form($form) {
+	public function load_from_form(Form $form): void {
 		foreach ($form->fields as $field) {
 			// default is either actual default from json or updated value from model or similar
 			$this->configuration->{$field->name} = $field->default; 
 		}
 	}
 
-	public function load_from_db() {
+	public function load_from_db(): self|bool {
 		// set config and form fields from configurations table entry
 		$result = DB::fetch("SELECT * FROM configurations WHERE name=? AND domain=?", [$this->name, $this->domain]);
 		if ($result) {
@@ -97,7 +99,7 @@ class Configuration {
 		}
 	}
 
-	public function save() {
+	public function save(): self|bool {
 		// update or insert new set of configuration options
 		$json_config = json_encode($this->configuration);
 		$configurationExists = DB::fetch("SELECT name FROM configurations WHERE name=? AND domain=?", [$this->name, $this->domain]);
