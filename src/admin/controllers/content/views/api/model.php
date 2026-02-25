@@ -8,7 +8,7 @@ Use Respect\Validation\Validator as v;
 ob_end_clean(); // IMPORTANT - empty output buffer from template to ensure on JSON is returned
 ob_end_clean();
 
-function rj($input) {
+function rj(mixed $input): void {
     echo json_encode($input);
     die;
 }

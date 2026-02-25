@@ -180,21 +180,3 @@ if (property_exists($custom_fields,'list')) {
 }
 
 $hidden_list_fields = isset($custom_fields->hide) ? $custom_fields->hide : [];
-
-function make_sortable_header($title) {
-	?>
-		<th>
-			<label class="orderablerow">
-				<span><?php echo ucwords($title); ?></span>
-				<i class="tableorder fas fa-sort"></i>
-				<i class="tableorder fas fa-sort-up"></i>
-				<i class="tableorder fas fa-sort-down"></i>
-			</label>
-			<?php $selectedTitle = Input::getVar(str_replace(" ", "_", $title) . "_order", v::StringVal()->in(["asc", "desc", "regular"]), "regular");?>
-			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="regular" <?php echo $selectedTitle=="regular" ? "checked" : ""; ?> />
-			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="asc" <?php echo $selectedTitle=="asc" ? "checked" : ""; ?> />
-			<input type="radio" name="<?php echo str_replace(" ", "_", $title); ?>_order" form="orderform" value="desc" <?php echo $selectedTitle=="desc" ? "checked" : ""; ?> />
-		</th>
-	<?php
-}
-

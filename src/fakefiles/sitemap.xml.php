@@ -5,7 +5,7 @@ use HoltBosse\Alba\Core\{CMS, Content, Hook, Page};
 header("Content-type: text/xml");
 
 //this exists to limit the scope of what is accessible to the file
-function get_page_details($location, $page, $maxpriority, $path, $contentControllerPath) {
+function get_page_details(string $location, object $page, float $maxpriority, string $path, string $contentControllerPath): mixed {
     return require($contentControllerPath . "/sitemap.php");
 }
 

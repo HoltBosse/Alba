@@ -154,7 +154,7 @@ else {
 // quality fixed for url param version
 $req_quality = Input::getVar("q", v::numericVal(), 75);
 
-function serve_file ($media_obj, $fullpath, $seconds_to_cache=86400) {
+function serve_file (object $media_obj, string $fullpath, int $seconds_to_cache=86400): void {
 	$seconds_to_cache = $seconds_to_cache;
 	$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
 	header("Expires: $ts");
@@ -172,7 +172,7 @@ function serve_file ($media_obj, $fullpath, $seconds_to_cache=86400) {
 	exit(0);
 }
 
-function get_image ($id) {
+function get_image (int $id): ?object {
 	$image = DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
 
 	if($image->state==0) {

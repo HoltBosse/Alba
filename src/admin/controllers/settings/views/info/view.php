@@ -4,7 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, Mail, Component};
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
 // TODO: move this to admin function
-function show_message ($heading, $text, $class) {
+function show_message(string $heading, string $text, string $class): void {
 	echo "<article class=\"message $class\">
 		<div class=\"message-header\">
 			<p>$heading</p>
@@ -16,8 +16,7 @@ function show_message ($heading, $text, $class) {
 	</article>";
 }
 
-function embedded_phpinfo()
-{
+function embedded_phpinfo(): void {
     ob_start();
     phpinfo();
     $phpinfo = ob_get_contents();

@@ -6,11 +6,11 @@ Use \Exception;
 
 // any variables created here will be available to the view
 
-function human_filesize($bytes, $decimals = 2) {
+function human_filesize(int $bytes, int $decimals = 2): string {
 	$sz = 'BKMGTP';
-	$factor = (int) floor((strlen($bytes) - 1) / 3);
+	$factor = (int) floor((strlen((string) $bytes) - 1) / 3);
 	return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
-  }
+}
 
 $segments = CMS::Instance()->uri_segments;
 
@@ -64,7 +64,7 @@ if ($submitted) {
 	$date = date('d_m_Y_H_i', time());
 	$zip->open($_ENV["backup_directory"] . "/backups/backup_" . $date . ".zip", ZipArchive::CREATE | ZipArchive::OVERWRITE );
 	
-	function add_folder($zip, $folder) {
+	function add_folder(ZipArchive $zip, string $folder): void {
 		$rootPath = $_ENV["backup_directory"] . "/" . $folder;
 		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
 		foreach ($files as $name => $file)

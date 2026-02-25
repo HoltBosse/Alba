@@ -5,7 +5,7 @@ Use HoltBosse\DB\DB;
 use HoltBosse\Alba\Migrations\{RunAllMigration};
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
-function show_message (string $heading, string $text, string $class) {
+function show_message(string $heading, string $text, string $class): void {
 	echo "<article class=\"message $class\">
 	<div class=\"message-header\">
 		<p>$heading</p>

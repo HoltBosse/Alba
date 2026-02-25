@@ -5,7 +5,7 @@ Use HoltBosse\Alba\Core\{CMS, User, Hook, Component, Tag};
 Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
 
-function in_group ($group_id, $edit_user) {
+function in_group (int $group_id, object $edit_user): bool {
 	foreach ($edit_user->groups as $group) {
 		if ($group->id==$group_id) {
 			return true;
