@@ -3,26 +3,26 @@ namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\DB\DB;
 Use \PDO;
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 
 class Tag {
-	public $id;
-	public $title;
-	public $state;
-	public $alias;
-	public $form;
-	public $note;
-	public $filter;
-	public $description;
-	public $image;
-	public $public;
-	public $parent;
-	public $category;
-	public $custom_fields;
-	public $contenttypes;
+	public int $id;
+	public string $title;
+	public int $state;
+	public string $alias;
+	public mixed $form;
+	public string $note;
+	public mixed $filter;
+	public string $description;
+	public ?int $image;
+	public bool $public;
+	public int $parent;
+	public int $category;
+	public mixed $custom_fields;
+	public mixed $contenttypes;
 	public ?int $domain = null;
 
-	public function load($id) {
+	public function load(int $id): bool {
 		$info = DB::fetch('SELECT * FROM tags WHERE id=?', [$id]);
 		if ($info) {
 			$this->id = $info->id;
@@ -46,35 +46,35 @@ class Tag {
 
 	}
 
-	public static function get_tags_for_content($content_id, $content_type_id=-1) {
+	public static function get_tags_for_content(int $content_id, int $content_type_id=-1): array {
 		// default to media/image content type
 		$result = DB::fetchAll("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", [$content_id, $content_type_id]);
 		return $result;
 	}
 
-	public static function get_tags_available_for_content_type ($content_type_id) {
+	public static function get_tags_available_for_content_type (int $content_type_id): array {
 		$result = DB::fetchAll("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
 		$result2 = DB::fetchAll("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
 		return array_merge ($result,$result2);
 	}
 
-	public static function set_tags_for_content($content_id, $tag_array, $content_type_id) {
+	public static function set_tags_for_content(int $content_id, array $tag_array, int $content_type_id): void {
 		DB::exec("delete from tagged where content_id=? and content_type_id=?", [$content_id,$content_type_id]);
 		foreach ($tag_array as $tag_id) {
 			DB::exec("insert into tagged (tag_id, content_id, content_type_id) values (?,?,?)", [$tag_id, $content_id, $content_type_id]);
 		}
 	}
 
-	public function get_depth() {
+	public function get_depth(): int {
 		//legacy compat
 		return 0;
 	}
 
-	public static function get_all_tags() {
+	public static function get_all_tags(): array {
 		return DB::fetchAll("SELECT * FROM tags");
 	}
 
-	public static function get_all_tags_by_depth($parent=0, $depth=-1) {
+	public static function get_all_tags_by_depth(int $parent=0, int $depth=-1): array {
 		$depth = $depth+1;
 		$result=[];
 		$children = DB::fetchAll("select t.*, cat.title as cat_title from (tags t) left join categories cat on t.category=cat.id where t.state>-1 and t.parent=?", [$parent]);
@@ -86,11 +86,11 @@ class Tag {
 		return $result;
 	}
 
-	public static function get_tag_content_types($id) {
+	public static function get_tag_content_types(int $id): array {
 		return DB::fetchAll("SELECT content_type_id from tag_content_type where tag_id=?", [$id]);
 	}
 
-	public static function get_tag_content_type_titles($id, ?int $domain=null) {
+	public static function get_tag_content_type_titles(int $id, ?int $domain=null): string {
 		if($domain==null) {
 			$domain==CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
@@ -116,7 +116,7 @@ class Tag {
 
 
 
-	public function save($required_details_form, $custom_fields_form = "") {
+	public function save(Form $required_details_form, ?Form $custom_fields_form = null): bool {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->getFieldByName('title')->default;
 		$this->state = $required_details_form->getFieldByName('state')->default;
@@ -130,10 +130,6 @@ class Tag {
 		$this->parent = $required_details_form->getFieldByName('parent')->default;
 		$this->category = $required_details_form->getFieldByName('category')->default;
 		$this->custom_fields = $custom_fields_form ? json_encode($custom_fields_form) : "";
-
-		if ($this->parent=="0"||$this->parent=="") {
-			$this->parent = 0;
-		}
 
 		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
@@ -227,7 +223,7 @@ class Tag {
 				foreach ($this->contenttypes as $contenttype) {
 					DB::exec('INSERT INTO tag_content_type (tag_id,content_type_id) VALUES (?,?)', [$new_id, $contenttype]);
 				}
-				$this->id = $new_id;
+				$this->id = (int) $new_id;
 
 				Actions::add_action("tagcreate", (object) [
 					"affected_tag"=>$this->id,

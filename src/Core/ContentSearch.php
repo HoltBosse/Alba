@@ -11,26 +11,26 @@ class ContentSearch {
 	// 
 	// $order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], 
 	// $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null
-	public $order_by;
-	public $order_direction;
-	public $type_filter;
-	public $published_only;
-	public $disable_builtin_state_check;
-	public $list_fields;
-	public $ignore_fields;
-	public $created_by_cur_user;
-	public $page;
-	public $searchtext;
-	public $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
-	public $page_size;
-	public $custom_field_name;
-	public $category; // category id to match
-	public $tags; // array of tag ids to match 
-	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']]
+	public string $order_by;
+	public string $order_direction;
+	public int|string $type_filter;
+	public bool $published_only;
+	public bool $disable_builtin_state_check;
+	public array $list_fields;
+	public array $ignore_fields;
+	public bool $created_by_cur_user;
+	public int $page;
+	public ?string $searchtext;
+	public bool $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
+	public int $page_size;
+	public ?string $custom_field_name;
+	public ?int $category; // category id to match
+	public array $tags; // array of tag ids to match 
+	public array $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']]
 	public ?int $domain; //null for all, or domain id to match
-	private $count; // set after query is exec() shows total potential row count for paginated calls
-	private $filter_pdo_params;
-	private $custom_search_params;
+	private int $count; // set after query is exec() shows total potential row count for paginated calls
+	private array $filter_pdo_params;
+	private array $custom_search_params;
 
 	public function __construct() {
 		$this->order_by = "id";
@@ -54,11 +54,11 @@ class ContentSearch {
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}
 
-	public function get_count() {
+	public function get_count(): int {
 		return $this->count;
 	}
 
-	public function exec() {
+	public function exec(): mixed {
 		// Create and run query based on criteria in object properties
 		// Return DB fetchAll array
 		// Set $this->count to number of rows returned WITHOUT LIMITS IN PACE
@@ -141,6 +141,7 @@ class ContentSearch {
 		// also save filter value to filter_pdo_params
 		foreach ($this->list_fields as $field) {
 
+			//@phpstan-ignore-next-line
 			if (array_key_exists($field, $this->filters ?? [])) {
 				$this->filter_pdo_params[] = $this->filters[$field];
 				//$from .= ", content_fields f_{$field}_t "; // no longer needs all in one table now
@@ -228,12 +229,14 @@ class ContentSearch {
 			$this->filter_pdo_params[] = $this->domain;
 		}
 
-		if ($this->category && is_numeric($this->category)) {
-			$where .= " AND c.category=" . $this->category . " "; // safe to inject - checked for number
+		if ($this->category) {
+			$where .= " AND c.category=? "; // safe to inject - checked for number
+			$this->filter_pdo_params[] = $this->category;
 		}
 
 		if ($this->created_by_cur_user) {
-			$where .= " AND c.created_by=" . CMS::Instance()->user->id . " "; // safe to inject - will be int 100%
+			$where .= " AND c.created_by=? "; // safe to inject - will be int 100%
+			$this->filter_pdo_params[] = CMS::Instance()->user->id;
 		}
 
 		$where = Hook::execute_hook_filters('custom_content_search_where', $where, $this->type_filter); 
@@ -250,9 +253,7 @@ class ContentSearch {
 			$query .= " order by `" . $this->order_by . "` " . $this->order_direction;
 		}
 		if ($this->page) {
-			if (is_numeric($this->page_size) && is_numeric($this->page)) {
-				$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
-			}
+			$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
 		}
 		/* CMS::pprint_r ($this->filters);*/
 		//CMS::pprint_r ($this->filter_pdo_params);
@@ -270,13 +271,17 @@ class ContentSearch {
 
 		if ($this->searchtext) {
 			$like = '%'.$this->searchtext.'%';
+			// @phpstan-ignore-next-line
 			$result = DB::fetchAll($query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? [])); // title and note
 			// set count
+			// @phpstan-ignore-next-line
 			$this->count = DB::fetch($count_query,array_merge([$like,$like], $this->filter_pdo_params ?? [], $this->custom_search_params ?? []))->c ?? 0;
 		}
 		else {
+			// @phpstan-ignore-next-line
 			$result = DB::fetchAll($query, array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []) );
 			// set count
+			// @phpstan-ignore-next-line
 			$this->count = DB::fetch($count_query, array_merge($this->filter_pdo_params ?? [], $this->custom_search_params ?? []) )->c ?? 0;
 		}
 		return $result;

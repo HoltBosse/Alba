@@ -19,20 +19,15 @@ class Image {
 	];
     // modified also available, but almost certainly never needed front-end
     
-    public function __construct($id) {
-        if (!is_numeric($id)) {
-            throw new Exception('Cannot create image object from non-numerical id');
-        }
-        else {
-            $this->id = $id;
-            $db_image = DB::fetch('select * from media where id=?', $this->id);
-            $this->filename = $db_image->filename;
-            $this->width = $db_image->width;
-            $this->height = $db_image->height;
-            $this->title = $db_image->title;
-            $this->alt = $db_image->alt;
-            $this->mimetype = $db_image->mimetype;
-        }       
+    public function __construct(int $id) {
+        $this->id = $id;
+        $db_image = DB::fetch('select * from media where id=?', $this->id);
+        $this->filename = $db_image->filename;
+        $this->width = $db_image->width;
+        $this->height = $db_image->height;
+        $this->title = $db_image->title;
+        $this->alt = $db_image->alt;
+        $this->mimetype = $db_image->mimetype;      
     }
     
     #[\Deprecated(message: "use new oop component", since: "3.20.0")]

@@ -4,23 +4,23 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 
 class UserSearch {
-	public $order_by;
-	public $order_direction;
-	public $published_only;
-	public $disable_builtin_state_check;
-	public $list_fields;
-	public $ignore_fields;
-	public $page;
-	public $searchtext;
-	public $page_size;
-	public $created_by_cur_user;
-	public $tags; // array of tag ids to match 
-	public $groups; // array of group_ids to match
-	public $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
+	public string $order_by;
+	public string $order_direction;
+	public bool $published_only;
+	public bool $disable_builtin_state_check;
+	public array $list_fields;
+	public array $ignore_fields;
+	public int $page;
+	public ?string $searchtext;
+	public int $page_size;
+	public bool $created_by_cur_user;
+	public array $tags; // array of tag ids to match 
+	public array $groups; // array of group_ids to match
+	public array $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	public ?int $domain; //null for all, or domain id to match
-	private $count; // set after query is exec() shows total potential row count for paginated calls
-	private $filter_pdo_params;
-	private $custom_search_params;
+	private int $count; // set after query is exec() shows total potential row count for paginated calls
+	private mixed $filter_pdo_params;
+	private mixed $custom_search_params;
 
 	public function __construct() {
 		$this->order_by = "id";
@@ -43,11 +43,11 @@ class UserSearch {
 	}	
 
 
-	public function get_count() {
+	public function get_count(): int {
 		return $this->count;
 	}
 
-	public function exec() {
+	public function exec(): mixed {
 		// Create and run query based on criteria in object properties
 		// Return DB fetchAll array
 		// Set $this->count to number of rows returned WITHOUT LIMITS IN PACE
@@ -185,9 +185,7 @@ class UserSearch {
 		}
 
 		if ($this->page) {
-			if (is_numeric($this->page_size) && is_numeric($this->page)) {
-				$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
-			}
+			$query .= " LIMIT " . (($this->page-1)*$this->page_size) . "," . $this->page_size;
 		}
 
 		if ($this->searchtext) {

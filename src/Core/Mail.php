@@ -7,10 +7,10 @@ use PHPMailer\PHPMailer\Exception;
 use stdClass;
 
 class Mail extends PHPMailer {
-	private $legacy_to = false;
-	public $subject = false;
-	public $html = "";
-	public $text = "";
+	private bool $legacy_to = false;
+	public ?string $subject = null;
+	public ?string $html = null;
+	public ?string $text = null;
 
 	public function __construct($exceptions = true) {
 		parent::__construct($exceptions);
@@ -75,7 +75,7 @@ class Mail extends PHPMailer {
 	}
 
 	#[\Deprecated(message: "stop using this please", since: "3.0.0")]
-	public static function is_available() {
+	public static function is_available(): bool {
 		return true;
 	}
 }

@@ -3,23 +3,23 @@ namespace HoltBosse\Alba\Core;
 
 class File {
 	// id	type 1 = image, 2 = other file	width	height	title	alt	filename	mimetype
-	public $id; 
-	public $type;
-	public $width;
-	public $height;
-	public $title;
-	public $alt;
-	public $filename;
-	public $filepath;
-	public $mimetype;
-	public $original_width;
+	public mixed $id; 
+	public mixed $type;
+	public ?float $width;
+	public ?float $height;
+	public string $title;
+	public string $alt;
+	public string $filename;
+	public string $filepath;
+	public string $mimetype;
+	public float $original_width;
 	
 	/*
 		state 0: invalid
 		state 1: valid+thumbnails
 		state 2: valid+no thumbnails
 	*/
-	public static $image_types = [
+	public static array $image_types = [
 		"image/jpeg" => 1,
 		"image/webp" => 1,
 		"image/png" => 1,
@@ -28,7 +28,7 @@ class File {
 		"image/gif" => 2
 	];
 
-	public static function get_mimetype_by_format($format) {
+	public static function get_mimetype_by_format(string $format) {
 		// return mimetype when passed partial match
 		// such as webp, jpeg or png
 		foreach (File::$image_types as $key => $value) {
@@ -39,7 +39,7 @@ class File {
 		return false;
 	}
 
-	function __construct($filepath="") {
+	function __construct(string $filepath="") {
 		$this->id = null;
 		$this->type = null;
 		$this->width = null;
@@ -66,7 +66,7 @@ class File {
 		// TODO: 
 	}
 
-	public function is_image() {
+	public function is_image(): bool {
 		if ($this::$image_types[$this->mimetype] >= 0 ) {
 			return true;
 		}
@@ -76,7 +76,7 @@ class File {
 	}
 
 
-	public function recalc_height($new_width) {
+	public function recalc_height(int $new_width): void {
 		$ratio = $new_width / (float)$this->width;
 		$new_height = round($this->height * $ratio);
 		$this->height = $new_height;
@@ -84,16 +84,15 @@ class File {
 	}
 
 
-	public static function get_max_upload_size()  {  
-		return min((ini_get('post_max_size')), (ini_get('upload_max_filesize')));  
+	public static function get_max_upload_size(): int {  
+		return (int) min((ini_get('post_max_size')), (ini_get('upload_max_filesize')));  
 	}  
 
-	public static function get_max_upload_size_bytes()  {  
-		return min(File::php_size_to_bytes(ini_get('post_max_size')), File::php_size_to_bytes(ini_get('upload_max_filesize')));    
+	public static function get_max_upload_size_bytes(): int  {  
+		return (int) min(File::php_size_to_bytes(ini_get('post_max_size')), File::php_size_to_bytes(ini_get('upload_max_filesize')));    
 	}
 
-	
-	public static function php_size_to_bytes($php_size) {
+	public static function php_size_to_bytes(string $php_size): int {
 		$suffix = strtoupper(substr($php_size, -1));
 		if (!in_array($suffix,['P','T','G','M','K'])){
 			return (int)$php_size;  
