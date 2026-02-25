@@ -18,7 +18,7 @@ Use Symfony\Component\Console\Application;
 use HoltBosse\Alba\Commands\{InitCommand, MigrateCommand, CreateCommand};
 
 $application = new Application("Alba Project Creator");
-$application->add(new InitCommand());
-$application->add(new MigrateCommand());
-$application->add(new CreateCommand());
+$application->addCommand(new InitCommand());
+$application->addCommand(new MigrateCommand());
+$application->addCommand(new CreateCommand());
 $application->run();
