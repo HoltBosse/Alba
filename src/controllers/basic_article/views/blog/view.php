@@ -2,6 +2,7 @@
 
 Use HoltBosse\Alba\Core\{CMS, Content, Tag, Image};
 Use HoltBosse\Form\Input;
+Use HoltBosse\Alba\Components\Image\Image as ImageComponent;
 
 // default view is blog listing
 // if single blog entry detected, single.php view is loaded
@@ -27,7 +28,7 @@ Use HoltBosse\Form\Input;
 					<?php foreach ($tags as $tag):?>
 						<?php if ($tag->public):?>
 						<li>
-							<a href='<?php echo CMS::Instance()->page->get_url();?>/tag/<?php echo $tag->alias;?>' class='blog_list_tag_link'><?php echo $tag->title;?></a>
+							<a href='<?php echo CMS::Instance()->page->get_url();?>/tag/<?php echo $tag->alias;?>' class='blog_list_tag_link'><?php echo Input::stringHtmlSafe($tag->title);?></a>
 						</li>
 						<?php endif; ?>
 					<?php endforeach; ?>
@@ -36,8 +37,14 @@ Use HoltBosse\Form\Input;
 			<?php if ($blog->og_description || $blog->og_image):?>
 				<p class='preview'>
 				<?php if ($blog->og_image) {
-					$thumb = $img = new Image($blog->og_image);
-					$thumb->render('thumb','thumb square pull-right');
+					(new ImageComponent)->loadFromConfig((object) [
+						'imageId' => $blog->og_image,
+						'fixedWidth' => 200,
+						'attributes'=>[
+							'width'=>200,
+						],
+						'classList' => ['thumb', 'thumb','square pull-right'],
+					])->display();
 				}
 				echo Input::stringHtmlSafe($blog->og_description); ?>
 				</p>
