@@ -9,12 +9,12 @@ Use Respect\Validation\Validator as v;
 
 class Menu extends Widget {
 
-	public function get_page($id) {
+	public function get_page(int $id): object {
 		$page = DB::fetch("SELECT * from pages where id=?", [$id]);
 		return $page;
 	}
 
-	public function custom_save() {
+	public function custom_save(): void {
 		$menu_designer_config_json = Input::getvar('menu_designer_config',v::StringVal(),'');
 		$obj = new stdClass();
 		$obj->name = "menu_designer_config";
@@ -27,7 +27,7 @@ class Menu extends Widget {
 		return true;
 	}
 
-	public function render_custom_backend() {
+	public function render_custom_backend(): void {
 		$all_pages = Page::get_all_pages_by_depth();
 
 		echo "<style>";
@@ -142,14 +142,14 @@ class Menu extends Widget {
 	}
 
 
-	public function render_menu($node) {
+	public function render_menu(mixed $node): void {
 		if (!$node) {
-			return false;
+			return;
 		}
 		if (!property_exists($node,'type')) {
 			echo "<p>unknown node type</p>";
 			CMS::pprint_r ($node);
-			return false;
+			return;
 		}
 		if ($node->type!=='root') {
 			$title = "";
@@ -231,7 +231,7 @@ class Menu extends Widget {
 		}
 	}
 
-	public function render() {
+	public function render(): void {
 		//CMS::pprint_r ($this);
 		//echo "<hr>";
 		//CMS::pprint_r ($this->options[0]->value);

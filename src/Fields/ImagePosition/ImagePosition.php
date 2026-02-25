@@ -51,7 +51,7 @@ class ImagePosition extends TextInput {
                 parent::__construct($pluginConfig);
             }
             
-            public function init() {
+            public function init(): void {
                 CMS::add_action("render_image_field_buttons",$this,'add_button'); // label, function, priority  
             }
 

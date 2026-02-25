@@ -6,7 +6,7 @@ Use \Exception;
 Use HoltBosse\DB\DB;
 
 class FormInstance extends Widget {
-	public function render() {
+	public function render(): void {
 		$normalizedOptions = array_combine(array_column($this->options, 'name'), array_column($this->options, 'value'));
 		//echo $normalizedOptions["forminstance"];
 

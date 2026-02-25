@@ -5,11 +5,11 @@ Use HoltBosse\Alba\Core\{CMS, Plugin, Widget as CmsWidget};
 Use HoltBosse\DB\DB;
 
 class Widget extends Plugin {
-    public function init() {
+    public function init(): void {
         CMS::add_action("content_ready_frontend",$this,'insert_widget'); // label, function, priority  
     }
 
-    public function insert_widget ($page_contents, ...$args) {
+    public function insert_widget(string $page_contents, mixed ...$args): string {
         // FILTER
         $override_year = $this->get_option('testoption');
         $matches = [];

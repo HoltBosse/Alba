@@ -158,7 +158,7 @@ class Template {
 						$widget_list_array = false;
 					}
 					foreach ($widget_list_array as $widget_id) {
-						echo "<span data-tagid='{$widget_id}' draggable='true' ondragover='dragover_tag_handler(event)' ondragend='dragend_tag_handler(event)' ondragstart='dragstart_tag_handler(event)' class='draggable_widget  is-warning tag'>".Widget::get_widget_title ($widget_id)."<span class='delete is-delete'>X</span></span>";	
+						echo "<span data-tagid='{$widget_id}' draggable='true' ondragover='dragover_tag_handler(event)' ondragend='dragend_tag_handler(event)' ondragstart='dragstart_tag_handler(event)' class='draggable_widget  is-warning tag'>".Widget::get_widget_title ((int) $widget_id)."<span class='delete is-delete'>X</span></span>";	
 					}
 					
 				echo "</div>";

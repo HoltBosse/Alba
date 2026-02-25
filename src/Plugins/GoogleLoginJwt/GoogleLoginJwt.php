@@ -8,7 +8,7 @@ Use Respect\Validation\Validator as v;
 
 class GoogleLoginJwt extends Plugin {
 
-    public function init() {
+    public function init(): void {
         // add to system hooks
         CMS::add_action("additional_login_options", $this, 'display_button'); 
         CMS::add_action("authenticate_user", $this, 'authenticate_token'); 
@@ -16,20 +16,20 @@ class GoogleLoginJwt extends Plugin {
         CMS::add_action('add_to_head', $this, 'logout_js');
     }
 
-    public function logout_onclick_js() {
+    public function logout_onclick_js(): void {
         // ACTION - attached to logout_onclick_js hook
         // not needed for new google login method
         // leaving just in case we need to do anything else
     }
 
-    public function logout_js() {
+    public function logout_js(): void {
         // ACTION - attached to add_to_head hook
         // Not needed for new google login method
         // leaving just in case we need to do anything else
     }
 
 
-    public static function urlsafeB64Decode($input)
+    public static function urlsafeB64Decode(string $input): string
     {
         $remainder = strlen($input) % 4;
         if ($remainder) {
@@ -39,7 +39,7 @@ class GoogleLoginJwt extends Plugin {
         return base64_decode(strtr($input, '-_', '+/'));
     }
 
-    public function authenticate_token($user_object) {
+    public function authenticate_token(object $user_object): object {
         // FILTER - attached to authenticate_user hook
         // authenticate_user hook passes user_object
         
@@ -130,7 +130,7 @@ class GoogleLoginJwt extends Plugin {
         return $a_user;
     }
 
-    public function display_button(...$args) {
+    public function display_button(mixed ...$args): void {
         // ACTION - attached to additional_login_options hook
         ?>
         <script>

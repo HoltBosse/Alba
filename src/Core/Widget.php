@@ -8,22 +8,22 @@ Use \stdClass;
 Use Respect\Validation\Validator as v;
 
 class Widget {
-	public $id;
-	public $title;
-	public $type_id;
-	public $type;
-	public $state;
-	public $options;
-	public $note;
-	public $ordering;
-	public $position_control;
-	public $global_position;
-	public $page_list;
-	public $form;
-	public $form_data;
-	public $domain;
+	public ?int $id = null;
+	public ?string $title = null;
+	public ?int $type_id = null;
+	public mixed $type = null;
+	public ?int $state = null;
+	public mixed $options = null;
+	public ?string $note = null;
+	public mixed $ordering = null;
+	public mixed $position_control = null;
+	public mixed $global_position = null;
+	public mixed $page_list = null;
+	public mixed $form = null;
+	public mixed $form_data = null;
+	public mixed $domain = null;
 
-    private static $widgetRegistry = [
+    private static array $widgetRegistry = [
 		"Html" => [
 			"path" => __DIR__ . '/../Widgets/Html',
 			"class" => "HoltBosse\\Alba\\Widgets\\Html\\Html",
@@ -96,7 +96,7 @@ class Widget {
 		return true;
 	}
 
-	public function render_edit() {
+	public function render_edit(): void {
 		if (CMS::Instance()->user->is_member_of(1) && !CMS::Instance()->isAdmin()) { ?>
 			<div class='front_end_edit_wrap' >
 				<a style='' target="_blank" href='/admin/widgets/edit/<?php echo $this->id;?>'>EDIT &ldquo;<?= Input::stringHtmlSafe($this->title); ?>&rdquo;</a>
@@ -105,11 +105,11 @@ class Widget {
 		}
 	}
 
-	public function render() {
+	public function render(): void {
 		echo "<h1>Hello, I'm a base class widget!</h1>";
 	}
 
-	public function internal_render() {
+	public function internal_render(): void {
 		ob_start();
 		$this->render();
 		$output = ob_get_clean();
@@ -117,11 +117,11 @@ class Widget {
 		echo $output;
 	}
 
-	public static function get_all_widget_types() {
+	public static function get_all_widget_types(): array {
 		return DB::fetchAll('SELECT * FROM widget_types');
 	}
 
-	public static function get_widgets_for_position($page_id, $position) {
+	public static function get_widgets_for_position(int $page_id, string $position): array {
 		$query = 'SELECT * 
 		from widgets 
 		where ((position_control=1 and not find_in_set(?, page_list)) OR (position_control=0 and find_in_set(?, page_list))) 
@@ -129,7 +129,7 @@ class Widget {
 		return DB::fetchAll($query, [$page_id, $page_id, $position]);
 	}
 
-	public function get_option_value($option_name) {
+	public function get_option_value(mixed $option_name): mixed {
 		foreach ($this->options as $option) {
 			/* if (property_exists($option, $option_name)) {
 				return $option->$option_name;
@@ -141,18 +141,18 @@ class Widget {
 		return false;
 	}
 
-	public static function get_widget_title ($id) {
-		return DB::fetch("select title from widgets where id=?", [$id])->title;
+	public static function get_widget_title (int $id): string {
+		return DB::fetch("SELECT title from widgets where id=?", [$id])->title;
 	}
 
 
-	public static function get_widget_overrides_csv_for_position ($page, $position) {
+	public static function get_widget_overrides_csv_for_position (int $page, string $position): ?string {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
 		$widget_ids = DB::fetch("SELECT widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets ?? null; // csv
 		return $widget_ids;
 	}
 
-	public static function get_widget_overrides_for_position ($page, $position) {
+	public static function get_widget_overrides_for_position (int $page, string $position): ?object {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
 		$widget_ids = DB::fetch("SELECT widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets ?? null; // csv
 		if ($widget_ids) {
@@ -162,18 +162,18 @@ class Widget {
 			ORDER BY FIELD(id,'.$widget_ids.')';
 			return DB::fetchAll($query);
 		}
-		return false;
+		return null;
 	}
 
 	public function hasCustomBackend(): bool {
 		return false;
 	}
 
-	public function render_custom_backend() {
-		return false;
+	public function render_custom_backend(): void {
+		
 	}
 
-	public function load($id, $type_id=null) {
+	public function load(int $id, ?int $type_id=null): void {
 		//id of -1 is a new widget
 		if($id!=-1) {
 			$info = DB::fetch('SELECT * FROM widgets WHERE id=?', $id);
@@ -198,25 +198,15 @@ class Widget {
 		Hook::execute_hook_actions('on_widget_load', $this, "thinggg");
 	}
 
-	public static function get_widget_type_title($widget_type_id) {
-		if (is_numeric($widget_type_id)) {
-			return DB::fetch('SELECT title FROM widget_types WHERE id=?', $widget_type_id)->title;
-		}
-		else {
-			return false;
-		}
+	public static function get_widget_type_title(int $widget_type_id): string {
+		return DB::fetch('SELECT title FROM widget_types WHERE id=?', $widget_type_id)->title;
 	}
 
-	public static function get_widget_type($widget_type_id) {
-		if (is_numeric($widget_type_id)) {
-			return DB::fetch('SELECT * FROM widget_types WHERE id=?', $widget_type_id);
-		}
-		else {
-			return false;
-		}
+	public static function get_widget_type(int $widget_type_id): object {
+		return DB::fetch('SELECT * FROM widget_types WHERE id=?', $widget_type_id);
 	}
 
-	public function save($required_details_form, $widget_options_form, $position_options_form) {
+	public function save(Form $required_details_form, Form $widget_options_form, Form $position_options_form): void {
 		// update this object with submitted and validated form info
 		$redirect_url = $_ENV["uripath"] . '/admin/widgets/show';
 		if (Input::getvar("http_referer_form", v::StringVal()) && Input::getvar("http_referer_form", v::StringVal()) != $_SERVER["HTTP_REFERER"]){
