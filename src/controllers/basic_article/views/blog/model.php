@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Content};
+Use HoltBosse\Alba\Core\{CMS, Content, ContentSearch};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
@@ -21,7 +21,19 @@ if (CMS::Instance()->uri_segments) {
 		if (sizeof(CMS::Instance()->uri_segments)==2) {
 			$filter_tag = DB::fetch('select * from tags where alias=?',[CMS::Instance()->uri_segments[1]]);
 			if ($filter_tag) {
-				$blog_content_items = Content::get_all_content($order_by="start", 1, null, $filter_tag->id, true); // null is specific content id
+				$blog_content_items = DB::fetchall(
+					"SELECT *
+					FROM controller_basic_html c
+					WHERE c.state>0
+					AND c.id IN (
+						SELECT content_id
+						FROM tagged
+						WHERE content_type_id=1
+						AND tag_id=?
+					)
+					ORDER BY c.start DESC",
+					$filter_tag->id
+				);
 			}
 			else {
 				CMS::show_error('Tag alias not found');
@@ -40,7 +52,13 @@ if (CMS::Instance()->uri_segments) {
 		if (!$blog_found || $blog->state<1) {
 			CMS::raise_404();
 		}
-		$blog_content_items = Content::get_all_content($order_by="start", 1, $blog->id, null, true);
+		$blog_content_items = DB::fetchall(
+			"SELECT *
+			FROM controller_basic_html c
+			WHERE c.state>0
+			AND c.id=?",
+			$blog->id
+		);
 		// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
 		
 		if ($blog_content_items) {
@@ -64,7 +82,15 @@ else {
 	// all blog listing - ignore markup field - not needed for listing view, potentially save lots of data that
 	// won't be shown in view anyway
 	//$blog_content_items = Content::get_all_content($order_by="start", 1, false, $tag_id, true, [], ['markup']); 
-	$blog_content_items = Content::get_all_content($order_by="start", 1, null, $tag_id, true, [], ['markup'], null, null, $cur_page, null, $articles_per_page);
+	//$blog_content_items = Content::get_all_content($order_by="start", 1, null, $tag_id, true, [], ['markup'], null, null, $cur_page, null, $articles_per_page);
+	$content_search = new ContentSearch();
+	$content_search->order_by = "start";
+	$content_search->type_filter = 1;
+	$content_search->tags = [$tag_id];
+	$content_search->published_only = true;
+	$content_search->page = $cur_page;
+	$content_search->page_size = $articles_per_page;
+	$blog_content_items = $content_search->exec();
 	// order, type filter (1=basic article), specific id, tag id, published_only, list_fields, ignore_fields
 	$show_next = false;
 	$show_prev = false;
