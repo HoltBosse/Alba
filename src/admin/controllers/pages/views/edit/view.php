@@ -228,7 +228,9 @@
 				if (is_file($options_form_filepath)) {
 					$options_form = new Form($options_form_filepath);
 					// set options form values from json stored in view_configuration
-					$options_form->deserializeJson($page->view_configuration);
+					if($page->view_configuration) {
+						$options_form->deserializeJson($page->view_configuration);
+					}
 					$options_form->display();
 				}
 				else {
