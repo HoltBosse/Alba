@@ -1,0 +1,7 @@
+{
+  "title": "Layout Block",
+  "location": "Layout",
+  "description": "Composable layout container with typed content slots (rich text, widgets, images, or nested layouts).",
+  "id": "widget_layout_options",
+  "fields": []
+}

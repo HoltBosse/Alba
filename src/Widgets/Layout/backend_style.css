@@ -1,0 +1,289 @@
+/* ─── Layout Widget — Admin Backend Styles ─────────────────────────────────── */
+
+#layout_widget_builder {
+    margin-top: 1rem;
+}
+
+.layout_section {
+    margin-bottom: 2rem;
+    padding: 1.25rem;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 6px;
+    background: rgba(0,0,0,0.02);
+}
+
+.layout_section .title.is-6 {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #555;
+}
+
+/* ─── Variant picker grid ──────────────────────────────────────────────────── */
+
+.layout_variant_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+}
+
+.layout_variant_btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 0.5rem;
+    border: 2px solid rgba(0,0,0,0.15);
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    font-size: 0.78rem;
+    color: #444;
+    text-align: center;
+}
+
+.layout_variant_btn:hover {
+    border-color: #3e8ed0;
+    background: #f0f7ff;
+}
+
+.layout_variant_btn.is-active {
+    border-color: #3e8ed0;
+    background: #e8f4ff;
+    color: #1a5fa8;
+    font-weight: bold;
+}
+
+/* ─── Variant icons (SVG-like CSS representations) ─────────────────────────── */
+/* These use simple CSS to visually suggest each layout pattern.               */
+
+.variant_icon {
+    display: block;
+    width: 64px;
+    height: 36px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    opacity: 0.5;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Full width — single block */
+.variant_icon_full::before {
+    content: ''; display: block; position: absolute;
+    inset: 4px; background: currentColor; border-radius: 1px;
+}
+
+/* Two col equal */
+.variant_icon_two_col::before,
+.variant_icon_two_col::after {
+    content: ''; display: block; position: absolute;
+    top: 4px; bottom: 4px; width: calc(50% - 6px);
+    background: currentColor; border-radius: 1px;
+}
+.variant_icon_two_col::before { left: 4px; }
+.variant_icon_two_col::after  { right: 4px; }
+
+/* Two col wide left */
+.variant_icon_two_col_wide_left::before,
+.variant_icon_two_col_wide_left::after {
+    content: ''; display: block; position: absolute;
+    top: 4px; bottom: 4px; background: currentColor; border-radius: 1px;
+}
+.variant_icon_two_col_wide_left::before { left: 4px; width: 55%; }
+.variant_icon_two_col_wide_left::after  { right: 4px; width: 32%; }
+
+/* Two col wide right */
+.variant_icon_two_col_wide_right::before,
+.variant_icon_two_col_wide_right::after {
+    content: ''; display: block; position: absolute;
+    top: 4px; bottom: 4px; background: currentColor; border-radius: 1px;
+}
+.variant_icon_two_col_wide_right::before { left: 4px; width: 32%; }
+.variant_icon_two_col_wide_right::after  { right: 4px; width: 55%; }
+
+/* Three col */
+.variant_icon_three_col {
+    display: flex;
+    align-items: stretch;
+    padding: 4px;
+    gap: 3px;
+}
+.variant_icon_three_col::before,
+.variant_icon_three_col::after {
+    content: '';
+    flex: 1;
+    background: currentColor;
+    border-radius: 1px;
+}
+
+/* Sidebar left */
+.variant_icon_sidebar_left::before,
+.variant_icon_sidebar_left::after {
+    content: ''; display: block; position: absolute;
+    top: 4px; bottom: 4px; background: currentColor; border-radius: 1px;
+}
+.variant_icon_sidebar_left::before { left: 4px; width: 28%; }
+.variant_icon_sidebar_left::after  { right: 4px; width: 62%; }
+
+/* Sidebar right */
+.variant_icon_sidebar_right::before,
+.variant_icon_sidebar_right::after {
+    content: ''; display: block; position: absolute;
+    top: 4px; bottom: 4px; background: currentColor; border-radius: 1px;
+}
+.variant_icon_sidebar_right::before { left: 4px; width: 62%; }
+.variant_icon_sidebar_right::after  { right: 4px; width: 28%; }
+
+/* Two row */
+.variant_icon_two_row::before,
+.variant_icon_two_row::after {
+    content: ''; display: block; position: absolute;
+    left: 4px; right: 4px; height: calc(50% - 6px);
+    background: currentColor; border-radius: 1px;
+}
+.variant_icon_two_row::before { top: 4px; }
+.variant_icon_two_row::after  { bottom: 4px; }
+
+.variant_label {
+    display: block;
+    line-height: 1.2;
+}
+
+/* ─── Spacing row ──────────────────────────────────────────────────────────── */
+
+.layout_spacing_row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.layout_spacing_row .label {
+    margin-bottom: 0;
+    white-space: nowrap;
+    font-size: 0.9rem;
+}
+
+/* ─── Slot list ────────────────────────────────────────────────────────────── */
+
+.layout_slot_list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.layout_slot_list_nested {
+    margin-top: 0.75rem;
+    padding-left: 1rem;
+    border-left: 3px solid rgba(62,142,208,0.3);
+}
+
+.layout_slot_item {
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 6px;
+    background: white;
+    overflow: hidden;
+}
+
+.layout_slot_item[data-depth="1"] {
+    border-color: rgba(62,142,208,0.4);
+    background: #fafcff;
+}
+
+.layout_slot_item[data-depth="2"] {
+    border-color: rgba(62,142,208,0.25);
+    background: #f5faff;
+}
+
+/* ─── Slot type row ────────────────────────────────────────────────────────── */
+
+.layout_slot_type_row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(0,0,0,0.03);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+.layout_slot_label {
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: #555;
+    white-space: nowrap;
+    min-width: 4rem;
+}
+
+.layout_slot_type_select {
+    flex: 1;
+    max-width: 200px;
+    font-size: 0.9rem;
+}
+
+.layout_slot_controls {
+    display: flex;
+    gap: 0.4rem;
+    margin-left: auto;
+}
+
+/* ─── Slot content area ────────────────────────────────────────────────────── */
+
+.layout_slot_content {
+    padding: 0.75rem;
+}
+
+/* Rich text */
+.layout_rich_textarea {
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    min-height: 8rem;
+}
+
+/* Widget select */
+.layout_slot_widget_wrap .label,
+.layout_slot_image_wrap .label {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.layout_slot_widget_wrap .label:first-child,
+.layout_slot_image_wrap .label:first-child {
+    margin-top: 0;
+}
+
+.layout_slot_widget_wrap .select,
+.layout_slot_image_wrap .input {
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Nested layout */
+.layout_slot_nested_wrap {
+    padding: 0.5rem 0;
+}
+
+.layout_slot_nested_wrap > .label {
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.layout_slot_nested_wrap > .select {
+    margin-bottom: 0.75rem;
+}
+
+/* ─── Depth indicator chip ─────────────────────────────────────────────────── */
+
+.layout_slot_item[data-depth="1"] .layout_slot_label::before {
+    content: '↳ ';
+    color: #3e8ed0;
+}
+
+.layout_slot_item[data-depth="2"] .layout_slot_label::before {
+    content: '↳↳ ';
+    color: #3e8ed0;
+}
