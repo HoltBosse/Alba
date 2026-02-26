@@ -1,9 +1,11 @@
 <?php
 namespace HoltBosse\Alba\Actions\ContentCreate;
 
-use HoltBosse\Alba\Core\{Content, CMS, Actions};
+use HoltBosse\Alba\Core\{Content, CMS, Actions, File};
 use HoltBosse\DB\DB;
-Use HoltBosse\Form\Form;
+Use HoltBosse\Form\{Form, Field};
+Use \Exception;
+Use \stdClass;
 
 class ContentCreate extends Actions {
 
@@ -21,10 +23,10 @@ class ContentCreate extends Actions {
         $this->render_row($url, "Created \"$contentTypeLabel->title\" Content: " . $contentDetails->title);
     }
 
-    public function display_diff(object $viewmore): string {
+    public function display_diff(stdClass $viewmore): string {
         ob_start();
 
-        $customFields = json_decode(file_get_contents(Content::getContentControllerPath(Content::get_content_location($this->options->content_type)) . "/custom_fields.json"))->fields;
+        $customFields = json_decode(File::getContents(Content::getContentControllerPath(Content::get_content_location($this->options->content_type)) . "/custom_fields.json"))->fields;
         $fieldTypeLookup = [];
         //CMS::pprint_r($customFields);
         
@@ -77,6 +79,9 @@ class ContentCreate extends Actions {
                 $classname = Form::getFieldClass($fieldTypeLookup[$field]->type);
                 $beforeFieldInstance = new $classname();
                 $afterFieldInstance = new $classname();
+                if(!($beforeFieldInstance instanceof Field) || !($afterFieldInstance instanceof Field)) {
+                    throw new Exception("Failed to load field");
+                }
 
                 $fieldTypeLookup[$field]->default = $item->before;
                 $beforeFieldInstance->loadFromConfig($fieldTypeLookup[$field]);

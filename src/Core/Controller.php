@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\DB\DB;
 Use \Exception;
+Use \StdClass;
 
 class Controller {
 	public string $path;
@@ -48,7 +49,7 @@ class Controller {
 		}
 	}
 
-	public function get_controller_config(): object {
+	public function get_controller_config(): stdClass {
 		$ePath = explode("/", $this->path);
 		$controllerLocation = $ePath[sizeof($ePath)-1];
 

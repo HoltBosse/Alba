@@ -7,7 +7,7 @@ class JSON {
 	static public function load_obj_from_file (string $file): mixed {
 		if (is_file($file)) {
 			if (is_readable($file)) {
-				$json = file_get_contents($file);
+				$json = File::getContents($file);
 				$obj = json_decode($json);
 				if (!$obj) {
 					$message = "JSON decode error";

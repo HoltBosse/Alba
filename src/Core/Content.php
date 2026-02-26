@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\Form\{Input, Form, Field};
 Use HoltBosse\DB\DB;
 Use \Exception;
+Use \StdClass;
 
 class Content {
 	public ?int $id;
@@ -26,6 +27,7 @@ class Content {
 	public string $content_location;
 	public ?int $domain;
 
+	// @phpstan-ignore missingType.iterableValue
 	private static array $controllerRegistry = [
 		"basic_article" => __DIR__ . '/../controllers/basic_article',
 	];
@@ -61,7 +63,7 @@ class Content {
 	}
 
 	public static function registerContentControllerDir(string $contentControllerDirPath): void {
-		foreach(glob($contentControllerDirPath . '/*') as $file) {
+		foreach(File::glob($contentControllerDirPath . '/*') as $file) {
 			Content::registerContentController(
 				basename($file, '.php'),
 				$file
@@ -71,12 +73,13 @@ class Content {
 
 	public static function getContentControllerPath(string $contentName): ?string {
 		if (isset(self::$controllerRegistry[$contentName])) {
-			return realpath(self::$controllerRegistry[$contentName]);
+			return File::realpath(self::$controllerRegistry[$contentName]);
 		}
 
 		return null;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function getContentControllerNames(): array {
 		return array_keys(self::$controllerRegistry);
 	}
@@ -452,6 +455,7 @@ class Content {
 		}
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_content_types(): array {
 		$result = DB::fetchAll('SELECT * from content_types where state > 0 order by id ASC');
 		return $result ? $result : [];
@@ -479,7 +483,7 @@ class Content {
 		}
 	}
 
-	public static function get_content_type_fields(int $content_type): ?object {
+	public static function get_content_type_fields(int $content_type): ?stdClass {
 		if (!$content_type) {
 			return null;
 		}
@@ -492,7 +496,7 @@ class Content {
 		}
 	}
 
-	public static function get_content_type_id($controller_location): ?int {
+	public static function get_content_type_id(?string $controller_location): ?int {
 		if (!$controller_location) {
 			return null;
 		}
@@ -516,6 +520,7 @@ class Content {
 		return null;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_applicable_tags (?int $content_type_id): array {
 		$tags = DB::fetchAll(
 			"SELECT *
@@ -541,6 +546,7 @@ class Content {
 		return $tags ? $tags : [];
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_applicable_categories (?int $content_type_id): array {
 		$query = "SELECT * from categories where content_type=?";
 		$cats = DB::fetchAll($query, [$content_type_id]);
@@ -575,17 +581,17 @@ class Content {
 		}
 	}
 
-	public static function get_all_content_for_id (int $id, int $content_type) {
+	public static function get_all_content_for_id (int $id, int $content_type): stdClass {
 		$table = Content::get_table_name_for_content_type($content_type);
 		return DB::fetch("SELECT * from `{$table}` where id=?", [$id]);
 	}
 
 	#[\Deprecated(message: "get_table_name_for_content_type", since: "3.20.0")]
-	public static function get_table_name(int $content_type_id) {
+	public static function get_table_name(int $content_type_id): string {
 		return Content::get_table_name_for_content_type($content_type_id);
 	}
 
-	#[\Deprecated(message: "use ContentSearch instead", since: "3.0.0")]
+	#[\Deprecated(message: "use ContentSearch instead", since: "3.0.0")] //@phpstan-ignore-line
 	public static function get_all_content($order_by="id", $type_filter=false, $id=null, $tag=null, $published_only=null, $list_fields=[], $ignore_fields=[], $filter_field=null, $filter_val=null, $page=0, $search="", $custom_pagination_size=null) {
 		//add inputed filters, and then if id is present, add that to filters as well
 		if ($filter_field) {
@@ -606,11 +612,13 @@ class Content {
 				/** @var Field $field */
 				if (isset($field->save)) {
 					if ($field->save===true) {
+						// @phpstan-ignore offsetAccess.nonOffsetAccessible
 						$list_fields[] = $field->name;
 					}
 				}
 				else {
 					// assume saveable
+					// @phpstan-ignore offsetAccess.nonOffsetAccessible
 					$list_fields[] = $field->name;
 				} 
 			}

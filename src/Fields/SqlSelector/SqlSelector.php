@@ -8,6 +8,7 @@ use \Exception;
 
 class SqlSelector extends Select {
 	public ?string $query = null;
+	// @phpstan-ignore missingType.iterableValue
 	public array $params = [];
 
 	public function loadFromConfig(object $config): self {

@@ -4,16 +4,19 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 Use \Exception;
 Use HoltBosse\Alba\Components\Image\Image as ComponentImage;
+Use \stdClass;
+Use \GdImage;
 
 class Image {
-	public $id;
-    public $filename;
-    public $width;
-    public $height;
-    public $title;
-    public $alt;
-    public $mimetype;
-    public static $image_sizes = [
+	public mixed $id;
+    public mixed $filename;
+    public mixed $width;
+    public mixed $height;
+    public mixed $title;
+    public mixed $alt;
+    public mixed $mimetype;
+    // @phpstan-ignore missingType.iterableValue
+    public static array $image_sizes = [
 		"thumb"=>200,
 		"web"=>1920
 	];
@@ -30,7 +33,7 @@ class Image {
         $this->mimetype = $db_image->mimetype;      
     }
     
-    #[\Deprecated(message: "use new oop component", since: "3.20.0")]
+    #[\Deprecated(message: "use new oop component", since: "3.20.0")] //@phpstan-ignore-line
     public function render($size="", $class="", $output_immediately=true, $attributes=[]) {
         // size and class used in v <= 2.4.77
         // $w attribute supercedes $size
@@ -91,15 +94,24 @@ class Image {
         }
     }
 
-    public static function MakeResizedImage(string $src, string $dest, int $desired_width, object $file, float $quality, string $mimetype): bool {
+    public static function MakeResizedImage(string $src, string $dest, int $desired_width, stdClass $file, float $quality, string $mimetype): bool {
         if ($file->mimetype=='image/jpeg') {
             $source_image = imagecreatefromjpeg($src);
+            if($source_image === false) {
+                throw new Exception("invalid gd resource");
+            }
         } elseif ($file->mimetype=='image/webp') {
             $source_image = imagecreatefromwebp($src);
+            if($source_image === false) {
+                throw new Exception("invalid gd resource");
+            }
             imageAlphaBlending($source_image, false);
             imageSaveAlpha($source_image, true);
         } else {
             $source_image = imagecreatefrompng($src);
+            if($source_image === false) {
+                throw new Exception("invalid gd resource");
+            }
             imageAlphaBlending($source_image, false);
             imageSaveAlpha($source_image, true);
         }
@@ -107,8 +119,15 @@ class Image {
         $height = imagesy($source_image);
         /* find the "desired height" of this thumbnail, relative to the desired width  */
         $desired_height = (int) floor($height * ($desired_width / $width)); //floor returns a float, cast to int, cause php is weird
+        
+        $desired_height = max(1, $desired_height);
+        $desired_width = max(1, $desired_width);
+        
         /* create a new, "virtual" image */
         $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+        if($virtual_image === false) {
+            throw new Exception("invalid gd resource");
+        }
         /* copy source image at a resized size */
         if ($mimetype=='image/png'||$mimetype=='image/webp') {
             imageAlphaBlending($virtual_image, false);
@@ -140,6 +159,9 @@ class Image {
                 $orientation = $exif['Orientation'];
                 /* if($orientation != 1 || true){ */
                     $img = imagecreatefromjpeg($filename);
+                    if($img === false) {
+                        throw new Exception("invalid gd resource");
+                    }
                     $deg = 0;
                     switch ($orientation) {
                         case 3:
@@ -153,7 +175,10 @@ class Image {
                             break;
                     }
                     if ($deg) {
-                        $img = imagerotate($img, $deg, 0);        
+                        $img = imagerotate($img, $deg, 0);
+                        if($img === false) {
+                            throw new Exception("invalid gd resource");
+                        }
                     }
                     // then rewrite the rotated image back to the disk as $filename 
                     return imagejpeg($img, $filename, 75);
@@ -163,7 +188,8 @@ class Image {
         return false;
     }
 
-    public static function processUploadedFiles(array $files, array $alts, array $titles, array $tags, string $directory): object {
+    // @phpstan-ignore-next-line missingType.iterableValue
+    public static function processUploadedFiles(array $files, array $alts, array $titles, array $tags, string $directory): stdClass {
         $image_types_data = File::$image_types;
         $uploaded_files = [];
         $n=0;

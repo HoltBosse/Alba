@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, DataExport, Hook, HookQueryResult};
+Use HoltBosse\Alba\Core\{CMS, Configuration, DataExport, Hook, HookQueryResult, File};
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
@@ -21,7 +21,7 @@ $formSelectOptions = array_map(function($input) {
         "text"=>$input->value,
     ];
 
-    $json = json_decode(file_get_contents($_ENV["root_path_to_forms"] . $input->form_path));
+    $json = json_decode(File::getContents($_ENV["root_path_to_forms"] . $input->form_path));
     if(isset($json->display_name)) {
         $option->text = $json->display_name;
     }
@@ -37,7 +37,7 @@ $formSelectOptions = array_values(array_filter($formSelectOptions, function($inp
     return $input !== null;
 }));
 
-$searchFieldsObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFieldsObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 $searchFieldsObject->fields[0]->select_options = $formSelectOptions;
 // @phpstan-ignore-next-line
 if(Input::getVar("form", v::StringVal(), null)==null && $searchFieldsObject->fields[0]->select_options[0]) {
@@ -110,7 +110,7 @@ $results = DB::fetchAll($query . $queryWhereFilters . $paginationQuery, $params)
 
 $headerFields = [];
 if($results[0]) {
-    $currentSelectedObject = json_decode(file_get_contents($_ENV["root_path_to_forms"] . $results[0]->form_path));
+    $currentSelectedObject = json_decode(File::getContents($_ENV["root_path_to_forms"] . $results[0]->form_path));
     if(isset($currentSelectedObject->list)) {
         $headerFields = $currentSelectedObject->list;
     } else {

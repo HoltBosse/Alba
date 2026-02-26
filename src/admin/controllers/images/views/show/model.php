@@ -10,7 +10,7 @@ if(sizeof($segments)>2) {
     CMS::raise_404();
 }
 
-$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 $searchFormObject->fields[] = (object) [
 	"type"=>"Html",
 	"html"=>"<div style='display: flex; gap: 1rem;'>

@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Controller};
+Use HoltBosse\Alba\Core\{CMS, Controller, File};
 
 // router
 
@@ -18,7 +18,7 @@ if(sizeof($segments)>2 || !file_exists(__DIR__ . "/views/{$segments[1]}/model.ph
 
 // load model + view
 
-$user_controller = new Controller(realpath(dirname(__FILE__)),$view);
+$user_controller = new Controller(File::realpath(dirname(__FILE__)),$view);
 $user_controller->load_view($view);
 
 

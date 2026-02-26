@@ -31,9 +31,11 @@ class FormInstance extends Widget {
                     foreach($emails as $email) {
                         $user = DB::fetch("SELECT * FROM users WHERE id=?", [trim($email)]);
 
+                        // @phpstan-ignore property.notFound
                         $mail->addAddress(trim($user->email), $user->username ?? ($formDetails->title . " Recipient"));
                     }
 
+                    // @phpstan-ignore property.notFound
                     $mail->subject = "New form submission: " . $formDetails->title;
 
                     $adminLogoId = Configuration::get_configuration_value('general_options','admin_logo');
@@ -45,7 +47,7 @@ class FormInstance extends Widget {
                     foreach($form->fields as $field) {
                         if($field instanceof \HoltBosse\Alba\Fields\Image\Image) {
                             if(is_numeric($field->default) && $field->public_accessible==true) {
-                                $image = new \HoltBosse\Alba\Core\Image($field->default);
+                                $image = new \HoltBosse\Alba\Core\Image((int) $field->default);
                                 $filePath = $_ENV["images_directory"] . "/processed/" . $image->filename;
                                 $mail->addAttachment($filePath, $image->title ?: basename($image->filename));
                             }

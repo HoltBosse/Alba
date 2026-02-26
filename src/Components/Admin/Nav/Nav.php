@@ -9,9 +9,11 @@ Use HoltBosse\Alba\Components\Collection\Collection;
 Use HoltBosse\Alba\Components\Html\Html;
 
 class Nav extends Component {
+    // @phpstan-ignore missingType.iterableValue
     public array $navigation = [];
 
-    private function GetLink($link): Component {
+    // @phpstan-ignore missingType.iterableValue
+    private function GetLink(array $link): Component {
         return (new Button())->loadFromConfig((object)[
             "text"=>ucwords($link["label"]),
             "type"=>ButtonType::anchor,
@@ -20,7 +22,8 @@ class Nav extends Component {
         ]);
     }
 
-    private function getMenu($menu): Component {
+    // @phpstan-ignore missingType.iterableValue
+    private function getMenu(array $menu): Component {
         $items = [];
         foreach($menu["links"] as $label=>$url) {
             if($label=="hr" || $url=="hr") {
@@ -29,7 +32,7 @@ class Nav extends Component {
                     "wrap"=>false
                 ]);
             } else {
-                $pathParts = explode("/", ltrim(parse_url($url, PHP_URL_PATH), "/"));
+                $pathParts = explode("/", ltrim((string) parse_url($url, PHP_URL_PATH), "/"));
                 if (Access::can_access(Access::getAdminAccessRule($pathParts[1]) ?? null)) {
                     $link = [
                         "label" => $label,

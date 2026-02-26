@@ -41,7 +41,7 @@ class DomainsTableMigration extends Migration {
             } elseif($output===null) {
                 DB::exec("INSERT INTO `domains` (`id`, `value`, `display`) VALUES (?, ?, ?);", [0, $_SERVER["HTTP_HOST"], $_SERVER["HTTP_HOST"]]);
             } else {
-                $domain = trim(readline("Please enter the primary domain for this CMS installation (e.g. example.com): "));
+                $domain = trim((string) readline("Please enter the primary domain for this CMS installation (e.g. example.com): "));
                 DB::exec("INSERT INTO `domains` (`id`, `value`, `display`) VALUES (?, ?, ?);", [0, $domain, $domain]);
             }
 

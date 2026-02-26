@@ -2,7 +2,7 @@
 namespace HoltBosse\Alba\Fields\RecaptchaV2;
 
 Use HoltBosse\Form\Field;
-use HoltBosse\Alba\Core\{CMS, Configuration};
+use HoltBosse\Alba\Core\{CMS, Configuration, File};
 Use Respect\Validation\Validator as v;
 
 class RecaptchaV2 extends Field {
@@ -47,7 +47,7 @@ class RecaptchaV2 extends Field {
 			]
 		];
 		$context  = stream_context_create($options);
-		$verify = file_get_contents($url, false, $context);
+		$verify = File::getContents($url, false, $context);
 		$captcha_success=json_decode($verify);
 		if ($captcha_success->success==false) {
 			CMS::Instance()->queue_message('Failed reCAPTCHA test','danger');

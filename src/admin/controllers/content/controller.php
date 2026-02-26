@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Content, JSON, Controller};
+Use HoltBosse\Alba\Core\{CMS, Content, JSON, Controller, File};
 Use HoltBosse\DB\DB;
 Use \PDO;
 
@@ -182,8 +182,8 @@ if ($cols_added) { ?>
 
 
 // load model + view
-if (is_dir(realpath(dirname(__FILE__) . "/views")) && is_dir(realpath(dirname(__FILE__) . "/views/$view"))) {
-	$content_type_controller = new Controller(realpath(dirname(__FILE__)),$view);
+if (is_dir(File::realpath(dirname(__FILE__) . "/views")) && is_dir(File::realpath(dirname(__FILE__) . "/views/$view"))) {
+	$content_type_controller = new Controller(File::realpath(dirname(__FILE__)),$view);
 	$content_type_controller->load_view($view);
 } else {
 	CMS::raise_404();

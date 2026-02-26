@@ -4,8 +4,10 @@ namespace HoltBosse\Alba\Fields\PickerOrdered;
 Use HoltBosse\Form\{Field, Input};
 Use Respect\Validation\Validator as v;
 Use HoltBosse\Alba\Components\CssFile\CssFile;
+Use HoltBosse\Alba\Core\File;
 
 class PickerOrdered extends Field {
+	// @phpstan-ignore missingType.iterableValue
 	public array $select_options = [];
 	public bool $searchable = true;
 
@@ -93,7 +95,7 @@ class PickerOrdered extends Field {
 				<p class='note'>Click items on the left to add to selected area. Drag and drop in selected area to reorder. To remove a selected item, click it.</p>
                 <script type="module">
 					<?php
-						$scriptContent = file_get_contents(__DIR__ . "/script.js");
+						$scriptContent = File::getContents(__DIR__ . "/script.js");
 						$scriptContent = str_replace("{{replace_with_rendered_name}}", $this->getRenderedName(), $scriptContent);
 						echo $scriptContent;
 					?>

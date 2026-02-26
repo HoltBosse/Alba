@@ -4,6 +4,7 @@ Use HoltBosse\Alba\Core\{CMS, File, Image, User};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
+Use \stdClass;
 
 // api style controller - end output
 while(ob_get_level()>0) {
@@ -154,7 +155,7 @@ else {
 // quality fixed for url param version
 $req_quality = Input::getVar("q", v::numericVal(), 75);
 
-function serve_file (object $media_obj, string $fullpath, int $seconds_to_cache=86400): void {
+function serve_file (stdClass $media_obj, string $fullpath, int $seconds_to_cache=86400): void {
 	$seconds_to_cache = $seconds_to_cache;
 	$ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
 	header("Expires: $ts");
@@ -172,7 +173,7 @@ function serve_file (object $media_obj, string $fullpath, int $seconds_to_cache=
 	exit(0);
 }
 
-function get_image (int $id): ?object {
+function get_image (int $id): ?stdClass {
 	$image = DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
 
 	if($image->state==0) {
@@ -185,7 +186,7 @@ function get_image (int $id): ?object {
 		}
 
 		//we already know this is on our domain, else the group check would have failed
-		if(!$_SERVER["HTTP_REFERER"] || CMS::parseUrlToSegments( parse_url($_SERVER["HTTP_REFERER"], PHP_URL_PATH) )[0] != "admin") {
+		if(!$_SERVER["HTTP_REFERER"] || CMS::parseUrlToSegments((string) parse_url($_SERVER["HTTP_REFERER"], PHP_URL_PATH) )[0] != "admin") {
 			http_response_code(401);
 			exit(0);
 		}
@@ -204,7 +205,7 @@ if ($segsize<2 || !is_numeric($segments[1]) ) {
 if ($segsize==2 && !$req_width && !$req_format && $req_quality==75) {
 	// just image id and no get params of note
 	// serve original uploaded image
-	$image = get_image ($segments[1]);
+	$image = get_image ((int) $segments[1]);
 	if ($image) {
 		$fullpath = $_ENV["images_directory"] . '/processed/' . $image->filename;
 		serve_file ($image, $fullpath);
@@ -218,7 +219,7 @@ if ($segsize==2 && !$req_width && !$req_format && $req_quality==75) {
 // reach here, got either segments for size or we have get 1 or more params
 // we already have $req_width or $req_format due to the if handling them them missing above
 
-	$image = get_image ($segments[1]);
+	$image = get_image ((int) $segments[1]);
 	if ($image) {
 		$original_path = $_ENV["images_directory"] . "/processed/" . $image->filename;
 		// if no width param found - set to default image width

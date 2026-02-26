@@ -1,6 +1,6 @@
 <?php
 
-use HoltBosse\Alba\Core\CMS;
+use HoltBosse\Alba\Core\{CMS, File};
 use HoltBosse\Form\Form;
 
 test('registers built-in form fields and loads HTML widget config without exceptions', function () {
@@ -101,7 +101,7 @@ test('registers built-in form fields and loads content required fields config wi
     expect(file_exists($requiredFieldsConfigPath))->toBeTrue();
 
     // Remove the category and tags field to prevent database errors during testing
-    $requiredFieldsConfig = json_decode(file_get_contents($requiredFieldsConfigPath));
+    $requiredFieldsConfig = json_decode(File::getContents($requiredFieldsConfigPath));
     unset($requiredFieldsConfig->fields[2]);
     unset($requiredFieldsConfig->fields[3]);
     //print_r($requiredFieldsConfig);

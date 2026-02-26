@@ -10,6 +10,7 @@
 	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
+	Use \stdClass;
 
 	ob_start();
 	if ($widget_type_id) {
@@ -91,6 +92,7 @@
 				"rowAttribute"=>"stateComposite",
 				"rendererAttribute"=>"state",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $state;
 
 					public function display(): void {
@@ -114,6 +116,7 @@
 				"rowAttribute"=>"titleComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -151,7 +154,7 @@
 				"rowAttribute"=>"pagesComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
-					public object $defaultvalue;
+					public stdClass $defaultvalue;
 
 					public function display(): void {
 						echo "<div>";

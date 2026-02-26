@@ -10,6 +10,7 @@
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
 	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
+	Use \stdClass;
 
 	$header = "All Pages";
 	$rightContent = "<a href='" . $_ENV["uripath"] . "/admin/pages/edit/0' class='button is-primary pull-right'>
@@ -59,6 +60,7 @@
 				"rowAttribute"=>"stateComposite",
 				"rendererAttribute"=>"state",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $state;
 
 					public function display(): void {
@@ -81,7 +83,7 @@
 				"rowAttribute"=>"titleComposite",
 				"rendererAttribute"=>"title",
 				"renderer"=>new class extends Component {
-					public object $title;
+					public stdClass $title;
 
 					public function display(): void {
 						echo "<div>";
@@ -113,6 +115,7 @@
 				"rowAttribute"=>"urlComposite",
 				"rendererAttribute"=>"iid",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $iid;
 
 					public function display(): void {
@@ -134,6 +137,7 @@
 				"rowAttribute"=>"templateComposite",
 				"rendererAttribute"=>"data",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $data;
 
 					public function display(): void {

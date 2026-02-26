@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Content, Hook};
+Use HoltBosse\Alba\Core\{CMS, Content, Hook, File};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
 Use Respect\Validation\Validator as v;
@@ -11,8 +11,8 @@ $segments = CMS::Instance()->uri_segments;
 
 if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])) {
 	// need to pass content type now as well
-	$content_id = $segments[2];
-	$content_type = $segments[3];
+	$content_id = (int) $segments[2];
+	$content_type = (int) $segments[3];
 
 	$contentTypeTableRecord = DB::fetch("SELECT * FROM content_types WHERE id=?", $content_type);
 	if(!$contentTypeTableRecord) {
@@ -64,7 +64,7 @@ if (sizeof($segments)==4 && is_numeric($segments[2]) && is_numeric($segments[3])
 	}
 	
 } elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
-	$content_type = $segments[3];
+	$content_type = (int) $segments[3];
 	$content = new Content($content_type);
 
 	$contentTypeTableRecord = DB::fetch("SELECT * FROM content_types WHERE id=?", $content_type);
@@ -84,8 +84,8 @@ if(!Content::isAccessibleOnDomain($content_type, $_SESSION["current_domain"])) {
 }
 
 // inject custom content states into form
-$custom_fields = json_decode(file_get_contents(Content::getContentControllerPath($content->content_location) . "/custom_fields.json"));
-$required_details_obj = json_decode(file_get_contents(__DIR__ . '/required_fields_form.json'));
+$custom_fields = json_decode(File::getContents(Content::getContentControllerPath($content->content_location) . "/custom_fields.json"));
+$required_details_obj = json_decode(File::getContents(__DIR__ . '/required_fields_form.json'));
 
 foreach($required_details_obj->fields as $field) {
 	if($field->name == "state") {

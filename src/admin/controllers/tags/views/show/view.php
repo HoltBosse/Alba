@@ -1,6 +1,6 @@
 <?php
 
-	Use HoltBosse\Alba\Core\{Component, Tag, CMS};
+	Use HoltBosse\Alba\Core\{Component, File, Tag, CMS};
 	Use HoltBosse\Form\{Input, Form, Field};
 	Use HoltBosse\Alba\Components\StateButton\StateButton;
 	Use HoltBosse\Alba\Components\Html\Html;
@@ -10,6 +10,8 @@
 	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
+	Use \stdClass;
+	Use \Exception;
 
 	$header = "All Tags";
 	$rightContent = "<a class='pull-right button is-primary' href='" . $_ENV["uripath"] ."/admin/tags/edit/new'>New Tag</a>";
@@ -47,7 +49,7 @@
 	<?php
 		$customStates = [];
 		if (isset($_ENV["tag_custom_fields_file_path"])) {
-			$customFieldsFormObject = json_decode(file_get_contents($_ENV["tag_custom_fields_file_path"]));
+		$customFieldsFormObject = json_decode(File::getContents($_ENV["tag_custom_fields_file_path"]));
 			if(isset($customFieldsFormObject->states)) {
 				$customStates = $customFieldsFormObject->states;
 			}
@@ -77,6 +79,7 @@
 				"rowAttribute"=>"stateComposite",
 				"rendererAttribute"=>"state",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $state;
 
 					public function display(): void {
@@ -99,6 +102,7 @@
 				"rowAttribute"=>"titleComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -143,6 +147,9 @@
 			$propname = "{$content_list_field->name}"; 
 			$classname = Form::getFieldClass($content_list_field->type);
 			$curfield = new $classname();
+			if(!($curfield instanceof Field)) {
+				throw new Exception("Failed to load field");
+			}
 			$curfield->loadFromConfig($named_custom_fields[$propname]);
 
 			$lastField = $listColumns[count($listColumns)-1];

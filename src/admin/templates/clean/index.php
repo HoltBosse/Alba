@@ -1,6 +1,6 @@
 <?php 
 
-Use HoltBosse\Alba\Core\{CMS, Hook, Configuration, Component};
+Use HoltBosse\Alba\Core\{CMS, Hook, Configuration, Component, File};
 Use HoltBosse\Form\Input;
 Use HoltBosse\Form\Fields\Select\Select;
 Use HoltBosse\DB\DB;
@@ -148,10 +148,9 @@ if(!isset($_SESSION["current_domain"])) {
 		</main>
 		<script>
 			<?php
-				echo file_get_contents(__DIR__ . "/js/script.js");
+				echo File::getContents(__DIR__ . "/js/script.js");
 			?>
 		</script>
 	</body>
-</html>
 
 

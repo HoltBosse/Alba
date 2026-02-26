@@ -1,6 +1,6 @@
 <?php
 
-	Use HoltBosse\Alba\Core\{CMS, Config, Component, Content, Page, Template};
+	Use HoltBosse\Alba\Core\{CMS, Config, Component, Content, File, Page, Template};
 	Use HoltBosse\DB\DB;
 	Use HoltBosse\Form\{Form, Input};
 	Use HoltBosse\Form\Fields\Input\Input as Field_Text;
@@ -307,5 +307,5 @@
 
 <script>
 	window.pageid = <?php echo $page->id ?>;
-	<?php echo file_get_contents(__DIR__ . "/script.js"); ?>	
+	<?php echo File::getContents(__DIR__ . "/script.js"); ?>	
 </script>

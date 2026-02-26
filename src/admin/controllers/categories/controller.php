@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Controller};
+Use HoltBosse\Alba\Core\{CMS, Controller, File};
 
 // router
 
@@ -17,7 +17,7 @@ if((sizeof($segments)>3 && ($view!="action" && $view!="edit")) || !file_exists(_
 	CMS::raise_404();
 }
 
-$content_type_controller = new Controller(realpath(dirname(__FILE__)),$view);
+$content_type_controller = new Controller(File::realpath(dirname(__FILE__)),$view);
 $content_type_controller->load_view($view);
 
 

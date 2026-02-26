@@ -10,11 +10,13 @@ class Plugin {
 	public int $id;
 	public string $title;
 	public int $state;
+	// @phpstan-ignore missingType.iterableValue
     public ?array $options;
     public string $location;
     public string $description;
 	public ?Form $form;
 
+	// @phpstan-ignore missingType.iterableValue
 	private static array $pluginRegistry = [
 		"AutoYear" => [
 			"path" => __DIR__ . '/../Plugins/AutoYear',
@@ -38,7 +40,7 @@ class Plugin {
 		],
 	];
 
-    public function __construct(object $plugin_info) {
+    public function __construct(stdClass $plugin_info) {
         // $plugin_info should be object containing select * info from plugins table for this plugin
         $this->state = $plugin_info->state;
         $this->title = $plugin_info->title;
@@ -63,7 +65,7 @@ class Plugin {
 	}
 
 	public static function registerPluginDir(string $pluginDirPath, string $pluginClassBase): void {
-		foreach(glob($pluginDirPath . '/*') as $file) {
+		foreach(File::glob($pluginDirPath . '/*') as $file) {
 			Plugin::registerPlugin(
 				basename($file, '.php'),
 				$file,
@@ -74,7 +76,7 @@ class Plugin {
 
 	public static function getPluginPath(string $pluginName): ?string {
 		if (isset(self::$pluginRegistry[$pluginName])) {
-			return realpath(self::$pluginRegistry[$pluginName]['path']);
+			return File::realpath(self::$pluginRegistry[$pluginName]['path']);
 		}
 
 		return null;
@@ -88,10 +90,12 @@ class Plugin {
 		return null;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function getPluginNames(): array {
 		return array_keys(self::$pluginRegistry);
 	}
     
+	// @phpstan-ignore missingType.iterableValue
     public static function get_all_plugins(): array {
 		return DB::fetchAll('select * from plugins where state > -1');
     }

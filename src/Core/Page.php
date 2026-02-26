@@ -6,6 +6,7 @@ Use HoltBosse\Form\{Form, Input};
 Use \PDOException;
 Use Respect\Validation\Validator as v;
 Use HoltBosse\Form\Field;
+Use HoltBosse\Alba\Core\File;
 
 class Page {
 	public int $id;
@@ -13,7 +14,7 @@ class Page {
 	public string $title;
 	public string $alias;
 	public int $template_id;
-	public ?object $template;
+	public ?Template $template;
 	public ?int $parent;
 	public ?int $content_type;
 	public ?int $view;
@@ -37,7 +38,7 @@ class Page {
 		$this->content_type = null;
 		$this->view = null;
 		$this->view_configuration = null;
-		$this->page_options_form = new Form(realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json"));
+		$this->page_options_form = new Form(File::realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json"));
 		$this->page_options = null;
 		$this->domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 	}
@@ -83,12 +84,13 @@ class Page {
 		return $depth;
 	}
 
-	// $pdo->prepare($sql)->execute([$name, $id]);
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_pages(): array {
 		$result = DB::fetchAll("SELECT * FROM pages WHERE state>-1");
 		return $result;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_pages_by_depth(int $parent=-1, int $depth=-1): array {
 		$depth = $depth+1;
 		$result=[];
@@ -101,7 +103,7 @@ class Page {
 		return $result;
 	}
 
-
+	// @phpstan-ignore-next-line missingType.iterableValue
 	public static function get_pages_from_id_array(array $id_array): array {
 		$in_string = implode(',',$id_array);
 		$query = "select * from pages where id in ({$in_string})";
@@ -109,7 +111,8 @@ class Page {
 		return  $result;
 	}
 
-	public static function has_overrides ($page): array {
+	// @phpstan-ignore missingType.iterableValue
+	public static function has_overrides (int $page): array {
 		$w = DB::fetchAll("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", [$page]);
 		//CMS::pprint_r ($w);
 		return $w;
@@ -128,7 +131,7 @@ class Page {
 		$this->view = Input::getvar('content_type_controller_view',v::IntVal());
 
 		// OLD: view_options now handles by options_form.json in view
-		$this->view_configuration = json_encode(Input::getvar('view_options',v::arrayType()));
+		$this->view_configuration = json_encode(Input::getvar('view_options',v::arrayType()), JSON_THROW_ON_ERROR);
 		// TODO: load from options_form
 		// e.g. $options_form = new Form(form location);
 		// $options_form->setFromSubmit();

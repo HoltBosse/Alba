@@ -1,6 +1,6 @@
 <?php
 
-	Use HoltBosse\Alba\Core\{CMS, Component, Hook, User, Tag, Form};
+	Use HoltBosse\Alba\Core\{CMS, Component, File, Hook, User, Tag, Form};
 	Use HoltBosse\Form\Fields\Select\Select as Field_Select;
 	Use HoltBosse\Form\{Field, Input};
 	Use HoltBosse\Alba\Components\Pagination\Pagination;
@@ -69,6 +69,7 @@
 				"rowAttribute"=>"stateComposite",
 				"rendererAttribute"=>"state",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $state;
 
 					public function display(): void {
@@ -91,6 +92,7 @@
 				"rowAttribute"=>"usernameComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -124,6 +126,7 @@
 				"rowAttribute"=>"groupComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -145,6 +148,7 @@
 				"rowAttribute"=>"tagComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -184,11 +188,14 @@
 					"columnSpan"=>2,
 				]);
 
-				$named_custom_fields = array_column(json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]))->fields, null, 'name'); 
+				$named_custom_fields = array_column(json_decode(File::getContents($_ENV["custom_user_fields_file_path"]))->fields, null, 'name'); 
 
 				$propname = "{$content_list_field->name}"; 
 				$classname = Form::getFieldClass($content_list_field->type);
 				$curfield = new $classname();
+				if(!($curfield instanceof Field)) {
+					throw new Exception("Failed to load field");
+				}
 				$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
 
 				$lastField = $listColumns[count($listColumns)-1];

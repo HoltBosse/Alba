@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Template, Content, Widget, Hook, HookQueryResult};
+Use HoltBosse\Alba\Core\{CMS, Template, Content, Widget, Hook, HookQueryResult, File};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Form;
 Use HoltBosse\Form\Input;
@@ -16,7 +16,7 @@ if($widget_type_id && !Widget::isAccessibleOnDomain($widget_type_id, $_SESSION["
 	CMS::raise_404();
 }
 
-$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 if(!is_numeric($widget_type_id)) {
 	$searchFormObject->fields[] = (object) [
 		"type"=>"Select",

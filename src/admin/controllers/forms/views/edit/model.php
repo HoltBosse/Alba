@@ -110,6 +110,7 @@ if($requiredDetailsForm->isSubmitted()) {
                 //CMS::pprint_r($normalizedDetails);
 
                 if(!empty(Form::getFieldClass($fieldType))) {
+                    // @phpstan-ignore argument.type
                     $fieldReflection = new ReflectionClass(Form::getFieldClass($fieldType));
                     //$propertiesWithAttributes = [];
                     $fieldInstance = [];
@@ -211,7 +212,10 @@ if($requiredDetailsForm->isSubmitted()) {
         ];
 
         $fileHandle = fopen($formConfigPath . "form_instance_" . $formId . ".json", "w");
-        fwrite($fileHandle, json_encode($formObject, JSON_PRETTY_PRINT));
+        if($fileHandle===false) {
+            throw new Exception("Failed to open form config file for writing: " . $formConfigPath . "form_instance_" . $formId . ".json");
+        }
+        fwrite($fileHandle, json_encode($formObject, JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR));
         fclose($fileHandle);
 
         CMS::Instance()->queue_message('Form saved successfully','success',$_ENV["uripath"].'/admin/forms/all');

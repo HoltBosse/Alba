@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, User, UserSearch, Tag, Hook, Form, HookQueryResult};
+Use HoltBosse\Alba\Core\{CMS, Configuration, File, User, UserSearch, Tag, Hook, Form, HookQueryResult};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
@@ -13,7 +13,7 @@ $group_name = "All";
 $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==2) {
 	if (is_numeric($segments[1])) {
-        $group_id = $segments[1];
+        $group_id = (int) $segments[1];
         $group_name = User::get_group_name ($group_id);
     }
 }
@@ -26,11 +26,11 @@ $applicable_tags = array_values(array_filter($applicable_tags, function($tag) {
 	return ($tag->domain === null || $tag->domain === $_SESSION["current_domain"]);
 }));
 
-$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 
 $states = NULL;
 if(isset($_ENV["custom_user_fields_file_path"])) {
-	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
+	$formObject = json_decode(File::getContents($_ENV["custom_user_fields_file_path"]));
 	if($formObject->states) {
 		$states = $formObject->states;
 	}
@@ -122,7 +122,7 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
 $content_list_fields = [];
 $customUserFieldsLookup = [];
 if(isset($_ENV["custom_user_fields_file_path"])) {
-	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
+	$formObject = json_decode(File::getContents($_ENV["custom_user_fields_file_path"]));
 
 	if (property_exists($formObject,'list')) {
 		foreach ($formObject->list as $fieldName) {

@@ -1,6 +1,6 @@
 <?php
 
-use HoltBosse\Alba\Core\{CMS, Content, Controller};
+use HoltBosse\Alba\Core\{CMS, Content, Controller, File};
 
 // router
 
@@ -19,7 +19,7 @@ $view = Content::get_view_location(CMS::Instance()->page->view);
 if ($view=='single' && sizeof($segments)>0) {
 	CMS::Instance()->raise_404();
 }
-$controller = new Controller(realpath(dirname(__FILE__)),$view);
+$controller = new Controller(File::realpath(dirname(__FILE__)),$view);
 $controller->load_view($view); 
 
 

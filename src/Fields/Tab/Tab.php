@@ -2,7 +2,7 @@
 namespace HoltBosse\Alba\Fields\Tab;
 
 Use HoltBosse\Form\Field;
-Use HoltBosse\Alba\Core\CMS;
+Use HoltBosse\Alba\Core\{CMS, File};
 
 class Tab extends Field {
 
@@ -12,7 +12,7 @@ class Tab extends Field {
 	public mixed $input_type = null;
 
 	public function display(): void {
-		$tabsJs = "<script type='module'>" . file_get_contents(__DIR__ . "/script.js") . "</script>";
+		$tabsJs = "<script type='module'>" . File::getContents(__DIR__ . "/script.js") . "</script>";
 		if(!in_array($tabsJs, CMS::Instance()->head_entries)) {
 			CMS::Instance()->head_entries[] = $tabsJs;
 		}

@@ -82,6 +82,7 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 				"rowAttribute"=>"stateComposite",
 				"rendererAttribute"=>"state",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $state;
 
 					public function display(): void {
@@ -106,6 +107,7 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 				"hideAttribute"=>"title",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -135,6 +137,7 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 				"hideAttribute"=>"tags",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -239,6 +242,9 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 			$propname = "{$content_list_field->name}"; 
 			$classname = Form::getFieldClass($content_list_field->type);
 			$curfield = new $classname();
+			if(!($curfield instanceof Field)) {
+				throw new Exception("Failed to load field");
+			} 
 			$curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
 
 			$lastField = $listColumns[count($listColumns)-1];

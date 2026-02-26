@@ -31,7 +31,7 @@ class Widget extends Plugin {
                 // output widget into buffer and store
                 ob_start();
                 $widget_of_type->internal_render();
-                $widget_markup = ob_get_contents();
+                $widget_markup = (string) ob_get_contents();
                 ob_end_clean();
             }
             else {

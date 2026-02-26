@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS};
+Use HoltBosse\Alba\Core\{CMS, File};
 Use HoltBosse\Form\Form;
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
@@ -22,7 +22,7 @@ else {
 	exit(0);
 }
 
-$required_details_obj = json_decode(file_get_contents(__DIR__ . '/required_fields_form.json'));
+$required_details_obj = json_decode(File::getContents(__DIR__ . '/required_fields_form.json'));
 
 $domains = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
 $domainOptions = [];

@@ -1,5 +1,5 @@
 <?php
-    use HoltBosse\Alba\Core\{CMS, Component};
+    use HoltBosse\Alba\Core\{CMS, Component, File};
     use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
     use HoltBosse\Alba\Components\CssFile\CssFile;
 
@@ -32,13 +32,13 @@
                     <select class="new-field-select">
                         <option value="">Select Field Type</option>
                         <?php
-                            $jsonConfig = json_decode(file_get_contents(__DIR__ . "/config.json"));
+                            $jsonConfig = json_decode(File::getContents(__DIR__ . "/config.json"));
                             foreach($jsonConfig->allowedFields as $fieldType) {
                                 echo "<option value='$fieldType'>" . ucwords($fieldType) . "</option>";
                             }
 
                             if($formId) {
-                                $formFields = json_decode(file_get_contents($_ENV["root_path_to_forms"] . "/forms/form_instance_" . $formId . ".json"));
+                                $formFields = json_decode(File::getContents($_ENV["root_path_to_forms"] . "/forms/form_instance_" . $formId . ".json"));
                                 foreach($formFields->fields as &$field) {
                                     if(isset($field->select_options)) {
                                         $convertedOptions = [];
@@ -79,5 +79,5 @@
 </form>
 
 <script>
-    <?php echo file_get_contents(__DIR__ . "/script.js"); ?>
+    <?php echo File::getContents(__DIR__ . "/script.js"); ?>
 </script>

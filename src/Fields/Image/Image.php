@@ -18,15 +18,15 @@ class Image extends Field {
 	#[FormBuilderAttribute(fieldType: "Select", dataType: FormBuilderDataType::Bool, required: true, description: "Is this field publicly accessible on the front-end?")]
 	public bool $public_accessible = false;
 
-	public function display($repeatable_template=false): void {
+	public function display(): void {
 		if(!$this->public_accessible) {
-			$this->trustedDisplay($repeatable_template);
+			$this->trustedDisplay();
 		} else {
-			$this->unTrustedDisplay($repeatable_template);
+			$this->unTrustedDisplay();
 		}
 	}
 
-	public function unTrustedDisplay($repeatable_template=false): void {
+	public function unTrustedDisplay(): void {
 		$_SESSION["public_accessible_image_field_loaded"] = true;
 
 		(new CssFile())->loadFromConfig((object)[
@@ -149,7 +149,7 @@ class Image extends Field {
 		<?php
 	}
 
-	public function trustedDisplay($repeatable_template=false): void {
+	public function trustedDisplay(): void {
 		echo "<script>";
 			echo "window.max_upload_size_bytes = " . File::get_max_upload_size_bytes() . ";";
 		echo "</script>";
@@ -165,12 +165,7 @@ class Image extends Field {
 			$repeatable_id_suffix='';
 		}
 		else {
-			if ($repeatable_template) {
-				$repeatable_id_suffix='{{repeatable_id_suffix}}'; // injected via JS at repeatable addition time
-			}
-			else {
-				$repeatable_id_suffix = "_" . uniqid();
-			}
+			$repeatable_id_suffix = "_" . uniqid();
 			$this->id = $this->id . $repeatable_id_suffix;
 		}
 
@@ -328,7 +323,7 @@ class Image extends Field {
 					$image = DB::fetch("SELECT * FROM media WHERE id=?", $this->default);
 
 					//this images are uploaded to state 0, also prevents xss
-					$img_data = base64_encode(file_get_contents($_ENV["images_directory"] . "/processed/" . $image->filename));
+					$img_data = base64_encode(File::getContents($_ENV["images_directory"] . "/processed/" . $image->filename));
 					$img_src = "data:" . $image->mimetype . ";base64," . $img_data;
 					echo "<img src='" . $img_src . "'>";
 					return null;

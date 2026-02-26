@@ -53,7 +53,7 @@ class Repeatable extends Field {
 					<?php
 						ob_start();
 						$repeatable_form->display();
-						$rform_contents = ob_get_contents();
+						$rform_contents = (string) ob_get_contents();
 						ob_end_clean();
 						$rform_contents = str_replace("{{repeatable_id_suffix}}", uniqid(), $rform_contents);
 						$rform_contents = str_replace("{{replace_with_index}}", $repeatable_index, $rform_contents);

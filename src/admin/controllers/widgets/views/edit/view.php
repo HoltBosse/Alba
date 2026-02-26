@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Widget, Component};
+Use HoltBosse\Alba\Core\{CMS, Widget, Component, File};
 Use HoltBosse\Form\Form;
 Use HoltBosse\Form\Input;
 Use HoltBosse\Alba\Components\Admin\ControlBar\ControlBar as AdminControlBar;
@@ -48,7 +48,7 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 </div>
 
 <script>
-	<?php echo file_get_contents(__DIR__ . "/script.js"); ?>
+	<?php echo File::getContents(__DIR__ . "/script.js"); ?>
 </script>
 
 <hr>

@@ -1,12 +1,13 @@
 <?php
 
-use HoltBosse\Alba\Core\{CMS, Form};
+use HoltBosse\Alba\Core\{CMS, File, Form};
 use \ReflectionClass;
 use HoltBosse\Form\FormBuilderDataType;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
 //recursively order properties by inheritance
+// @phpstan-ignore-next-line
 function getOrderedProperties(ReflectionClass $rc): array {
     $properties = [];
     $parent = $rc->getParentClass();
@@ -34,12 +35,13 @@ function getOrderedProperties(ReflectionClass $rc): array {
     return $properties;
 }
 
-function generateFormForFieldType($fieldType): Form {
+function generateFormForFieldType(string $fieldType): Form {
     $formObject = (object) [
         "id"=>"fieldconfig",
         "fields"=>[]
     ];
 
+    // @phpstan-ignore argument.type
     $reflection = new ReflectionClass(Form::getFieldClass($fieldType));
 
     foreach(getOrderedProperties($reflection) as $property) {
@@ -107,7 +109,7 @@ function getFieldOptionsForm(Form $form, string $fieldType, string $prefixMarkup
 $segments = CMS::Instance()->uri_segments;
 
 if(sizeof($segments)==4 && $segments[2]=="fieldoptions") {
-    $jsonConfig = json_decode(file_get_contents(__DIR__ . "/../edit/config.json"));
+    $jsonConfig = json_decode(File::getContents(__DIR__ . "/../edit/config.json"));
 
     if($segments[3]=="none") {
         echo "<p>Select Field</p>";

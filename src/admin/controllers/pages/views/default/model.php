@@ -20,6 +20,7 @@ $default_template = 1;
 
 $all_pages = Page::get_all_pages_by_depth(); // defaults to parent=-1 and depth=-1
 
+// @phpstan-ignore missingType.iterableValue
 function get_template_title(int $page_template_id, array $all_templates): string {
 	foreach ($all_templates as $template) {
 		if ($page_template_id == $template->id) {

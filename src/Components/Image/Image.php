@@ -4,6 +4,8 @@ namespace HoltBosse\Alba\Components\Image;
 
 use HoltBosse\Alba\Core\Component;
 use HoltBosse\DB\DB;
+use \stdClass;
+use \Exception;
 
 class Image extends Component {
     public int $imageId;
@@ -21,7 +23,7 @@ class Image extends Component {
     public function loadFromConfig(object $config): self {
         parent::loadFromConfig($config);
 
-        $this->imageId = $config->imageId;
+        $this->imageId = $config->imageId ?? throw new Exception("Image component requires imageId in config");
         $dbImage = DB::fetch('SELECT * FROM media WHERE id=?', $this->imageId);
 
         $this->fixedWidth = $config->fixedWidth ?? null;

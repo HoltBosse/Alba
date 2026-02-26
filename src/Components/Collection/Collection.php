@@ -6,6 +6,7 @@ use HoltBosse\Alba\Core\Component;
 use \Exception;
 
 class Collection extends Component {
+    // @phpstan-ignore missingType.iterableValue
     public array $items = [];
 
     public function display(): void {

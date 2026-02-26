@@ -18,6 +18,7 @@ Class Message {
         return isset($this->message) && $this->message != "";
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public function toMessagesAddArgsArray(): array {
         return [
             $this->type,
@@ -26,6 +27,7 @@ Class Message {
         ];
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public function toQueueMessageArgsArray(): array {
         return [
             $this->message ?? "",

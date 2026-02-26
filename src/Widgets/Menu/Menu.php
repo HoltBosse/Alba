@@ -1,7 +1,7 @@
 <?php
 namespace HoltBosse\Alba\Widgets\Menu;
 
-Use HoltBosse\Alba\Core\{CMS, Widget, Page, Content};
+Use HoltBosse\Alba\Core\{CMS, Widget, Page, Content, File};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use \stdClass;
@@ -9,7 +9,7 @@ Use Respect\Validation\Validator as v;
 
 class Menu extends Widget {
 
-	public function get_page(int $id): object {
+	public function get_page(int $id): stdClass {
 		$page = DB::fetch("SELECT * from pages where id=?", [$id]);
 		return $page;
 	}
@@ -31,7 +31,7 @@ class Menu extends Widget {
 		$all_pages = Page::get_all_pages_by_depth();
 
 		echo "<style>";
-			echo file_get_contents(__DIR__ . "/backend_style.css");
+			echo File::getContents(__DIR__ . "/backend_style.css");
 		echo "</style>";
 
 		?>
@@ -136,7 +136,7 @@ class Menu extends Widget {
 		</script>
 
 		<script>
-			<?php echo file_get_contents(__DIR__ . "/menu_widget_admin.js"); ?>
+			<?php echo File::getContents(__DIR__ . "/menu_widget_admin.js"); ?>
 		</script>
 		<?php
 	}

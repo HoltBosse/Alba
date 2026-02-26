@@ -2,20 +2,23 @@
 
 namespace HoltBosse\Alba\Components\Admin\Table;
 
-use HoltBosse\Alba\Core\{Component, Hook, Access, CMS};
+use HoltBosse\Alba\Core\{Component, Hook, Access, CMS, File};
 Use HoltBosse\Alba\Components\Button\{Button, ButtonType};
 Use HoltBosse\Alba\Components\Wrap\Wrap;
 Use HoltBosse\Alba\Components\Collection\Collection;
 Use HoltBosse\Alba\Components\Html\Html;
 Use Respect\Validation\Validator as v;
 Use HoltBosse\Form\Input;
+Use \Exception;
 
 class Table extends Component {
+    // @phpstan-ignore missingType.iterableValue
     public array $columns;
+    // @phpstan-ignore missingType.iterableValue
     public array $rows;
     public string $trClass = "normal_admin_row";
 
-    private function make_sortable_header($title) {
+    private function make_sortable_header(string $title): void {
         ?>
             <th>
                 <label class="orderablerow">
@@ -46,7 +49,7 @@ class Table extends Component {
         }
 
         echo "<style>";
-            echo file_get_contents(__DIR__ . "/style.css");
+            echo File::getContents(__DIR__ . "/style.css");
 
             echo ".$this->trClass.selected {
                 background:rgba(200,255,200,0.3);
@@ -90,6 +93,10 @@ class Table extends Component {
                         >
                     ";
                         foreach($this->columns as $column) {
+                            if(!($column instanceof TableField)) {
+                                throw new Exception("Trying to load column that isn't a table field");
+                            }
+
                             echo "
                                 <td
                                     " . (!isset($column->tdAttributes["dataset-name"]) ? "dataset-name='{$column->label}'" : "") . "
@@ -109,7 +116,7 @@ class Table extends Component {
         echo "</table>";
 
         if(in_array(true, array_column($this->columns, "sortable"))) {
-            echo "<script>" . file_get_contents(__DIR__ . "/ordering.js") . "</script>";
+            echo "<script>" . File::getContents(__DIR__ . "/ordering.js") . "</script>";
         }
 
         echo "<script type='module'>

@@ -33,7 +33,7 @@ class FileUploader extends Field {
 					$val *= 1024;
 			}
 		}
-		return $val;
+		return (int) $val;
 	}
 
 	public function display(): void {
@@ -148,6 +148,7 @@ class FileUploader extends Field {
 		$this->multiple = $config->multiple ?? "";
 		$this->mime_type = $config->mime_type ?? [];
 		$this->max_size = $this->get_bytes(ini_get("upload_max_filesize"));
+		//@phpstan-ignore-next-line
 		if ($config->max_size < $this->get_bytes(ini_get("upload_max_filesize"))) {
 			$this->max_size = $config->max_size;
 		}

@@ -56,7 +56,9 @@ class Mail extends PHPMailer {
 			$this->Username = $smtp_username;
 			$this->Password = $smtp_password;
 			$this->SMTPSecure = $encryption;
-			$this->Port = $port;
+			if($port) {
+				$this->Port = $port;
+			}
 			$this->setFrom($smtp_from, $smtp_name);
 			$this->addReplyTo($smtp_replyto, $smtp_name);
 

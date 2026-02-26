@@ -2,7 +2,7 @@
 namespace HoltBosse\Alba\Fields\Turnstile;
 
 Use HoltBosse\Form\Field;
-Use HoltBosse\Alba\Core\{CMS, Configuration};
+Use HoltBosse\Alba\Core\{CMS, Configuration, File};
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
@@ -44,7 +44,7 @@ class Turnstile extends Field {
 			]
 		];
 		$context  = stream_context_create($options);
-		$verify = file_get_contents($url, false, $context);
+		$verify = File::getContents($url, false, $context);
 		$captcha_success=json_decode($verify);
 		//CMS::log(print_r($captcha_success, true));
 		if ($captcha_success->success==false) {
