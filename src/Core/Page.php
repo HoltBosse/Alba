@@ -22,6 +22,8 @@ class Page {
 	public ?string $page_options; // json string from db / or serialized from form submission
 	public ?Form $page_options_form;
 	public ?int $domain;
+	public ?string $controller = null;
+	public mixed $view_configuration_object = null;
 
 	public function __construct() {
 		$this->id = 0;

@@ -17,7 +17,7 @@ $segments = CMS::Instance()->uri_segments;
 if(sizeof($segments)==2 && $segments[1]=="parsedown") {
 
     //user must be logged in to use this api, to prevent against abuse
-    if(CMS::Instance()->user->id===false) {
+    if(CMS::Instance()->user->id===null) {
         echo json_encode($response);
     }
 

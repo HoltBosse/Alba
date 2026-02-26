@@ -11,44 +11,44 @@ Use \Exception;
 Use \PDO;
 
 final class CMS {
-	public $domain;
-	public $user;
-	public $request;
-	public $uri_segments; // remaining segments of uri after controller found
-	public $uri_path_segments; // uri path of found controller/page
-	public $full_path_segments; // full path segments of request
-	public $markup; // TODO: rendered html for current content item/page
-	public $messages ;
-	public $page_contents;
-	public $page;
-	public $page_id;
-	public $protocol;
-	public $cache;
-	public $enabled_plugins;
-	private static $instance = null;
-	private $core_controller = false;
-	private $need_session = true;
-	public $hooks = [];
-	public $head_entries = []; // array of string to be output during CMSHEAD replacement
-	public $version = "2.5.5";
-	public $edit_page_id; // used in admin to store page being edited
+	public ?string $domain = null;
+	public ?User $user = null;
+	public ?string $request = null;
+	public ?array $uri_segments = null; // remaining segments of uri after controller found
+	public ?array $uri_path_segments = null; // uri path of found controller/page
+	public ?array $full_path_segments = null; // full path segments of request
+	public ?string $markup = null; // TODO: rendered html for current content item/page
+	public ?Messages $messages = null;
+	public ?string $page_contents = null;
+	public ?Page $page = null;
+	public ?int $page_id = null;
+	public ?string $protocol = null;
+	public ?Cache $cache = null;
+	public ?array $enabled_plugins = null;
+	private static ?CMS $instance = null;
+	private ?string $core_controller = null;
+	private bool $need_session = true;
+	public array $hooks = [];
+	public array $head_entries = []; // array of string to be output during CMSHEAD replacement
+	public string $version = "2.5.5";
+	public ?int $edit_page_id = null; // used in admin to store page being edited
 
-	private static $coreControllersRegistry = [
+	private static array $coreControllersRegistry = [
 		"image"=>__DIR__ . "/../corecontrollers/image",
 		"api"=>__DIR__ . "/../corecontrollers/api",
 		"js"=>__DIR__ . "/../corecontrollers/js",
 	];
 
-	private static $adminControllersRegistry = [
+	private static array $adminControllersRegistry = [
 		//loaded in __construct()
 	];
 
-	private static $fakeFilesRegistry = [
+	private static array $fakeFilesRegistry = [
 		"sitemap.xml"=>__DIR__ . "/../fakefiles/sitemap.xml.php",
 		"robots.txt"=>__DIR__ . "/../fakefiles/robots.txt.php",
 	];
 
-	public final static function Instance(){
+	public final static function Instance(): CMS {
 		if (self::$instance === null) {
 			// check for singleton instancing errors caused by circular class references inside CMS construction
 			/* echo "<pre>"; print_r(debug_backtrace()); echo "</pre>"; 
@@ -118,7 +118,7 @@ final class CMS {
 		return false;
 	}
 
-	public static function configureDebug() {
+	public static function configureDebug(): void {
 		if ($_ENV["debug"]==="true") {
 			ini_set('display_errors', 1);
 			ini_set('display_startup_errors', 1);
@@ -144,7 +144,7 @@ final class CMS {
 		return (isset($this->full_path_segments[0]) && $this->full_path_segments[0]=='admin');
 	}
 
-	public static function raise_404() {
+	public static function raise_404(): void {
 		ob_end_clean ();ob_end_clean ();
 		// check if we need to redirect this page
 		$relative_url = rtrim(CMS::Instance()->request, '/');
@@ -184,13 +184,13 @@ final class CMS {
 			if (isset($_ENV["custom_404_file_path"])) {
 				include($_ENV["custom_404_file_path"]); // provide your own HTML for the error page
 			} else {
-				CMS::show_error("Oops, something went wrong &#129300", "404");
+				CMS::show_error("Oops, something went wrong &#129300", 404);
 			}
 		}
 		exit(0);
 	}
 
-	public static function add_action ($hook_label, $plugin_object, $function_name, $priority=10) {
+	public static function add_action(string $hook_label, object $plugin_object, string $function_name, int $priority=10): void {
 		// shamelessly borrowed idea from wordpress API
 		// adds an action/filter to a hook - if hook doesn't exist, it's registered in CMS
 		if (!isset($GLOBALS['hooks'][$hook_label])) {
@@ -205,7 +205,7 @@ final class CMS {
 		$GLOBALS['hooks'][$hook_label]->actions[] = $action;
 	}
 	
-	public static function get_admin_template() {
+	public static function get_admin_template(): string {
 		$template="clean";
 		if (isset($_ENV["admintemplate"]) && $_ENV["admintemplate"]) {
 			if (file_exists(Template::getTemplatePath($_ENV["admintemplate"], true) . "/index.php")) {
@@ -215,11 +215,11 @@ final class CMS {
 		return $template;
 	}
 
-	public static function log($msg) {
+	public static function log(string $msg): void {
 		file_put_contents($_ENV["cms_log_file_path"], "\r\n" . date('Y-m-d H:i:s') . " - " . $msg, FILE_APPEND | LOCK_EX);
 	}
 
-	public function render_head() {
+	public function render_head(): string {
 		// called by template
 		// injects page title, opengraph, analytics js etc...
 		ob_start();
@@ -253,7 +253,7 @@ final class CMS {
 	}
 
 	
-	public function render_widgets($position) {
+	public function render_widgets(string $position): void {
 		//echo "<h5>{$position}</h5>";
 		// TODO: fix for different templates
 		$widgets = Widget::get_widget_overrides_for_position ($this->page->id, $position);
@@ -278,7 +278,7 @@ final class CMS {
 		//CMS::pprint_r ($widgets);
 	}
 
-	public static function show_error($text, $http_code="500", $qrCodeText=null) {
+	public static function show_error(string $text, int $http_code=500, ?string $qrCodeText=null): void {
 		ob_end_clean();
 		ob_end_clean();
 		http_response_code($http_code);
@@ -299,7 +299,7 @@ final class CMS {
 								$img_meta_string = $_ENV["sitename"] . " site logo";
 							?>
 							<img src="<?php echo $logo_src;?>" title="<?= $img_meta_string; ?>" alt="<?= $img_meta_string; ?>">
-							<?php echo $http_code!="" ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
+							<?php echo $http_code!=0 ? '<h1 class="title" style="font-size: 6rem; width: 6rem;">' . $http_code . '</h1>' : ""; ?>
 						</div>
 						<br><br>
 						<div style="display: flex; flex-direction: column; gap: 1rem; align-items:center; justify-content:center;">
@@ -479,7 +479,7 @@ final class CMS {
 
 		// default page contents
 		$this->page_contents = "";
-		$this->page_id = false;
+		$this->page_id = null;
 
 		// moved cache serve checking post session + db bootstrap
 		// small performance hit, but only way to alleviate potential security issues for following checks
@@ -511,7 +511,7 @@ final class CMS {
 		}
 	}
 
-	public function queue_message($msg, $type='success', $redirect=null) {
+	public function queue_message(string $msg, string|MessageType $type='success', ?string $redirect=null): void {
 		if(gettype($type)=="string") {
 			$type = MessageType::from($type);
 		}
@@ -519,21 +519,21 @@ final class CMS {
 		$this->messages->add($type, $msg, $redirect);
 	}
 
-	public function display_messages() {
+	public function display_messages(): void {
 		$this->messages->display();
 	}
 
-	public static function pprint_r ($o) {
+	public static function pprint_r(mixed $o): void {
 		echo "<pre>";
-		print_r ($o);
+			print_r($o);
 		echo "</pre>";
 	}
 
-	public static function jprint_r($o, $mode = "log") {
+	public static function jprint_r(mixed $o, string $mode = "log"): void {
     	echo "<script>console.".$mode."(".json_encode($o).");</script>";
 	}
 
-	public function get_controller() {
+	public function get_controller(): ?string {
 		// returns name/location of controller (if any)
 		// if controller found, it is set in $this->page->controller object
 		// called by render_controller function
@@ -567,13 +567,13 @@ final class CMS {
 				}
 				else {
 					$this->page->controller = null;
-					return false;
+					return null;
 				}
 			}
 		}
 	}
 
-	public function render_controller() {
+	public function render_controller(): void {
 		// called by template index.php to display main content
 
 		// determine controller (if any)
@@ -598,7 +598,7 @@ final class CMS {
 		}
 	}
 
-	public function render_dev_banner() {
+	public function render_dev_banner(): string {
 		ob_start();
 		?> 
 			<div class='dev_banner' style='background-color:red; display:flex; justify-content:center; align-items:center; z-index:99999999; width:100%; height: 10rem; position:fixed; bottom:0;'>
@@ -610,7 +610,7 @@ final class CMS {
 		return $dev_banner;
 	}
 
-	public static function getDomainIndex(string $domain) {
+	public static function getDomainIndex(string $domain): int {
 		$domains = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
 
 		$index = array_search($domain, $domains);
@@ -621,7 +621,7 @@ final class CMS {
 		return $index;
 	}
 
-	public function render() {
+	public function render(): void {
 		// main entry point for CMS after object is instantiated
 
 		// first check for core controllers
@@ -816,7 +816,6 @@ final class CMS {
 
 				// create full page cache if needed
 				// only if no messages in queue and user is not logged in and not a core controller and not debugging currently
-				// @phpstan-ignore-next-line
 				if ( $_ENV["debugwarnings"]!=="true" && $_ENV["debug"]!=="true" && $_ENV["cache_enabled"]==="true" && !($_SESSION['flash_messages'] ?? null) && !$this->user->id  && !$this->core_controller) {
 					$this->cache->create_cache($_SERVER['REQUEST_URI'], 'url', $this->page_contents);
 				}

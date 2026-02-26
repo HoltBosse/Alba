@@ -1,5 +1,5 @@
 <?php
-	Use HoltBosse\Alba\Core\{Component, Content, Page, Template};
+	Use HoltBosse\Alba\Core\{Component, Content, Page, Template, CMS};
 	Use HoltBosse\Form\{Input};
 	Use HoltBosse\DB\DB;
 	Use HoltBosse\Alba\Components\StateButton\StateButton;
@@ -93,8 +93,11 @@
 						echo "</div>";
 						if ($this->title->content_type > 0) {
 							echo "<span class='unimportant'>" . Content::get_content_type_title($this->title->content_type) ;
-							echo " &raquo; ";
-							echo Content::get_view_title($this->title->content_view) . "</span>";
+							if($this->title->content_view) {
+								echo " &raquo; ";
+								echo Content::get_view_title($this->title->content_view);
+							}
+							echo "</span>";
 						}
 						else {
 							echo "<span class='unimportant'>Widgets only</span>";
