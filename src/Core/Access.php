@@ -97,7 +97,7 @@ class Access {
 
         CMS::Instance()->user = Hook::execute_hook_filters('authenticate_user', CMS::Instance()->user); 
         
-        if (CMS::Instance()->user->id!==false) {
+        if (CMS::Instance()->user->id===null) {
             return Access::onLoginSuccess($redirectPath);
         }
 

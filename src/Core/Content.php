@@ -13,8 +13,8 @@ class Content {
 	public mixed $configuration;
 	public string $updated;
 	public int $content_type;
-	public string $created_by;
-	public string $updated_by;
+	public int $created_by;
+	public int $updated_by;
 	public string $note;
 	public mixed $tags;
 	public string $alias;
@@ -45,6 +45,7 @@ class Content {
 			$this->domain = null;
 		}
 		$this->created_by = CMS::Instance()->user->id;
+		$this->updated_by = CMS::Instance()->user->id;
 		$this->alias="";
 		$this->category=0;
 	}
