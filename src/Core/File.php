@@ -19,6 +19,7 @@ class File {
 		state 1: valid+thumbnails
 		state 2: valid+no thumbnails
 	*/
+	// @phpstan-ignore missingType.iterableValue
 	public static array $image_types = [
 		"image/jpeg" => 1,
 		"image/webp" => 1,
@@ -28,7 +29,7 @@ class File {
 		"image/gif" => 2
 	];
 
-	public static function get_mimetype_by_format(string $format) {
+	public static function get_mimetype_by_format(string $format): ?string {
 		// return mimetype when passed partial match
 		// such as webp, jpeg or png
 		foreach (File::$image_types as $key => $value) {
@@ -36,7 +37,7 @@ class File {
 				return $key;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	function __construct(string $filepath="") {

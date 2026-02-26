@@ -44,6 +44,7 @@
 				"rowAttribute"=>"stateComposite",
 				"rendererAttribute"=>"state",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $state;
 
 					public function display(): void {
@@ -66,6 +67,7 @@
 				"rowAttribute"=>"titleComposite",
 				"rendererAttribute"=>"title",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $title;
 
 					public function display(): void {

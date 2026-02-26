@@ -28,6 +28,7 @@ class Category {
 		}
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_categories_by_depth(?int $content_type, int $parent=0, int $depth=-1): array {
 		
 		$depth = $depth+1;

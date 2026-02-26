@@ -13,9 +13,11 @@ class Template {
 	public ?int $page_id;
 	public mixed $positions; // array of tuples - position alias, position title
 
+	// @phpstan-ignore missingType.iterableValue
 	private static array $templateRegistry = [
 		"basic" => __DIR__ . '/../templates/basic',
 	];
+	// @phpstan-ignore missingType.iterableValue
 	private static array $adminTemplateRegistry = [
 		"clean" => __DIR__ . '/../admin/templates/clean',
 	];
@@ -81,6 +83,7 @@ class Template {
 		return "";
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	static public function get_all_templates(): array {
 		return DB::fetchAll(
 			"SELECT * FROM templates WHERE (domain IS NULL OR domain=?)",

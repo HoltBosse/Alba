@@ -11,11 +11,13 @@ Use Respect\Validation\Validator as v;
 Use HoltBosse\Form\Input;
 
 class Table extends Component {
+    // @phpstan-ignore missingType.iterableValue
     public array $columns;
+    // @phpstan-ignore missingType.iterableValue
     public array $rows;
     public string $trClass = "normal_admin_row";
 
-    private function make_sortable_header($title) {
+    private function make_sortable_header(string $title): void {
         ?>
             <th>
                 <label class="orderablerow">

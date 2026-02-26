@@ -11,6 +11,7 @@ class Actions {
     public ?string $date = null;
     public mixed $options = null;
 
+    // @phpstan-ignore missingType.iterableValue
     private static array $actionsRegistry = [
         "contentcreate" => "HoltBosse\\Alba\\Actions\\ContentCreate\\ContentCreate",
         "contentdelete" => "HoltBosse\\Alba\\Actions\\ContentDelete\\ContentDelete",
@@ -54,6 +55,7 @@ class Actions {
         return null;
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public static function getActionTypes(): array {
         return array_keys(self::$actionsRegistry);
     }

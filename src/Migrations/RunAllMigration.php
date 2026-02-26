@@ -14,6 +14,7 @@ class RunAllMigration extends Migration {
         return new Message(false, MessageType::Warning, "Run each migration seperately.");
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public static function getAllMigrations(): array {
         return [
             ['Pages Table - Options Column', new PageOptionsMigration()],

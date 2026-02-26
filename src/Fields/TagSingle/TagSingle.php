@@ -11,7 +11,7 @@ class TagSingle extends Select {
 	public mixed $content_type;
 	public mixed $domain;
 
-	private function get_parent_tag($input) {
+	private function get_parent_tag(mixed $input): object {
 		if ($input->parent != 0) {
 			if(isset($this->tag_cache[$input->parent])) {
 				return $this->tag_cache[$input->parent];
@@ -25,7 +25,7 @@ class TagSingle extends Select {
 		}
 	}
 
-	private function make_tag_path($input) {
+	private function make_tag_path(object $input): string {
 		$title = $input->title;
 		while($input->parent != 0) {
 			$parent_tag = $this->get_parent_tag($input);

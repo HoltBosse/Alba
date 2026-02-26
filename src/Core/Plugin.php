@@ -10,11 +10,13 @@ class Plugin {
 	public int $id;
 	public string $title;
 	public int $state;
+	// @phpstan-ignore missingType.iterableValue
     public ?array $options;
     public string $location;
     public string $description;
 	public ?Form $form;
 
+	// @phpstan-ignore missingType.iterableValue
 	private static array $pluginRegistry = [
 		"AutoYear" => [
 			"path" => __DIR__ . '/../Plugins/AutoYear',
@@ -88,10 +90,12 @@ class Plugin {
 		return null;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function getPluginNames(): array {
 		return array_keys(self::$pluginRegistry);
 	}
     
+	// @phpstan-ignore missingType.iterableValue
     public static function get_all_plugins(): array {
 		return DB::fetchAll('select * from plugins where state > -1');
     }

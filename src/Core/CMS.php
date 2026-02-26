@@ -14,8 +14,11 @@ final class CMS {
 	public ?string $domain = null;
 	public ?User $user = null;
 	public ?string $request = null;
+	// @phpstan-ignore missingType.iterableValue
 	public ?array $uri_segments = null; // remaining segments of uri after controller found
+	// @phpstan-ignore missingType.iterableValue
 	public ?array $uri_path_segments = null; // uri path of found controller/page
+	// @phpstan-ignore missingType.iterableValue
 	public ?array $full_path_segments = null; // full path segments of request
 	public ?string $markup = null; // TODO: rendered html for current content item/page
 	public ?Messages $messages = null;
@@ -24,25 +27,31 @@ final class CMS {
 	public ?int $page_id = null;
 	public ?string $protocol = null;
 	public ?Cache $cache = null;
+	// @phpstan-ignore missingType.iterableValue
 	public ?array $enabled_plugins = null;
 	private static ?CMS $instance = null;
 	private ?string $core_controller = null;
 	private bool $need_session = true;
+	// @phpstan-ignore missingType.iterableValue
 	public array $hooks = [];
+	// @phpstan-ignore missingType.iterableValue
 	public array $head_entries = []; // array of string to be output during CMSHEAD replacement
 	public string $version = "2.5.5";
 	public ?int $edit_page_id = null; // used in admin to store page being edited
 
+	// @phpstan-ignore missingType.iterableValue
 	private static array $coreControllersRegistry = [
 		"image"=>__DIR__ . "/../corecontrollers/image",
 		"api"=>__DIR__ . "/../corecontrollers/api",
 		"js"=>__DIR__ . "/../corecontrollers/js",
 	];
 
+	// @phpstan-ignore missingType.iterableValue
 	private static array $adminControllersRegistry = [
 		//loaded in __construct()
 	];
 
+	// @phpstan-ignore missingType.iterableValue
 	private static array $fakeFilesRegistry = [
 		"sitemap.xml"=>__DIR__ . "/../fakefiles/sitemap.xml.php",
 		"robots.txt"=>__DIR__ . "/../fakefiles/robots.txt.php",
@@ -324,6 +333,7 @@ final class CMS {
 		die();
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function parseUrlToSegments(string $url): array {
 		//if string starts with //, change to /
 		if (substr($url, 0, 2) === "//") {

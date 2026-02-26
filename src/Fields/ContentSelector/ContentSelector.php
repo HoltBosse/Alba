@@ -8,6 +8,7 @@ Use Respect\Validation\Validator as v;
 Use HoltBosse\Form\{Input, FormBuilderAttribute, FormBuilderDataType};
 
 class ContentSelector extends Select {
+	// @phpstan-ignore missingType.iterableValue
 	public array $select_options = []; //shadow selects property so that we dont have attribute
 	public bool $list_unpublished = false;
 	public mixed $tags = null;

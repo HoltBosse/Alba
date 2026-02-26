@@ -6,6 +6,7 @@ Use Respect\Validation\Validator as v;
 Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 class PickerOrdered extends Field {
+	// @phpstan-ignore missingType.iterableValue
 	public array $select_options = [];
 	public bool $searchable = true;
 

@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Core;
 
 class Hook {
 	public ?string $label;
+	// @phpstan-ignore missingType.iterableValue
     public array $actions;
 
 	public function __construct() {

@@ -5,6 +5,7 @@ use \Exception;
 use \SimpleXMLElement;
 
 class DataExport {
+    // @phpstan-ignore missingType.iterableValue
     public array $data;
     public bool $terminateOnFinish = true;
     public bool $cleanBuffers = true;
@@ -13,6 +14,7 @@ class DataExport {
     public bool $outputHeaders = true;
     public ?string $filename; //set what you want without .format
 
+    // @phpstan-ignore missingType.iterableValue
     public static function getSupportedFormats(): array {
         return [
             "json"=>".json",

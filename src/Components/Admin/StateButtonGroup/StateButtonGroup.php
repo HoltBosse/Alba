@@ -9,6 +9,7 @@ use HoltBosse\Alba\Components\Wrap\Wrap;
 
 class StateButtonGroup extends Component {
     public string $location;
+    // @phpstan-ignore missingType.iterableValue
     public array $buttons=["publish"=>"primary","unpublish"=>"warning","delete"=>"danger"];
 
     public function display(): void {

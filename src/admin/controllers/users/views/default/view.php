@@ -69,6 +69,7 @@
 				"rowAttribute"=>"stateComposite",
 				"rendererAttribute"=>"state",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $state;
 
 					public function display(): void {
@@ -91,6 +92,7 @@
 				"rowAttribute"=>"usernameComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -124,6 +126,7 @@
 				"rowAttribute"=>"groupComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {
@@ -145,6 +148,7 @@
 				"rowAttribute"=>"tagComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
+					// @phpstan-ignore missingType.iterableValue
 					public array $defaultvalue;
 
 					public function display(): void {

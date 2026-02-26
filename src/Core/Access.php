@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Core;
 use HoltBosse\Form\Input;
 
 class Access {
+    // @phpstan-ignore missingType.iterableValue
     private static array $adminAccessRegistry = [
         "" => [1,2],
         "content" => [1, 2],
@@ -12,6 +13,7 @@ class Access {
         "images" => [1, 2]
     ];
 
+    // @phpstan-ignore missingType.iterableValue
     public static function registerAdminAccessRule(string $path, array $groups): bool {
         if(!isset(self::$adminAccessRegistry[$path])) {
             self::$adminAccessRegistry[$path] = $groups;
@@ -22,14 +24,17 @@ class Access {
         return false;
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public static function registerAdminAccessRuleOverride(string $path, array $groups): void {
         self::$adminAccessRegistry[$path] = $groups;
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public static function getAdminAccessRule(string $path): ?array {
         return isset(self::$adminAccessRegistry[$path]) ? self::$adminAccessRegistry[$path] : null;
     }
 
+    // @phpstan-ignore-next-line missingType.iterableValue
     public static function can_access(?array $page_groups=[], ?array $user_groups=[]): bool {
         //prep and parse the inputs
         if (!$user_groups) {

@@ -6,14 +6,15 @@ Use \Exception;
 Use HoltBosse\Alba\Components\Image\Image as ComponentImage;
 
 class Image {
-	public $id;
-    public $filename;
-    public $width;
-    public $height;
-    public $title;
-    public $alt;
-    public $mimetype;
-    public static $image_sizes = [
+	public mixed $id;
+    public mixed $filename;
+    public mixed $width;
+    public mixed $height;
+    public mixed $title;
+    public mixed $alt;
+    public mixed $mimetype;
+    // @phpstan-ignore missingType.iterableValue
+    public static array $image_sizes = [
 		"thumb"=>200,
 		"web"=>1920
 	];
@@ -30,7 +31,7 @@ class Image {
         $this->mimetype = $db_image->mimetype;      
     }
     
-    #[\Deprecated(message: "use new oop component", since: "3.20.0")]
+    #[\Deprecated(message: "use new oop component", since: "3.20.0")] //@phpstan-ignore-line
     public function render($size="", $class="", $output_immediately=true, $attributes=[]) {
         // size and class used in v <= 2.4.77
         // $w attribute supercedes $size
@@ -163,6 +164,7 @@ class Image {
         return false;
     }
 
+    // @phpstan-ignore-next-line missingType.iterableValue
     public static function processUploadedFiles(array $files, array $alts, array $titles, array $tags, string $directory): object {
         $image_types_data = File::$image_types;
         $uploaded_files = [];

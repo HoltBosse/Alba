@@ -9,10 +9,12 @@ Use Respect\Validation\Validator as v;
 
 class User {
 	public ?int $id;
+	// @phpstan-ignore missingType.iterableValue
 	public array $groups;
 	public string $username;
 	public ?string $password;
 	public ?string $email;
+	// @phpstan-ignore missingType.iterableValue
 	public array $tags;
 	public int $state;
 	public string $registered;
@@ -31,7 +33,8 @@ class User {
 		$this->domain = null;
 	}
 
-	public static function create_new (string $username, string $password, string $email, array $groups=[], int $state=0, ?int $domain=null) {
+	// @phpstan-ignore missingType.iterableValue
+	public static function create_new (string $username, string $password, string $email, array $groups=[], int $state=0, ?int $domain=null): int {
 		if(is_null($domain)) {
 			$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
@@ -41,7 +44,7 @@ class User {
 			$query = "INSERT INTO users (username, email, password, state, domain) VALUES (?,?,?,?,?)";
 			//CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
 			DB::exec($query, [$username,$email,$hash,$state,$domain]);
-			$id = DB::getLastInsertedId();
+			$id = (int) DB::getLastInsertedId();
 			foreach ($groups as $group) {
 				if (is_int($group)) {
 					$query = "INSERT INTO user_groups (user_id, group_id) values (?,?)";
@@ -55,6 +58,7 @@ class User {
 		}
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_users(): array {
 		return DB::fetchAll(
 			"SELECT u.*, group_concat(DISTINCT g.display) AS `groups`, group_concat(DISTINCT t.title) AS tags 
@@ -67,6 +71,7 @@ class User {
 		);
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public function get_all_users_in_group(int $group_id): array {
 		$query = "Select u.*, group_concat(g.display) as `groups` from users u 
 					Left Join user_groups ug on ug.user_id = u.id  
@@ -76,11 +81,13 @@ class User {
 		return DB::fetchAll($query, [$group_id]);
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_groups_for_user(int $user_id): array {
 		$query = "SELECT * from `groups` where id in (select group_id from user_groups where user_id=?) ORDER BY display ASC";
 		return DB::fetchAll($query, $user_id);
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_group_name (int $group_id): array {
 		$query = "select display from `groups` where id=?";
 		$result = DB::fetch($query, [$group_id]);
@@ -423,6 +430,7 @@ class User {
 		}
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_groups(?int $domain=null): array {
 		if($domain==null) {
 			$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);

@@ -16,6 +16,7 @@ class TableField extends Component {
     public string $rendererAttribute;
     public mixed $value;
     public ?Component $renderer = null;
+    // @phpstan-ignore missingType.iterableValue
     public array $tdAttributes = [];
     public int $columnSpan = 1;
 

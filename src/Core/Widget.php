@@ -23,6 +23,7 @@ class Widget {
 	public mixed $form_data = null;
 	public mixed $domain = null;
 
+	// @phpstan-ignore missingType.iterableValue
     private static array $widgetRegistry = [
 		"Html" => [
 			"path" => __DIR__ . '/../Widgets/Html',
@@ -77,6 +78,7 @@ class Widget {
 		return null;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function getWidgetNames(): array {
 		return array_keys(self::$widgetRegistry);
 	}
@@ -117,10 +119,12 @@ class Widget {
 		echo $output;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_widget_types(): array {
 		return DB::fetchAll('SELECT * FROM widget_types');
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_widgets_for_position(int $page_id, string $position): array {
 		$query = 'SELECT * 
 		from widgets 

@@ -43,9 +43,9 @@ class ImagePosition extends TextInput {
         ];
 
         $fakeplugin = new class($pluginConfig, $this) extends Plugin {
-            public $field;
+            public mixed $field;
             
-            public function __construct($pluginConfig, $field) {
+            public function __construct(object $pluginConfig, mixed $field) {
                 $this->field = $field;
 
                 parent::__construct($pluginConfig);
@@ -55,7 +55,7 @@ class ImagePosition extends TextInput {
                 CMS::add_action("render_image_field_buttons",$this,'add_button'); // label, function, priority  
             }
 
-            public function add_button($pageContents, ...$args) {
+            public function add_button(string $pageContents, mixed ...$args): string {
                 $field = $args[0][0];
 
                 ob_start();

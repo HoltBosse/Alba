@@ -83,12 +83,13 @@ class Page {
 		return $depth;
 	}
 
-	// $pdo->prepare($sql)->execute([$name, $id]);
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_pages(): array {
 		$result = DB::fetchAll("SELECT * FROM pages WHERE state>-1");
 		return $result;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_pages_by_depth(int $parent=-1, int $depth=-1): array {
 		$depth = $depth+1;
 		$result=[];
@@ -101,7 +102,7 @@ class Page {
 		return $result;
 	}
 
-
+	// @phpstan-ignore-next-line missingType.iterableValue
 	public static function get_pages_from_id_array(array $id_array): array {
 		$in_string = implode(',',$id_array);
 		$query = "select * from pages where id in ({$in_string})";
@@ -109,7 +110,8 @@ class Page {
 		return  $result;
 	}
 
-	public static function has_overrides ($page): array {
+	// @phpstan-ignore missingType.iterableValue
+	public static function has_overrides (int $page): array {
 		$w = DB::fetchAll("select widgets from page_widget_overrides where page_id=? and (widgets is not null and widgets <> '')", [$page]);
 		//CMS::pprint_r ($w);
 		return $w;

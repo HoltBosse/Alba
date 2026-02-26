@@ -7,6 +7,7 @@ Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
 //recursively order properties by inheritance
+// @phpstan-ignore-next-line
 function getOrderedProperties(ReflectionClass $rc): array {
     $properties = [];
     $parent = $rc->getParentClass();
@@ -34,7 +35,7 @@ function getOrderedProperties(ReflectionClass $rc): array {
     return $properties;
 }
 
-function generateFormForFieldType($fieldType): Form {
+function generateFormForFieldType(string $fieldType): Form {
     $formObject = (object) [
         "id"=>"fieldconfig",
         "fields"=>[]

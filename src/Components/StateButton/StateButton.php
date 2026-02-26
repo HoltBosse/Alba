@@ -10,6 +10,7 @@ class StateButton extends Component {
     public int $state;
     public string $multiStateFormAction;
     public string $dualStateFormAction;
+    // @phpstan-ignore missingType.iterableValue
     public ?array $states;
     public ?int $contentType;
 

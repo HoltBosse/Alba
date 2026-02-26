@@ -23,6 +23,7 @@ class FrontEndEditButton extends Plugin {
         ];
     }
 
+    // @phpstan-ignore-next-line missingType.iterableValue
     private function validateGroup(array $groupOptions, array $userGroups): bool {
         foreach($userGroups as $item) {
             if(in_array($item, $groupOptions)) {

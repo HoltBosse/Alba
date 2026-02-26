@@ -8,14 +8,19 @@ class UserSearch {
 	public string $order_direction;
 	public bool $published_only;
 	public bool $disable_builtin_state_check;
+	// @phpstan-ignore missingType.iterableValue
 	public array $list_fields;
+	// @phpstan-ignore missingType.iterableValue
 	public array $ignore_fields;
 	public int $page;
 	public ?string $searchtext;
 	public int $page_size;
 	public bool $created_by_cur_user;
+	// @phpstan-ignore missingType.iterableValue
 	public array $tags; // array of tag ids to match 
+	// @phpstan-ignore missingType.iterableValue
 	public array $groups; // array of group_ids to match
+	// @phpstan-ignore missingType.iterableValue
 	public array $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']] - note custom fields need f_ prefix
 	public ?int $domain; //null for all, or domain id to match
 	private int $count; // set after query is exec() shows total potential row count for paginated calls

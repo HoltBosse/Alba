@@ -46,18 +46,21 @@ class Tag {
 
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_tags_for_content(int $content_id, int $content_type_id=-1): array {
 		// default to media/image content type
 		$result = DB::fetchAll("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", [$content_id, $content_type_id]);
 		return $result;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_tags_available_for_content_type (int $content_type_id): array {
 		$result = DB::fetchAll("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
 		$result2 = DB::fetchAll("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
 		return array_merge ($result,$result2);
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function set_tags_for_content(int $content_id, array $tag_array, int $content_type_id): void {
 		DB::exec("delete from tagged where content_id=? and content_type_id=?", [$content_id,$content_type_id]);
 		foreach ($tag_array as $tag_id) {
@@ -70,10 +73,12 @@ class Tag {
 		return 0;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_tags(): array {
 		return DB::fetchAll("SELECT * FROM tags");
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_tags_by_depth(int $parent=0, int $depth=-1): array {
 		$depth = $depth+1;
 		$result=[];
@@ -86,6 +91,7 @@ class Tag {
 		return $result;
 	}
 
+	// @phpstan-ignore missingType.iterableValue
 	public static function get_tag_content_types(int $id): array {
 		return DB::fetchAll("SELECT content_type_id from tag_content_type where tag_id=?", [$id]);
 	}

@@ -16,7 +16,9 @@ class ContentSearch {
 	public int|string $type_filter;
 	public bool $published_only;
 	public bool $disable_builtin_state_check;
+	// @phpstan-ignore missingType.iterableValue
 	public array $list_fields;
+	// @phpstan-ignore missingType.iterableValue
 	public array $ignore_fields;
 	public bool $created_by_cur_user;
 	public int $page;
@@ -25,11 +27,15 @@ class ContentSearch {
 	public int $page_size;
 	public ?string $custom_field_name;
 	public ?int $category; // category id to match
+	// @phpstan-ignore missingType.iterableValue
 	public array $tags; // array of tag ids to match 
+	// @phpstan-ignore missingType.iterableValue
 	public array $filters; // array of assoc arrays where 0=colname and 1=value to match e.g. [['note','test']]
 	public ?int $domain; //null for all, or domain id to match
 	private int $count; // set after query is exec() shows total potential row count for paginated calls
+	// @phpstan-ignore missingType.iterableValue
 	private array $filter_pdo_params;
+	// @phpstan-ignore missingType.iterableValue
 	private array $custom_search_params;
 
 	public function __construct() {

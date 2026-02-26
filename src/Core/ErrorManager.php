@@ -47,6 +47,7 @@ Class ErrorManager {
         return 'E_' . $base64;
     }
 
+    // @phpstan-ignore missingType.iterableValue
     public static function decodeNiceException(string $errorCode): ?array {
         if (strpos($errorCode, 'E_') !== 0) return null;
         $base64 = substr($errorCode, 2);
