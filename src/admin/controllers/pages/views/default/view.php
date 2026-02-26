@@ -10,6 +10,7 @@
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
 	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
+	Use \stdClass;
 
 	$header = "All Pages";
 	$rightContent = "<a href='" . $_ENV["uripath"] . "/admin/pages/edit/0' class='button is-primary pull-right'>
@@ -82,7 +83,7 @@
 				"rowAttribute"=>"titleComposite",
 				"rendererAttribute"=>"title",
 				"renderer"=>new class extends Component {
-					public object $title;
+					public stdClass $title;
 
 					public function display(): void {
 						echo "<div>";

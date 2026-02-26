@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, Actions, Hook};
+Use HoltBosse\Alba\Core\{CMS, Configuration, Actions, Hook, File};
 Use HoltBosse\Form\Form;
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
@@ -10,7 +10,7 @@ $cur_page = Input::getVar("page", v::numericVal(), 1);
 $pagination_size = Configuration::get_configuration_value ('general_options', 'pagination_size') ?? 10;
 
 $event_types = DB::fetchAll("SELECT DISTINCT `type` AS text, `type` AS value FROM user_actions");
-$search_form_object = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$search_form_object = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 $search_form_object->fields[0]->select_options = $event_types;
 $search_form_object->fields[] = (object) [
     "type"=>"Html",

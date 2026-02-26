@@ -40,7 +40,7 @@ class Plugin {
 		],
 	];
 
-    public function __construct(object $plugin_info) {
+    public function __construct(stdClass $plugin_info) {
         // $plugin_info should be object containing select * info from plugins table for this plugin
         $this->state = $plugin_info->state;
         $this->title = $plugin_info->title;
@@ -65,7 +65,7 @@ class Plugin {
 	}
 
 	public static function registerPluginDir(string $pluginDirPath, string $pluginClassBase): void {
-		foreach(glob($pluginDirPath . '/*') as $file) {
+		foreach(File::glob($pluginDirPath . '/*') as $file) {
 			Plugin::registerPlugin(
 				basename($file, '.php'),
 				$file,
@@ -76,7 +76,7 @@ class Plugin {
 
 	public static function getPluginPath(string $pluginName): ?string {
 		if (isset(self::$pluginRegistry[$pluginName])) {
-			return realpath(self::$pluginRegistry[$pluginName]['path']);
+			return File::realpath(self::$pluginRegistry[$pluginName]['path']);
 		}
 
 		return null;

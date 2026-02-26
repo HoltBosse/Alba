@@ -41,7 +41,7 @@ Class ErrorManager {
 
     public static function generateNiceException(Throwable $e): string {
         $data = $e->getMessage() . '|' . $e->getLine() . '|' . $e->getFile();
-        $compressed = gzcompress($data, 9);
+        $compressed = (string) gzcompress($data, 9);
         $base64 = base64_encode($compressed);
         $base64 = rtrim(strtr($base64, '+/', '-_'), '=');
         return 'E_' . $base64;

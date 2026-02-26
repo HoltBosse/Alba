@@ -15,6 +15,9 @@ if (CMS::Instance()->uri_segments[2]=="widget_preview" && is_numeric(CMS::Instan
 		$type_info = Widget::get_widget_type($widget->type);
 		$widget_class_name = "Widget_" . $type_info->location;
 		$widget_of_type = new $widget_class_name();
+		if(!($widget_of_type instanceof Widget)) {
+			throw new Exception("Widget class $widget_class_name does not extend Widget");
+		}
 		$widget_of_type->load ($widget->id);
 		$widget_of_type->internal_render();
 	}

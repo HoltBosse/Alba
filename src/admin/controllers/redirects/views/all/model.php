@@ -1,13 +1,13 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, Hook, Form};
+Use HoltBosse\Alba\Core\{CMS, Configuration, File, Hook, Form};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
 
 // any variables created here will be available to the view
 
-$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 $searchFormObject->fields[] = (object) [
 	"type"=>"Html",
 	"html"=>"<div style='display: flex; gap: 1rem;'>

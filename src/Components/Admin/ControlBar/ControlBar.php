@@ -2,7 +2,7 @@
 
 namespace HoltBosse\Alba\Components\Admin\ControlBar;
 
-use HoltBosse\Alba\Core\Component;
+use HoltBosse\Alba\Core\{Component, File};
 
 class ControlBar extends Component {
     public ?Component $middleButton = null;
@@ -11,10 +11,10 @@ class ControlBar extends Component {
     public function display(): void {
         ?>
             <style>
-                <?php echo file_get_contents(__DIR__ . '/style.css'); ?>
+                <?php echo File::getContents(__DIR__ . '/style.css'); ?>
             </style>
             <script>
-                <?php echo file_get_contents(__DIR__ . '/script.js'); ?>
+                <?php echo File::getContents(__DIR__ . '/script.js'); ?>
             </script>
             <div <?php echo $this->renderAttributes(); ?>>
                 <button title="Save and exit" class="button is-primary" type="submit">Save</button>

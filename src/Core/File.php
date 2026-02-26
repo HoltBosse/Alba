@@ -1,6 +1,8 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
+use \Exception;
+
 class File {
 	// id	type 1 = image, 2 = other file	width	height	title	alt	filename	mimetype
 	public mixed $id; 
@@ -52,7 +54,7 @@ class File {
 		if ($filepath && is_file($filepath)) {
 			$this->filepath = $filepath;
 			$this->filename = basename ($filepath);
-			$this->mimetype = mime_content_type ($filepath);
+			$this->mimetype = (string) mime_content_type ($filepath);
 			if ($this->is_image()) {
 				$image_info = getimagesize($filepath);
 				if (is_array($image_info)) {
@@ -65,6 +67,36 @@ class File {
 			}
 		}
 		// TODO: 
+	}
+
+	//wrapper to do modern php exceptions rather than old php strings|false
+	public static function getContents(string $filename, bool $use_include_path = false, mixed $context = null, int $offset = 0, ?int $length = null): string {
+		if($length!==null) {
+			$length = max(0, $length);
+		}
+		$output = file_get_contents($filename, $use_include_path, $context, $offset, $length);
+		if($output===false) {
+			throw new Exception("Failed to get contents of file: $filename");
+		}
+		return $output;
+	}
+
+	//wrapper to do modern php exceptions rather than old php strings|false
+	public static function realpath(string $filename): string {
+		$output = realpath($filename);
+		if($output===false) {
+			throw new Exception("Failed to get realpath of file: $filename");
+		}
+		return $output;
+	}
+
+	// @phpstan-ignore missingType.iterableValue
+	public static function glob(string $pattern, int $flags = 0): array {
+		$output = glob($pattern, $flags);
+		if($output===false) {
+			throw new Exception("Failed to glob files with pattern: $pattern");
+		}
+		return $output;
 	}
 
 	public function is_image(): bool {
@@ -90,7 +122,7 @@ class File {
 	}  
 
 	public static function get_max_upload_size_bytes(): int  {  
-		return (int) min(File::php_size_to_bytes(ini_get('post_max_size')), File::php_size_to_bytes(ini_get('upload_max_filesize')));    
+		return (int) min(File::php_size_to_bytes((string) ini_get('post_max_size')), File::php_size_to_bytes((string) ini_get('upload_max_filesize')));    
 	}
 
 	public static function php_size_to_bytes(string $php_size): int {

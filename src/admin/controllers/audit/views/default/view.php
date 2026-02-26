@@ -1,13 +1,13 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Configuration, Actions, Component};
+Use HoltBosse\Alba\Core\{CMS, Configuration, Actions, Component, File};
 Use HoltBosse\Form\Form;
 Use HoltBosse\DB\DB;
 Use HoltBosse\Alba\Components\Pagination\Pagination;
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
 echo "<style>";
-    echo file_get_contents(__DIR__ . "/style.css");
+    echo File::getContents(__DIR__ . "/style.css");
 echo "</style>";
 
 (new TitleHeader())->loadFromConfig((object)[
@@ -38,7 +38,9 @@ echo "</style>";
 				$className = Actions::getActionClass($item->type);
 				if($className) {
 					$actionInstance = new $className($item);
-					$actionInstance->display();
+					if($actionInstance instanceof Actions) {
+						$actionInstance->display();
+					}
 				}
 			}
 		?>

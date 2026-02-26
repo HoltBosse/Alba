@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Component};
+Use HoltBosse\Alba\Core\{CMS, Component, File};
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 Use HoltBosse\Alba\Components\Pagination\Pagination;
@@ -8,7 +8,7 @@ Use HoltBosse\Alba\Components\Html\Html;
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
 echo "<style>";
-    echo file_get_contents(__DIR__ . "/style.css");
+    echo File::getContents(__DIR__ . "/style.css");
 echo "</style>";
 
 $currentForm = Input::getVar("form", v::StringVal()->length(1, null), null) ?? $searchFieldsObject->fields[0]->select_options[0]->value ?? null;
@@ -122,5 +122,5 @@ if($countResults > 0) {
 }
 
 echo "<script>";
-    echo file_get_contents(__DIR__ . "/script.js");
+    echo File::getContents(__DIR__ . "/script.js");
 echo "</script>";

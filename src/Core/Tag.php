@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 Use \PDO;
 Use HoltBosse\Form\{Input, Form};
+Use HoltBosse\Alba\Core\File;
 
 class Tag {
 	public int $id;
@@ -142,7 +143,7 @@ class Tag {
 		
 		//if shared accross all domains
 		if (isset($_ENV["tag_custom_fields_file_path"])) {
-			$customFieldsFormObject = json_decode(file_get_contents($_ENV["tag_custom_fields_file_path"]));
+			$customFieldsFormObject = json_decode(File::getContents($_ENV["tag_custom_fields_file_path"]));
 			if(isset($customFieldsFormObject->multi_domain_shared_instances) && $customFieldsFormObject->multi_domain_shared_instances==true) {
 				$domain = null;
 			}

@@ -32,7 +32,7 @@ class Nav extends Component {
                     "wrap"=>false
                 ]);
             } else {
-                $pathParts = explode("/", ltrim(parse_url($url, PHP_URL_PATH), "/"));
+                $pathParts = explode("/", ltrim((string) parse_url($url, PHP_URL_PATH), "/"));
                 if (Access::can_access(Access::getAdminAccessRule($pathParts[1]) ?? null)) {
                     $link = [
                         "label" => $label,

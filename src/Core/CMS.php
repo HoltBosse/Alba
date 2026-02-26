@@ -77,7 +77,7 @@ final class CMS {
 	}
 
 	public static function registerCoreControllerDir(string $coreControllerDirPath): void {
-		foreach(glob($coreControllerDirPath . '/*') as $file) {
+		foreach(File::glob($coreControllerDirPath . '/*') as $file) {
 			CMS::registerCoreController(
 				basename($file, '.php'),
 				$file
@@ -106,7 +106,7 @@ final class CMS {
 	}
 
 	public static function registerAdminControllerDir(string $adminControllerDirPath): void {
-		foreach(glob($adminControllerDirPath . '/*') as $file) {
+		foreach(File::glob($adminControllerDirPath . '/*') as $file) {
 			CMS::registerAdminController(
 				basename($file, '.php'),
 				$file
@@ -256,8 +256,10 @@ final class CMS {
 		<?php echo "<script>window.uripath='" . $_ENV["uripath"] . "';</script>" ?>
 
 		<?php 
-		$cms_head = ob_get_contents();
-		ob_end_clean();
+		$cms_head = ob_get_clean();
+		if($cms_head === false) {
+			throw new Exception("Failed to get Head");
+		}
 		return $cms_head;
 	}
 
@@ -340,7 +342,7 @@ final class CMS {
 			$url = substr($url, 1);
 		}
 
-		return preg_split('@/@', parse_url($url, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
+		return (array) preg_split('@/@', (string) parse_url($url, PHP_URL_PATH), -1, PREG_SPLIT_NO_EMPTY);
 	}
 
 	public static function registerBuiltInFormFields(): void {
@@ -358,7 +360,7 @@ final class CMS {
 			}
 		}
 
-		foreach(glob(__DIR__ . "/../Fields/*") as $fieldFile) {
+		foreach(File::glob(__DIR__ . "/../Fields/*") as $fieldFile) {
 			$fieldName = basename($fieldFile);
 			$fieldClass = "HoltBosse\\Alba\\Fields\\" . $fieldName . "\\" . $fieldName;
 			if (class_exists($fieldClass)) {
@@ -422,7 +424,6 @@ final class CMS {
 		// authentication eg. image API
 		
 		
-
 		if( session_status() == PHP_SESSION_NONE && $this->need_session) {
 			session_start();
 			$session_user_id = null;
@@ -615,8 +616,10 @@ final class CMS {
 				<h1 style="font-weight: bold; font-size: 5rem; color: black;">DEV SITE</h1>
 			</div>
 		<?php
-		$dev_banner = ob_get_contents();
-		ob_end_clean();
+		$dev_banner = ob_get_clean();
+		if($dev_banner === false) {
+			throw new Exception("Failed to render dev banner");
+		}
 		return $dev_banner;
 	}
 
@@ -628,7 +631,7 @@ final class CMS {
 			throw new Exception("Could not resolve domain name");
 		}
 
-		return $index;
+		return (int) $index;
 	}
 
 	public function render(): void {
@@ -713,8 +716,11 @@ final class CMS {
 				include_once(Template::getTemplatePath($template, true) . "/index.php");
 				
 				// save page contents to CMS
-				$this->page_contents = ob_get_contents();
-				ob_end_clean(); // clear and stop buffering
+				$output = ob_get_clean();
+				if($output===false) {
+					throw new Exception("Failed to get template buffer");
+				}
+				$this->page_contents = $output;
 
 				// perform content filtering / plugins on CMS::page_contents;
 				$this->page_contents = Hook::execute_hook_filters('content_ready_admin', $this->page_contents);
@@ -804,8 +810,11 @@ final class CMS {
 				ob_start();
 				include_once (Template::getTemplatePath($this->page->template->folder) . "/index.php");
 				// save page contents to CMS
-				$this->page_contents = ob_get_contents();
-				ob_end_clean();
+				$output = ob_get_clean();
+				if($output === false) {
+					throw new Exception("Failed to get template buffer");
+				}
+				$this->page_contents = $output;
 				// perform content filtering / plugins on CMS::page_contents;
 				$this->page_contents = Hook::execute_hook_filters('content_ready_frontend', $this->page_contents);
 				// render CMS header - can incorporate changes to page title/og/metatags from content controllers

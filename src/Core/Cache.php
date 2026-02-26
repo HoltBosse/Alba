@@ -29,16 +29,16 @@ class Cache {
         return $type . "_" . hash('md4', $identifier);
     }
 
-    public function is_cached(string $identifier, string $type): string|bool {
+    public function is_cached(string $identifier, string $type): ?string {
         // checks if cache file for an identifier/type exists 
         // and that it isn't stale
         // if it's good, returns full path to cache file
-        // otherwise returns false
+        // otherwise returns null
 
         // first check if path is ignored for urls
         if ($type=='url') {
             if ($this->ignore($identifier, $type)) {
-                return false;
+                return null;
             }
         }
         $filename = $this->gen_cache_filename($identifier, $type);
@@ -63,7 +63,7 @@ class Cache {
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public function create_cache(string $identifier, string $type='url', string $content=""): void {
@@ -75,7 +75,7 @@ class Cache {
     }
 
     public function get_cache(string $filepath): string {
-        return file_get_contents($filepath);
+        return File::getContents($filepath);
     }
 
     public function serve_cache(string $filepath): void {
@@ -83,7 +83,7 @@ class Cache {
     }
 
     public function serve_page(string $filepath): void {
-        echo "<!-- Alba cache: " . date('F j, Y, g:i a', filemtime($filepath)) . " -->\n";
+        echo "<!-- Alba cache: " . date('F j, Y, g:i a', (int) filemtime($filepath)) . " -->\n";
         readfile($filepath);
         exit();
     }

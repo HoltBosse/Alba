@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Tag, Component};
+Use HoltBosse\Alba\Core\{CMS, Tag, Component, File};
 Use HoltBosse\Form\Input;
 Use HoltBosse\Alba\Components\Pagination\Pagination;
 Use HoltBosse\Alba\Components\Html\Html;
@@ -176,7 +176,7 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 
 	window.load_img_editor = loadImgEditor;
 	<?php
-		echo file_get_contents(__DIR__ . "/script.js");
+		echo File::getContents(__DIR__ . "/script.js");
 	?>
 
 	initGraphicalUploaderEventListeners("#upload_space");

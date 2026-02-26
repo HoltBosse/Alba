@@ -66,6 +66,7 @@ class ContentSelector extends Select {
 			// e.g. basic_article
 			$this->content_type = Content::get_content_type_id($this->content_type);
 		}
+		$this->content_type = (int) $this->content_type;
 		if ($this->content_type) {
 
 			$location = Content::get_content_location($this->content_type);

@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, JSON, Controller, Configuration, Tag, Content, ContentSearch, Form, Hook, HookQueryResult};
+Use HoltBosse\Alba\Core\{CMS, JSON, Controller, Configuration, Tag, Content, ContentSearch, Form, Hook, HookQueryResult, File};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
@@ -36,7 +36,7 @@ $applicable_tags = Tag::get_tags_available_for_content_type ($content_type_filte
 $applicable_users = DB::fetchAll('SELECT id,username FROM users WHERE domain=? ORDER BY username ASC', [$_SESSION["current_domain"]]);
 $applicable_categories = DB::fetchAll('SELECT * FROM categories WHERE content_type=? AND (domain=? OR domain IS NULL) ORDER BY title ASC', [$content_type_filter, $_SESSION["current_domain"]]);
 
-$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 
 $searchFormObject->fields[] = (object) [
 	"type"=>"Html",

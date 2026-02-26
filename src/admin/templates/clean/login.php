@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Hook, User, Mail};
+Use HoltBosse\Alba\Core\{CMS, Hook, User, Mail, File};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
@@ -93,9 +93,9 @@ if ($protocol=="http") {
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.0/css/bulma.min.css"></link>
 		<style>
 			<?php
-				echo file_get_contents(__DIR__ . "/css/dashboard.css");
-				echo file_get_contents(__DIR__ . "/css/layout.css");
-				echo file_get_contents(__DIR__ . "/css/darkmode.css");
+				echo File::getContents(__DIR__ . "/css/dashboard.css");
+				echo File::getContents(__DIR__ . "/css/layout.css");
+				echo File::getContents(__DIR__ . "/css/darkmode.css");
 			?>
 		</style>
 

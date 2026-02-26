@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Controller, Plugin};
+Use HoltBosse\Alba\Core\{CMS, Controller, Plugin, File};
 Use HoltBosse\DB\DB;
 
 // router
@@ -41,7 +41,7 @@ if ($missing) { ?>
 			<?php foreach ($missing as $missed) {
 				$plugin_config_file = Plugin::getPluginPath($missed) . '/plugin_config.json';
 				if (is_readable($plugin_config_file)) {
-					$w_config = json_decode(file_get_contents($plugin_config_file));
+					$w_config = json_decode(File::getContents($plugin_config_file));
 					if (!$w_config || !$w_config->title) {
 						echo "<li class='list-item has-text-danger'>Skipped <strong>{$missed}</strong> - missing or badly formed <em>plugin_config.json</em></li>";
 					}
@@ -71,8 +71,8 @@ if ($missing) { ?>
 
 //CMS::queue_message('Test','success');
 
-if ($view && is_dir(realpath(dirname(__FILE__) . "/views")) && is_dir(realpath(dirname(__FILE__) . "/views/$view"))) {
-	$plugin_controller = new Controller(realpath(dirname(__FILE__)),$view);
+if ($view && is_dir(File::realpath(dirname(__FILE__) . "/views")) && is_dir(File::realpath(dirname(__FILE__) . "/views/$view"))) {
+	$plugin_controller = new Controller(File::realpath(dirname(__FILE__)),$view);
 	$plugin_controller->load_view($view);
 } else {
 	CMS::raise_404();

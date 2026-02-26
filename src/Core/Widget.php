@@ -53,7 +53,7 @@ class Widget {
 	}
 
 	public static function registerWidgetDir(string $widgetDirPath, string $widgetClassBase): void {
-		foreach(glob($widgetDirPath . '/*') as $file) {
+		foreach(File::glob($widgetDirPath . '/*') as $file) {
 			Widget::registerWidget(
 				basename($file, '.php'),
 				$file,
@@ -64,7 +64,7 @@ class Widget {
 
 	public static function getWidgetPath(string $widgetName): ?string {
 		if (isset(self::$widgetRegistry[$widgetName])) {
-			return realpath(self::$widgetRegistry[$widgetName]['path']);
+			return File::realpath(self::$widgetRegistry[$widgetName]['path']);
 		}
 
 		return null;
@@ -156,7 +156,8 @@ class Widget {
 		return $widget_ids;
 	}
 
-	public static function get_widget_overrides_for_position (int $page, string $position): ?object {
+	// @phpstan-ignore missingType.iterableValue
+	public static function get_widget_overrides_for_position (int $page, string $position): ?array {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
 		$widget_ids = DB::fetch("SELECT widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets ?? null; // csv
 		if ($widget_ids) {
@@ -206,7 +207,7 @@ class Widget {
 		return DB::fetch('SELECT title FROM widget_types WHERE id=?', $widget_type_id)->title;
 	}
 
-	public static function get_widget_type(int $widget_type_id): object {
+	public static function get_widget_type(int $widget_type_id): stdClass {
 		return DB::fetch('SELECT * FROM widget_types WHERE id=?', $widget_type_id);
 	}
 

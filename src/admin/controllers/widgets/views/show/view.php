@@ -10,6 +10,7 @@
 	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
+	Use \stdClass;
 
 	ob_start();
 	if ($widget_type_id) {
@@ -153,7 +154,7 @@
 				"rowAttribute"=>"pagesComposite",
 				"rendererAttribute"=>"defaultvalue",
 				"renderer"=>new class extends Component {
-					public object $defaultvalue;
+					public stdClass $defaultvalue;
 
 					public function display(): void {
 						echo "<div>";

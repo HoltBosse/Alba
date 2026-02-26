@@ -3,8 +3,9 @@ namespace HoltBosse\Alba\Fields\ImagePosition;
 
 Use HoltBosse\Form\Field;
 Use HoltBosse\Form\Fields\Input\Input as TextInput;
-Use HoltBosse\Alba\Core\{CMS, Plugin, Hook};
+Use HoltBosse\Alba\Core\{CMS, Plugin, Hook, File};
 Use HoltBosse\DB\DB;
+Use stdClass;
 
 class ImagePosition extends TextInput {
     public ?string $fieldname = null;
@@ -16,7 +17,7 @@ class ImagePosition extends TextInput {
                     display: none;
                 }
 
-                <?php echo file_get_contents(__DIR__ . "/style.css"); ?>
+                <?php echo File::getContents(__DIR__ . "/style.css"); ?>
             </style>
         <?php
 
@@ -45,7 +46,7 @@ class ImagePosition extends TextInput {
         $fakeplugin = new class($pluginConfig, $this) extends Plugin {
             public mixed $field;
             
-            public function __construct(object $pluginConfig, mixed $field) {
+            public function __construct(stdClass $pluginConfig, mixed $field) {
                 $this->field = $field;
 
                 parent::__construct($pluginConfig);

@@ -1,9 +1,9 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Content, Component};
+Use HoltBosse\Alba\Core\{CMS, Content, Component, File};
 Use HoltBosse\Alba\Components\Html\Html;
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
-Use HoltBosse\Form\{Input, Form};
+Use HoltBosse\Form\{Input, Form, Field};
 
 ?>
 
@@ -90,6 +90,9 @@ Use HoltBosse\Form\{Input, Form};
                                 $propname = "{$content_list_field->name}"; 
                                 $classname = Form::getFieldClass($content_list_field->type);
                                 $curfield = new $classname();
+                                if(!($curfield instanceof Field)) {
+                                    throw new Exception("Failed to load field");
+                                }
                                 $curfield->loadFromConfig($named_custom_fields[$propname]); // load config - useful for some fields
                                 $curfield->default = $i->$propname; // set temp field value to current stored value
                                 // TODO: pass precalc array of table names for content types to aid in performance of lookups 
@@ -112,6 +115,6 @@ Use HoltBosse\Form\{Input, Form};
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <script>
     let content_type=<?=$content_type;?>;
-    <?php echo file_get_contents(__DIR__ . "/script.js"); ?>
+    <?php echo File::getContents(__DIR__ . "/script.js"); ?>
 </script>
 

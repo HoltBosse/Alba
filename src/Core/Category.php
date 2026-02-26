@@ -4,6 +4,8 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 Use \Exception;
 Use HoltBosse\Form\Form;
+Use \StdClass;
+Use HoltBosse\Alba\Core\File;
 
 class Category {
 	public ?int $id = null;
@@ -47,7 +49,7 @@ class Category {
 		return $result;
 	}
 
-	public static function get_category_count(int|string|null $content_type, string $search=""): object {
+	public static function get_category_count(int|string|null $content_type, string $search=""): stdClass {
 		if ($search) {
 			$like = '%' . $search . '%';
 			if (!$content_type) {
@@ -104,14 +106,14 @@ class Category {
 		$this->state = $required_details_form->getFieldByName('state')->default;
 		$this->parent = $required_details_form->getFieldByName('parent')->default; 
 		$this->content_type = $required_details_form->getFieldByName('content_type')->default; 
-		$this->custom_fields = $custom_fields_form ? json_encode($custom_fields_form) : "";
+		$this->custom_fields = $custom_fields_form ? json_encode($custom_fields_form, JSON_THROW_ON_ERROR) : "";
 
 		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
 		
 		//if shared accross all domains
 		if (isset($_ENV["category_custom_fields_form_path"])) {
-			$customFieldsFormObject = json_decode(file_get_contents($_ENV["category_custom_fields_form_path"]));
+			$customFieldsFormObject = json_decode(File::getContents($_ENV["category_custom_fields_form_path"]));
 			if(isset($customFieldsFormObject->multi_domain_shared_instances) && $customFieldsFormObject->multi_domain_shared_instances==true) {
 				$domain = null;
 			}

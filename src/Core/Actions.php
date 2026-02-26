@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use \DateTime;
+Use \stdClass;
 
 class Actions {
     public ?string $id = null;
@@ -31,7 +32,7 @@ class Actions {
         "userupdate" => "HoltBosse\\Alba\\Actions\\UserUpdate\\UserUpdate",
     ];
 
-    function __construct(object $action) {
+    function __construct(stdClass $action) {
 		$this->id = $action->id;
         $this->userid = $action->userid;
         $this->date = $action->date;
@@ -60,7 +61,7 @@ class Actions {
         return array_keys(self::$actionsRegistry);
     }
 
-    public static function add_action(string $type, object $action, int $userid=0): string {
+    public static function add_action(string $type, stdClass $action, int $userid=0): string {
         if ($userid==0) {$userid=CMS::Instance()->user->id;}
         if (!is_numeric($userid)) {$userid=0;} //triple check - cms can be dumb when a user is timed out
 
@@ -74,7 +75,7 @@ class Actions {
         return $id;
     }
 
-    public static function add_action_details(string $actionid, object $details): void {
+    public static function add_action_details(string $actionid, stdClass $details): void {
         DB::exec("INSERT INTO user_actions_details (action_id, json) VALUES (?, ?)", [$actionid, json_encode($details)]);
     }
 
@@ -135,7 +136,7 @@ class Actions {
         $this->render_row(null, "unknown action occurred");
     }
 
-    public function display_diff(object $viewmore): string {
+    public function display_diff(stdClass $viewmore): string {
         return "
             <tr>
                 <td>unknown</td>

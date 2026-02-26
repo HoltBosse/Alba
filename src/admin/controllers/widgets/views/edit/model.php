@@ -8,7 +8,7 @@ Use HoltBosse\DB\DB;
 $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	// edit existing widget id is segment 2
-	$widget_id = $segments[2];
+	$widget_id = (int) $segments[2];
 
 	$widgetExists = DB::fetch('SELECT * FROM widgets WHERE id=?', $widget_id);
 	if(!$widgetExists) {
@@ -27,7 +27,7 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
 	// get widget type and create object of correct class
-	$type_info = Widget::get_widget_type($segments[3]);
+	$type_info = Widget::get_widget_type((int) $segments[3]);
 	$widget_class_name = Widget::getWidgetClass($type_info->location);
 	$widget = new $widget_class_name();
 	$new_widget = true;

@@ -3,12 +3,16 @@
 Use HoltBosse\Alba\Core\{CMS, Mail, Component};
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 Use HoltBosse\Alba\Components\Admin\MessageBox\MessageBox;
+Use \Exception;
 
 function embedded_phpinfo(): void {
     ob_start();
     phpinfo();
-    $phpinfo = ob_get_contents();
-    ob_end_clean();
+    $phpinfo = ob_get_clean();
+    if($phpinfo===false) {
+        throw new Exception("Failed to capture phpinfo output");
+    }
+
     $phpinfo = preg_replace('%^.*<body>(.*)</body>.*$%ms', '$1', $phpinfo);
     echo "
         <style type='text/css'>

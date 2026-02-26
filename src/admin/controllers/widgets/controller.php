@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Template, Content, Widget, Controller};
+Use HoltBosse\Alba\Core\{CMS, Template, Content, Widget, Controller, File};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Form;
 
@@ -42,7 +42,7 @@ if ($missing) { ?>
 			<?php foreach ($missing as $missed) {
 				$widget_config_file = Widget::getWidgetPath($missed) . '/widget_config.json';
 				if (is_readable($widget_config_file)) {
-					$w_config = json_decode(file_get_contents($widget_config_file));
+					$w_config = json_decode(File::getContents($widget_config_file));
 					if (!$w_config || !$w_config->title) {
 						echo "<li class='list-item has-text-danger'>Skipped <strong>{$missed}</strong> - missing or badly formed <em>widget_config.json</em></li>";
 					}
@@ -72,8 +72,8 @@ if ($missing) { ?>
 
 //CMS::queue_message('Test','success');
 
-if ($view && is_dir(realpath(dirname(__FILE__) . "/views")) && is_dir(realpath(dirname(__FILE__) . "/views/$view"))) {
-	$widgets_controller = new Controller(realpath(dirname(__FILE__)),$view);
+if ($view && is_dir(File::realpath(dirname(__FILE__) . "/views")) && is_dir(File::realpath(dirname(__FILE__) . "/views/$view"))) {
+	$widgets_controller = new Controller(File::realpath(dirname(__FILE__)),$view);
 	$widgets_controller->load_view($view);
 } else {
 	CMS::raise_404();

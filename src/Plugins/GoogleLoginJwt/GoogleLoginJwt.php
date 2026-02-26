@@ -1,10 +1,12 @@
 <?php
 namespace HoltBosse\Alba\Plugins\GoogleLoginJwt;
 
-Use HoltBosse\Alba\Core\{CMS, Plugin};
+Use HoltBosse\Alba\Core\{CMS, Plugin, File, User};
 Use HoltBosse\Form\Input;
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
+Use \stdClass;
+Use \Exception;
 
 class GoogleLoginJwt extends Plugin {
 
@@ -39,11 +41,11 @@ class GoogleLoginJwt extends Plugin {
         return base64_decode(strtr($input, '-_', '+/'));
     }
 
-    public function authenticate_token(object $user_object): object {
+    public function authenticate_token(User $user_object): User {
         // FILTER - attached to authenticate_user hook
         // authenticate_user hook passes user_object
         
-        if ($user_object->id!==false) {
+        if ($user_object->id!==null) {
             // already logged in 
             return $user_object;
         }
@@ -89,7 +91,7 @@ class GoogleLoginJwt extends Plugin {
 
         // check token signature against public keys
         // TODO: cache and only retrieve once expired
-        $google_pems = file_get_contents("https://www.googleapis.com/oauth2/v1/certs");
+        $google_pems = File::getContents("https://www.googleapis.com/oauth2/v1/certs");
         $google_pems_obj = json_decode($google_pems);
         if (!$google_pems) {
             CMS::Instance()->queue_message('Failed to retrieve valid PEMs from Google','danger', $_ENV["uripath"] . "/admin");
@@ -100,7 +102,10 @@ class GoogleLoginJwt extends Plugin {
         // loop over public keys for match
         foreach ($pem_arr as $pem) {
             $prepped_pem = openssl_pkey_get_public($pem); // prepare
-            $valid = openssl_verify( $data, $sig, $prepped_pem, "RSA-SHA256"); 
+            if($prepped_pem===false) {
+                throw new Exception("Bad things happened in Google JWT");
+            }
+            $valid = openssl_verify( $data, $sig, $prepped_pem, "RSA-SHA256");
             if ($valid===1) {
                 break;
             }

@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Fields\FormInstances;
 Use HoltBosse\Form\Fields\Select\Select;
 Use HoltBosse\Alba\Core\{CMS};
 Use HoltBosse\Alba\Fields\SqlSelector\SqlSelector;
+Use \stdClass;
 
 class FormInstances extends SqlSelector {
     public ?int $domain = null;
@@ -13,7 +14,9 @@ class FormInstances extends SqlSelector {
 
         $this->domain = $config->domain ?? $domain;
         
+		//@phpstan-ignore-next-line
 		$config->query = "SELECT id as value, title as text FROM `form_instances` WHERE state >= 0 AND (domain = ? OR domain IS NULL) ORDER BY title ASC";
+		//@phpstan-ignore-next-line
 		$config->params = [$this->domain];
 
         parent::loadFromConfig($config);

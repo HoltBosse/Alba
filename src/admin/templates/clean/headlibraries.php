@@ -1,5 +1,5 @@
 <?php
-    Use HoltBosse\Alba\Core\Configuration;
+    Use HoltBosse\Alba\Core\{Configuration, File};
 ?>
 
 <script>window.uripath = "<?php echo $_ENV["uripath"]; ?>";</script>
@@ -7,10 +7,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.0/css/bulma.min.css"></link>
 <style>
     <?php
-        echo file_get_contents(__DIR__ . "/css/dashboard.css");
-        echo file_get_contents(__DIR__ . "/css/layout.css");
-        echo file_get_contents(__DIR__ . "/css/searchform.css");
-        echo file_get_contents(__DIR__ . "/css/darkmode.css");
+        echo File::getContents(__DIR__ . "/css/dashboard.css");
+        echo File::getContents(__DIR__ . "/css/layout.css");
+        echo File::getContents(__DIR__ . "/css/searchform.css");
+        echo File::getContents(__DIR__ . "/css/darkmode.css");
     ?>
 </style>
 

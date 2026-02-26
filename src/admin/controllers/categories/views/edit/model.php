@@ -12,7 +12,7 @@ $segments = CMS::Instance()->uri_segments;
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	// edit existing cat
 	
-	$cat_id = $segments[2];
+	$cat_id = (int) $segments[2];
 	$content_type = DB::fetch('select content_type from categories where id=?', [$cat_id]);
 	//CMS::pprint_r ($content_type); exit(0);
 	if (!$content_type) {
@@ -23,7 +23,7 @@ if (sizeof($segments)==3 && is_numeric($segments[2])) {
 	$new_cat = false;
 }
 elseif(sizeof($segments)==4 && $segments[2]=='new' && is_numeric($segments[3])) {
-	$cat = new Category($segments[3]);
+	$cat = new Category((int) $segments[3]);
 	//$content->type_id = $segments[3]; // passing optional parameter to class constructor above
 	$new_cat = true;
 }

@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Fields\Rich;
 
 Use HoltBosse\Form\Field;
 Use HoltBosse\Alba\Components\CssFile\CssFile;
+Use HoltBosse\Alba\Core\File;
 
 class Rich extends Field {
 	public mixed $listing_endpoint;
@@ -199,9 +200,9 @@ class Rich extends Field {
 					};
 
 					<?php
-						echo file_get_contents(__DIR__ . "/figure.js");
-						echo file_get_contents(__DIR__ . "/figcaption.js");
-						echo file_get_contents(__DIR__ . "/video.js");
+						echo File::getContents(__DIR__ . "/figure.js");
+						echo File::getContents(__DIR__ . "/figcaption.js");
+						echo File::getContents(__DIR__ . "/video.js");
 					?>
 
 					function stripClassAttributes(html) {

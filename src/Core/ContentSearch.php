@@ -77,6 +77,9 @@ class ContentSearch {
 					throw new Exception('Unable to determine content type');
 				}
 			}
+			//if it was a string, we converted it to an int. if it was a string int, now we cast it
+			$this->type_filter = (int) $this->type_filter;
+
 			$location = Content::get_content_location($this->type_filter);
             $custom_fields = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
 			$table_name = "controller_" . $custom_fields->id ;

@@ -69,6 +69,9 @@ class DataExport {
             }
 
             $output = fopen('php://output', 'w');
+            if($output === false) {
+                throw new Exception("Failed to open output file");
+            }
             fputcsv($output, array_keys($this->data[0]), escape: "");
             foreach($this->data as $row) {
                 fputcsv($output, $row, escape: "");

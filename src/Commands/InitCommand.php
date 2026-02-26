@@ -8,6 +8,7 @@ use HoltBosse\DB\DB;
 use Symfony\Component\Dotenv\Dotenv;
 use PDO;
 use Exception;
+use HoltBosse\Alba\Core\File;
 
 #[AsCommand(
     name: 'init',
@@ -18,10 +19,10 @@ class InitCommand extends Command {
     public function __invoke(OutputInterface $output): int {
         $output->writeln("Beginning Alba project initialization...");
 
-        $installPath = readline("Enter project root or [" . getcwd() . "] for default: ");
+        $installPath = (string) readline("Enter project root or [" . getcwd() . "] for default: ");
 
         if($installPath==="") {
-            $installPath = getcwd();
+            $installPath = (string) getcwd();
         }
 
         if(!file_exists($installPath)) {
@@ -30,7 +31,7 @@ class InitCommand extends Command {
         }
 
         if(file_exists($installPath . "/../.env")) {
-            $envPath = realpath($installPath . "/../.env");
+            $envPath = File::realpath($installPath . "/../.env");
 
             $output->writeln("found .env: $envPath");
             $output->writeln("loading... ");
@@ -75,7 +76,7 @@ class InitCommand extends Command {
                     $default = " [$nicev] for default";
                 }
 
-                $input = readline("Enter configuration option '$k'$default: ");
+                $input = (string) readline("Enter configuration option '$k'$default: ");
 
                 if($input==="") {
                     $env[$k] = $v;
@@ -90,7 +91,7 @@ class InitCommand extends Command {
             $output->writeln("");
             $output->writeln("writing .env");
 
-            $envPath = realpath($installPath . "/..") . "/.env";
+            $envPath = File::realpath($installPath . "/..") . "/.env";
             
             $fileData = "";
 
@@ -146,9 +147,9 @@ class InitCommand extends Command {
 
         $output->writeln("");
 
-        $sqlFiles = glob(__DIR__ . "/../../bin/sql/mariadb/*.sql");
-        foreach($sqlFiles as $file) {
-            $tableName = explode(".", basename($file))[0];
+		$sqlFiles = File::glob(__DIR__ . "/../../bin/sql/mariadb/*.sql");
+	    foreach($sqlFiles as $file) {
+		    $tableName = explode(".", basename($file))[0];
 
             $tableStatus = DB::fetch("SELECT count(*) AS c FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?", [$tableName, $_ENV["dbname"]])->c;
 
@@ -156,7 +157,7 @@ class InitCommand extends Command {
                 $output->writeln("table $tableName is already installed, skipping");
             } else {
                 $output->writeln("installing $tableName");
-                DB::exec(file_get_contents($file));
+                DB::exec(File::getContents($file));
                 $output->writeln("installed");
             }
         }
@@ -226,7 +227,7 @@ class InitCommand extends Command {
             $output->writeln("Admin User Configurator");
 
             foreach($user as $k=>$v) {
-                $user[$k] = readline("Enter [$k]: ");
+                $user[$k] = (string) readline("Enter [$k]: ");
             }
 
             $hash = password_hash($user["password"], PASSWORD_DEFAULT);
@@ -258,10 +259,10 @@ class InitCommand extends Command {
         $output->writeln("");
 
         if(!file_exists($installPath . "/index.php")) {
-            $indexContents = file_get_contents(__DIR__ . "/../../bin/datafiles/index.php");
+            $indexContents = File::getContents(__DIR__ . "/../../bin/datafiles/index.php");
             
             if(file_exists($installPath . "/composer.json")) {
-                $composerData = json_decode(file_get_contents($installPath . "/composer.json"));
+                $composerData = json_decode(File::getContents($installPath . "/composer.json"));
                 
                 if($composerData->autoload && $composerData->autoload->{"psr-4"}) {
                     $namespace = array_keys((array) $composerData->autoload->{"psr-4"})[0];
@@ -291,7 +292,7 @@ class InitCommand extends Command {
         }
 
         if(!file_exists($installPath . "/.htaccess")) {
-            file_put_contents($installPath . "/.htaccess", file_get_contents(__DIR__ . "/../../bin/datafiles/.htaccess"));
+            file_put_contents($installPath . "/.htaccess", File::getContents(__DIR__ . "/../../bin/datafiles/.htaccess"));
 
             $output->writeln("created .htaccess");
             $output->writeln("");

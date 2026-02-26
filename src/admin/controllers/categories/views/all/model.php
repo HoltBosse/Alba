@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Category, Content, Hook, Form, HookQueryResult};
+Use HoltBosse\Alba\Core\{CMS, Category, Content, Hook, Form, HookQueryResult, File};
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
@@ -18,7 +18,7 @@ if($content_type_filter < -3 || $content_type_filter > $max_content_id) {
 	CMS::show_error("Invalid content type", 404);
 }
 
-$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 $searchFormObject->fields[] = (object) [
 	"type"=>"Html",
 	"html"=>"<div style='display: flex; gap: 1rem;'>

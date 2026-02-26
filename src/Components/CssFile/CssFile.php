@@ -2,7 +2,7 @@
 
 namespace HoltBosse\Alba\Components\CssFile;
 
-use HoltBosse\Alba\Core\{Component, CMS};
+use HoltBosse\Alba\Core\{Component, CMS, File};
 use \Exception;
 
 class CssFile extends Component {
@@ -10,10 +10,7 @@ class CssFile extends Component {
     public bool $injectIntoHead = true;
 
     public function display(): void {
-        $cssContents = file_get_contents($this->filePath);
-        if ($cssContents === false) {
-            throw new Exception("Failed to read CSS file: " . $this->filePath);
-        }
+        $cssContents = File::getContents($this->filePath);
         $cssWithStyleTags = "<style>\n" . $cssContents . "\n</style>";
         if($this->injectIntoHead) {
             CMS::Instance()->head_entries[] = $cssWithStyleTags;

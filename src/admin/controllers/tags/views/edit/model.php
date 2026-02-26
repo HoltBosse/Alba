@@ -1,12 +1,12 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Tag};
+Use HoltBosse\Alba\Core\{CMS, File, Tag};
 Use HoltBosse\Form\{Input, Form};
 
 $segments = CMS::Instance()->uri_segments;
 
 if (sizeof($segments)==3 && is_numeric($segments[2])) {
-	$tag_id = $segments[2];
+	$tag_id = (int) $segments[2];
 	$tag = new Tag();
 	$tagLoadStatus = $tag->load($tag_id);
 
@@ -34,10 +34,10 @@ if (isset($_ENV["tag_custom_fields_file_path"])) {
 	$custom_fields_form = new Form ($_ENV["tag_custom_fields_file_path"]);
 }
 
-$required_details_obj = json_decode(file_get_contents(__DIR__ . '/required_fields_form.json'));
+$required_details_obj = json_decode(File::getContents(__DIR__ . '/required_fields_form.json'));
 
 if($custom_fields_form) {
-	$customFieldStates = json_decode(file_get_contents($_ENV["tag_custom_fields_file_path"]))->states ?? [];
+	$customFieldStates = json_decode(File::getContents($_ENV["tag_custom_fields_file_path"]))->states ?? [];
 
 	foreach($required_details_obj->fields as $field) {
 		if($field->name == "state") {

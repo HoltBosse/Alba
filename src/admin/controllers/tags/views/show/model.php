@@ -1,11 +1,11 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Tag, Hook, HookQueryResult, Form};
+Use HoltBosse\Alba\Core\{CMS, File, Tag, Hook, HookQueryResult, Form};
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 use stdClass;
 
-$searchFormObject = json_decode(file_get_contents(__DIR__ . "/search_form.json"));
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
 $searchFormObject->fields[] = (object) [
 	"type"=>"Html",
 	"html"=>"<div style='display: flex; gap: 1rem;'>
@@ -45,7 +45,7 @@ $all_tags = array_values(array_filter($all_tags, function($tag) {
 $content_list_fields = [];
 
 if (isset($_ENV["tag_custom_fields_file_path"])) {
-	$customFieldsFormObject = json_decode(file_get_contents($_ENV["tag_custom_fields_file_path"]));
+	$customFieldsFormObject = json_decode(File::getContents($_ENV["tag_custom_fields_file_path"]));
     $named_custom_fields = array_column($customFieldsFormObject->fields, null, 'name');
 
     if (property_exists($customFieldsFormObject,'list')) {

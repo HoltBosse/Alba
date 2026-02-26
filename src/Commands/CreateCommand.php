@@ -12,6 +12,7 @@ Use \Exception;
 Use \ErrorException;
 Use HoltBosse\DB\DB;
 use Respect\Validation\Validator as v;
+use HoltBosse\Alba\Core\File;
 
 //we try catch this, since the cms debug code needs env vars to run
 
@@ -40,7 +41,7 @@ class CreateCommand extends Command {
         }
 
         //read composer.json and get the psr-4 namespace for the src directory
-        $composerJson = json_decode(file_get_contents('composer.json'), true);
+        $composerJson = json_decode(File::getContents('composer.json'), true);
         $psr4 = $composerJson['autoload']['psr-4'] ?? null;
 
         if (!$psr4) {
@@ -56,7 +57,7 @@ class CreateCommand extends Command {
             case 'controller':
                 $output->writeln("Creating controller...");
 
-                $controllerName = trim(readline("Please enter your controller name: "));
+                $controllerName = trim((string) readline("Please enter your controller name: "));
 
                 if(!file_exists('src/Controllers')) {
                     mkdir('src/Controllers', 0755, true);
@@ -67,8 +68,8 @@ class CreateCommand extends Command {
                     return Command::FAILURE;
                 }
 
-                $controllerTitle = trim(readline("Please enter a title for this controller (e.g. 'Blog Posts'): "));
-                $controllerDescription = trim(readline("Please enter a description for this controller (e.g. 'Controller for managing blog posts'): "));
+                $controllerTitle = trim((string) readline("Please enter a title for this controller (e.g. 'Blog Posts'): "));
+                $controllerDescription = trim((string) readline("Please enter a description for this controller (e.g. 'Controller for managing blog posts'): "));
 
                 mkdir("src/Controllers/{$controllerName}", 0755, true);
                 file_put_contents("src/Controllers/{$controllerName}/controller.php", "");
@@ -92,7 +93,7 @@ class CreateCommand extends Command {
                 break;
             case 'widget':
                 $output->writeln("Creating widget...");
-                $widgetName = trim(readline("Please enter your widget name: "));
+                $widgetName = trim((string) readline("Please enter your widget name: "));
 
                 //check that src/Widgets exists, if not create it
                 if (!file_exists('src/Widgets')) {

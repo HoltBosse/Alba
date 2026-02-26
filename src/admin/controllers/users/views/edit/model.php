@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, User};
+Use HoltBosse\Alba\Core\{CMS, File, User};
 Use HoltBosse\Form\Form;
 Use HoltBosse\DB\DB;
 
@@ -20,7 +20,7 @@ $custom_user_fields_form = isset($_ENV["custom_user_fields_file_path"]) ? new Fo
 
 if (sizeof($segments)==3) {
 	if (is_numeric($segments[2])) {
-		$userLoadStatus = $edit_user->load_from_id($segments[2]);
+		$userLoadStatus = $edit_user->load_from_id((int) $segments[2]);
 
 		if($userLoadStatus==false) {
 			CMS::Instance()->queue_message('Failed to load User id: ' . $segments[2], 'danger',$_ENV["uripath"].'/admin/users');
@@ -61,7 +61,7 @@ if(!$edit_user->email) {
 }
 
 if(isset($_ENV["custom_user_fields_file_path"])) {
-	$formObject = json_decode(file_get_contents($_ENV["custom_user_fields_file_path"]));
+	$formObject = json_decode(File::getContents($_ENV["custom_user_fields_file_path"]));
 	if($formObject->states) {
 		foreach($formObject->states as $state) {
 			$core_user_fields_form->fields["userstate"]->select_options[] = (object) ["text"=>$state->name,"value"=>$state->state];

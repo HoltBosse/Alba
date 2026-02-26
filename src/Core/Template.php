@@ -31,7 +31,7 @@ class Template {
 		$this->title = $template->title;
 		$this->folder = $template->folder;
 		$this->description = $template->description;
-		$this->positions = JSON::load_obj_from_file(realpath(self::$templateRegistry[$this->folder] . '/positions.json'))->positions;
+		$this->positions = JSON::load_obj_from_file(File::realpath(self::$templateRegistry[$this->folder] . '/positions.json'))->positions;
 		$this->page_id = null; // nominally used in back-end to inform template of page being edited for layout/position purposes
 	}
 
@@ -53,7 +53,7 @@ class Template {
 	}
 
 	public static function registerTemplateDir(string $templateDirPath): void {
-		foreach(glob($templateDirPath . '/*') as $file) {
+		foreach(File::glob($templateDirPath . '/*') as $file) {
 			Template::registerTemplate(
 				basename($file, '.php'),
 				$file
@@ -64,11 +64,11 @@ class Template {
 	public static function getTemplatePath(string $templateName, bool $adminTemplate=false): ?string {
 		if ($adminTemplate) {
 			if (isset(self::$adminTemplateRegistry[$templateName])) {
-				return realpath(self::$adminTemplateRegistry[$templateName]);
+				return File::realpath(self::$adminTemplateRegistry[$templateName]);
 			}
 		} else {
 			if (isset(self::$templateRegistry[$templateName])) {
-				return realpath(self::$templateRegistry[$templateName]);
+				return File::realpath(self::$templateRegistry[$templateName]);
 			}
 		}
 		return null;
@@ -158,7 +158,7 @@ class Template {
 					echo "<input type='hidden' name='override_positions_widgets[]' class='position_widgets_input' value='{$override_widgets}'>"; // TODO: csv of positions in order
 					$widget_list_array = explode(",",$override_widgets);
 					if ($widget_list_array[0]=="") {
-						$widget_list_array = false;
+						$widget_list_array = [];
 					}
 					foreach ($widget_list_array as $widget_id) {
 						echo "<span data-tagid='{$widget_id}' draggable='true' ondragover='dragover_tag_handler(event)' ondragend='dragend_tag_handler(event)' ondragstart='dragstart_tag_handler(event)' class='draggable_widget  is-warning tag'>".Widget::get_widget_title ((int) $widget_id)."<span class='delete is-delete'>X</span></span>";	

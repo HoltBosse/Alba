@@ -36,7 +36,7 @@ Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 		<?php foreach ($backup_files as $backup_file):?>
 			<tr>
 				<td><a href='<?php echo $_ENV["uripath"];?>/backups/<?php echo $backup_file;?>'><?php echo $backup_file;?></a></td>
-				<td><?php echo human_filesize(filesize($_ENV["backup_directory"] . "/backups/" . $backup_file));?></td>
+				<td><?php echo human_filesize((int) filesize($_ENV["backup_directory"] . "/backups/" . $backup_file));?></td>
 			</tr>
 		<?php endforeach; ?>
 	</tbody>

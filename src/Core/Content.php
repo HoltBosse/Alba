@@ -4,6 +4,7 @@ namespace HoltBosse\Alba\Core;
 Use HoltBosse\Form\{Input, Form, Field};
 Use HoltBosse\DB\DB;
 Use \Exception;
+Use \StdClass;
 
 class Content {
 	public ?int $id;
@@ -62,7 +63,7 @@ class Content {
 	}
 
 	public static function registerContentControllerDir(string $contentControllerDirPath): void {
-		foreach(glob($contentControllerDirPath . '/*') as $file) {
+		foreach(File::glob($contentControllerDirPath . '/*') as $file) {
 			Content::registerContentController(
 				basename($file, '.php'),
 				$file
@@ -72,7 +73,7 @@ class Content {
 
 	public static function getContentControllerPath(string $contentName): ?string {
 		if (isset(self::$controllerRegistry[$contentName])) {
-			return realpath(self::$controllerRegistry[$contentName]);
+			return File::realpath(self::$controllerRegistry[$contentName]);
 		}
 
 		return null;
@@ -482,7 +483,7 @@ class Content {
 		}
 	}
 
-	public static function get_content_type_fields(int $content_type): ?object {
+	public static function get_content_type_fields(int $content_type): ?stdClass {
 		if (!$content_type) {
 			return null;
 		}
@@ -580,7 +581,7 @@ class Content {
 		}
 	}
 
-	public static function get_all_content_for_id (int $id, int $content_type): object {
+	public static function get_all_content_for_id (int $id, int $content_type): stdClass {
 		$table = Content::get_table_name_for_content_type($content_type);
 		return DB::fetch("SELECT * from `{$table}` where id=?", [$id]);
 	}
@@ -611,11 +612,13 @@ class Content {
 				/** @var Field $field */
 				if (isset($field->save)) {
 					if ($field->save===true) {
+						// @phpstan-ignore offsetAccess.nonOffsetAccessible
 						$list_fields[] = $field->name;
 					}
 				}
 				else {
 					// assume saveable
+					// @phpstan-ignore offsetAccess.nonOffsetAccessible
 					$list_fields[] = $field->name;
 				} 
 			}

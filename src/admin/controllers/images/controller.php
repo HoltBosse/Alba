@@ -1,6 +1,6 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Controller};
+Use HoltBosse\Alba\Core\{CMS, Controller, File};
 
 // router
 
@@ -36,8 +36,8 @@ if (sizeof($segments)==1) {
 
 //CMS::queue_message('Test','success');
 
-if ($view && is_dir(realpath(dirname(__FILE__) . "/views")) && is_dir(realpath(dirname(__FILE__) . "/views/$view"))) {
-	$images_controller = new Controller(realpath(dirname(__FILE__)),$view);
+if ($view && is_dir(File::realpath(dirname(__FILE__) . "/views")) && is_dir(File::realpath(dirname(__FILE__) . "/views/$view"))) {
+	$images_controller = new Controller(File::realpath(dirname(__FILE__)),$view);
 	$images_controller->load_view($view);
 } else {
 	CMS::raise_404();

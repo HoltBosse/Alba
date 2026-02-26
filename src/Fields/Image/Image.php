@@ -323,7 +323,7 @@ class Image extends Field {
 					$image = DB::fetch("SELECT * FROM media WHERE id=?", $this->default);
 
 					//this images are uploaded to state 0, also prevents xss
-					$img_data = base64_encode(file_get_contents($_ENV["images_directory"] . "/processed/" . $image->filename));
+					$img_data = base64_encode(File::getContents($_ENV["images_directory"] . "/processed/" . $image->filename));
 					$img_src = "data:" . $image->mimetype . ";base64," . $img_data;
 					echo "<img src='" . $img_src . "'>";
 					return null;
