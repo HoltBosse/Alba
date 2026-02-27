@@ -15,6 +15,7 @@ class TitleHeader extends Component {
         (new CssFile())->loadFromConfig((object)[
             "filePath"=>__DIR__ . "/style.css",
             "injectIntoHead"=>false,
+            "renderOnce" => true,
         ])->display();
         ?>
             <div <?php echo $this->renderAttributes(); ?>>

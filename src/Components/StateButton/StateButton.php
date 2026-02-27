@@ -18,6 +18,7 @@ class StateButton extends Component {
         (new CssFile())->loadFromConfig((object)[
             "filePath"=>__DIR__ . "/style.css",
             "injectIntoHead"=>false,
+            "renderOnce" => true,
         ])->display();
         ?>
             <div class="sb_center_state">

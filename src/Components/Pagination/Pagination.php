@@ -32,6 +32,7 @@ class Pagination extends Component {
                 (new CssFile())->loadFromConfig((object)[
                     "filePath"=>__DIR__ . "/style.css",
                     "injectIntoHead"=>false,
+                    "renderOnce" => true,
                 ])->display();    
             ?>
             <nav <?php echo $this->renderAttributes(); ?>>
