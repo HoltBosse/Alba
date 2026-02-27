@@ -25,7 +25,6 @@ class PickerOrdered extends Field {
 			(new CssFile())->loadFromConfig((object)[
 				"filePath"=>__DIR__ . "/style.css",
 				"injectIntoHead"=>false,
-				"renderOnce" => true,
 			])->display();
                 ?>
                 

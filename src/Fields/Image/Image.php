@@ -32,7 +32,6 @@ class Image extends Field {
 		(new CssFile())->loadFromConfig((object)[
             "filePath"=>__DIR__ . "/untrusted.css",
             "injectIntoHead"=>false,
-			"renderOnce" => true,
         ])->display();
 		
 		echo "<div class='field " . ($this->required ? "required" : "") . "'>";

@@ -8,7 +8,7 @@ use \Exception;
 class CssFile extends Component {
     public string $filePath;
     public bool $injectIntoHead = true;
-    public bool $renderOnce = false;
+    public bool $renderOnce = true;
 
     /** @var array<string, bool> */
     private static array $renderedFiles = [];
@@ -42,7 +42,7 @@ class CssFile extends Component {
 
         $this->filePath = $config->filePath;
         $this->injectIntoHead = $config->injectIntoHead ?? true;
-        $this->renderOnce = $config->renderOnce ?? false;
+        $this->renderOnce = $config->renderOnce ?? true;
 
         return $this->hookObjectIntance();
     }

@@ -21,7 +21,6 @@ class Rich extends Field {
 					(new CssFile())->loadFromConfig((object)[
 						"filePath"=>__DIR__ . "/style.css",
 						"injectIntoHead"=>false,
-						"renderOnce" => true,
 					])->display();
 				?>
 				<div style="display: none;">
