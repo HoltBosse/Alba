@@ -7,7 +7,7 @@ Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\Alba\Core\File;
 
 class Tag {
-	public int $id;
+	public ?int $id = null;
 	public string $title;
 	public int $state;
 	public string $alias;
