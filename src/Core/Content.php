@@ -293,7 +293,8 @@ class Content {
 		$this->start = $required_details_form->getFieldByName('start')->default;
 		$this->end = $required_details_form->getFieldByName('end')->default;
 		$this->updated_by = CMS::Instance()->user->id;
-		$this->tags = $required_details_form->getFieldByName('tags')->default; 
+		$tagsFieldValue = $required_details_form->getFieldByName('tags')->default;
+		$this->tags = $tagsFieldValue ? json_decode($tagsFieldValue) : [];
 		$this->category = $required_details_form->getFieldByName('category')->default; 
 
 		// ensure alias is unique for content_type - will use id for existing content, random 4 digit number otherwise
@@ -397,7 +398,7 @@ class Content {
 		}
 
 		// set tags
-		Tag::set_tags_for_content($this->id, json_decode($this->tags), $this->content_type);
+		Tag::set_tags_for_content($this->id, $this->tags, $this->content_type);
 
 		// now save fields
 		// first remove old field data if any exists
