@@ -23,6 +23,7 @@ class RunAllMigration extends Migration {
             ['Tags Table - Parent Column', new TagParentMigration()],
             ['Categories Table', new CategoriesTableMigration()],
             ['Tags Table - Category Column', new TagCategoryMigration()],
+            ['Tags Table - Description Column Text Type', new TagDescriptionTextMigration()],
             ['Categories Table - Custom Fields Column', new CategoryCustomFieldsMigration()],
             ['Tags Table - Custom Fields Column', new TagCustomFieldsMigration()],
             ['Redirects Table', new RedirectsTableMigration()],
