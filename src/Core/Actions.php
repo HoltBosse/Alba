@@ -61,7 +61,10 @@ class Actions {
         return array_keys(self::$actionsRegistry);
     }
 
-    public static function add_action(string $type, stdClass $action, int $userid=0): string {
+    public static function add_action(string $type, stdClass $action, ?int $userid=0): string {
+        if(is_null($userid)) {
+            $userid = 0;
+        }
         if ($userid==0) {$userid=CMS::Instance()->user->id;}
         if (!is_numeric($userid)) {$userid=0;} //triple check - cms can be dumb when a user is timed out
 
