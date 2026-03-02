@@ -14,17 +14,17 @@ class ContentSearch {
 	public string $order_by;
 	public string $order_direction;
 	public int|string $type_filter;
-	public bool $published_only;
+	public ?bool $published_only;
 	public bool $disable_builtin_state_check;
 	// @phpstan-ignore missingType.iterableValue
 	public array $list_fields;
 	// @phpstan-ignore missingType.iterableValue
 	public array $ignore_fields;
 	public bool $created_by_cur_user;
-	public int $page;
+	public ?int $page;
 	public ?string $searchtext;
 	public bool $fetch_all; // boolean - if list_fields not set, get all not just 'list' items from json
-	public int $page_size;
+	public ?int $page_size;
 	public ?string $custom_field_name;
 	public ?int $category; // category id to match
 	// @phpstan-ignore missingType.iterableValue

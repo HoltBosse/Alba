@@ -564,8 +564,7 @@ final class CMS {
 			// first determine page
 			// look for deepest matching alias - once found, that page is our controller
 			// if final matching alias is empty, show home
-
-			if (property_exists ($this->page,'controller')) {
+			if ($this->page->controller!==null) {
 				// already have controller - should never happen? // todo- check
 				return $this->page->controller;
 			}
