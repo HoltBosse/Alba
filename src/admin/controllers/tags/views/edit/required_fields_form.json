@@ -130,12 +130,10 @@
 			"id": "description",
 			"type": "Rich",
 			"required": false,
-			"maxlength": 255,
 			"description": "",
 			"default": "",
 			"filter":{
-				"StringVal": [],
-				"Length": [0, 255]
+				"StringVal": []
 			}
 		},
 		
