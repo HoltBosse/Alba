@@ -14,8 +14,8 @@ class Content {
 	public mixed $configuration;
 	public string $updated;
 	public int $content_type;
-	public int $created_by;
-	public int $updated_by;
+	public ?int $created_by;
+	public ?int $updated_by;
 	public string $note;
 	public mixed $tags;
 	public string $alias;
