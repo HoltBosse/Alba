@@ -9,6 +9,7 @@ Use Respect\Validation\Validator as v;
 
 $page = new Page();
 $page_options_form = new Form(__DIR__ . '/../edit/page_options.json');
+$existingPage = null;
 $success=$page->load_from_post();
 
 if (!$success) {
@@ -85,6 +86,92 @@ if ($success) {
 	} else {
 		$msg = "Page <a href='" . $_ENV["uripath"] . "/admin/pages/edit/{$page->id}/{$page->content_type}/{$page->view}'>" . Input::stringHtmlSafe($page->title) . "</a> $status" . ($new_page ? 'created' : 'updated');
 		$redirectTo = $_ENV["uripath"].'/admin/pages';
+	}
+
+	$existingUrl = $existingPage ? $existingPage->get_url() : null;
+	$newUrl = $page->get_url();
+	if ($existingUrl && $existingUrl !== $newUrl) {
+		$normalizeUrl = static function (?string $url): ?string {
+			if ($url === null) {
+				return null;
+			}
+
+			$url = trim($url);
+			if ($url === '') {
+				return null;
+			}
+
+			if ($url !== '/') {
+				$url = rtrim($url, '/');
+			}
+
+			return $url === '' ? '/' : $url;
+		};
+
+		$oldUrl = $normalizeUrl($existingUrl);
+		$targetUrl = $normalizeUrl($newUrl);
+		$domain = (int) $_SESSION["current_domain"];
+
+		if ($oldUrl && $targetUrl && $oldUrl !== $targetUrl) {
+			$activeRedirectFromOldUrl = DB::fetch(
+				"SELECT id, new_url FROM redirects WHERE state=1 AND old_url=? AND domain=? ORDER BY id DESC LIMIT 1",
+				[$oldUrl, $domain]
+			);
+
+			if (!$activeRedirectFromOldUrl) {
+				$redirectRows = DB::fetchAll(
+					"SELECT old_url, new_url FROM redirects WHERE state=1 AND domain=? AND new_url IS NOT NULL",
+					[$domain]
+				);
+
+				$graph = [];
+				foreach ($redirectRows as $redirectRow) {
+					$from = $normalizeUrl($redirectRow->old_url ?? null);
+					$to = $normalizeUrl($redirectRow->new_url ?? null);
+					if (!$from || !$to) {
+						continue;
+					}
+
+					if (!isset($graph[$from])) {
+						$graph[$from] = [];
+					}
+
+					$graph[$from][$to] = true;
+				}
+
+				// Prevent cycles by checking whether the new target can already reach the old URL.
+				$visited = [];
+				$queue = [$targetUrl];
+				$wouldCreateLoop = false;
+
+				while (!empty($queue)) {
+					$current = array_shift($queue);
+					if (isset($visited[$current])) {
+						continue;
+					}
+
+					$visited[$current] = true;
+					if ($current === $oldUrl) {
+						$wouldCreateLoop = true;
+						break;
+					}
+
+					$nextNodes = array_keys($graph[$current] ?? []);
+					foreach ($nextNodes as $nextUrl) {
+						if (!isset($visited[$nextUrl])) {
+							$queue[] = $nextUrl;
+						}
+					}
+				}
+
+				if (!$wouldCreateLoop) {
+					DB::exec(
+						"INSERT INTO redirects (old_url, new_url, created_by, updated_by, domain, state, note) VALUES (?,?,?,?,?,1,'page url update')",
+						[$oldUrl, $targetUrl, CMS::Instance()->user->id, CMS::Instance()->user->id, $domain]
+					);
+				}
+			}
+		}
 	}
 
 	CMS::Instance()->queue_message($msg, 'success', $redirectTo);
