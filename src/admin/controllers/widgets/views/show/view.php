@@ -15,7 +15,7 @@
 	ob_start();
 	if ($widget_type_id) {
 ?>
-	<a class='is-primary pull-right button btn' href='<?php echo $_ENV["uripath"];?>/admin/widgets/edit/new/<?php echo $widget_type_id;?>'>New &ldquo;<?php echo $widget_type_title;?>&rdquo; Widget</a>
+	<a class='is-primary pull-right button btn' href='<?php echo $_ENV["uripath"];?>/admin/widgets/edit/new/<?php echo $widget_type_id;?>'>New &ldquo;<?php echo Input::stringHtmlSafe($widget_type_title);?>&rdquo; Widget</a>
 <?php } else { ?>
 	<div class='field pull-right'>
 		<label class='label'>New Widget</label>
@@ -29,7 +29,7 @@
 								continue;
 							}
 							?>
-								<option value='<?php echo $widget_type->id;?>'><?php echo $widget_type->title;?></option>
+								<option value='<?php echo $widget_type->id;?>'><?php echo Input::stringHtmlSafe($widget_type->title);?></option>
 							<?php
 						}	
 					?>

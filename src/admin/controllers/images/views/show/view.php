@@ -110,10 +110,10 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 <div id='all_images'>
 	<?php foreach ($all_images as $image):?>
 		<div id="media_item_id_<?php echo $image->id;?>" data-id='<?php echo $image->id;?>' class='all_images_image_container'>
-			<img title="<?php echo $image->title;?>" alt="<?php echo $image->alt;?>" src="<?php echo $_ENV["uripath"] . '/image/' . $image->id;?>/thumb">
+			<img title="<?php echo Input::stringHtmlSafe($image->title);?>" alt="<?php echo Input::stringHtmlSafe($image->alt);?>" src="<?php echo $_ENV["uripath"] . '/image/' . $image->id;?>/thumb">
 			<div class='image_info_wrap'>
 				<div class='image_info'>
-					<span class='bigger imgtitle'><?php echo $image->title; ?></span><br><span class='imgalt'><?php echo $image->alt; ?></span><br>
+					<span class='bigger imgtitle'><?php echo Input::stringHtmlSafe($image->title); ?></span><br><span class='imgalt'><?php echo Input::stringHtmlSafe($image->alt); ?></span><br>
 					<?php echo $image->width . "x" . $image->height; ?> / <?php echo $image->mimetype; ?> 
 				</div>
 				<div class="state_indicator" data-submiturl="<?php echo $_ENV["uripath"] . '/admin/images/api?action=toggle_image_state&id=' . $image->id; ?>" title="State Toggle" alt="State Toggle">

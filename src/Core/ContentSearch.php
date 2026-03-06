@@ -197,8 +197,11 @@ class ContentSearch {
 				}
 			}
 			if ($tags_ok) {
-				// safe to implode without param injection
-				$where .= " and c.id in (select content_id from tagged where tag_id in (" . implode(',', $this->tags) . ") and content_type_id=?) ";
+				$tag_placeholders = implode(',', array_fill(0, count($this->tags), '?'));
+				$where .= " and c.id in (select content_id from tagged where tag_id in ($tag_placeholders) and content_type_id=?) ";
+				foreach ($this->tags as $t) {
+					$this->filter_pdo_params[] = $t;
+				}
 				$this->filter_pdo_params[] = $this->type_filter;
 			}
 		}
@@ -259,6 +262,9 @@ class ContentSearch {
 		
 
 		if ($this->order_by) {
+			if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $this->order_by)) {
+				throw new Exception('Invalid order_by column name');
+			}
 			$query .= " order by `" . $this->order_by . "` " . $this->order_direction;
 		}
 		if ($this->page) {

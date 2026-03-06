@@ -33,6 +33,9 @@ if ($custom_fields) {
 	$query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'custom_user_fields' AND TABLE_SCHEMA = ?";
 	$cols = DB::fetchAll($query, [$_ENV["dbname"]], ["mode"=>PDO::FETCH_COLUMN]);
 	foreach ($custom_fields->fields as $f) {
+		if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $f->name)) {
+			continue; // skip invalid column names
+		}
 		if (!in_array($f->name, $cols)) {
 			// check if column is saveable
 			if (property_exists($f, 'save')) {
@@ -86,6 +89,9 @@ if ($old_custom_user_fields_table_exists && $custom_fields && ($user_c != $new_c
 		$old_user_fields_for_user = DB::fetchAll('SELECT * FROM `user_fields` WHERE `user_id`=?',[$user_id]);
 		$done_at_least_one = false;
 		foreach ($custom_fields->fields as $f) {
+			if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $f->name)) {
+				continue; // skip invalid column names
+			}
 			if (!in_array($f->name, $cols)) {
 				// check if column is saveable
 				if (property_exists($f, 'save')) {
@@ -100,7 +106,7 @@ if ($old_custom_user_fields_table_exists && $custom_fields && ($user_c != $new_c
 					// check if f->name is a col returned from user_fields (old) check
 					if ($old_field->name === $f->name) {
 						$old_value = $old_field->content ?? null;
-						$insert_query = 'INSERT INTO `custom_user_fields` (user_id, ' . $f->name . ') VALUES (?,?) ON DUPLICATE KEY UPDATE ' . $f->name . '=?';
+						$insert_query = 'INSERT INTO `custom_user_fields` (user_id, `' . $f->name . '`) VALUES (?,?) ON DUPLICATE KEY UPDATE `' . $f->name . '`=?';
 						DB::exec($insert_query, [$user_id, $old_value, $old_value]);
 						$done_at_least_one = true;
 						$count++;

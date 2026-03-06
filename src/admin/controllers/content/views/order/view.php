@@ -70,7 +70,7 @@ Use HoltBosse\Form\{Input, Form, Field};
                 else {
                     foreach($custom_fields->states as $state) {
                         if($content_item->state==$state->state) {
-                            echo "<i style='color:$state->color' class='fas fa-times-circle' aria-hidden='true'></i>";
+                            echo "<i style='color:" . Input::stringHtmlSafe($state->color) . "' class='fas fa-times-circle' aria-hidden='true'></i>";
                             $ok = true;
                         }
                     }

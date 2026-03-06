@@ -243,7 +243,7 @@ final class CMS {
 			<meta property="og:title" content="<?php echo Input::stringHtmlSafe($og_title); ?>" />
 			<meta property="og:description" content="<?php echo Input::stringHtmlSafe($og_description); ?>" />
 			<meta property="og:type" content="website" />
-			<meta property="og:url" content="<?php echo  (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; ?>" />
+			<meta property="og:url" content="<?php echo  Input::stringHtmlSafe((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']); ?>" />
 			<meta name="description" content="<?php echo Input::stringHtmlSafe($og_description); ?>">
 			<?php if ($og_image):?>
 				<?php $og_image_dimensions = DB::fetch('SELECT width,height FROM media WHERE id=?', $og_image);?>

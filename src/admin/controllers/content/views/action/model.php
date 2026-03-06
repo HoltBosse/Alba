@@ -118,8 +118,8 @@ elseif ($action=='publish') {
 		Actions::add_action_details($actionId, (object) $userActionDiff);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = 1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("update `$table_name` SET state = 1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published content','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -152,8 +152,8 @@ elseif ($action=='unpublish') {
 		Actions::add_action_details($actionId, (object) $userActionDiff);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = 0 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("update `$table_name` SET state = 0 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished content','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -186,8 +186,8 @@ elseif ($action=='delete') {
 		Actions::add_action_details($actionId, (object) $userActionDiff);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = -1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("update `$table_name` SET state = -1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted content','success', $_SERVER['HTTP_REFERER']);
 	}

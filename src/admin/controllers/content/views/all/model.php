@@ -109,11 +109,14 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
 	
 	foreach($_GET as $key=>$value) {
 		if(str_contains($key, "_order") && ($value=="asc" || $value=="desc")) {
-			$content_search->order_by = str_replace("_order", "", $key);
-			if($value=="asc") {
-				$content_search->order_direction = "ASC";
+			$order_col = str_replace("_order", "", $key);
+			if(preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $order_col)) {
+				$content_search->order_by = $order_col;
+				if($value=="asc") {
+					$content_search->order_direction = "ASC";
+				}
+				//is desc by default
 			}
-			//is desc by default
 		}
 	}
 	

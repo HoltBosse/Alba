@@ -61,8 +61,8 @@ if ($action=='publish') {
 		]);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE users SET state = 1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE users SET state = 1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published users','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -78,8 +78,8 @@ if ($action=='unpublish') {
 		]);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE users SET state = 0 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE users SET state = 0 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished users','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -95,8 +95,8 @@ if ($action=='delete') {
 		]);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE users SET state = -1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE users SET state = -1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted users','success', $_SERVER['HTTP_REFERER']);
 	}

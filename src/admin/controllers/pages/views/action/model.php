@@ -38,8 +38,8 @@ if ($action=='publish') {
 			"affected_page"=>$item,
 		]);
 	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE pages SET state = 1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE pages SET state = 1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published pages','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -54,8 +54,8 @@ if ($action=='unpublish') {
 			"affected_page"=>$item,
 		]);
 	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE pages SET state = 0 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE pages SET state = 0 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished pages','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -70,15 +70,15 @@ if ($action=='delete') {
 			"affected_page"=>$item,
 		]);
 	}
-	$idlist = implode(',',$id);
-	$result = DB::fetch("select count(parent) as c from pages where parent in ({$idlist})");
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::fetch("select count(parent) as c from pages where parent in ({$placeholders})", $id);
 	if ($result) {
 		$c = $result->c;
 		if ($c>0) {
 			CMS::Instance()->queue_message('Cannot delete page(s) with children','danger', $_SERVER['HTTP_REFERER']);
 		}
 		else {
-			$result = DB::exec("UPDATE pages SET alias = CONCAT(alias,'_DELETED'), parent=-1, state = -1 where id in ({$idlist})"); 
+			$result = DB::exec("UPDATE pages SET alias = CONCAT(alias,'_DELETED'), parent=-1, state = -1 where id in ({$placeholders})", $id); 
 			if ($result) {
 				CMS::Instance()->queue_message('Deleted pages','success', $_SERVER['HTTP_REFERER']);
 			}

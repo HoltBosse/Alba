@@ -81,8 +81,9 @@ class Messages {
 					$data .= sprintf($this->msgWrapper, $this->msgClass, $item->type, $this->msgBefore . $item->message . $this->msgAfter);
 				}
 				//state is set to 0 as that is read, while -1 is deleted
-				$messageIds = implode(",", array_column($messages, "id"));
-				DB::exec("UPDATE messages set state=0 WHERE id IN ($messageIds)");
+				$messageIds = array_column($messages, "id");
+				$placeholders = implode(',', array_fill(0, count($messageIds), '?'));
+				DB::exec("UPDATE messages set state=0 WHERE id IN ($placeholders)", $messageIds);
 			}
 		}
 		

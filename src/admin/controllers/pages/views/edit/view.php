@@ -196,7 +196,7 @@
 								if ($page->view==$view->id) {
 									$view_selected = ' selected ';
 								}
-								echo "<option {$view_selected} value='".$view->id."' data-view_location=" . $view->location . " data-content_type_id=" . $view->content_type_id . ">" . $view->title . "</option>";
+								echo "<option {$view_selected} value='".$view->id."' data-view_location='" . Input::stringHtmlSafe($view->location) . "' data-content_type_id='" . (int)$view->content_type_id . "'>" . Input::stringHtmlSafe($view->title) . "</option>";
 							}
 							?>
 						</select>
@@ -292,7 +292,7 @@
 				</div>
 				<div class='widget_actions'>
 					<button onClick="preview_widget(this); return false;" type='button' data-widgetid='<?php echo $widget->id;?>' class='button widget_preview button'>Preview</button>
-					<button data-widgettitle='<?php echo $widget->title;?>' data-widgetid='<?php echo $widget->id;?>' class='button  is-primary add_widget_to_override' type='button'>Add</button>	
+					<button data-widgettitle='<?php echo Input::stringHtmlSafe($widget->title);?>' data-widgetid='<?php echo $widget->id;?>' class='button  is-primary add_widget_to_override' type='button'>Add</button>	
 				</div>
 			</div>
 			<?php endforeach; ?>

@@ -161,11 +161,13 @@ class Widget {
 		//echo "<h1>checking page {$page} position {$position}</h1>";
 		$widget_ids = DB::fetch("SELECT widgets from page_widget_overrides where page_id=? and position=?", [$page, $position])->widgets ?? null; // csv
 		if ($widget_ids) {
-			$query = 'SELECT * 
+			$id_array = array_map('intval', explode(',', $widget_ids));
+			$placeholders = implode(',', array_fill(0, count($id_array), '?'));
+			$query = "SELECT * 
 			from widgets 
-			where id in ('.$widget_ids.') and state>=0 
-			ORDER BY FIELD(id,'.$widget_ids.')';
-			return DB::fetchAll($query);
+			where id in ($placeholders) and state>=0 
+			ORDER BY FIELD(id,$placeholders)";
+			return DB::fetchAll($query, array_merge($id_array, $id_array));
 		}
 		return null;
 	}
