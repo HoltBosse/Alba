@@ -47,8 +47,8 @@ elseif ($action=='publish') {
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = 1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("update `$table_name` SET state = 1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published form','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -62,8 +62,8 @@ elseif ($action=='unpublish') {
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = 0 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("update `$table_name` SET state = 0 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished form','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -77,8 +77,8 @@ elseif ($action=='delete') {
 	if (!$id) {
 		CMS::Instance()->queue_message('Cannot perform action on unknown items','danger', $_SERVER['HTTP_REFERER']);
 	}
-	$idlist = implode(',',$id);
-	$result = DB::exec("update `$table_name` SET state = -1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("update `$table_name` SET state = -1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted form','success', $_SERVER['HTTP_REFERER']);
 	}

@@ -37,8 +37,8 @@ if ($action=='toggle') {
 }
 
 if ($action=='publish') {
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE plugins SET state = 1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE plugins SET state = 1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published plugin','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -48,8 +48,8 @@ if ($action=='publish') {
 }
 
 if ($action=='unpublish') {
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE plugins SET state = 0 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE plugins SET state = 0 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished plugin','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -59,8 +59,8 @@ if ($action=='unpublish') {
 }
 
 if ($action=='delete') {
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE plugins SET state = -1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE plugins SET state = -1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted plugin','success', $_SERVER['HTTP_REFERER']);
 	}

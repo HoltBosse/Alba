@@ -126,8 +126,11 @@ class UserSearch {
 				}
 			}
 			if ($tags_ok) {
-				// safe to implode without param injection
-				$where .= " and u.id in (select content_id from tagged where content_type_id=-2 and tag_id in (" . implode(',', $this->tags) . ")) ";
+				$tag_placeholders = implode(',', array_fill(0, count($this->tags), '?'));
+				$where .= " and u.id in (select content_id from tagged where content_type_id=-2 and tag_id in ($tag_placeholders)) ";
+				foreach ($this->tags as $t) {
+					$this->filter_pdo_params[] = $t;
+				}
 			}
 		}
 
@@ -173,8 +176,11 @@ class UserSearch {
 				}
 			}
 			if ($groups_ok) {
-				$group_csv = implode(",",$this->groups);
-				$where .= " and u.id in (select user_id from user_groups where group_id in (" . $group_csv . ")) ";
+				$group_placeholders = implode(',', array_fill(0, count($this->groups), '?'));
+				$where .= " and u.id in (select user_id from user_groups where group_id in ($group_placeholders)) ";
+				foreach ($this->groups as $g) {
+					$this->filter_pdo_params[] = $g;
+				}
 			}
 		}
 
@@ -186,7 +192,10 @@ class UserSearch {
 		$query = $query . $select . $from . $where;
 		
 		if ($this->order_by) {
-			$query .= " order by " . $this->order_by . " " . $this->order_direction;
+			if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $this->order_by)) {
+				throw new \Exception('Invalid order_by column name');
+			}
+			$query .= " order by `" . $this->order_by . "` " . $this->order_direction;
 		}
 
 		if ($this->page) {

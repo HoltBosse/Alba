@@ -213,9 +213,7 @@ class User {
 	}
 
 	public function generate_reset_key(): string {
-		$key = md5((2418*2) . $this->email);
-   		$addKey = substr(md5(uniqid((string) rand(),true)),3,10);
-		$key = $key . $addKey;
+		$key = bin2hex(random_bytes(32));
 		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
 		$ok = DB::exec($query, [$key, $this->id]);
 		if (!$ok) {

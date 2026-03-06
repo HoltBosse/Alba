@@ -57,8 +57,8 @@ if ($action=='publish') {
 		]);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = 1 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE tags SET state = 1 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Published tags','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -74,8 +74,8 @@ if ($action=='unpublish') {
 		]);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = 0 where id in ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE tags SET state = 0 where id in ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Unpublished tags','success', $_SERVER['HTTP_REFERER']);
 	}
@@ -91,8 +91,8 @@ if ($action=='delete') {
 		]);
 	}
 
-	$idlist = implode(',',$id);
-	$result = DB::exec("UPDATE tags SET state = -1 WHERE id IN ({$idlist})"); 
+	$placeholders = implode(',', array_fill(0, count($id), '?'));
+	$result = DB::exec("UPDATE tags SET state = -1 WHERE id IN ({$placeholders})", $id); 
 	if ($result) {
 		CMS::Instance()->queue_message('Deleted tags','success', $_SERVER['HTTP_REFERER']);
 	}

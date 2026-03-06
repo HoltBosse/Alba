@@ -48,7 +48,7 @@ if ($submitted) {
 	$db_backup_ok = false;
 	
 	// DB BACKUP
-	$command='mysqldump --opt -h ' . $_ENV["dbhost"] .' -u' .$_ENV["dbuser"] ." -p'" .$_ENV["dbpass"] ."' " .$_ENV["dbname"] .' > ' . $db_backup_file ;
+	$command='mysqldump --opt -h ' . escapeshellarg($_ENV["dbhost"]) .' -u' . escapeshellarg($_ENV["dbuser"]) ." -p'" . escapeshellarg($_ENV["dbpass"]) . "' " . escapeshellarg($_ENV["dbname"]) .' > ' . escapeshellarg($db_backup_file) ;
 	exec($command,$output,$db_backup_error);
 	/* CMS::pprint_r ($command);
 	CMS::pprint_r ($output);

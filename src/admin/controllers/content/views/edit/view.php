@@ -24,7 +24,7 @@
 <hr>
 
 <form method="POST" action="" enctype="multipart/form-data">
-<input type="hidden" name="http_referer_form" value="<?php echo $_SERVER['HTTP_REFERER'];?>">
+<input type="hidden" name="http_referer_form" value="<?php echo Input::stringHtmlSafe($_SERVER['HTTP_REFERER'] ?? '');?>">
 
 <div class='toggle_wrap '>
 	<div class='flex'>

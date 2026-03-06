@@ -105,9 +105,9 @@ class Page {
 
 	// @phpstan-ignore-next-line missingType.iterableValue
 	public static function get_pages_from_id_array(array $id_array): array {
-		$in_string = implode(',',$id_array);
-		$query = "select * from pages where id in ({$in_string})";
-		$result = DB::fetchAll($query);
+		$placeholders = implode(',', array_fill(0, count($id_array), '?'));
+		$query = "select * from pages where id in ({$placeholders})";
+		$result = DB::fetchAll($query, array_values($id_array));
 		return  $result;
 	}
 
