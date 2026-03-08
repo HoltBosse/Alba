@@ -82,11 +82,28 @@ if ($required_details_form->isSubmitted()) {
 			}
 		}
 		else {
-			CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
+			$badFields = $custom_fields_form->getFailedValidationFields();
+
+			$niceBadFields = array_map(function($field) use ($custom_fields_form) {
+				return $custom_fields_form->fields[$field]->label !='' ? $custom_fields_form->fields[$field]->label : $custom_fields_form->fields[$field]->name;
+			}, $badFields);
+
+			$niceBadFields = sizeof($niceBadFields) > 0 ? $niceBadFields : ["Unknown fields"];
+
+			CMS::Instance()->queue_message('Invalid form (fields: ' . implode(', ', $niceBadFields) . ')','danger',$_SERVER['REQUEST_URI']);	
 		}
 	}
 	else {
-		CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['REQUEST_URI']);	
+		$badFields = $required_details_form->getFailedValidationFields();
+		//CMS::pprint_r ($badFields);
+
+		$niceBadFields = array_map(function($field) use ($required_details_form) {
+			return $required_details_form->fields[$field]->label !='' ? $required_details_form->fields[$field]->label : $required_details_form->fields[$field]->name;
+		}, $badFields);
+
+		$niceBadFields = sizeof($niceBadFields) > 0 ? $niceBadFields : ["Unknown fields"];
+
+		CMS::Instance()->queue_message('Invalid form (fields: ' . implode(', ', $niceBadFields) . ')','danger',$_SERVER['REQUEST_URI']);	
 	}
 	//CMS::Instance()->queue_message('content saved','success',$_ENV["uripath"] . '/admin/content/show');
 }
