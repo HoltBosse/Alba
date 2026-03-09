@@ -163,7 +163,7 @@ if ($required_details_form->isSubmitted()) {
 		$allNiceBadFields = array_merge($requiredNiceBadFields, $contentNiceBadFields);
 		$allNiceBadFields = sizeof($allNiceBadFields) > 0 ? $allNiceBadFields : ["Unknown fields"];
 
-		CMS::Instance()->queue_message('Invalid form (fields: ' . implode(', ', $allNiceBadFields) . ')','danger');	
+		CMS::Instance()->queue_message('Invalid form (fields: ' . implode(', ', $allNiceBadFields) . ')','danger', $_SERVER['REQUEST_URI']);	
 	}
 	//CMS::Instance()->queue_message('content saved','success',$_ENV["uripath"] . '/admin/content/show');
 }
