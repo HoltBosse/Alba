@@ -149,7 +149,7 @@ class User {
 		}
 		$this->registered = date('Y-m-d H:i:s');
 		$this->id = Input::getvar('id',v::IntVal(),null);
-		$this->groups = Input::getvar('groups',v::arrayType()->each(v::intVal()));
+		$this->groups = Input::getvar('groups',v::arrayType()->each(v::intVal()), []);
 		$this->tags = Input::getvar('tags',v::arrayType()->each(v::intVal()), []);
 		$this->state = Input::getvar('userstate',v::IntVal());
 		$this->domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
