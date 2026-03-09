@@ -16,7 +16,7 @@ class Tag {
 	public mixed $filter;
 	public string $description;
 	public ?int $image;
-	public bool $public;
+	public int $public;
 	public int $parent;
 	public int $category;
 	public mixed $custom_fields;
@@ -132,7 +132,7 @@ class Tag {
 		$this->filter = $required_details_form->getFieldByName('filter')->default;
 		$this->image = $required_details_form->getFieldByName('image')->default;
 		$this->description = $required_details_form->getFieldByName('description')->default;
-		$this->public = $required_details_form->getFieldByName('public')->default;
+		$this->public = (int) $required_details_form->getFieldByName('public')->default;
 		$this->contenttypes = $required_details_form->getFieldByName('contenttypes')->default;
 		$this->parent = $required_details_form->getFieldByName('parent')->default;
 		$this->category = $required_details_form->getFieldByName('category')->default;
@@ -156,6 +156,8 @@ class Tag {
 		}
 
 		$this->domain = $domain;
+
+		//CMS::pprint_r($this); die;
 
 		if ($this->id) {
 
