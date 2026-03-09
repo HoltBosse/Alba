@@ -145,12 +145,25 @@ if ($required_details_form->isSubmitted()) {
 			CMS::Instance()->queue_message($msg, 'success', $redirect_to);
 		}
 		else {
-			CMS::Instance()->queue_message('Invalid form','danger',$_SERVER['HTTP_REFERER']);
+			CMS::Instance()->queue_message('Failed to save Content','danger',$_SERVER['HTTP_REFERER']);
 		}
 		
 	}
 	else {
-		CMS::Instance()->queue_message('Invalid form','danger');	
+		$requiredBadFields = $required_details_form->getFailedValidationFields();
+		$contentBadFields = $content_form->getFailedValidationFields();
+
+		$requiredNiceBadFields = array_map(function($field) use ($required_details_form) {
+			return $required_details_form->fields[$field]->label !='' ? $required_details_form->fields[$field]->label : $required_details_form->fields[$field]->name;
+		}, $requiredBadFields);
+		$contentNiceBadFields = array_map(function($field) use ($content_form) {
+			return $content_form->fields[$field]->label !='' ? $content_form->fields[$field]->label : $content_form->fields[$field]->name;
+		}, $contentBadFields);
+
+		$allNiceBadFields = array_merge($requiredNiceBadFields, $contentNiceBadFields);
+		$allNiceBadFields = sizeof($allNiceBadFields) > 0 ? $allNiceBadFields : ["Unknown fields"];
+
+		CMS::Instance()->queue_message('Invalid form (fields: ' . implode(', ', $allNiceBadFields) . ')','danger');	
 	}
 	//CMS::Instance()->queue_message('content saved','success',$_ENV["uripath"] . '/admin/content/show');
 }
