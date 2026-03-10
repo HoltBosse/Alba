@@ -32,6 +32,7 @@ class Image extends Field {
 		(new CssFile())->loadFromConfig((object)[
             "filePath"=>__DIR__ . "/untrusted.css",
             "injectIntoHead"=>false,
+			"renderOnce"=>$this->in_repeatable_form ?? false,
         ])->display();
 		
 		echo "<div class='field " . ($this->required ? "required" : "") . "'>";
