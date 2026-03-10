@@ -195,19 +195,22 @@ class Image extends Field {
 		}
 
 		$previewsrc = is_numeric($this->default) ? $_ENV["uripath"] . '/image/' . $this->default . "/thumb" : $this->default;
-		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}'><p>No Image Selected</p><img alt='$previewalt' title='$previewtitle' style='max-width: 20rem; max-height: 20rem;' src='$previewsrc' id='image_selector_chosen_preview_{$this->id}'?></div>";
+		echo "<div class='selected_image_wrap {$active}' id='selected_image_{$this->id}' data-repeatableindex='{{replace_with_index}}'>
+				<p>No Image Selected</p>
+				<img alt='$previewalt' title='$previewtitle' style='max-width: 20rem; max-height: 20rem;' src='$previewsrc' id='image_selector_chosen_preview_{$this->id}' data-repeatableindex='{{replace_with_index}}'>
+		</div>";
 		
 
 		echo "<div style='display: flex; gap: 0.25rem; flex-wrap: wrap;'>";
 			ob_start();
-				echo "<button type='button' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
-				echo "<button type='button' id='trigger_image_crop_{$this->id}' class='button btn is-primary'>Crop Image</button>";
-				echo "<button type='button' id='trigger_image_upload_{$this->id}' class='button btn is-info is-light upload_new_image_button'>Upload New Image</button>";
+				echo "<button type='button' data-repeatableindex='{{replace_with_index}}' id='trigger_image_selector_{$this->id}' class='button btn is-primary'>Choose New Image</button>";
+				echo "<button type='button' data-repeatableindex='{{replace_with_index}}' id='trigger_image_crop_{$this->id}' class='button btn is-primary'>Crop Image</button>";
+				echo "<button type='button' data-repeatableindex='{{replace_with_index}}' id='trigger_image_upload_{$this->id}' class='button btn is-info is-light upload_new_image_button'>Upload New Image</button>";
 			$imageButtons = ob_get_clean();
 			echo Hook::execute_hook_filters('render_image_field_buttons', $imageButtons, $this);
-			echo "<button id='trigger_image_clear_{$this->id}' type='button' onclick='(function() { let e=document.getElementById(\"selected_image_" . $this->id . "\");  let wr=e.closest(\".selected_image_wrap\"); let input=document.getElementById(\"" . $this->id . "\"); input.value=\"\"; wr.classList.remove(\"active\"); console.log(e);})(); return false; '  class='button btn is-warning'>Clear</button>";
+			echo "<button data-repeatableindex='{{replace_with_index}}' id='trigger_image_clear_{$this->id}' type='button' class='button btn is-warning'>Clear</button>";
 		echo "</div>";
-		echo "<input oninvalid='this.setCustomValidity(\"A valid image is required\")' style='position:absolute; width:0px; opacity:0;' value='{$this->default}' {$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}>";
+		echo "<input data-repeatableindex='{{replace_with_index}}' oninvalid='this.setCustomValidity(\"A valid image is required\")' style='position:absolute; width:0px; opacity:0;' value='{$this->default}' {$required} id='{$this->id}' {$this->getRenderedName()} {$this->getRenderedForm()}>";
 		
 		
 		
@@ -225,13 +228,20 @@ class Image extends Field {
 		?>
 
 		<script type="module">
-		import {addImageUploadDialog} from "/js/image_uploading.js?v=1";
+		import {addImageUploadDialog} from "/js/image_uploading.js?v=3";
 		import {loadImgEditor} from "/js/image_editing.js";
 		import {openMediaSelector} from "/js/media_selector.js?v=2";
 
+		document.querySelector('#trigger_image_clear_<?php echo $this->id; ?>[data-repeatableindex="{{replace_with_index}}"]').addEventListener("click", (e)=>{
+			let img_wrapper = document.querySelector("#selected_image_<?php echo $this->id; ?>[data-repeatableindex='{{replace_with_index}}']");
+			let input = document.querySelector("#<?php echo $this->id; ?>[data-repeatableindex='{{replace_with_index}}']");
+			input.value = "";
+			img_wrapper.classList.remove("active");
+			img_wrapper.querySelector("img").removeAttribute("src");
+		});
 		
-		document.getElementById("trigger_image_crop_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
-			let img_wrapper = document.getElementById("selected_image_<?php echo $this->id; ?>");
+		document.querySelector('#trigger_image_crop_<?php echo $this->id; ?>[data-repeatableindex="{{replace_with_index}}"]').addEventListener("click", (e)=>{
+			let img_wrapper = document.querySelector("#selected_image_<?php echo $this->id; ?>[data-repeatableindex='{{replace_with_index}}']");
 			if(!img_wrapper.closest(".selected_image_wrap").classList.contains("active")) {
 				alert("no image selected");
 				return false;
@@ -248,7 +258,7 @@ class Image extends Field {
 				//console.log(result);
 
 				if(result != 0) {
-					let preview = document.getElementById('image_selector_chosen_preview_<?php echo $this->id; ?>');
+					let preview = document.querySelector('#image_selector_chosen_preview_<?php echo $this->id; ?>[data-repeatableindex="{{replace_with_index}}"]');
 
 					document.getElementById("image_editor").querySelector(".modal-card-body").innerHTML = `<p>Uploading Edit to the Server. Please Wait ....</p>`;
 					document.getElementById("image_editor").querySelector(".modal-card-foot").innerHTML = "";
@@ -264,7 +274,7 @@ class Image extends Field {
 					}).then((response) => response.json()).then((data) => {
 						console.log(data);
 						img_wrapper.querySelector("img").setAttribute("src", "/image/"+data.ids);
-						document.getElementById("<?php echo $this->id; ?>").value=data.ids;
+						document.querySelector("#<?php echo $this->id; ?>[data-repeatableindex='{{replace_with_index}}']").value=data.ids;
 						document.getElementById("image_editor").remove();
 						//window.location.reload();
 					});
@@ -274,8 +284,8 @@ class Image extends Field {
 			handle_img_editor();
 		});
 
-		document.getElementById("trigger_image_upload_<?php echo $this->id; ?>").addEventListener("click", (e)=>{
-			window.image_upload_el = "<?php echo $this->id; ?>";
+		document.querySelector('#trigger_image_upload_<?php echo $this->id; ?>[data-repeatableindex="{{replace_with_index}}"]').addEventListener("click", (e)=>{
+			window.image_upload_el = "#<?php echo $this->id; ?>[data-repeatableindex='{{replace_with_index}}']";
 			window.upload_endpoint = "<?php echo $this->upload_endpoint; ?>";
 			addImageUploadDialog();
 		});
@@ -287,18 +297,19 @@ class Image extends Field {
 		let tags = <?php echo json_encode($this->tags);?>;
 		let listingEndpoint = "<?php echo $this->listing_endpoint; ?>";
 
-		document.getElementById('trigger_image_selector_' + elementId).addEventListener('click', e => {
+		document.querySelector('#trigger_image_selector_' + elementId + '[data-repeatableindex="{{replace_with_index}}"]').addEventListener('click', e => {
 			// open media selector (choose new image)
 			const mediaSelector = openMediaSelector(elementId, imagesPerPage, mimetypes, tags, listingEndpoint);
 			mediaSelector.addEventListener("mediaItemSelected", (mediaE) => {
-				const preview = document.getElementById(`image_selector_chosen_preview_${elementId}`);
+				const preview = document.querySelector(`#image_selector_chosen_preview_${elementId}[data-repeatableindex="{{replace_with_index}}"]`);
+				console.log(`#image_selector_chosen_preview_${elementId}[data-repeatableindex="{{replace_with_index}}"]`);
 				const url = mediaE.detail.hasImageUrl ? mediaE.detail.url : `${mediaE.detail.url}/thumb`;
 				preview.src = url;
 				preview.alt = mediaE.detail.alt;
 				preview.title = mediaE.detail.title;
 				preview.closest('.selected_image_wrap').classList.add('active');
 
-				const hiddenInput = document.getElementById(elementId);
+				const hiddenInput = document.querySelector(`#${elementId}[data-repeatableindex="{{replace_with_index}}"]`);
 				hiddenInput.setCustomValidity('');
 				hiddenInput.value = mediaE.detail.hasImageUrl ? url : mediaE.detail.mediaId;	
 			});

@@ -162,7 +162,7 @@ class Rich extends Field {
 					import BubbleMenu from '/js/dist/@tiptap/extension-bubble-menu.js'
 					import { Details, DetailsContent, DetailsSummary } from '/js/dist/@tiptap/extension-details.js'
 					import FileHandler from '/js/dist/@tiptap/extension-file-handler.js'
-					import {getValidImageTypes, doUpload} from "/js/image_uploading.js?v=2"
+					import {getValidImageTypes, doUpload} from "/js/image_uploading.js?v=3"
 					import { findChildrenInRange, mergeAttributes, Node, nodeInputRule, Tracker } from '/js/dist/@tiptap/core.js'
 					import { Plugin, PluginKey } from '/js/dist/@tiptap/pm.js' //previously from pm/state
 					
