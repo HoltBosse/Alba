@@ -223,7 +223,7 @@ function doUpload(e) {
 			} else if(window.hasOwnProperty('image_upload_el')) {
 				upload_dialog.remove();
 
-				const upload_el = document.getElementById(window.image_upload_el);
+				const upload_el = document.querySelector(window.image_upload_el);
 
 				upload_el.value = data.ids.split(",")[0];
 				upload_el.parentElement.querySelector(".selected_image_wrap img").src = `${data.urls.split(",")[0]}/thumb`;

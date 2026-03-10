@@ -171,7 +171,7 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 	}
 ?>
 <script type="module">
-	import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/js/image_uploading.js?v=1";
+	import {initGraphicalUploaderEventListeners, initInputFileUploaderEventListeners} from "/js/image_uploading.js?v=3";
 	import {loadImgEditor} from "/js/image_editing.js";
 
 	window.load_img_editor = loadImgEditor;
