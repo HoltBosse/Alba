@@ -77,6 +77,11 @@ if ($required_details_form->isSubmitted()) {
 			}
 		}
 		else {
+			if(!$custom_fields_form->isCsrfValid()) {
+				CMS::Instance()->queue_message("For your security, we couldn't process this form. Please refresh the page and try again.","danger",$_SERVER['REQUEST_URI']);
+				exit(0);
+			}
+
 			$badFields = $custom_fields_form->getFailedValidationFields();
 
 			$niceBadFields = array_map(function($field) use ($custom_fields_form) {
@@ -89,6 +94,11 @@ if ($required_details_form->isSubmitted()) {
 		}
 	}
 	else {
+		if(!$required_details_form->isCsrfValid()) {
+			CMS::Instance()->queue_message("For your security, we couldn't process this form. Please refresh the page and try again.","danger",$_SERVER['REQUEST_URI']);
+			exit(0);
+		}
+
 		$badFields = $required_details_form->getFailedValidationFields();
 
 		$niceBadFields = array_map(function($field) use ($required_details_form) {

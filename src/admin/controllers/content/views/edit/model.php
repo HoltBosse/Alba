@@ -150,6 +150,11 @@ if ($required_details_form->isSubmitted()) {
 		
 	}
 	else {
+		if(!$required_details_form->isCsrfValid() || !$content_form->isCsrfValid()) {
+			CMS::Instance()->queue_message("For your security, we couldn't process this form. Please refresh the page and try again.","danger",$_SERVER['REQUEST_URI']);
+			exit(0);
+		}
+
 		$requiredBadFields = $required_details_form->getFailedValidationFields();
 		$contentBadFields = $content_form->getFailedValidationFields();
 
