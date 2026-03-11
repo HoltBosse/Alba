@@ -3,6 +3,8 @@ namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
+Use Respect\Validation\Validatable;
+Use Respect\Validation\Validator as v;
 Use \DateTime;
 Use \stdClass;
 
@@ -76,6 +78,54 @@ class Actions {
         }
 
         return $id;
+    }
+
+    public static function isApiAccessEnabledForType(string $type): bool {
+        $actionClass = self::getActionClass($type);
+        if ($actionClass === null || !class_exists($actionClass)) {
+            return false;
+        }
+
+        return $actionClass::isApiAccessEnabled();
+    }
+
+    public static function getActionDataSchemaForType(string $type): Validatable {
+        $actionClass = self::getActionClass($type);
+        if ($actionClass === null || !class_exists($actionClass)) {
+            return v::alwaysInvalid();
+        }
+
+        return $actionClass::getActionDataSchema();
+    }
+
+    public static function isApiAccessEnabled(): bool {
+        return false;
+    }
+
+    public static function getActionDataSchema(): Validatable {
+        return v::AlwaysInvalid();
+    }
+
+    public static function insertCsrfTokenForType(string $type): void {
+        $actionClass = self::getActionClass($type);
+        if ($actionClass === null || !class_exists($actionClass)) {
+            throw new \Exception("Unknown action type: $type");
+        }
+
+        $_SESSION["alba_action_csrf_tokens"] = $_SESSION["alba_action_csrf_tokens"] ?? [];
+        
+        $token = $_SESSION["alba_action_csrf_tokens"][$type] ?? bin2hex(random_bytes(32));
+        $_SESSION["alba_action_csrf_tokens"][$type] = $token;
+
+        echo "<script type='module'>window.albaActionCsrf = window.albaActionCsrf || {}; window.albaActionCsrf['$type'] = '$token';</script>";
+    }
+
+    public static function validateApiCsrfTokenForType(string $type, ?string $token): bool {
+        if (!isset($_SESSION["alba_action_csrf_tokens"][$type])) {
+            return false;
+        }
+
+        return hash_equals($_SESSION["alba_action_csrf_tokens"][$type], $token ?? '');
     }
 
     public static function add_action_details(string $actionid, stdClass $details): void {
