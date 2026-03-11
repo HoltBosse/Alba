@@ -62,6 +62,11 @@ class FormInstance extends Widget {
 
                 CMS::Instance()->queue_message('Form submitted successfully','success', $redirectToPage->get_url());
             } else {
+                if(!$form->isCsrfValid()) {
+                    CMS::Instance()->queue_message("For your security, we couldn't process this form. Please refresh the page and try again.","danger",$_SERVER['REQUEST_URI']);
+                    exit(0);
+                }
+
                 $badFields = $form->getFailedValidationFields();                
                 $badFields = array_values(array_filter($badFields, function($field) use ($form) {
                     return $form->fields[$field]->save;
