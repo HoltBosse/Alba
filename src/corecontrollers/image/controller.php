@@ -176,6 +176,10 @@ function serve_file (stdClass $media_obj, string $fullpath, int $seconds_to_cach
 function get_image (int $id): ?stdClass {
 	$image = DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
 
+	if($image===false) {
+		return null;
+	}
+
 	if($image->state==0) {
 		$userGroups = User::get_all_groups_for_user(CMS::Instance()->user->id);
 		//check that user has backend access
