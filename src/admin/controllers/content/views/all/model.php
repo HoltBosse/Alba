@@ -137,6 +137,7 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
 	
 	if (sizeof($filters) > 0) {
 		$content_search->filters = $filters;
+		//@phpstan-ignore-next-line
 		if($filters["state"]) {
 			$content_search->disable_builtin_state_check = true;
 		}
