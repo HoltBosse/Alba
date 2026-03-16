@@ -34,7 +34,7 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
         if($search === null) {
             return true;
         }
-        return (str_contains($tag->title,$search) || str_contains($tag->note,$search));
+        return (str_contains(strtolower($tag->title), strtolower($search)) || str_contains(strtolower($tag->note), strtolower($search)));
     })); //filter tags by search term if provided
 }
 

@@ -46,7 +46,7 @@ if($queryResult->results !== null && $queryResult->totalCount !== null) {
 		if($search === null) {
 			return true;
 		}
-		return (str_contains($category->title,$search));
+		return (str_contains(strtolower($category->title), strtolower($search)));
 	})); //filter categories by search term if provided
 }
 
