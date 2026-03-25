@@ -56,6 +56,11 @@
 	])->display();
 ?>
 
+<style>
+	div[data-field_id="page"] {
+		grid-column: span 2;
+	}
+</style>
 <form style="margin-bottom: 0;">
 	<?php
 		$searchForm->display();
