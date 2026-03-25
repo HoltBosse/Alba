@@ -47,20 +47,23 @@ class TagSingle extends Select {
 		$params = [];
 
 		if ($this->content_type) {
-			$query .= " AND (
-				filter=2
-				and id in (
-					SELECT tag_id
-					from tag_content_type
-					where content_type_id=?
-				)
-			) or (
-				filter=1
-				and id
-				not in (
-					SELECT tag_id
-					from tag_content_type
-					where content_type_id=?
+			$query .= " AND
+			(
+				(
+					filter=2
+					and id in (
+						SELECT tag_id
+						from tag_content_type
+						where content_type_id=?
+					)
+				) or (
+					filter=1
+					and id
+					not in (
+						SELECT tag_id
+						from tag_content_type
+						where content_type_id=?
+					)
 				)
 			)";
 			$params[] = $this->content_type;
