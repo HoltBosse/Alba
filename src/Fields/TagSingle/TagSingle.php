@@ -43,15 +43,31 @@ class TagSingle extends Select {
 		$this->content_type = $config->content_type ?? null;
 		$this->domain = $config->domain ?? $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
 
-		if ($this->content_type) {
-			if(!is_numeric($this->content_type)) {
-				$this->content_type = Content::get_content_type_id($this->content_type);
-			}
+		$query = "SELECT * FROM tags WHERE state>0";
+		$params = [];
 
-			$tags = Content::get_applicable_tags((int) $this->content_type);
-		} else {
-			$tags = Tag::get_all_tags ();
+		if ($this->content_type) {
+			$query .= " AND (
+				filter=2
+				and id in (
+					SELECT tag_id
+					from tag_content_type
+					where content_type_id=?
+				)
+			) or (
+				filter=1
+				and id
+				not in (
+					SELECT tag_id
+					from tag_content_type
+					where content_type_id=?
+				)
+			)";
+			$params[] = $this->content_type;
+			$params[] = $this->content_type;
 		}
+
+		$tags = DB::fetchAll($query, $params);
 
 		$tags = array_values(array_filter($tags, function($tag) {
 			return ($tag->domain === null || $tag->domain == $this->domain);
@@ -62,7 +78,6 @@ class TagSingle extends Select {
 			$this->select_options[] = (object) [
 				"text"=>$this->make_tag_path($tag),
 				"value"=>$tag->id,
-				"disabled"=>$tag->state ? false : true
 			];
 		}
 
