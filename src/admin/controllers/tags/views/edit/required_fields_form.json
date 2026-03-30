@@ -143,7 +143,6 @@
 			"id": "image",
 			"type": "Image",
 			"required": false,
-			"description": "TODO: Create and change this to MEDIA field type",
 			"filter":{
 				"IntVal": []
 			}
