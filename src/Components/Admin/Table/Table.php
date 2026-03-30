@@ -100,7 +100,7 @@ class Table extends Component {
                             echo "
                                 <td
                                     " . (!isset($column->tdAttributes["dataset-name"]) ? "dataset-name='{$column->label}'" : "") . "
-                                    " . (isset($column->tdAttributes) ? $column->renderRowAttributes(): "") . "
+                                    " . ($column->renderRowAttributes()) . "
                                 >";
                                 if(!is_null($column->renderer)) {
                                     $column->value = $row->{$column->rowAttribute};

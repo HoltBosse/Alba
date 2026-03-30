@@ -45,7 +45,7 @@ class Component {
             $attributesString .= " id='" . Input::stringHtmlSafe($this->id) . "' ";
         }
 
-        $classes = $this->classList ?? [];
+        $classes = $this->classList;
         $additionalClasses = isset($this->attributes["class"]) ? explode(" ", $this->attributes["class"]) : [];
         unset($this->attributes["class"]);
         $classes = array_merge($classes, $additionalClasses);

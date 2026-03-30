@@ -611,7 +611,7 @@ class Content {
 			$form = JSON::load_obj_from_file(Content::getContentControllerPath($location) . '/custom_fields.json');
 			foreach($form->fields as $field) {
 				/** @var Field $field */
-				if (isset($field->save)) {
+				if (isset($field->save)) { //@phpstan-ignore-line
 					if ($field->save===true) {
 						// @phpstan-ignore offsetAccess.nonOffsetAccessible
 						$list_fields[] = $field->name;
