@@ -39,14 +39,6 @@ if ($custom_user_fields_form) {
 					continue;
 				}
 			}
-			// TODO: handle other arrays 
-			/* CMS::pprint_r ($field);  */
-			if ($field->filter=="ARRAYOFINT") {
-				// convert array of int to string
-				if (is_array($field->default)) {
-					$field->default = implode(",",$field->default);
-				}
-			}
 			// make sure INT is good
 			if ($field->coltype=="INTEGER") {
 				$field->default = (int)$field->default;

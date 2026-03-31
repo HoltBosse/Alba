@@ -415,14 +415,6 @@ class Content {
 					continue;
 				}
 			}
-			// TODO: handle other arrays 
-			/* CMS::pprint_r ($field);  */
-			if ($field->filter=="ARRAYOFINT") {
-				// convert array of int to string
-				if (is_array($field->default)) {
-					$field->default = implode(",",$field->default);
-				}
-			}
 			// always update, either new row for new content, or id available for update
 			// content casting
 			// make sure INT is good
