@@ -7,16 +7,13 @@ Use HoltBosse\DB\DB;
 
 class FormInstance extends Widget {
 	public function render(): void {
-		$normalizedOptions = array_combine(array_column($this->options, 'name'), array_column($this->options, 'value'));
-		//echo $normalizedOptions["forminstance"];
-
-        if(!is_numeric($normalizedOptions["forminstance"])) {
+        if(!is_numeric($this->objectOptions->forminstance)) {
             throw new \Exception("FormInstance widget requires a valid form instance ID as 'forminstance' option.");
         }
 
-        $formDetails = DB::fetch("SELECT * FROM form_instances WHERE id=? AND state>=0", [$normalizedOptions["forminstance"]]);
+        $formDetails = DB::fetch("SELECT * FROM form_instances WHERE id=? AND state>=0", [$this->objectOptions->forminstance]);
 
-        $form = new Form($_ENV["root_path_to_forms"] . "/forms/form_instance_" . $normalizedOptions["forminstance"] . ".json");
+        $form = new Form($_ENV["root_path_to_forms"] . "/forms/form_instance_" . $this->objectOptions->forminstance . ".json");
 
         if($form->isSubmitted()) {
             $form->setFromSubmit();
