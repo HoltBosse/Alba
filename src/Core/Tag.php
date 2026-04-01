@@ -1,11 +1,14 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
-Use HoltBosse\DB\DB;
 Use \PDO;
 Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\Alba\Core\File;
 
+/**
+ * Tag - WordPress taxonomy wrapper
+ * Provides wrapper methods for WordPress tag/taxonomy functions
+ */
 class Tag {
 	public ?int $id = null;
 	public string $title;
@@ -22,50 +25,116 @@ class Tag {
 	public mixed $custom_fields;
 	public mixed $contenttypes;
 	public ?int $domain = null;
+	private string $taxonomy = 'post_tag'; // Default to WordPress tag taxonomy
 
+	/**
+	 * Load tag by ID
+	 * Wrapper for WordPress get_term()
+	 */
 	public function load(int $id): bool {
-		$info = DB::fetch('SELECT * FROM tags WHERE id=?', [$id]);
-		if ($info) {
-			$this->id = $info->id;
-			$this->title = $info->title;
-			$this->state = $info->state;
-			$this->note = $info->note;
-			$this->alias = $info->alias;
-			$this->filter = $info->filter;
-			$this->description = $info->description;
-			$this->image = $info->image;
-			$this->public = $info->public;
-			$this->parent = $info->parent;
-			$this->category = $info->category;
-			$this->custom_fields = $info->custom_fields;
-			$this->contenttypes = DB::fetchAll("SELECT content_type_id FROM tag_content_type WHERE tag_id=?", $this->id, ["mode"=>PDO::FETCH_COLUMN]);
-			$this->domain = isset($info->domain) ? $info->domain : null;
+		$term = get_term($id);
+		
+		if ($term && !is_wp_error($term)) {
+			$this->id = $term->term_id;
+			$this->title = $term->name;
+			$this->state = 1; // WordPress terms don't have state by default
+			$this->note = get_term_meta($term->term_id, 'alba_note', true) ?: '';
+			$this->alias = $term->slug;
+			$this->filter = get_term_meta($term->term_id, 'alba_filter', true);
+			$this->description = $term->description;
+			$this->image = get_term_meta($term->term_id, 'alba_image', true);
+			$this->public = (int) get_term_meta($term->term_id, 'alba_public', true) ?: 1;
+			$this->parent = $term->parent;
+			$this->category = (int) get_term_meta($term->term_id, 'alba_category', true) ?: 0;
+			$this->custom_fields = get_term_meta($term->term_id, 'alba_custom_fields', true);
+			$this->contenttypes = get_term_meta($term->term_id, 'alba_content_types', true) ?: [];
+			$this->domain = get_term_meta($term->term_id, 'alba_domain', true);
 			return true;
 		} else {
 			return false;
 		}
-
 	}
 
+	/**
+	 * Get tags for content
+	 * Wrapper for WordPress wp_get_post_terms() or get_terms()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_tags_for_content(int $content_id, int $content_type_id=-1): array {
-		// default to media/image content type
-		$result = DB::fetchAll("select * from tags where state>0 and id in (select tag_id from tagged where content_id=? and content_type_id=?)", [$content_id, $content_type_id]);
-		return $result;
+		// For WordPress posts
+		if ($content_type_id > 0) {
+			$terms = wp_get_post_terms($content_id, 'post_tag');
+		} else {
+			// For other content types (media, users) use term meta
+			$taxonomy = 'alba_tag_' . abs($content_type_id);
+			$terms = get_terms([
+				'taxonomy' => $taxonomy,
+				'hide_empty' => false,
+			]);
+		}
+		
+		if (is_wp_error($terms)) {
+			return [];
+		}
+		
+		$tags = [];
+		foreach ($terms as $term) {
+			$tags[] = (object) [
+				'id' => $term->term_id,
+				'title' => $term->name,
+				'alias' => $term->slug,
+				'state' => 1
+			];
+		}
+		
+		return $tags;
 	}
 
+	/**
+	 * Get tags available for content type
+	 * Wrapper for WordPress get_terms()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_tags_available_for_content_type (int $content_type_id): array {
-		$result = DB::fetchAll("select * from tags where state>0 and filter=2 and id in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
-		$result2 = DB::fetchAll("select * from tags where state>0 and filter=1 and id not in (select tag_id from tag_content_type where content_type_id=?)", [$content_type_id]);
-		return array_merge ($result,$result2);
+		$args = [
+			'taxonomy' => 'post_tag',
+			'hide_empty' => false,
+		];
+		
+		$terms = get_terms($args);
+		
+		if (is_wp_error($terms)) {
+			return [];
+		}
+		
+		$tags = [];
+		foreach ($terms as $term) {
+			// Check if tag is available for this content type
+			$contenttypes = get_term_meta($term->term_id, 'alba_content_types', true) ?: [];
+			$filter = get_term_meta($term->term_id, 'alba_filter', true);
+			
+			if ($filter == 2 && in_array($content_type_id, $contenttypes)) {
+				$tags[] = $term;
+			} elseif ($filter == 1 && !in_array($content_type_id, $contenttypes)) {
+				$tags[] = $term;
+			}
+		}
+		
+		return $tags;
 	}
 
+	/**
+	 * Set tags for content
+	 * Wrapper for WordPress wp_set_post_terms()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function set_tags_for_content(int $content_id, array $tag_array, int $content_type_id): void {
-		DB::exec("delete from tagged where content_id=? and content_type_id=?", [$content_id,$content_type_id]);
-		foreach ($tag_array as $tag_id) {
-			DB::exec("insert into tagged (tag_id, content_id, content_type_id) values (?,?,?)", [$tag_id, $content_id, $content_type_id]);
+		if ($content_type_id > 0) {
+			// WordPress post
+			wp_set_post_terms($content_id, $tag_array, 'post_tag');
+		} else {
+			// Other content types - store in post meta or custom table
+			update_post_meta($content_id, 'alba_tags_' . abs($content_type_id), $tag_array);
 		}
 	}
 
@@ -74,55 +143,111 @@ class Tag {
 		return 0;
 	}
 
+	/**
+	 * Get all tags
+	 * Wrapper for WordPress get_terms()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_tags(): array {
-		return DB::fetchAll("SELECT * FROM tags");
+		$terms = get_terms([
+			'taxonomy' => 'post_tag',
+			'hide_empty' => false,
+		]);
+		
+		if (is_wp_error($terms)) {
+			return [];
+		}
+		
+		return $terms;
 	}
 
+	/**
+	 * Get all tags by depth (hierarchical)
+	 * Wrapper for WordPress get_terms()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_tags_by_depth(int $parent=0, int $depth=-1): array {
 		$depth = $depth+1;
 		$result=[];
-		$children = DB::fetchAll("select t.*, cat.title as cat_title from (tags t) left join categories cat on t.category=cat.id where t.state>-1 and t.parent=?", [$parent]);
-		foreach ($children as $child) {
-			$child->depth = $depth;
-			$result[] = $child;
-			$result = array_merge ($result, Tag::get_all_tags_by_depth($child->id, $depth));
+		
+		$children = get_terms([
+			'taxonomy' => 'post_tag',
+			'parent' => $parent,
+			'hide_empty' => false,
+		]);
+		
+		if (is_wp_error($children)) {
+			return [];
 		}
+		
+		foreach ($children as $child) {
+			$tag_data = (object) [
+				'id' => $child->term_id,
+				'title' => $child->name,
+				'alias' => $child->slug,
+				'state' => 1,
+				'parent' => $child->parent,
+				'depth' => $depth,
+				'category' => get_term_meta($child->term_id, 'alba_category', true),
+				'cat_title' => '' // TODO: implement if needed
+			];
+			$result[] = $tag_data;
+			$result = array_merge($result, Tag::get_all_tags_by_depth($child->term_id, $depth));
+		}
+		
 		return $result;
 	}
 
+	/**
+	 * Get tag content types
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_tag_content_types(int $id): array {
-		return DB::fetchAll("SELECT content_type_id from tag_content_type where tag_id=?", [$id]);
+		$contenttypes = get_term_meta($id, 'alba_content_types', true) ?: [];
+		$result = [];
+		
+		foreach ($contenttypes as $ct) {
+			$result[] = (object) ['content_type_id' => $ct];
+		}
+		
+		return $result;
 	}
 
+	/**
+	 * Get tag content type titles
+	 */
 	public static function get_tag_content_type_titles(int $id, ?int $domain=null): string {
 		if($domain==null) {
-			$domain==CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+			$domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
 
-		$tag = new Tag();
-		$tag->load($id);
-		$titles_obj = DB::fetchAll("SELECT id, title from content_types where id in (select content_type_id from tag_content_type where tag_id=?)", [$id]);
+		$contenttypes = get_term_meta($id, 'alba_content_types', true) ?: [];
 		$titles = [];
-		if (in_array('-1',$tag->contenttypes)) {
+		
+		if (in_array('-1', $contenttypes) || in_array(-1, $contenttypes)) {
 			$titles[] = "Media";
 		}
-		if (in_array('-2',$tag->contenttypes)) {
+		if (in_array('-2', $contenttypes) || in_array(-2, $contenttypes)) {
 			$titles[] = "Users";
 		}
-		foreach($titles_obj as $t) {
-			if(!Content::isAccessibleOnDomain($t->id, $domain)) {
-				continue;
+		
+		// Get content type titles from WordPress post types or custom storage
+		foreach($contenttypes as $ct) {
+			if ($ct > 0) {
+				$post_type = get_post_type_object($ct);
+				if ($post_type) {
+					$titles[] = $post_type->labels->singular_name;
+				}
 			}
-			$titles[] = $t->title;
 		}
-		return implode(', ',$titles);
+		
+		return implode(', ', $titles);
 	}
 
-
-
+	/**
+	 * Save tag
+	 * Wrapper for WordPress wp_insert_term() and wp_update_term()
+	 */
 	public function save(Form $required_details_form, ?Form $custom_fields_form = null): bool {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->getFieldByName('title')->default;
@@ -140,8 +265,7 @@ class Tag {
 
 		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
-		
-		//if shared accross all domains
+		//if shared across all domains
 		if (isset($_ENV["tag_custom_fields_file_path"])) {
 			$customFieldsFormObject = json_decode(File::getContents($_ENV["tag_custom_fields_file_path"]));
 			if(isset($customFieldsFormObject->multi_domain_shared_instances) && $customFieldsFormObject->multi_domain_shared_instances==true) {
@@ -157,10 +281,22 @@ class Tag {
 
 		$this->domain = $domain;
 
-		//CMS::pprint_r($this); die;
+		// Prepare alias/slug
+		if (!$this->alias) {
+			$this->alias = sanitize_title($this->title);
+		} else {
+			$this->alias = sanitize_title($this->alias);
+		}
+
+		// Prepare term arguments
+		$args = [
+			'description' => $this->description,
+			'slug' => $this->alias,
+			'parent' => $this->parent
+		];
 
 		if ($this->id) {
-
+			// Update existing term
 			Actions::add_action("tagupdate", (object) [
 				"affected_tag"=>$this->id,
 			]);
@@ -169,82 +305,68 @@ class Tag {
 			if ($this->parent) {
 				$parent_id = $this->parent;
 				while ($parent_id) {
-					$parent_tag = new Tag();
-					$parent_tag->load($parent_id);
-					$parent_id = $parent_tag->parent;
-					if ($parent_tag->parent) {
-						if ($parent_id==$this->parent) {
-							// can't be child of itself
-							CMS::Instance()->log('Tag cannot be child of itself');
-							return false;
-						}
+					$parent_term = get_term($parent_id);
+					if (!$parent_term || is_wp_error($parent_term)) {
+						break;
+					}
+					$parent_id = $parent_term->parent;
+					if ($parent_id == $this->id) {
+						// can't be child of itself
+						CMS::Instance()->log('Tag cannot be child of itself');
+						return false;
 					}
 				}
 			}
-			// reach here, parent is valid or empty
+
+			$result = wp_update_term($this->id, $this->taxonomy, array_merge(['name' => $this->title], $args));
 			
-			// update
-			$query = "UPDATE tags SET state=?, public=?, title=?, alias=?, image=?, note=?, description=?, filter=?, parent=?, category=?, custom_fields=?, domain=? WHERE id=?";
-			if (!$this->alias) {
-				$this->alias = Input::stringURLSafe($this->title);
-			} else {
-				$this->alias = Input::stringURLSafe($this->alias);
-			}
-			if (!$this->image) {
-				$this->image=null;
-			}
-			$params = [$this->state, $this->public, $this->title, $this->alias, $this->image, $this->note, $this->description, $this->filter, $this->parent, $this->category, $this->custom_fields, $this->domain, $this->id ] ;
-			$result = DB::exec($query, $params);
-			if ($result) {
-				// clear any content types applicable to this tag from tag_content_type
-				
-				DB::exec("DELETE FROM tag_content_type WHERE tag_id=?", [$this->id]);
-				
-				// insert new tag content_type relationships if required
-				foreach ($this->contenttypes as $contenttype) {
-					DB::exec('INSERT INTO tag_content_type (tag_id,content_type_id) VALUES (?,?)', [$this->id, $contenttype]);
-				}
-				Hook::execute_hook_actions('on_tag_save', $this);
-				return true;	
-			}
-			else {
-				CMS::Instance()->log('Tag failed to save');
+			if (is_wp_error($result)) {
+				CMS::Instance()->log('Tag failed to save: ' . $result->get_error_message());
 				return false;
 			}
+			
+			// Update term meta
+			update_term_meta($this->id, 'alba_state', $this->state);
+			update_term_meta($this->id, 'alba_public', $this->public);
+			update_term_meta($this->id, 'alba_note', $this->note);
+			update_term_meta($this->id, 'alba_filter', $this->filter);
+			update_term_meta($this->id, 'alba_image', $this->image);
+			update_term_meta($this->id, 'alba_category', $this->category);
+			update_term_meta($this->id, 'alba_custom_fields', $this->custom_fields);
+			update_term_meta($this->id, 'alba_domain', $domain);
+			update_term_meta($this->id, 'alba_content_types', $this->contenttypes);
+			
+			Hook::execute_hook_actions('on_tag_save', $this);
+			return true;
 		}
 		else {
-			// new
-			$query = "INSERT INTO tags (state,public,title,alias,note,filter,description,image,parent,category,custom_fields,domain) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+			// Create new term
+			$result = wp_insert_term($this->title, $this->taxonomy, $args);
 			
-			if (!$this->alias) {
-				$this->alias = Input::stringURLSafe($this->title);
-			} else {
-				$this->alias = Input::stringURLSafe($this->alias);
-			}
-			if (!$this->image) {
-				$this->image=null;
-			}
-			$params = [$this->state, $this->public, $this->title, $this->alias, $this->note, $this->filter, $this->description, $this->image, $this->parent, $this->category, $this->custom_fields, $this->domain] ;
-			$result = DB::exec($query, $params);
-			if ($result) {
-				// insert new tag content_type relationships if required
-				$new_id = DB::getLastInsertedId();
-				foreach ($this->contenttypes as $contenttype) {
-					DB::exec('INSERT INTO tag_content_type (tag_id,content_type_id) VALUES (?,?)', [$new_id, $contenttype]);
-				}
-				$this->id = (int) $new_id;
-
-				Actions::add_action("tagcreate", (object) [
-					"affected_tag"=>$this->id,
-				]);
-
-				Hook::execute_hook_actions('on_tag_save', $this);
-				return true;	
-			}
-			else {
-				CMS::Instance()->log('New tag failed to save');
+			if (is_wp_error($result)) {
+				CMS::Instance()->log('New tag failed to save: ' . $result->get_error_message());
 				return false;
 			}
+			
+			$this->id = $result['term_id'];
+			
+			// Save term meta
+			update_term_meta($this->id, 'alba_state', $this->state);
+			update_term_meta($this->id, 'alba_public', $this->public);
+			update_term_meta($this->id, 'alba_note', $this->note);
+			update_term_meta($this->id, 'alba_filter', $this->filter);
+			update_term_meta($this->id, 'alba_image', $this->image);
+			update_term_meta($this->id, 'alba_category', $this->category);
+			update_term_meta($this->id, 'alba_custom_fields', $this->custom_fields);
+			update_term_meta($this->id, 'alba_domain', $domain);
+			update_term_meta($this->id, 'alba_content_types', $this->contenttypes);
+			
+			Actions::add_action("tagcreate", (object) [
+				"affected_tag"=>$this->id,
+			]);
+			
+			Hook::execute_hook_actions('on_tag_save', $this);
+			return true;
 		}
 	}
 }

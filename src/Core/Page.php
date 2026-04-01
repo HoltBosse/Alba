@@ -1,13 +1,15 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
-Use HoltBosse\DB\DB;
 Use HoltBosse\Form\{Form, Input};
-Use \PDOException;
 Use Respect\Validation\Validator as v;
 Use HoltBosse\Form\Field;
 Use HoltBosse\Alba\Core\File;
 
+/**
+ * Page - WordPress page functions wrapper  
+ * Provides wrapper methods for WordPress page management
+ */
 class Page {
 	public int $id;
 	public int $state;
@@ -41,6 +43,104 @@ class Page {
 		$this->page_options_form = new Form(File::realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json"));
 		$this->page_options = null;
 		$this->domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+	}
+
+	/**
+	 * Load page from WordPress by ID
+	 * Wrapper for WordPress get_post()
+	 */
+	public function load_wp_page(int $id): bool {
+		$post = get_post($id);
+		
+		if (!$post || $post->post_type !== 'page') {
+			return false;
+		}
+		
+		$this->id = $post->ID;
+		$this->title = $post->post_title;
+		$this->alias = $post->post_name;
+		$this->state = $post->post_status === 'publish' ? 1 : 0;
+		$this->updated = $post->post_modified;
+		$this->parent = $post->post_parent ?: -1;
+		$this->template_id = (int) get_post_meta($post->ID, 'alba_template_id', true) ?: 1;
+		$this->content_type = get_post_meta($post->ID, 'alba_content_type', true);
+		$this->view = get_post_meta($post->ID, 'alba_view', true);
+		$this->view_configuration = get_post_meta($post->ID, 'alba_view_configuration', true);
+		$this->page_options = get_post_meta($post->ID, 'alba_page_options', true);
+		$this->domain = get_post_meta($post->ID, 'alba_domain', true);
+		$this->controller = get_post_meta($post->ID, 'alba_controller', true);
+		
+		return true;
+	}
+
+	/**
+	 * Save page as WordPress page
+	 * Wrapper for WordPress wp_insert_post() and wp_update_post()
+	 */
+	public function save_wp_page(): int|bool {
+		$post_data = [
+			'post_title' => $this->title,
+			'post_name' => $this->alias,
+			'post_status' => $this->state == 1 ? 'publish' : 'draft',
+			'post_type' => 'page',
+			'post_parent' => $this->parent > 0 ? $this->parent : 0,
+		];
+		
+		if ($this->id) {
+			// Update existing page
+			$post_data['ID'] = $this->id;
+			$result = wp_update_post($post_data, true);
+			
+			if (is_wp_error($result)) {
+				return false;
+			}
+		} else {
+			// Create new page
+			$result = wp_insert_post($post_data, true);
+			
+			if (is_wp_error($result)) {
+				return false;
+			}
+			
+			$this->id = $result;
+		}
+		
+		// Update page meta
+		update_post_meta($this->id, 'alba_template_id', $this->template_id);
+		update_post_meta($this->id, 'alba_content_type', $this->content_type);
+		update_post_meta($this->id, 'alba_view', $this->view);
+		update_post_meta($this->id, 'alba_view_configuration', $this->view_configuration);
+		update_post_meta($this->id, 'alba_page_options', $this->page_options);
+		update_post_meta($this->id, 'alba_domain', $this->domain);
+		update_post_meta($this->id, 'alba_controller', $this->controller);
+		
+		return $this->id;
+	}
+
+	/**
+	 * Delete page
+	 * Wrapper for WordPress wp_delete_post()
+	 */
+	public function delete_wp_page(bool $force_delete = false): bool {
+		if (!$this->id) {
+			return false;
+		}
+		
+		$result = wp_delete_post($this->id, $force_delete);
+		return $result !== false && !is_wp_error($result);
+	}
+
+	/**
+	 * Get all pages
+	 * Wrapper for WordPress get_pages()
+	 */
+	// @phpstan-ignore missingType.iterableValue
+	public static function get_all_pages_wp(): array {
+		$pages = get_pages([
+			'post_status' => 'any',
+		]);
+		
+		return $pages;
 	}
 
 	public function get_url(): string {

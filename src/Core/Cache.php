@@ -1,14 +1,18 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
+/**
+ * Cache - WordPress transients wrapper
+ * Provides wrapper methods for WordPress transient API
+ */
 class Cache {
     public function __construct() {
-        // make sure cache path exists
-        if (!is_dir($_ENV["cache_root"] . "/cache")) {
-            mkdir($_ENV["cache_root"] . "/cache", 0755);
-        }
+        // WordPress handles cache initialization
     }
 
+    /**
+     * Check if cache should be ignored for this request
+     */
     public function ignore(string $request, ?string $type=null): bool {
         if(isset($_ENV["cache_ignore"])) {
             foreach (explode(",", $_ENV["cache_ignore"]) as $partial_path) {
@@ -25,66 +29,102 @@ class Cache {
         return false;
     }
 
-    private function gen_cache_filename(string $identifier, string $type): string {
-        return $type . "_" . hash('md4', $identifier);
+    /**
+     * Generate cache key from identifier and type
+     */
+    private function gen_cache_key(string $identifier, string $type): string {
+        return 'alba_' . $type . "_" . hash('md4', $identifier);
     }
 
-    public function is_cached(string $identifier, string $type): ?string {
-        // checks if cache file for an identifier/type exists 
-        // and that it isn't stale
-        // if it's good, returns full path to cache file
-        // otherwise returns null
+    /**
+     * Get cache expiration time in seconds
+     */
+    private function get_cache_expiration(): int {
+        $config_time = 30; // default 30 minutes
+        if(isset($_ENV["cache_time"]) && is_numeric($_ENV["cache_time"])) {
+            $config_time = (float) $_ENV["cache_time"];
+        }
+        return (int) ($config_time * 60); // convert minutes to seconds
+    }
 
+    /**
+     * Check if cache exists and is not stale
+     * Returns the cached data or null if not cached
+     * Wrapper for WordPress get_transient()
+     */
+    public function is_cached(string $identifier, string $type): ?string {
         // first check if path is ignored for urls
         if ($type=='url') {
             if ($this->ignore($identifier, $type)) {
                 return null;
             }
         }
-        $filename = $this->gen_cache_filename($identifier, $type);
-        $fullpath = $_ENV["cache_root"] . "/cache/" . $filename;
-        if (file_exists($fullpath)) {
-            $curtime = time();
-            $filetime = filemtime($fullpath);
-            $config_time = 30;
-            if(isset($_ENV["cache_time"]) && is_numeric($_ENV["cache_time"])) {
-                $config_time = (float) $_ENV["cache_time"];
-            }
-            $file_stale_time = $filetime + ($config_time * 60);
-            // @phpstan-ignore-next-line
-            if ($filetime && is_numeric($file_stale_time)) {
-                if ($file_stale_time > $curtime) {
-                    // cache not stale yet
-                    return $fullpath;
-                }
-                else {
-                    // cache is stale - delete file
-                    unlink($fullpath);
-                }
-            }
-        }
-        return null;
+        
+        $cache_key = $this->gen_cache_key($identifier, $type);
+        $cached = get_transient($cache_key);
+        
+        return $cached !== false ? $cached : null;
     }
 
+    /**
+     * Create/update cache
+     * Wrapper for WordPress set_transient()
+     */
     public function create_cache(string $identifier, string $type='url', string $content=""): void {
-        // content agnostic - type commonly 'url' for full page
-        // but can be extended to create cache for anything
-        $filename = $this->gen_cache_filename($identifier, $type);
-        $fullpath = $_ENV["cache_root"] . "/cache/" . $filename;
-        file_put_contents($fullpath, $content);
+        $cache_key = $this->gen_cache_key($identifier, $type);
+        $expiration = $this->get_cache_expiration();
+        set_transient($cache_key, $content, $expiration);
     }
 
-    public function get_cache(string $filepath): string {
-        return File::getContents($filepath);
+    /**
+     * Get cache content (for backwards compatibility)
+     */
+    public function get_cache(string $identifier): string {
+        // For backwards compatibility - assumes identifier is the cache key
+        $cached = get_transient($identifier);
+        return $cached !== false ? $cached : '';
     }
 
-    public function serve_cache(string $filepath): void {
-        readfile($filepath);
+    /**
+     * Serve cached content directly
+     */
+    public function serve_cache(string $identifier): void {
+        $cached = $this->get_cache($identifier);
+        echo $cached;
     }
 
-    public function serve_page(string $filepath): void {
-        echo "<!-- Alba cache: " . date('F j, Y, g:i a', (int) filemtime($filepath)) . " -->\n";
-        readfile($filepath);
-        exit();
+    /**
+     * Serve cached page and exit
+     */
+    public function serve_page(string $identifier): void {
+        $cached = get_transient($identifier);
+        if ($cached !== false) {
+            echo "<!-- Alba cache (WordPress transients) -->\n";
+            echo $cached;
+            exit();
+        }
+    }
+
+    /**
+     * Delete a specific cache entry
+     * Wrapper for WordPress delete_transient()
+     */
+    public function delete_cache(string $identifier, string $type='url'): bool {
+        $cache_key = $this->gen_cache_key($identifier, $type);
+        return delete_transient($cache_key);
+    }
+
+    /**
+     * Clear all Alba caches
+     * Uses WordPress database query to delete all transients starting with 'alba_'
+     */
+    public function clear_all_caches(): bool {
+        global $wpdb;
+        $wpdb->query(
+            "DELETE FROM {$wpdb->options} 
+             WHERE option_name LIKE '_transient_alba_%' 
+             OR option_name LIKE '_transient_timeout_alba_%'"
+        );
+        return true;
     }
 }

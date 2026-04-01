@@ -1,12 +1,15 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
-Use HoltBosse\DB\DB;
 Use \Exception;
 Use HoltBosse\Form\Form;
 Use \StdClass;
 Use HoltBosse\Alba\Core\File;
 
+/**
+ * Category - WordPress taxonomy wrapper
+ * Provides wrapper methods for WordPress category/taxonomy functions
+ */
 class Category {
 	public ?int $id = null;
 	public ?string $title = null;
@@ -16,6 +19,7 @@ class Category {
 	public ?string $custom_fields = null;
 	public ?string $content_location = null;
 	public ?int $domain = null;
+	private string $taxonomy = 'category'; // Default to WordPress category taxonomy
 
 	public function __construct(int $content_type) {
 		$this->id = null;
@@ -25,74 +29,101 @@ class Category {
 		$this->content_type = $content_type;
 		$this->custom_fields = "";
 		$this->domain = null;
+		
+		// Determine taxonomy based on content_type
 		if ($content_type) {
 			$this->content_location = Content::get_content_location($this->content_type);
+			// Use custom taxonomy for Alba content types
+			$this->taxonomy = 'alba_category_' . $content_type;
+			
+			// Register taxonomy if it doesn't exist
+			if (!taxonomy_exists($this->taxonomy)) {
+				register_taxonomy($this->taxonomy, 'post', [
+					'hierarchical' => true,
+					'label' => 'Alba Categories',
+					'public' => true,
+					'show_ui' => true,
+					'show_in_rest' => true,
+				]);
+			}
 		}
 	}
 
+	/**
+	 * Get all categories by depth (hierarchical)
+	 * Wrapper for WordPress get_terms()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_categories_by_depth(?int $content_type, int $parent=0, int $depth=-1): array {
-		
 		$depth = $depth+1;
 		$result=[];
-		if ($content_type) {
-			$children = DB::fetchAll("select * from categories where content_type=? and state>-1 and parent=?", [$content_type, $parent]);
-		}
-		else {
-			$children = DB::fetchAll("select * from categories where state>-1 and parent=?", [$parent]);
-		}
+		
+		// Determine taxonomy
+		$taxonomy = $content_type ? 'alba_category_' . $content_type : 'category';
+		
+		// Get children
+		$args = [
+			'taxonomy' => $taxonomy,
+			'parent' => $parent,
+			'hide_empty' => false,
+		];
+		
+		$children = get_terms($args);
+		
 		foreach ($children as $child) {
-			$child->depth = $depth;
-			$result[] = $child;
-			$result = array_merge ($result, Category::get_all_categories_by_depth($content_type, $child->id, $depth));
+			$term_data = (object) [
+				'id' => $child->term_id,
+				'title' => $child->name,
+				'parent' => $child->parent,
+				'state' => 1, // WordPress terms don't have state
+				'content_type' => $content_type,
+				'depth' => $depth,
+				'custom_fields' => get_term_meta($child->term_id, 'alba_custom_fields', true),
+				'domain' => get_term_meta($child->term_id, 'alba_domain', true)
+			];
+			$result[] = $term_data;
+			$result = array_merge($result, Category::get_all_categories_by_depth($content_type, $child->term_id, $depth));
 		}
+		
 		return $result;
 	}
 
+	/**
+	 * Get category count
+	 * Wrapper for WordPress wp_count_terms()
+	 */
 	public static function get_category_count(int|string|null $content_type, string $search=""): stdClass {
+		$taxonomy = $content_type ? 'alba_category_' . $content_type : 'category';
+		
+		$args = [
+			'taxonomy' => $taxonomy,
+			'hide_empty' => false,
+		];
+		
 		if ($search) {
-			$like = '%' . $search . '%';
-			if (!$content_type) {
-				// return count of all content
-				return DB::fetch('select count(*) as c from categories where (title like ? ) and state>0',[$like])->c;
-			}
-			if (!is_numeric($content_type)) {
-				// try and get type id
-				$content_type = Content::get_content_type_id($content_type);
-				if (!$content_type) {
-					throw new Exception("Unable to determine content type when retrieving count");
-				}
-			}
-			return DB::fetch('select count(*) as c from categories where (title like ?) and state>0 and content_type=?',[$like,$content_type])->c;
+			$args['search'] = $search;
 		}
-		else {
-			if (!$content_type) {
-				// return count of all cats
-				return DB::fetch('select count(*) as c from categories where state>0',[])->c;
-			}
-			if (!is_numeric($content_type)) {
-				// try and get type id
-				$content_type = Content::get_content_type_id($content_type);
-				if (!$content_type) {
-					throw new Exception('Unable to determine content type when retrieving count');
-				}
-			}
-			return DB::fetch('select count(*) as c from categories where state>0 and content_type=?',[$content_type])->c;
-		}
+		
+		$count = wp_count_terms($args);
+		
+		return (object) ['c' => (int) $count];
 	}
 
-
-
+	/**
+	 * Load category by ID
+	 * Wrapper for WordPress get_term()
+	 */
 	public function load(int $id): bool {
-		$info = DB::fetch('SELECT * from categories where id=?',[$id]);
-		if ($info) {
-			$this->id = $info->id;
-			$this->title = $info->title;
-			$this->state = $info->state;
-			$this->content_type = $info->content_type;
-			$this->parent = $info->parent;
-			$this->custom_fields = $info->custom_fields;
-			$this->domain = $info->domain;
+		$term = get_term($id, $this->taxonomy);
+		
+		if ($term && !is_wp_error($term)) {
+			$this->id = $term->term_id;
+			$this->title = $term->name;
+			$this->state = 1; // WordPress terms don't have state
+			$this->content_type = get_term_meta($term->term_id, 'alba_content_type', true) ?: $this->content_type;
+			$this->parent = $term->parent;
+			$this->custom_fields = get_term_meta($term->term_id, 'alba_custom_fields', true);
+			$this->domain = get_term_meta($term->term_id, 'alba_domain', true);
 			return true;
 		}
 		else {
@@ -100,6 +131,10 @@ class Category {
 		}
 	}
 
+	/**
+	 * Save category
+	 * Wrapper for WordPress wp_insert_term() and wp_update_term()
+	 */
 	public function save(Form $required_details_form, ?Form $custom_fields_form = null): bool {
 		// update this object with submitted and validated form info
 		$this->title = $required_details_form->getFieldByName('title')->default;
@@ -110,8 +145,7 @@ class Category {
 
 		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 
-		
-		//if shared accross all domains
+		//if shared across all domains
 		if (isset($_ENV["category_custom_fields_form_path"])) {
 			$customFieldsFormObject = json_decode(File::getContents($_ENV["category_custom_fields_form_path"]));
 			if(isset($customFieldsFormObject->multi_domain_shared_instances) && $customFieldsFormObject->multi_domain_shared_instances==true) {
@@ -127,39 +161,67 @@ class Category {
 
 		$this->domain = $domain;
 
+		// Prepare term arguments
+		$args = [
+			'parent' => $this->parent,
+			'slug' => sanitize_title($this->title)
+		];
+
 		if ($this->id) {
+			// Update existing term
 			Actions::add_action("categoryupdate", (object) [
 				"affected_category"=>$this->id,
 			]);
-			// update
-			$required_result = DB::exec("update categories set state=?,  title=?, parent=?, custom_fields=? where id=?", [$this->state, $this->title, $this->parent, $this->custom_fields, $this->id]);
+			
+			$result = wp_update_term($this->id, $this->taxonomy, array_merge(['name' => $this->title], $args));
+			
+			if (is_wp_error($result)) {
+				CMS::Instance()->log("Failed to update category: " . $result->get_error_message());
+				return false;
+			}
+			
+			// Update term meta
+			update_term_meta($this->id, 'alba_state', $this->state);
+			update_term_meta($this->id, 'alba_custom_fields', $this->custom_fields);
+			update_term_meta($this->id, 'alba_domain', $domain);
+			update_term_meta($this->id, 'alba_content_type', $this->content_type);
 		}
 		else {
-			// new
-			$required_result = DB::exec("insert into categories (state,title,content_type, parent, custom_fields) values(?,?,?,?,?)", [$this->state, $this->title, $this->content_type, $this->parent, $this->custom_fields]);
-			if ($required_result) {
-				// update object id with inserted id
-				$id = DB::getLastInsertedId();
-				if($id===false) {
-					throw new Exception("Failed to retrieve last inserted id after category insert");
-				}
-
-				$this->id = (int) $id;
-
-				Actions::add_action("categorycreate", (object) [
-					"affected_category"=>$this->id,
-				]);
+			// Create new term
+			$result = wp_insert_term($this->title, $this->taxonomy, $args);
+			
+			if (is_wp_error($result)) {
+				CMS::Instance()->log("Failed to create category: " . $result->get_error_message());
+				return false;
 			}
-		}
-		if (!$required_result) {
-			CMS::Instance()->log("Failed to save category");
-			return false;
+			
+			$this->id = $result['term_id'];
+			
+			// Save term meta
+			update_term_meta($this->id, 'alba_state', $this->state);
+			update_term_meta($this->id, 'alba_custom_fields', $this->custom_fields);
+			update_term_meta($this->id, 'alba_domain', $domain);
+			update_term_meta($this->id, 'alba_content_type', $this->content_type);
+			
+			Actions::add_action("categorycreate", (object) [
+				"affected_category"=>$this->id,
+			]);
 		}
 
 		Hook::execute_hook_actions('on_category_save', $this);
 		return true;
 	}
 
-
-
+	/**
+	 * Delete category
+	 * Wrapper for WordPress wp_delete_term()
+	 */
+	public function delete(): bool {
+		if (!$this->id) {
+			return false;
+		}
+		
+		$result = wp_delete_term($this->id, $this->taxonomy);
+		return !is_wp_error($result);
+	}
 }

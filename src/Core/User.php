@@ -1,16 +1,18 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
-Use HoltBosse\DB\DB;
 Use HoltBosse\Form\Input;
 Use \Exception;
-use \PDOException;
 Use Respect\Validation\Validator as v;
 
+/**
+ * User - WordPress user functions wrapper
+ * Provides wrapper methods for WordPress user management
+ */
 class User {
 	public ?int $id;
 	// @phpstan-ignore missingType.iterableValue
-	public array $groups;
+	public array $groups;  // WordPress roles
 	public string $username;
 	public ?string $password;
 	public ?string $email;
@@ -33,6 +35,10 @@ class User {
 		$this->domain = null;
 	}
 
+	/**
+	 * Create a new user
+	 * Wrapper for WordPress wp_insert_user()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function create_new (string $username, string $password, string $email, array $groups=[], int $state=0, ?int $domain=null): int {
 		if(is_null($domain)) {
@@ -40,96 +46,184 @@ class User {
 		}
 
 		if ($username && $email && $password) {
-			$hash = password_hash ($password, PASSWORD_DEFAULT);
-			$query = "INSERT INTO users (username, email, password, state, domain) VALUES (?,?,?,?,?)";
-			//CMS::Instance()->$pdo->prepare($query)->execute([$username,$email,$hash,$state]);
-			DB::exec($query, [$username,$email,$hash,$state,$domain]);
-			$id = (int) DB::getLastInsertedId();
-			foreach ($groups as $group) {
-				if (is_int($group)) {
-					$query = "INSERT INTO user_groups (user_id, group_id) values (?,?)";
-					DB::exec($query, [$id,$group]);
-				}
+			$userdata = [
+				'user_login' => $username,
+				'user_email' => $email,
+				'user_pass' => $password,
+				'role' => !empty($groups) ? $groups[0] : 'subscriber'
+			];
+			
+			$user_id = wp_insert_user($userdata);
+			
+			if (is_wp_error($user_id)) {
+				throw new Exception('Unable to create new user: ' . $user_id->get_error_message());
 			}
-			return $id;
+			
+			// Add additional roles/groups
+			$user = new \WP_User($user_id);
+			foreach (array_slice($groups, 1) as $group) {
+				$user->add_role($group);
+			}
+			
+			// Store Alba-specific metadata
+			update_user_meta($user_id, 'alba_state', $state);
+			update_user_meta($user_id, 'alba_domain', $domain);
+			
+			return $user_id;
 		}
 		else {
 			throw new Exception('Unable to create new user');
 		}
 	}
 
+	/**
+	 * Get all users
+	 * Wrapper for WordPress get_users()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_users(): array {
-		return DB::fetchAll(
-			"SELECT u.*, group_concat(DISTINCT g.display) AS `groups`, group_concat(DISTINCT t.title) AS tags 
-			FROM users u 
-			LEFT JOIN user_groups ug ON ug.user_id = u.id 
-			LEFT JOIN `groups` g ON ug.group_id = g.id 
-			LEFT JOIN tagged tt ON tt.content_id = u.id AND content_type_id=-2 
-			LEFT JOIN tags t ON t.id = tt.tag_id AND t.state > 0 
-			GROUP BY u.id"
-		);
+		$wp_users = get_users();
+		$users = [];
+		
+		foreach ($wp_users as $wp_user) {
+			$user_data = (object) [
+				'id' => $wp_user->ID,
+				'username' => $wp_user->user_login,
+				'email' => $wp_user->user_email,
+				'groups' => implode(', ', $wp_user->roles),
+				'tags' => '', // TODO: implement with user meta
+				'state' => (int) get_user_meta($wp_user->ID, 'alba_state', true) ?: 1,
+				'created' => $wp_user->user_registered,
+				'domain' => get_user_meta($wp_user->ID, 'alba_domain', true)
+			];
+			$users[] = $user_data;
+		}
+		
+		return $users;
 	}
 
+	/**
+	 * Get all users in a specific role (group)
+	 * Wrapper for WordPress get_users()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public function get_all_users_in_group(int $group_id): array {
-		$query = "Select u.*, group_concat(g.display) as `groups` from users u 
-					Left Join user_groups ug on ug.user_id = u.id  
-					Left Join `groups` g on ug.group_id = g.id 
-					WHERE g.id=? 
-					group by u.id";
-		return DB::fetchAll($query, [$group_id]);
+		// Map group_id to role name
+		$role = $this->get_role_by_group_id($group_id);
+		
+		$wp_users = get_users(['role' => $role]);
+		$users = [];
+		
+		foreach ($wp_users as $wp_user) {
+			$user_data = (object) [
+				'id' => $wp_user->ID,
+				'username' => $wp_user->user_login,
+				'email' => $wp_user->user_email,
+				'groups' => implode(', ', $wp_user->roles)
+			];
+			$users[] = $user_data;
+		}
+		
+		return $users;
 	}
 
+	/**
+	 * Get all roles (groups) for a user
+	 * Wrapper for WordPress WP_User->roles
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_groups_for_user(int $user_id): array {
-		$query = "SELECT * from `groups` where id in (select group_id from user_groups where user_id=?) ORDER BY display ASC";
-		return DB::fetchAll($query, $user_id);
+		$wp_user = get_user_by('ID', $user_id);
+		if (!$wp_user) {
+			return [];
+		}
+		
+		$roles = [];
+		foreach ($wp_user->roles as $role) {
+			$role_obj = get_role($role);
+			if ($role_obj) {
+				$roles[] = (object) [
+					'id' => $role,
+					'display' => ucfirst($role),
+					'value' => $role
+				];
+			}
+		}
+		
+		return $roles;
 	}
 
+	/**
+	 * Get role name by group ID
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_group_name (int $group_id): array {
-		$query = "select display from `groups` where id=?";
-		$result = DB::fetch($query, [$group_id]);
-		return $result->display;
+		// In WordPress, role names are strings, not IDs
+		// This is a compatibility method
+		$roles = wp_roles()->roles;
+		$role_keys = array_keys($roles);
+		
+		if (isset($role_keys[$group_id])) {
+			return $roles[$role_keys[$group_id]]['name'];
+		}
+		
+		return 'Unknown';
 	}
 
-
+	/**
+	 * Update user password
+	 * Wrapper for WordPress wp_set_password()
+	 */
 	public function update_password (string $new_password): bool {
-		$hash = password_hash ($new_password, PASSWORD_DEFAULT);
-		$query = "update users set password=? where id=?";
-		DB::exec($query, [$hash, $this->id]);
+		if (!$this->id) {
+			return false;
+		}
+		wp_set_password($new_password, $this->id);
 		return true;
 	}
 
+	/**
+	 * Check if user is member of a role/group
+	 * Wrapper for WordPress user_can()
+	 */
 	public function is_member_of (mixed $group_value): bool {
+		if (!$this->id) {
+			return false;
+		}
+		
+		$wp_user = get_user_by('ID', $this->id);
+		if (!$wp_user) {
+			return false;
+		}
+		
 		if (is_numeric($group_value)) {
-			$query = "select * from user_groups where group_id=? and user_id=?";
+			// Convert group ID to role name
+			$role = $this->get_role_by_group_id($group_value);
+			return in_array($role, $wp_user->roles);
 		}
 		else {
-			// by group name value
-			$query = "select id from `groups` where value=? and id in (select group_id from user_groups where user_id=?)";
+			// Check by role name
+			return in_array($group_value, $wp_user->roles);
 		}
-		$result = DB::fetchAll($query, [$group_value, $this->id]);
-		if ($result) {
-			return true;
-		}
-		return false;
 	}
 
+	/**
+	 * Check if user can access backend
+	 * Wrapper for WordPress current_user_can()
+	 */
 	public function canAccessBackend(): bool {
-		$result = DB::fetchAll(
-			"SELECT *
-			FROM user_groups ug
-			LEFT JOIN groups g on ug.group_id = g.id
-			WHERE ug.user_id = ?
-			AND (
-				g.backend=1	
-			)",
-			[$this->id]
-		);
+		if (!$this->id) {
+			return false;
+		}
+		return user_can($this->id, 'edit_posts');
+	}
 
-		return !empty($result);
+	/**
+	 * Helper method to map group ID to role name
+	 */
+	private function get_role_by_group_id(int $group_id): string {
+		$roles = array_keys(wp_roles()->roles);
+		return $roles[$group_id] ?? 'subscriber';
 	}
 
 	public function load_from_post(): bool {
@@ -137,7 +231,7 @@ class User {
 
 		$submittedPassword = Input::getvar('password',v::StringVal(),null);
 		if ($submittedPassword) {
-			$this->password = password_hash ($submittedPassword, PASSWORD_DEFAULT); 
+			$this->password = $submittedPassword; // WordPress will hash it
 		}
 		else {
 			$this->password = null;
@@ -156,28 +250,31 @@ class User {
 		return true;
 	}
 
+	/**
+	 * Load user from WordPress by ID
+	 * Wrapper for WordPress get_user_by()
+	 */
 	public function load_from_id(int $id): bool {
-		$query = "select * from users where id=?";
-		$result = DB::fetch($query, [$id]);
-		if ($result) {
-			$this->username = $result->username;
-			$this->password = $result->password;
-			$this->created = $result->created;
-			$this->email = $result->email;
-			$this->id = $result->id;
-			$this->state = $result->state;
-			$this->domain = $result->domain;
-			// get groups
-			$query = "select * from `groups` where id in (select group_id from user_groups where user_id=?)";
-			$this->groups = DB::fetchAll($query, [$id]);
-
-			// get tags
-			$query = "select tag_id from tagged where content_type_id=-2 and content_id=?";
-			$tag_obj_array = DB::fetchAll($query, [$id]);
-			foreach ($tag_obj_array as $tag) {
-				$this->tags[] = $tag->tag_id;
+		$wp_user = get_user_by('ID', $id);
+		
+		if ($wp_user) {
+			$this->username = $wp_user->user_login;
+			$this->password = $wp_user->user_pass;
+			$this->created = $wp_user->user_registered;
+			$this->email = $wp_user->user_email;
+			$this->id = $wp_user->ID;
+			$this->state = (int) get_user_meta($wp_user->ID, 'alba_state', true) ?: 1;
+			$this->domain = get_user_meta($wp_user->ID, 'alba_domain', true);
+			
+			// Get roles
+			$this->groups = [];
+			foreach ($wp_user->roles as $role) {
+				$this->groups[] = (object) ['value' => $role, 'display' => ucfirst($role)];
 			}
-
+			
+			// Get tags
+			$this->tags = get_user_meta($wp_user->ID, 'alba_tags', true) ?: [];
+			
 			return true;
 		}
 		else {
@@ -185,65 +282,110 @@ class User {
 		}
 	}
 
-	
+	/**
+	 * Get username by ID
+	 * Wrapper for WordPress get_user_by()
+	 */
 	public static function get_username_by_id(int $id): ?string {
-		$result = DB::fetch("select username from users where id=?", [$id]);
-		return $result ? $result->username : null;
+		$wp_user = get_user_by('ID', $id);
+		return $wp_user ? $wp_user->user_login : null;
 	}
 
+	/**
+	 * Check password
+	 * Wrapper for WordPress wp_check_password()
+	 */
 	public function check_password(string $password): bool {
-		$query = "select password from users where id=?";
-		$hash = DB::fetch($query, [$this->id]);
-		return password_verify($password, $hash->password);
+		if (!$this->id) {
+			return false;
+		}
+		
+		$wp_user = get_user_by('ID', $this->id);
+		if (!$wp_user) {
+			return false;
+		}
+		
+		return wp_check_password($password, $wp_user->user_pass, $wp_user->ID);
 	}
 
+	/**
+	 * Load user from email
+	 * Wrapper for WordPress get_user_by()
+	 */
 	public function load_from_email(string $email, ?int $domain=null): User|bool {
 		if($domain==null) {
 			$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
 
-		//echo "<h5>Loading user object from db with email {$email}</h5>";
-		$query = "SELECT * FROM users WHERE email=? AND domain=?";
-		$result = DB::fetch($query, [$email, $domain]);
-		if ($result) {
-			return $this->load_from_id($result->id);
+		$wp_user = get_user_by('email', $email);
+		if ($wp_user) {
+			// Check domain if needed
+			$user_domain = get_user_meta($wp_user->ID, 'alba_domain', true);
+			if ($user_domain && $user_domain != $domain) {
+				return false;
+			}
+			
+			return $this->load_from_id($wp_user->ID);
 		} else {
 			return false;
 		}
 	}
 
+	/**
+	 * Generate password reset key
+	 * Wrapper for WordPress get_password_reset_key()
+	 */
 	public function generate_reset_key(): string {
-		$key = bin2hex(random_bytes(32));
-		$query = "update users set reset_key=?, reset_key_expires=NOW() + INTERVAL 1 DAY where id=?";
-		$ok = DB::exec($query, [$key, $this->id]);
-		if (!$ok) {
-			CMS::Instance()->queue_message('Error creating password reset key for ' . Input::stringHtmlSafe($this->username), 'warning', $_ENV["uripath"]."/admin");
-			// should not get here
+		if (!$this->id) {
+			throw new Exception('Cannot generate reset key without user ID');
 		}
+		
+		$wp_user = get_user_by('ID', $this->id);
+		if (!$wp_user) {
+			throw new Exception('User not found');
+		}
+		
+		$key = get_password_reset_key($wp_user);
+		
+		if (is_wp_error($key)) {
+			CMS::Instance()->queue_message('Error creating password reset key for ' . Input::stringHtmlSafe($this->username), 'warning', $_ENV["uripath"]."/admin");
+			throw new Exception($key->get_error_message());
+		}
+		
 		return $key;
 	}
 
+	/**
+	 * Remove reset key
+	 * WordPress handles expiration automatically
+	 */
 	public function remove_reset_key(): bool {
-		$query = "update users set reset_key=null, reset_key_expires=null where id=?";
-		$ok = DB::exec($query, [$this->id]); 
-		if (!$ok) {
-			return false;
-		}
-		else {
-			return true;
-		}
+		// WordPress doesn't expose a direct method to remove reset keys
+		// They expire automatically, so we'll just return true
+		return true;
 	}
 
+	/**
+	 * Get user by reset key
+	 * Wrapper for WordPress check_password_reset_key()
+	 */
 	public function get_user_by_reset_key (string $key): User|bool {
-		// get used for reset key - only returns anything if reset key has not expired
-		$query = "select * from users where reset_key=? and reset_key_expires>NOW() LIMIT 1";
-		$result = DB::fetch($query, [$key]);
-		if ($result) {
-			return $this->load_from_id($result->id);
+		// Extract user_login from key format (WordPress stores keys differently)
+		// WordPress uses format: user_login:timestamp in the key
+		// We need to find the user by checking all users
+		
+		// This is a simplified version - WordPress's check_password_reset_key requires both login and key
+		// You may need to store the user_login separately when generating the key
+		
+		$users = get_users();
+		foreach ($users as $wp_user) {
+			$check = check_password_reset_key($key, $wp_user->user_login);
+			if (!is_wp_error($check)) {
+				return $this->load_from_id($wp_user->ID);
+			}
 		}
-		else {
-			return false;
-		}
+		
+		return false;
 	}
 
 	public function sendResetEmail(?string $baseUrl=null): Message {
@@ -258,18 +400,18 @@ class User {
 		
 		if ($this->username != 'guest') {
 			$key = $this->generate_reset_key();
-			$link = $baseUrl . "?resetkey=" . $key;
+			$link = $baseUrl . "?resetkey=" . $key . "&user=" . urlencode($this->username);
 			$markup = "
 			<h5>Hi {$this->username}</h5>
-			<p>A password reset has been request on " . $_ENV["sitename"] . "</p>
-			<p>Click <a target='_blank' href='{$link}'>here</a> to choose a new password.</p>
+			<p>A password reset has been request on " . esc_html($_ENV["sitename"]) . "</p>
+			<p>Click <a target='_blank' href='" . esc_url($link) . "'>here</a> to choose a new password.</p>
 			<p>If you did not initiate this request, please ignore this email.</p>
 			";
-			$mail = new Mail();	
-			$mail->addAddress($this->email, $_ENV["sitename"] . " - User");
-			$mail->subject = 'Reset Email for ' . $_ENV["sitename"];
-			$mail->html = $markup;
-			$mail->send();
+			
+			// Use WordPress wp_mail instead of custom Mail class
+			$subject = 'Reset Email for ' . $_ENV["sitename"];
+			$headers = ['Content-Type: text/html; charset=UTF-8'];
+			wp_mail($this->email, $subject, $markup, $headers);
 
 			$status = true;
 		}
@@ -287,30 +429,33 @@ class User {
 			if ($password1 != $password2) {
 				return new Message(false, MessageType::Danger, 'Passwords did not match.', $baseUrl . '?resetkey=' . $resetkey);	
 			} else {
-				// check resetkey matches a valid and current resetkey in user table
-				$reset_user = new User();
-				$reset_user_exists = $reset_user->get_user_by_reset_key($resetkey);
-				if ($reset_user_exists) {
-					// remove resetkey from user, update password and redirect to admin login
-					if (!$reset_user->remove_reset_key()) {
-						return new Message(false, MessageType::Danger, 'Error removing reset key.', $baseUrl);
-					}
-					if ($reset_user->update_password($password1)) {
-						return new Message(true, MessageType::Success, 'Password changed for ' . Input::stringHtmlSafe($reset_user->username), $baseUrl);	
-					}
-					else {
-						return new Message(false, MessageType::Danger, 'Unable to reset password. Please contact the system administrator.', $baseUrl. '?resetkey=' . $resetkey);		
-					}
-				} else {
-					// no matching user for resetkey found or resetkey is outdated
-					return new Message(false, MessageType::Danger, 'Invalid reset key or reset key is too old.', $_ENV["uripath"] . '/admin?resetkey=' . $resetkey);	
+				// Get user_login from request
+				$user_login = $_REQUEST['user'] ?? '';
+				if (!$user_login) {
+					return new Message(false, MessageType::Danger, 'Invalid reset request.', $baseUrl);
 				}
+				
+				// Verify reset key using WordPress
+				$user = check_password_reset_key($resetkey, $user_login);
+				
+				if (is_wp_error($user)) {
+					return new Message(false, MessageType::Danger, 'Invalid reset key or reset key is too old.', $baseUrl);
+				}
+				
+				// Reset password using WordPress
+				reset_password($user, $password1);
+				
+				return new Message(true, MessageType::Success, 'Password changed for ' . Input::stringHtmlSafe($user->user_login), $baseUrl);
 			}
 		} else {
 			return new Message(false, MessageType::Danger, "An Error occurred, Please contact the system administrator.", $baseUrl);
 		}
 	}
 
+	/**
+	 * Save user
+	 * Wrapper for WordPress wp_update_user() and wp_insert_user()
+	 */
 	public function save(): bool {
 		$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		
@@ -323,117 +468,115 @@ class User {
 		$this->domain = $domain;
 
 		if ($this->id) {
+			// Update existing user
 			Actions::add_action("userupdate", (object) [
 				"affected_user"=>$this->id,
 			]);
 
-			// update
-			$this->registered = DB::fetch("SELECT created FROM users WHERE id=?", $this->id)->created;
-			if ($this->password==null) {
-				// no password change
-				try {
-					$result = DB::exec(
-						"UPDATE users SET username=?, email=?, state=? WHERE id=?",
-						[$this->username, $this->email, $this->state, $this->id]
-					);
-				}
-				catch (PDOException $e) {
-					//CMS::Instance()->queue_message('Username and/or email already exists','danger',$_ENV["uripath"].'/admin/users/');
-					if ($_ENV["debug"]==="true") {
-						echo "<code>" . $e->getMessage() . "</code>";
-					}
-					$result = false;
-				}
+			$userdata = [
+				'ID' => $this->id,
+				'user_login' => $this->username,
+				'user_email' => $this->email,
+			];
+			
+			// Only update password if provided
+			if ($this->password !== null) {
+				$userdata['user_pass'] = $this->password;
 			}
-			else {
-				// new password
-				$result = DB::exec(
-					"UPDATE users SET username=?, password=?, email=?, state=? WHERE id=?",
-					[$this->username, $this->password, $this->email, $this->state, $this->id]
-				);
-			}
-			if ($result) {
-				// user tags
-				DB::exec("delete from tagged where content_id=?", [$this->id]);
-				foreach ($this->tags as $tag) {
-					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", [$this->id, $tag]);
-				}
-			}
-			if ($result) {
-				// saved ok
-				// UDPATE GROUPS
-				// delete existing
-				// todo: sanity checks, don't trust post data etc...
-				DB::exec("delete from user_groups where user_id=?", [$this->id]);
-				// re-add new config
-				foreach ($this->groups as $group) {
-					// todo: sanity check - make sure each group exists before insertion
-					// don't trust post data
-					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", [$this->id, $group]);
-				}
-				return true;
-			}
-			else {
-				if ($_ENV["debug"]==="true") {
-					echo "<code>" . $e->getMessage() . "</code>";
-					exit(0);
-				}
+			
+			$result = wp_update_user($userdata);
+			
+			if (is_wp_error($result)) {
 				return false;
 			}
+			
+			// Update Alba-specific metadata
+			update_user_meta($this->id, 'alba_state', $this->state);
+			update_user_meta($this->id, 'alba_domain', $domain);
+			update_user_meta($this->id, 'alba_tags', $this->tags);
+			
+			// Update roles/groups
+			$wp_user = new \WP_User($this->id);
+			// Remove all current roles
+			foreach ($wp_user->roles as $role) {
+				$wp_user->remove_role($role);
+			}
+			// Add new roles
+			foreach ($this->groups as $group) {
+				if (is_object($group) && isset($group->value)) {
+					$wp_user->add_role($group->value);
+				} elseif (is_string($group)) {
+					$wp_user->add_role($group);
+				}
+			}
+			
+			return true;
 		}
 		else {
-			// insert new
-			try {
-				$result = DB::exec(
-					"INSERT INTO users (username,email,password,domain) VALUES (?,?,?,?)",
-					[$this->username, $this->email, $this->password, $this->domain]
-				);	
-			}
-			catch (PDOException $e) {
-				CMS::Instance()->queue_message('Username and/or email already exists','danger',$_ENV["uripath"].'/admin/users/');
-				if ($_ENV["debug"]==="true") {
-					echo "<code>" . $e->getMessage() . "</code>";
-				}
-				$result = false;
-			}
-			if ($result) {
-				$new_user_id = DB::getLastInsertedId();
-				$this->id = (int) $new_user_id;
-
-				Actions::add_action("usercreate", (object) [
-					"affected_user"=>$this->id,
-				]);
-
-				// user tags
-				foreach ($this->tags as $tag) {
-					DB::exec("insert into tagged (content_id, tag_id, content_type_id) values(?,?,-2)", [$new_user_id, $tag]);
-				}
-			}
-			if ($result) {
-				// user groups
-				
-				foreach ($this->groups as $group) {
-					// todo: sanity check - make sure each group exists before insertion
-					// don't trust post data
-					DB::exec("insert into user_groups (user_id, group_id) values (?,?)", [$new_user_id, $group]);
-				}
-				return true;
-			}
-			else {
-				// todo - check for username/email already existing and clarify
-				// todo: remove queue message? this function could be called from frontend too one day...
-				CMS::Instance()->queue_message('Unable to create user','danger',$_ENV["uripath"].'/admin/users');
+			// Insert new user
+			$userdata = [
+				'user_login' => $this->username,
+				'user_email' => $this->email,
+				'user_pass' => $this->password,
+				'role' => !empty($this->groups) ? (is_object($this->groups[0]) ? $this->groups[0]->value : $this->groups[0]) : 'subscriber'
+			];
+			
+			$new_user_id = wp_insert_user($userdata);
+			
+			if (is_wp_error($new_user_id)) {
+				CMS::Instance()->queue_message('Unable to create user: ' . $new_user_id->get_error_message(),'danger',$_ENV["uripath"].'/admin/users');
 				return false;
 			}
+			
+			$this->id = $new_user_id;
+			
+			Actions::add_action("usercreate", (object) [
+				"affected_user"=>$this->id,
+			]);
+			
+			// Save Alba-specific metadata
+			update_user_meta($new_user_id, 'alba_state', $this->state);
+			update_user_meta($new_user_id, 'alba_domain', $domain);
+			update_user_meta($new_user_id, 'alba_tags', $this->tags);
+			
+			// Add additional roles (first role already set in user_data)
+			if (count($this->groups) > 1) {
+				$wp_user = new \WP_User($new_user_id);
+				foreach (array_slice($this->groups, 1) as $group) {
+					if (is_object($group) && isset($group->value)) {
+						$wp_user->add_role($group->value);
+					} elseif (is_string($group)) {
+						$wp_user->add_role($group);
+					}
+				}
+			}
+			
+			return true;
 		}
 	}
 
+	/**
+	 * Get all roles (groups)
+	 * Wrapper for WordPress wp_roles()
+	 */
 	// @phpstan-ignore missingType.iterableValue
 	public static function get_all_groups(?int $domain=null): array {
 		if($domain==null) {
 			$domain = (CMS::Instance()->isAdmin() ? $_SESSION["current_domain"] : CMS::getDomainIndex($_SERVER["HTTP_HOST"])) ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 		}
 
-		return DB::fetchAll("SELECT * FROM `groups` WHERE (domain IS NULL OR FIND_IN_SET(?, domain)) ORDER BY display ASC", [$domain]);
+		$wp_roles = wp_roles();
+		$groups = [];
+		
+		foreach ($wp_roles->roles as $role_key => $role_data) {
+			$groups[] = (object) [
+				'id' => $role_key,
+				'value' => $role_key,
+				'display' => $role_data['name'],
+				'domain' => null // WordPress roles are global
+			];
+		}
+		
+		return $groups;
 	}
 }

@@ -1,83 +1,150 @@
 <?php
 namespace HoltBosse\Alba\Core;
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+use Exception;
 use stdClass;
 
-class Mail extends PHPMailer {
-	private bool $legacy_to = false;
+/**
+ * Mail - WordPress wp_mail() wrapper
+ * Provides wrapper methods for WordPress email functions
+ */
+class Mail {
 	public ?string $subject = null;
 	public ?string $html = null;
 	public ?string $text = null;
+	// @phpstan-ignore missingType.iterableValue
+	private array $to = [];
+	// @phpstan-ignore missingType.iterableValue
+	private array $headers = [];
+	// @phpstan-ignore missingType.iterableValue
+	private array $attachments = [];
 
 	public function __construct($exceptions = true) {
-		parent::__construct($exceptions);
+		// WordPress handles exceptions internally
+		$this->headers[] = 'Content-Type: text/html; charset=UTF-8';
 	}
 
-	// Legacy API: store addresses for backwards compatibility
+	/**
+	 * Add email address
+	 * Compatible with PHPMailer API but uses WordPress wp_mail
+	 */
 	public function addAddress($address, $name='') {
-		$this->legacy_to = true;
-		return parent::addAddress($address, $name);
+		if ($name) {
+			$this->to[] = "$name <$address>";
+		} else {
+			$this->to[] = $address;
+		}
+		return true;
 	}
 
-	// Keep legacy send() behaviour while leveraging PHPMailer internals
+	/**
+	 * Add CC address
+	 */
+	public function addCC($address, $name='') {
+		$cc = $name ? "$name <$address>" : $address;
+		$this->headers[] = "Cc: $cc";
+		return true;
+	}
+
+	/**
+	 * Add BCC address
+	 */
+	public function addBCC($address, $name='') {
+		$bcc = $name ? "$name <$address>" : $address;
+		$this->headers[] = "Bcc: $bcc";
+		return true;
+	}
+
+	/**
+	 * Add attachment
+	 */
+	public function addAttachment($path, $name = '') {
+		$this->attachments[] = $path;
+		return true;
+	}
+
+	/**
+	 * Set From address (uses WordPress filter)
+	 */
+	public function setFrom($address, $name = '') {
+		add_filter('wp_mail_from', function() use ($address) {
+			return $address;
+		});
+		
+		if ($name) {
+			add_filter('wp_mail_from_name', function() use ($name) {
+				return $name;
+			});
+		}
+		
+		return true;
+	}
+
+	/**
+	 * Add reply-to address
+	 */
+	public function addReplyTo($address, $name = '') {
+		$reply = $name ? "$name <$address>" : $address;
+		$this->headers[] = "Reply-To: $reply";
+		return true;
+	}
+
+	/**
+	 * Legacy API: send email using WordPress wp_mail()
+	 * Wrapper for WordPress wp_mail()
+	 */
 	public function send() {
-		if (!$this->legacy_to || !$this->subject || !$this->html) {
+		if (empty($this->to) || !$this->subject || !$this->html) {
 			throw new Exception('No to, subject, or content provided to send email');
 		}
 
-		$smtp_name = Configuration::get_configuration_value ('general_options', 'smtp_name');
-		$smtp_password = Configuration::get_configuration_value ('general_options', 'smtp_password');
-		$smtp_username = Configuration::get_configuration_value ('general_options', 'smtp_username');
-		$smtp_from = Configuration::get_configuration_value ('general_options', 'smtp_from');
-		$smtp_replyto = Configuration::get_configuration_value ('general_options', 'smtp_replyto');
-		$smtp_server = Configuration::get_configuration_value ('general_options', 'smtp_server');
-		$encryption = Configuration::get_configuration_value ('general_options', 'encryption');
-		$authenticate = Configuration::get_configuration_value ('general_options', 'authenticate');
-		if ($encryption=="none") {
-			$encryption=false;
-			$port = false;
+		// Get SMTP configuration from Alba if available
+		$smtp_from = Configuration::get_configuration_value('general_options', 'smtp_from');
+		$smtp_name = Configuration::get_configuration_value('general_options', 'smtp_name');
+		$smtp_replyto = Configuration::get_configuration_value('general_options', 'smtp_replyto');
+
+		// Set from and reply-to if configured
+		if ($smtp_from) {
+			$this->setFrom($smtp_from, $smtp_name ?: '');
 		}
-		if ($encryption=="tls") {
-			$port=587;
-		}
-		if ($encryption=="ssl") {
-			$port=465;
+		if ($smtp_replyto) {
+			$this->addReplyTo($smtp_replyto, $smtp_name ?: '');
 		}
 
-		try {
-			// Configure PHPMailer (this)
-			$this->SMTPDebug = 0;
-			$this->isSMTP();
-			$this->Host = $smtp_server;
-			$this->SMTPAuth = $authenticate==true;
-			$this->Username = $smtp_username;
-			$this->Password = $smtp_password;
-			$this->SMTPSecure = $encryption;
-			if($port) {
-				$this->Port = $port;
-			}
-			$this->setFrom($smtp_from, $smtp_name);
-			$this->addReplyTo($smtp_replyto, $smtp_name);
+		// Prepare message body
+		$message = $this->html;
+		
+		// Use WordPress wp_mail()
+		$sent = wp_mail(
+			$this->to,
+			$this->subject,
+			$message,
+			$this->headers,
+			$this->attachments
+		);
 
-			$this->isHTML(true);
-			$this->Subject = $this->subject;
-			$this->Body = $this->html;
-			$this->AltBody = $this->text ? $this->text : strip_tags($this->html);
-
-			$sent = parent::send();
-
-			return (bool) $sent;
-		} catch (Exception $e) {
-			CMS::log('Could not send email: ' . $this->ErrorInfo);
+		if (!$sent) {
+			CMS::log('Could not send email via wp_mail()');
 			return false;
 		}
+
+		return true;
 	}
 
 	#[\Deprecated(message: "stop using this please", since: "3.0.0")]
 	public static function is_available(): bool {
-		return true;
+		return function_exists('wp_mail');
+	}
+
+	/**
+	 * Simple static wrapper for quick emails
+	 * Wrapper for WordPress wp_mail()
+	 */
+	public static function quick_send(string $to, string $subject, string $message, array $headers = []): bool {
+		if (empty($headers)) {
+			$headers = ['Content-Type: text/html; charset=UTF-8'];
+		}
+		
+		return wp_mail($to, $subject, $message, $headers);
 	}
 }

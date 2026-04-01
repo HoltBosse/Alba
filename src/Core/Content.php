@@ -2,10 +2,13 @@
 namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\Form\{Input, Form, Field};
-Use HoltBosse\DB\DB;
 Use \Exception;
 Use \StdClass;
 
+/**
+ * Content - WordPress post functions wrapper
+ * Provides wrapper methods for WordPress post management
+ */
 class Content {
 	public ?int $id;
 	public string $title;
@@ -48,6 +51,140 @@ class Content {
 		}
 		$this->created_by = CMS::Instance()->user->id;
 		$this->updated_by = CMS::Instance()->user->id;
+		$this->alias="";
+		$this->category=0;
+	}
+
+	/**
+	 * Load content from WordPress post by ID
+	 * Wrapper for WordPress get_post()
+	 */
+	public function load_wp_post(?int $id): bool {
+		$post = get_post($id);
+		
+		if (!$post) {
+			return false;
+		}
+		
+		$this->id = $post->ID;
+		$this->title = $post->post_title;
+		$this->description = $post->post_excerpt;
+		$this->state = $post->post_status === 'publish' ? 1 : 0;
+		$this->updated = $post->post_modified;
+		$this->alias = $post->post_name;
+		$this->created_by = $post->post_author;
+		$this->updated_by = get_post_meta($post->ID, 'alba_updated_by', true) ?: $post->post_author;
+		$this->note = get_post_meta($post->ID, 'alba_note', true) ?: '';
+		$this->tags = wp_get_post_tags($post->ID);
+		$this->category = get_post_meta($post->ID, 'alba_category', true) ?: 0;
+		$this->domain = get_post_meta($post->ID, 'alba_domain', true);
+		$this->start = strtotime($post->post_date);
+		$this->end = get_post_meta($post->ID, 'alba_end', true);
+		$this->content_type = get_post_meta($post->ID, 'alba_content_type', true) ?: 0;
+		
+		return true;
+	}
+
+	/**
+	 * Save content as WordPress post
+	 * Wrapper for WordPress wp_insert_post() and wp_update_post()
+	 */
+	public function save_wp_post(array $custom_fields = []): int|bool {
+		$post_data = [
+			'post_title' => $this->title,
+			'post_name' => $this->alias,
+			'post_excerpt' => $this->description,
+			'post_status' => $this->state == 1 ? 'publish' : 'draft',
+			'post_author' => $this->created_by ?: get_current_user_id(),
+			'post_type' => 'post',
+		];
+		
+		if ($this->start) {
+			$post_data['post_date'] = date('Y-m-d H:i:s', $this->start);
+		}
+		
+		if ($this->id) {
+			// Update existing post
+			$post_data['ID'] = $this->id;
+			$result = wp_update_post($post_data, true);
+			
+			if (is_wp_error($result)) {
+				CMS::Instance()->log("Failed to update post: " . $result->get_error_message());
+				return false;
+			}
+		} else {
+			// Create new post
+			$result = wp_insert_post($post_data, true);
+			
+			if (is_wp_error($result)) {
+				CMS::Instance()->log("Failed to create post: " . $result->get_error_message());
+				return false;
+			}
+			
+			$this->id = $result;
+		}
+		
+		// Update post meta
+		update_post_meta($this->id, 'alba_updated_by', $this->updated_by);
+		update_post_meta($this->id, 'alba_note', $this->note);
+		update_post_meta($this->id, 'alba_category', $this->category);
+		update_post_meta($this->id, 'alba_domain', $this->domain);
+		update_post_meta($this->id, 'alba_end', $this->end);
+		update_post_meta($this->id, 'alba_content_type', $this->content_type);
+		
+		// Save custom fields
+		foreach ($custom_fields as $key => $value) {
+			update_post_meta($this->id, 'alba_' . $key, $value);
+		}
+		
+		// Set tags
+		if ($this->tags) {
+			$tag_ids = is_array($this->tags) ? $this->tags : [];
+			wp_set_post_tags($this->id, $tag_ids);
+		}
+		
+		return $this->id;
+	}
+
+	/**
+	 * Delete content
+	 * Wrapper for WordPress wp_delete_post()
+	 */
+	public function delete_wp_post(bool $force_delete = false): bool {
+		if (!$this->id) {
+			return false;
+		}
+		
+		$result = wp_delete_post($this->id, $force_delete);
+		return $result !== false && !is_wp_error($result);
+	}
+
+	/**
+	 * Get all posts of a specific content type
+	 * Wrapper for WordPress get_posts()
+	 */
+	// @phpstan-ignore missingType.iterableValue
+	public static function get_all_content_wp(int $content_type = 0, int $limit = -1): array {
+		$args = [
+			'post_type' => 'post',
+			'posts_per_page' => $limit,
+			'post_status' => 'any',
+		];
+		
+		if ($content_type > 0) {
+			$args['meta_query'] = [
+				[
+					'key' => 'alba_content_type',
+					'value' => $content_type,
+					'compare' => '='
+				]
+			];
+		}
+		
+		return get_posts($args);
+	}
+
+	public static function registerContentController(string $contentName, string $contentPath): bool {
 		$this->alias="";
 		$this->category=0;
 	}
