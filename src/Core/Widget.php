@@ -14,6 +14,7 @@ class Widget {
 	public mixed $type = null;
 	public ?int $state = null;
 	public mixed $options = null;
+	public stdClass $objectOptions;
 	public ?string $note = null;
 	public mixed $ordering = null;
 	public mixed $position_control = null;
@@ -191,6 +192,7 @@ class Widget {
 			$this->note = $info->note;
 			$this->ordering = $info->ordering;
 			$this->options = json_decode($info->options);
+			$this->objectOptions = (object) array_combine(array_column($this->options, 'name'), array_column($this->options, 'value'));
 			$this->position_control = $info->position_control;
 			$this->global_position = $info->global_position;
 			$this->page_list = explode(',', $info->page_list);
