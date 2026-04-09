@@ -174,7 +174,19 @@ function serve_file (stdClass $media_obj, string $fullpath, int $seconds_to_cach
 }
 
 function get_image (int $id): ?stdClass {
-	$image = DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]);
+	$domain = CMS::getDomainIndex($_SERVER['HTTP_HOST']);
+	if(isset($_SERVER["HTTP_REFERER"])) {
+		$host = parse_url($_SERVER["HTTP_REFERER"], PHP_URL_HOST);
+		$validDomain = DB::fetch("SELECT id FROM domains WHERE value=? LIMIT 1", [$host]);
+		if($validDomain) {
+			$urlChunks = CMS::parseUrlToSegments($_SERVER["HTTP_REFERER"]);
+			if($urlChunks[0]=="admin") {
+				$domain = $_SESSION["current_domain"] ?? $domain;
+			}
+		}
+	}
+
+	$image = DB::fetch('SELECT * FROM media WHERE id=? AND (domain=? OR domain IS NULL)', [$id, ($domain)]);
 
 	if($image===false) {
 		return null;
