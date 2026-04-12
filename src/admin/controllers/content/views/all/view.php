@@ -220,6 +220,12 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 
 		$listColumns = [];
 		foreach ($content_list_fields as $content_list_field) {
+			if(property_exists($content_list_field,'domain_visible')) {
+				if(!in_array($_SESSION["current_domain"], $content_list_field->domain_visible)) {
+					continue; // skip fields that are not visible in the current domain
+				}
+			}
+
 			$listColumns[] = (new AdminTableField())->loadFromConfig((object)[
 				"label"=>$content_list_field->label,
 				"sortable"=>false,
