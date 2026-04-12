@@ -116,15 +116,15 @@ function doUpload(e) {
                     <img id='${id}' src=''>
                 </div>
                 <div class='upload_details' style='margin-top:2rem;' >
-                    <div class='field' style='display: flex; gap:2rem;'>
-                        <label>Short Image Title</label>
+                    <div class='field' style='display: flex;'>
+                        <label>Image Title</label>
 						<div>
 							<input name='title[]' required/>
 							<p class="help">Image hover label</p>
 						</div>
                     </div>
-                    <div class='field' style='display: flex; gap:2rem;'>
-                        <label>Alternative Text</label>
+                    <div class='field' style='display: flex;'>
+                        <label>Alt Text</label>
 						<div>
 							<input name='alt[]' required/>
 							<p class="help">Used for accessibility and screen readers</p>
