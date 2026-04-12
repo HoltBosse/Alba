@@ -119,14 +119,14 @@ function doUpload(e) {
                     <div class='field' style='display: flex;'>
                         <label>Image Title</label>
 						<div>
-							<input name='title[]' required/>
+							<input style='width:100%;' name='title[]' required/>
 							<p class="help">Image hover label</p>
 						</div>
                     </div>
                     <div class='field' style='display: flex;'>
                         <label>Alt Text</label>
 						<div>
-							<input name='alt[]' required/>
+							<input style='width:100%;' name='alt[]' required/>
 							<p class="help">Used for accessibility and screen readers</p>
 						</div>
                     </div>
