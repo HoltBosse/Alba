@@ -115,7 +115,7 @@ function doUpload(e) {
                 <div class='upload_preview'>
                     <img id='${id}' src=''>
                 </div>
-                <div class='upload_details' style='margin-top:2rem;' >
+                <div class='upload_details'>
                     <div class='field' style='display: flex;'>
                         <label>Image Title</label>
 						<div>
