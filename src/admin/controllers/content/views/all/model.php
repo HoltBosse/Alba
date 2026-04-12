@@ -174,8 +174,7 @@ if (property_exists($custom_fields,'list')) {
 		// get label and type
 		foreach ($custom_fields->fields as $field) {
 			if ($field->name==$custom_field_name) {
-				$custom_fields_list_item->label = $field->label;
-				$custom_fields_list_item->type = $field->type;
+				$custom_fields_list_item = $field;
 			}
 		}
 		$content_list_fields[] = $custom_fields_list_item;

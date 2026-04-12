@@ -103,6 +103,16 @@ foreach($required_details_obj->fields as $field) {
 	}
 }
 
+//loop over $custom_fields->fields and if any have domain_visible property, check if current domain is in that array, if not remove from $custom_fields->fields
+if(isset($custom_fields->fields)) {
+	$custom_fields->fields = array_values(array_filter($custom_fields->fields, function($field) {
+		if(property_exists($field, 'domain_visible')) {
+			return in_array($_SESSION["current_domain"], $field->domain_visible);
+		}
+		return true;
+	}));
+}
+
 $required_details_obj = Hook::execute_hook_filters('content_required_details_form_obj', $required_details_obj);
 
 // prep forms
