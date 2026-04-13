@@ -25,5 +25,4 @@ test("Fields are valid", function ($file) {
     foreach($contents->fields as $field) {
         expect(new (Form::getFieldClass($field->type)))->toBeInstanceOf(Field::class);
     }
-// @phpstan-ignore method.notFound
 })->with($files);
