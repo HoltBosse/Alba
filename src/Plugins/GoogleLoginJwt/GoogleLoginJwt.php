@@ -136,42 +136,31 @@ class GoogleLoginJwt extends Plugin {
     }
 
     public function display_button(mixed ...$args): void {
-        // ACTION - attached to additional_login_options hook
+        // 1. Get the current URL for the redirect
+        // Google requires an absolute URL. 
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+        $login_page = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        
         ?>
-        <script>
-     
-
-        function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-            var id_token = googleUser.getAuthResponse().id_token; // for sending to server
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut(); // signout of google every time to prevent loops with unknown user in database
-            window.location.href += "?id_token=" + id_token;
-        }
-        </script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
-        <?php 
-            $login_page = $_SERVER['REQUEST_URI']; //redirect to current uri path
-            substr($login_page, -1) == "/" ?: $login_page = $login_page . "/"; //add / at end if missing to make google happy
-        ?>
+
         <div id="g_id_onload"
             data-client_id="<?php echo $this->get_option('client_id');?>"
-            data-ux_mode="redirect"
-            data-login_uri="<?php echo $login_page;?>"
             data-context="signin"
-            data-auto_select="true">
+            data-ux_mode="redirect"
+            data-login_uri="<?php echo $login_page; ?>"
+            data-auto_select="true"
+            data-itp_support="true">
         </div>
+
         <div class="g_id_signin" 
-        data-type="standard" 
-        data-shape="rectangular"
-        data-theme="outline"
-        data-text="signin"
-        data-size="large"
-        data-logo_alignment="left"></div>
+            data-type="standard" 
+            data-shape="rectangular"
+            data-theme="outline"
+            data-text="signin"
+            data-size="large"
+            data-logo_alignment="left">
+        </div>
         <?php
     }
 }
