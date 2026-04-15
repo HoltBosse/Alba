@@ -40,7 +40,7 @@ $searchtext = Input::getvar('searchtext',v::StringVal(),null);
 $query = "FROM media WHERE mimetype IN (" . implode(",", $valid_image_types) . ") ";
 $params = [];
 if ($searchtext) {
-    $query .= " AND title LIKE ? OR alt LIKE ? OR filename LIKE ?";
+    $query .= " AND (title LIKE ? OR alt LIKE ? OR filename LIKE ?)";
     $params = ["%".$searchtext."%", "%".$searchtext."%", "%".$searchtext."%"];
 }
 
