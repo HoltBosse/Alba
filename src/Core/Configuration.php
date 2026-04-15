@@ -26,7 +26,13 @@ class Configuration {
 		}
 
 		// fallback - get complete json and get property in PHP
-		$configuration = DB::fetch("SELECT configuration FROM configurations WHERE name=? AND domain=?", [$form_name, $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST'])]);
+		$configuration = DB::fetch(
+			"SELECT configuration FROM configurations WHERE name=? AND domain=?",
+			[
+				$form_name,
+				(CMS::Instance()->isAdmin() ? ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST'])) : CMS::getDomainIndex($_SERVER['HTTP_HOST']))
+			]
+		);
 		if ($configuration) {
 			$config = json_decode($configuration->configuration);
 			if (property_exists($config, $setting_name)) {
@@ -62,7 +68,7 @@ class Configuration {
 		$this->configuration = new stdClass();
 
 		if(is_null($domain)) {
-			$domain = $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
+			$domain = (CMS::Instance()->isAdmin() ? ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST'])) : CMS::getDomainIndex($_SERVER['HTTP_HOST']));
 		}
 		$this->domain = $domain;
 

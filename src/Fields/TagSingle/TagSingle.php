@@ -41,7 +41,7 @@ class TagSingle extends Select {
 		parent::loadFromConfig($config);
 
 		$this->content_type = $config->content_type ?? null;
-		$this->domain = $config->domain ?? $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
+		$this->domain = $config->domain ?? ((CMS::Instance()->isAdmin() ? ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST'])) : CMS::getDomainIndex($_SERVER['HTTP_HOST'])));
 
 		$query = "SELECT * FROM tags WHERE state>0";
 		$params = [];

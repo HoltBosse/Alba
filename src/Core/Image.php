@@ -215,7 +215,7 @@ class Image {
                 $alt = $alts[$n];
                 $in_db_ok = DB::exec(
                     "INSERT INTO media (width, height, title, alt, filename, mimetype, domain) VALUES (?,?,?,?,?,?,?)",
-                    [$file->width, $file->height, $title, $alt, $file->filename, $file->mimetype, ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']))]
+                    [$file->width, $file->height, $title, $alt, $file->filename, $file->mimetype, ((CMS::Instance()->isAdmin() ? ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST'])) : CMS::getDomainIndex($_SERVER['HTTP_HOST'])))]
                 );
                 $img_ids[] = DB::getLastInsertedId();
                 if ($in_db_ok) {

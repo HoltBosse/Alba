@@ -55,7 +55,7 @@ class ContentSelector extends Select {
 		$this->tags = $config->tags ?? false;
 		$this->order_by_field = $config->order_by_field ?? "title";
 		$this->order_by_direction = Input::filter(($config->order_by_direction ?? "ASC"), v::in(["ASC", "DESC"]), "ASC");
-		$this->domain = $config->domain ?? $_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST']);
+		$this->domain = $config->domain ?? ((CMS::Instance()->isAdmin() ? ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER['HTTP_HOST'])) : CMS::getDomainIndex($_SERVER['HTTP_HOST'])));
 
 		if (!$this->content_type) {
 			CMS::show_error('Content type required for ContentSelector field in v3+');
