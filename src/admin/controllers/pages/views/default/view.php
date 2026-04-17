@@ -31,6 +31,9 @@
 	$domainLookup = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
 ?>
 
+<form style="margin-bottom: 0;">
+	<?php $searchForm->display(); ?>
+</form>
 <form action='' method='post' name='page_action' id='page_action_form'>
 	<?php
 		(new AdminButtonToolBar())->loadFromConfig((object)[

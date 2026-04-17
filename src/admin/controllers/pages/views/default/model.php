@@ -1,7 +1,10 @@
 <?php
 
-Use HoltBosse\Alba\Core\{CMS, Template, Page};
+Use HoltBosse\Alba\Core\{CMS, Template, Page, Hook, File};
 Use HoltBosse\DB\DB;
+Use HoltBosse\Form\Form;
+Use HoltBosse\Form\Input;
+Use Respect\Validation\Validator as v;
 
 // any variables created here will be available to the view
 
@@ -37,5 +40,34 @@ $all_pages = array_filter($all_pages, function($page) {
 });
 
 $all_pages = array_values($all_pages); // reindex after array_filter
+
+// Build search form using CMS form system
+$searchFormObject = json_decode(File::getContents(__DIR__ . "/search_form.json"));
+$searchFormObject->fields[] = (object) [
+	"type" => "Html",
+	"html" => "<div style='display: flex; gap: 1rem;'>
+                <button class='button is-info' type='submit'>Submit</button>
+                <button type='button' onclick='window.location = window.location.href.split(\"?\")[0]; return false;' class='button is-default'>Clear</button>
+            </div>"
+];
+
+$searchFormObject = Hook::execute_hook_filters('admin_search_form_object', $searchFormObject);
+
+$searchForm = new Form($searchFormObject);
+if ($searchForm->isSubmitted()) {
+	$searchForm->setFromSubmit();
+}
+
+// Apply search filters to $all_pages
+$searchState = Input::getVar('state', v::numericVal(), null);
+$searchTitle = Input::getVar('title', v::stringType()->length(1, null), null);
+if (!is_null($searchState) || $searchTitle) {
+	$all_pages = array_filter($all_pages, function($p) use ($searchState, $searchTitle) {
+		if (!is_null($searchState) && (int)$p->state !== (int)$searchState) return false;
+		if ($searchTitle && stripos($p->title, $searchTitle) === false) return false;
+		return true;
+	});
+	$all_pages = array_values($all_pages);
+}
 
 $domainLookup = DB::fetchAll("SELECT value FROM `domains`", [], ["mode"=>PDO::FETCH_COLUMN]);
