@@ -161,35 +161,39 @@ final class CMS {
 			$relative_url = "/admin" . $relative_url;
 		}
 
-		$domainIndex = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
-		$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=? AND domain=?", [$relative_url, $domainIndex]);
-		if ($valid_redirect) {
-			header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
-		} else {
-			// handle redirect/404 capturing
-			if ($_ENV["capture_404s"]!=="false") {
-				$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=? and domain=?', [$relative_url, $domainIndex])->id ?? false;
-				if ($existing_redirect_id) {
-					// increment hit for 404
-					DB::exec('UPDATE redirects SET hits=hits+1 WHERE id=?', $existing_redirect_id);
-				}
-				else {
-					// check if URL ends in file suffix for certain file types and ignore for redirect storage
-					$ignore_suffixes = ['.zip', '.gz', '.tag', '.bz', '.sh', '.tar', '.gzip','.7z','.tgz','.exe','.bak','.iso'];
-					$pattern = '/(' . implode('|', array_map('preg_quote', $ignore_suffixes)) . ')$/i';
-					$ignore_file = preg_match($pattern, $relative_url);
-					// check if url contains, at any position, any of the following strings and ignore for redirect storage
-					$ignore_contains = ['wp-admin','wp-content','wp-includes','wp-login', 'wp-add', '.well-known','adminer','phpmyadmin','.git'];
-					$pattern = '/' . implode('|', array_map('preg_quote', $ignore_contains)) . '/i';
-					$ignore_request = preg_match($pattern, $relative_url);
-					if (!$ignore_file && !$ignore_request) {
-						// create new redirect
-						$user_id_int = CMS::Instance()->user->id ? CMS::Instance()->user->id : 0;
-						$params = [$relative_url, $_SERVER['HTTP_REFERER'], $user_id_int , $user_id_int, $domainIndex];
-						DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits, domain) VALUES(0,?,?,?,?,"auto",1,?)', $params);
+		//db limit is 2048, skip over redirects. not ideal, but is better than the alternative
+		if(strlen($relative_url)>2020) {
+			$domainIndex = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+			$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=? AND domain=?", [$relative_url, $domainIndex]);
+			if ($valid_redirect) {
+				header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
+			} else {
+				// handle redirect/404 capturing
+				if ($_ENV["capture_404s"]!=="false") {
+					$existing_redirect_id = DB::fetch('SELECT id FROM redirects WHERE old_url=? and domain=?', [$relative_url, $domainIndex])->id ?? false;
+					if ($existing_redirect_id) {
+						// increment hit for 404
+						DB::exec('UPDATE redirects SET hits=hits+1 WHERE id=?', $existing_redirect_id);
+					}
+					else {
+						// check if URL ends in file suffix for certain file types and ignore for redirect storage
+						$ignore_suffixes = ['.zip', '.gz', '.tag', '.bz', '.sh', '.tar', '.gzip','.7z','.tgz','.exe','.bak','.iso'];
+						$pattern = '/(' . implode('|', array_map('preg_quote', $ignore_suffixes)) . ')$/i';
+						$ignore_file = preg_match($pattern, $relative_url);
+						// check if url contains, at any position, any of the following strings and ignore for redirect storage
+						$ignore_contains = ['wp-admin','wp-content','wp-includes','wp-login', 'wp-add', '.well-known','adminer','phpmyadmin','.git'];
+						$pattern = '/' . implode('|', array_map('preg_quote', $ignore_contains)) . '/i';
+						$ignore_request = preg_match($pattern, $relative_url);
+						if (!$ignore_file && !$ignore_request) {
+							// create new redirect
+							$user_id_int = CMS::Instance()->user->id ? CMS::Instance()->user->id : 0;
+							$params = [$relative_url, $_SERVER['HTTP_REFERER'], $user_id_int , $user_id_int, $domainIndex];
+							DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits, domain) VALUES(0,?,?,?,?,"auto",1,?)', $params);
+						}
 					}
 				}
 			}
+
 			if (isset($_ENV["custom_404_file_path"])) {
 				include($_ENV["custom_404_file_path"]); // provide your own HTML for the error page
 			} else {
