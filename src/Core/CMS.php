@@ -162,7 +162,7 @@ final class CMS {
 		}
 
 		//db limit is 2048, skip over redirects. not ideal, but is better than the alternative
-		if(strlen($relative_url)>2020) {
+		if(strlen($relative_url)<2020) {
 			$domainIndex = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 			$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=? AND domain=?", [$relative_url, $domainIndex]);
 			if ($valid_redirect) {
