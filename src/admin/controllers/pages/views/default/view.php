@@ -48,9 +48,9 @@
             ])
         ])->display();
 
-		$all_pages = array_map(function($i) use ($all_templates) {
+		$all_pages = array_map(function($i) use ($all_templates, $searchTitle) {
 			$i->stateComposite = [$i->id, $i->state, NULL];
-			$i->titleComposite = $i;
+			$i->titleComposite = (object) array_merge((array)$i, ["searchTitle"=>$searchTitle]);
 			$i->urlComposite = [$i->id, $i->domain];
 			$i->templateComposite = [$i->template, $i->id, get_template_title($i->template, $all_templates)];
 			return $i;
@@ -90,8 +90,10 @@
 
 					public function display(): void {
 						echo "<div>";
-							for ($n=0; $n<$this->title->depth; $n++) {
-								echo "<span class='child_indicator'>-&nbsp;</span>";
+							if(is_null($this->title->searchTitle)) {
+								for ($n=0; $n<$this->title->depth; $n++) {
+									echo "<span class='child_indicator'>-&nbsp;</span>";
+								}
 							}
 							$url = $_ENV["uripath"] . "/admin/pages/edit/" . $this->title->id . "/" . $this->title->content_type . "/" . $this->title->content_view;
 							echo "<a href='" . $url . "'>" . Input::stringHtmlSafe($this->title->title) . "</a>";
