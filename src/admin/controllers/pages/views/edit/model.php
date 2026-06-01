@@ -13,7 +13,7 @@ if (CMS::Instance()->uri_segments[2]=="widget_preview" && is_numeric(CMS::Instan
 	$widget = DB::fetch('SELECT * FROM widgets WHERE id=? AND state=1', $widget_id);
 	if ($widget->state==1) {
 		$type_info = Widget::get_widget_type($widget->type);
-		$widget_class_name = "Widget_" . $type_info->location;
+		$widget_class_name = Widget::getWidgetClass($type_info->location);
 		$widget_of_type = new $widget_class_name();
 		if(!($widget_of_type instanceof Widget)) {
 			throw new Exception("Widget class $widget_class_name does not extend Widget");
