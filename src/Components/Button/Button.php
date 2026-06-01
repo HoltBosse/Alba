@@ -4,10 +4,13 @@ namespace HoltBosse\Alba\Components\Button;
 
 use HoltBosse\Alba\Core\Component;
 use HoltBosse\Form\Input;
+Use HoltBosse\Form\{FormBuilderAttribute, FormBuilderDataType};
 
 class Button extends Component {
+    #[FormBuilderAttribute(fieldType: "Input", dataType: FormBuilderDataType::String, required: true)]
     public string $text = "Button";
     public ButtonType $type = ButtonType::anchor;
+    #[FormBuilderAttribute(fieldType: "Input", dataType: FormBuilderDataType::String, required: true)]
     public ?string $url = null;
 
     public function display(): void {

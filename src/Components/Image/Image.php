@@ -6,8 +6,10 @@ use HoltBosse\Alba\Core\Component;
 use HoltBosse\DB\DB;
 use \stdClass;
 use \Exception;
+Use HoltBosse\Form\{FormBuilderAttribute, FormBuilderDataType};
 
 class Image extends Component {
+    #[FormBuilderAttribute(fieldType: "Image", dataType: FormBuilderDataType::Integer, required: true)]
     public int $imageId;
     public ?int $fixedWidth = null;
     public ?int $fixedHeight = null;

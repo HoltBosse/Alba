@@ -1,98 +1,14 @@
 <?php
 
-use HoltBosse\Alba\Core\{CMS, File, Form};
+use HoltBosse\Alba\Core\{CMS, File, Form, AttributeForm};
 use \ReflectionClass;
 use HoltBosse\Form\FormBuilderDataType;
 Use HoltBosse\Form\Input;
 Use Respect\Validation\Validator as v;
 
-//recursively order properties by inheritance
-// @phpstan-ignore-next-line
-function getOrderedProperties(ReflectionClass $rc): array {
-    $properties = [];
-    $parent = $rc->getParentClass();
-    if ($parent) {
-        $properties = getOrderedProperties($parent);
-    }
-
-    foreach ($rc->getProperties() as $prop) {
-        if ($prop->getDeclaringClass()->getName() === $rc->getName()) {
-            $properties[] = $prop;
-        }
-    }
-
-    //filter out duplicate properties, prefering the child class version
-    $seen = [];
-    $properties = array_reverse(array_values(array_filter(array_reverse($properties), function($prop) use (&$seen) {
-        $name = $prop->getName();
-        if (isset($seen[$name])) {
-            return false;
-        }
-        $seen[$name] = true;
-        return true;
-    })));
-
-    return $properties;
-}
-
 function generateFormForFieldType(string $fieldType): Form {
-    $formObject = (object) [
-        "id"=>"fieldconfig",
-        "fields"=>[]
-    ];
-
     // @phpstan-ignore argument.type
-    $reflection = new ReflectionClass(Form::getFieldClass($fieldType));
-
-    foreach(getOrderedProperties($reflection) as $property) {
-        $attributes = $property->getAttributes();
-        if(sizeof($attributes) == 0) {
-            continue;
-        }
-        //CMS::pprint_r($property->getName());
-
-        foreach ($attributes as $attribute) {
-            if($attribute->getName() == "HoltBosse\Form\FormBuilderAttribute") {
-                $attrInstance = $attribute->newInstance();
-                //CMS::pprint_r($attrInstance);
-
-                $field = [
-                    "name"=>$property->getName(),
-                    "type"=>$attrInstance->fieldType,
-                    "label"=>$attrInstance->label ?? ucwords(str_replace("_", " ", $property->getName())),
-                    "required"=>$attrInstance->required,
-                    "description"=>$attrInstance->description ?? null,
-                ];
-
-                $field = (object) array_merge($field, $attrInstance->config ?? []);
-
-                if($attrInstance->dataType === FormBuilderDataType::Bool && $attrInstance->fieldType == "Select") {
-                    $field->select_options = [
-                        (object) ["value"=>1, "text"=>"True"],
-                        (object) ["value"=>0, "text"=>"False"]
-                    ];
-                }
-
-                if($attrInstance->dataType === FormBuilderDataType::LetterString && $attrInstance->fieldType == "Text") {
-                    $field->pattern = "^[a-z]+$";
-                    $field->description = "Only letters (a-z) are allowed.";
-                }
-
-                $formObject->fields[] = $field;
-            }
-            /* CMS::pprint_r($attribute);
-            $attrInstance = $attribute->newInstance();
-            CMS::pprint_r($attrInstance); */
-        }
-    }
-
-    $formObject->fields[] = (object) [
-        "type"=>"Html",
-        "html"=>"<br><div class='button is-primary field-update'>Update Field</div>"
-    ];
-
-    $form = new Form($formObject);
-    return $form;
+    return AttributeForm::generateFormForClass(Form::getFieldClass($fieldType));
 }
 
 function getFieldOptionsForm(Form $form, string $fieldType, string $prefixMarkup=""): string {

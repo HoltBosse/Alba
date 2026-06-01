@@ -1,0 +1,127 @@
+{
+	"id":"page_options",
+	"fields":[
+		{
+			"name":"title",
+			"id":"title",
+			"type":"Text",
+			"label":"Title",
+			"input_type":"text",
+			"required":true,
+			"maxlength":250,
+			"minlength":0,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			},
+			"placeholder":"Page Title",
+            "icon_status":true,
+            "icon_parent_class":"has-icons-left",
+            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-heading'></i></span>"
+		},
+		{
+			"name":"alias",
+			"id":"alias",
+			"type":"Text",
+			"label":"URL Segment",
+			"input_type":"text",
+			"required":false,
+			"maxlength":250,
+			"minlength":0,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			},
+			"placeholder":"URL Segment",
+            "icon_status":true,
+            "icon_parent_class":"has-icons-left",
+            "icon_markup": "<span class='icon is-small is-left'><i class='fas fa-heading'></i></span>",
+			"description":"Alphanumeric characters only, no spaces."
+		},
+		{
+			"name":"parent",
+			"id":"parent",
+			"type":"Select",
+			"label":"Parent Page",
+			"required":true,
+			"select_options":[],
+			"slimselect":true
+		},
+		{
+			"type":"Html",
+			"html":"<hr>",
+			"save": false
+		},
+		{
+			"type":"UserGroupsMultiple",
+			"id":"access",
+			"name":"access",
+			"label":"Limit Access To",
+			"default":"",
+			"filter": {
+				"ArrayType": []
+			}
+		},
+		{
+			"type":"Html",
+			"html":"<hr>",
+			"save": false
+		},
+		{
+			"name":"og_description",
+			"id":"og_description",
+			"type":"Textarea",
+			"label":"Opengraph / Search Engine Description",
+			"required":false,
+			"default":"",
+			"description":"Description used for social sharing and SEO.",
+			"maxlength":1024,
+			"minlength":3,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 1024]
+			}
+		},
+		{
+			"name":"seo_keywords",
+			"id":"seo_keywords",
+			"type":"Textarea",
+			"label":"SEO Keywords",
+			"required":false,
+			"default":"",
+			"description":"Keywords and phrases used for SEO - separate entries with a comma.",
+			"maxlength":255,
+			"minlength":3,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
+		},
+		{
+			"name":"og_title",
+			"id":"og_title",
+			"type":"Text",
+			"label":"Opengraph Title",
+			"required":false,
+			"default":"",
+			"description":"Used for social sharing - leave blank to use page title",
+			"maxlength":255,
+			"minlength":3,
+			"filter":{
+				"StringVal": [],
+				"Length": [0, 255]
+			}
+		},
+		{
+			"name": "og_image",
+			"id": "og_image",
+			"type": "Image",
+			"label": "Opengraph Image",
+			"required": false,
+			"description": "Image used for social sharing",
+			"filter":{
+				"IntVal": []
+			}
+		}
+	]
+}

@@ -87,7 +87,7 @@ function updateFieldDiv(field, label, fieldData) {
 }
 
 document.querySelector(".control-panel").addEventListener("click", (e) => {
-    if(e.target.classList.contains("button") && e.target.classList.contains("field-update")) {
+    if(e.target.classList.contains("button") && e.target.classList.contains("class-update")) {
         const form = e.target.closest("form");
 
         const formStatus = form.reportValidity();
