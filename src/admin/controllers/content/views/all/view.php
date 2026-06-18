@@ -50,7 +50,13 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 <?php else:?>
 	<form style="margin: 0;" id='orderform' action="" method="GET"></form>
 
+	<?php
+		$_csrf = new Form((object)['id' => 'admin_content_action', 'fields' => []]);
+		$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+		$_csrfFieldName = $_csrf->getCsrfFieldName();
+	?>
 	<form action='' method='post' name='content_action' id='content_action_form'>
+	<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 	<input type='hidden' name='content_type' value='<?=$content_type_filter;?>'/>
 	<?php
 		$leftContent = "<a class='button is-primary is-outlined is-small' href='" . $_ENV["uripath"] . "/admin/content/order/{$content_type_filter}'>MANAGE ORDERING</a>";
@@ -91,7 +97,8 @@ Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/content/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/content/action/toggle",
 							"states"=>$this->state[3],
-							"contentType"=>$this->state[2]
+							"contentType"=>$this->state[2],
+							"csrfFormId"=>"admin_content_action",
 						]);
 						$stateButton->state = $this->state[1];
 						$stateButton->display();

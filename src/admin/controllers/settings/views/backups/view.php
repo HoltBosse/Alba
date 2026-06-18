@@ -1,7 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Component};
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\Alba\Components\Html\Html;
 Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 
@@ -11,7 +11,13 @@ Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
 ?>
 
 <?php if (class_exists("ZipArchive",false)):?>
+	<?php
+		$_csrf = new Form((object)['id' => 'admin_backups', 'fields' => []]);
+		$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+		$_csrfFieldName = $_csrf->getCsrfFieldName();
+	?>
 	<form method="POST">
+		<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 		<input type='hidden' value='ohyesplease' name='backup_please'/>
 		<button class='btn button is-success' type='submit'>Perform Backup</button>
 	</form>

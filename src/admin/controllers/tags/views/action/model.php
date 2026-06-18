@@ -2,12 +2,19 @@
 
 Use HoltBosse\Alba\Core\{CMS, Actions};
 Use HoltBosse\DB\DB;
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 Use Respect\Validation\Validator as v;
 
 $action = CMS::Instance()->uri_segments[2];
 if (!$action) {
 	CMS::Instance()->queue_message('Unknown action','danger', $_SERVER['HTTP_REFERER']);
+}
+
+$_csrf = new Form((object)['id' => 'admin_tags_action', 'fields' => []]);
+$_submittedToken = Input::getVar($_csrf->getCsrfFieldName(), v::StringVal());
+if (!$_submittedToken || !hash_equals($_csrf->getCsrfToken(), $_submittedToken)) {
+	CMS::Instance()->queue_message('Invalid CSRF token', 'danger', $_SERVER['HTTP_REFERER']);
+	die;
 }
 
 if ($action=='togglestate') {

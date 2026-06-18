@@ -31,7 +31,13 @@
 	?>
 </form>
 
+<?php
+	$_csrf = new Form((object)['id' => 'admin_tags_action', 'fields' => []]);
+	$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+	$_csrfFieldName = $_csrf->getCsrfFieldName();
+?>
 <form action='' method='post' name='tag_action' id='tag_action_form'>
+<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 	<?php
 		(new AdminButtonToolBar())->loadFromConfig((object)[
             "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
@@ -88,7 +94,8 @@
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/tags/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/tags/action/toggle",
 							"states"=>$this->state[2],
-							"contentType"=>-1
+							"contentType"=>-1,
+							"csrfFormId"=>"admin_tags_action",
 						]);
 						$stateButton->state = $this->state[1];
 						$stateButton->display();

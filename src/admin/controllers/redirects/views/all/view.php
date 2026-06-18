@@ -1,7 +1,7 @@
 <?php
 
 	Use HoltBosse\Alba\Core\{CMS, User, Component};
-	Use HoltBosse\Form\Input;
+	Use HoltBosse\Form\{Input, Form};
 	Use HoltBosse\DB\DB;
 	Use HoltBosse\Alba\Components\Pagination\Pagination;
 	Use HoltBosse\Alba\Components\StateButton\StateButton;
@@ -32,7 +32,13 @@
 
 <form style="margin: 0;" id='orderform' action="" method="GET"></form>
 
+<?php
+	$_csrf = new Form((object)['id' => 'admin_redirects_action', 'fields' => []]);
+	$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+	$_csrfFieldName = $_csrf->getCsrfFieldName();
+?>
 <form action='' method='post' name='redirect_action' id='redirect_action_form'>
+<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 
 <?php
 	(new AdminButtonToolBar())->loadFromConfig((object)[
@@ -75,7 +81,8 @@
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/redirects/action/toggle",
 							"states"=>NULL,
-							"contentType"=>-1
+							"contentType"=>-1,
+							"csrfFormId"=>"admin_redirects_action",
 						]);
 						$stateButton->state = $this->state[1];
 						$stateButton->display();

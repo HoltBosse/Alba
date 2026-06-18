@@ -9,14 +9,20 @@
 	Use HoltBosse\Alba\Components\CssFile\CssFile;
 	Use HoltBosse\Alba\Components\Admin\Table\Table as AdminTable;
 	Use HoltBosse\Alba\Components\Admin\Table\TableField as AdminTableField;
-	use HoltBosse\Form\Input;
+	use HoltBosse\Form\{Input, Form};
 
 	(new TitleHeader())->loadFromConfig((object)[
 		"header"=>"Plugins",
 	])->display();
 ?>
 	
+<?php
+	$_csrf = new Form((object)['id' => 'admin_plugins_action', 'fields' => []]);
+	$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+	$_csrfFieldName = $_csrf->getCsrfFieldName();
+?>
 <form action='' method='post' name='plugin_action' id='plugin_action_form'>
+<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 	<?php
 		(new AdminButtonToolBar())->loadFromConfig((object)[
             "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
@@ -53,7 +59,8 @@
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/plugins/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/plugins/action/toggle",
 							"states"=>$this->state[2],
-							"contentType"=>-1
+							"contentType"=>-1,
+							"csrfFormId"=>"admin_plugins_action",
 						]);
 						$stateButton->state = $this->state[1];
 						$stateButton->display();

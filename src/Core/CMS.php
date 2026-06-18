@@ -678,7 +678,17 @@ final class CMS {
 		if ( ($this->isAdmin() && $this->user->username=="guest") || ($this->user->username=="guest" && $_ENV["frontendlogin"]==="true") ) {
 			$email = Input::getvar('email',v::email()); // note: php email filter is a bit more picky than html input type email
         	$password = Input::getvar('password',v::StringVal());
-			
+
+			if ($email && $password) {
+				$_csrfLogin = new Form((object)['id' => 'admin_login', 'fields' => []]);
+				$_submittedLoginToken = Input::getVar($_csrfLogin->getCsrfFieldName(), v::StringVal());
+				if (!$_submittedLoginToken || !hash_equals($_csrfLogin->getCsrfToken(), $_submittedLoginToken)) {
+					$this->queue_message('Invalid CSRF token', 'danger', null);
+					$email = null;
+					$password = null;
+				}
+			}
+
 			$loginResult = Access::handleLogin($email, $password);
 
 			if($loginResult->hasMessage()) {

@@ -1,7 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Hook, User, Mail, File};
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
 Use HoltBosse\Alba\Fields\ToggleablePassword\ToggleablePassword;
@@ -12,6 +12,12 @@ $view = Input::getvar('view',v::StringVal(),'');
 
 $resetemail = Input::getvar('resetemail',v::email());
 if ($resetemail) {
+	$_csrfReset = new Form((object)['id' => 'admin_resetpassword', 'fields' => []]);
+	$_submittedResetToken = Input::getVar($_csrfReset->getCsrfFieldName(), v::StringVal());
+	if (!$_submittedResetToken || !hash_equals($_csrfReset->getCsrfToken(), $_submittedResetToken)) {
+		CMS::Instance()->queue_message('Invalid CSRF token', 'danger', $_ENV["uripath"] . "/admin");
+		die;
+	}
 	$resetUser = new User();
 	$resetUser->load_from_email($resetemail);
 	$message = $resetUser->sendResetEmail();
@@ -27,10 +33,16 @@ $resetkey = Input::getvar('resetkey',v::StringVal());
 if ($resetkey) {
 	$view = "newpassword";
 	// check if passwords sent
-	$password1 = Input::getvar('newpassword1',v::StringVal()); 
-	$password2 = Input::getvar('newpassword2',v::StringVal()); 
+	$password1 = Input::getvar('newpassword1',v::StringVal());
+	$password2 = Input::getvar('newpassword2',v::StringVal());
 
 	if ($password1 && $password2) {
+		$_csrfNewpwd = new Form((object)['id' => 'admin_newpassword', 'fields' => []]);
+		$_submittedNewpwdToken = Input::getVar($_csrfNewpwd->getCsrfFieldName(), v::StringVal());
+		if (!$_submittedNewpwdToken || !hash_equals($_csrfNewpwd->getCsrfToken(), $_submittedNewpwdToken)) {
+			CMS::Instance()->queue_message('Invalid CSRF token', 'danger', $_ENV["uripath"] . "/admin");
+			die;
+		}
 		$resetUser = new User();
 		$message = $resetUser->resetPassword($password1, $password2, $resetkey);
 
@@ -54,6 +66,12 @@ if ($updatePassword) {
 	$password2 = Input::getvar('newpassword2',v::StringVal());
 
 	if ($password1 && $password2) {
+		$_csrfNewpwd2 = new Form((object)['id' => 'admin_newpassword', 'fields' => []]);
+		$_submittedNewpwd2Token = Input::getVar($_csrfNewpwd2->getCsrfFieldName(), v::StringVal());
+		if (!$_submittedNewpwd2Token || !hash_equals($_csrfNewpwd2->getCsrfToken(), $_submittedNewpwd2Token)) {
+			CMS::Instance()->queue_message('Invalid CSRF token', 'danger', $_ENV["uripath"] . "/admin");
+			die;
+		}
 		$resetUser = new User();
 		$resetUser->get_user_by_reset_key($token);
 		$message = $resetUser->resetPassword($password1, $password2, $token);
@@ -127,9 +145,24 @@ if ($protocol=="http") {
 		</div>
 		<div id="login" class='container '>
 
+			<?php
+				$_csrfLogin = new Form((object)['id' => 'admin_login', 'fields' => []]);
+				$_loginCsrfToken = Input::stringHtmlSafe($_csrfLogin->getCsrfToken());
+				$_loginCsrfField = $_csrfLogin->getCsrfFieldName();
+
+				$_csrfResetpwd = new Form((object)['id' => 'admin_resetpassword', 'fields' => []]);
+				$_resetCsrfToken = Input::stringHtmlSafe($_csrfResetpwd->getCsrfToken());
+				$_resetCsrfField = $_csrfResetpwd->getCsrfFieldName();
+
+				$_csrfNewpwd = new Form((object)['id' => 'admin_newpassword', 'fields' => []]);
+				$_newpwdCsrfToken = Input::stringHtmlSafe($_csrfNewpwd->getCsrfToken());
+				$_newpwdCsrfField = $_csrfNewpwd->getCsrfFieldName();
+			?>
+
 			<?php if (!$view):?>
-		
+
 				<form class="" submit="" method="POST">
+					<input type='hidden' name='<?= $_loginCsrfField ?>' value='<?= $_loginCsrfToken ?>'>
 
 					<h1 class='title is-1'><?php echo $_ENV["sitename"] . " Admin Login";?></h1>
 					<?php echo $protocalwarning; ?>
@@ -173,6 +206,7 @@ if ($protocol=="http") {
 
 			<?php elseif ($view=='resetpassword'):?>
 				<form class='' submit='' action='' method="POST">
+					<input type='hidden' name='<?= $_resetCsrfField ?>' value='<?= $_resetCsrfToken ?>'>
 					<h1 class='title is-1'>Reset Password</h1>
 
 					<div class='field'>
@@ -200,6 +234,7 @@ if ($protocol=="http") {
 					}	
 				?>
 				<form class='' submit='<?php echo $url; ?>' action='' method="POST">
+					<input type='hidden' name='<?= $_newpwdCsrfField ?>' value='<?= $_newpwdCsrfToken ?>'>
 					<h1 class='title is-1'>Enter New Password</h1>
 
 					<div class='field'>

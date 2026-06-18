@@ -1,7 +1,7 @@
 <?php
 
 	Use HoltBosse\Alba\Core\{CMS, Component, Hook, Page, Widget};
-	Use HoltBosse\Form\Input;
+	Use HoltBosse\Form\{Input, Form};
 	Use HoltBosse\Alba\Components\StateButton\StateButton;
 	Use HoltBosse\Alba\Components\Html\Html;
 	Use HoltBosse\Alba\Components\TitleHeader\TitleHeader;
@@ -67,7 +67,13 @@
 	?>
 </form>
 
+<?php
+	$_csrf = new Form((object)['id' => 'admin_widgets_action', 'fields' => []]);
+	$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+	$_csrfFieldName = $_csrf->getCsrfFieldName();
+?>
 <form action='' method='post' name='widget_action' id='widget_action_form'>
+<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 	<?php
 		(new AdminButtonToolBar())->loadFromConfig((object)[
             "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
@@ -106,7 +112,8 @@
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/widgets/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/widgets/action/toggle",
 							"states"=>NULL,
-							"contentType"=>-1
+							"contentType"=>-1,
+							"csrfFormId"=>"admin_widgets_action",
 						]);
 						$stateButton->state = $this->state[1];
 						$stateButton->display();

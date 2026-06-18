@@ -4,6 +4,8 @@ namespace HoltBosse\Alba\Components\StateButton;
 
 use HoltBosse\Alba\Core\Component;
 use HoltBosse\Alba\Components\CssFile\CssFile;
+use HoltBosse\Form\Form;
+use HoltBosse\Form\Input;
 
 class StateButton extends Component {
     public ?string $itemId;
@@ -13,6 +15,7 @@ class StateButton extends Component {
     // @phpstan-ignore missingType.iterableValue
     public ?array $states;
     public ?int $contentType;
+    public ?string $csrfFormId;
 
     public function display(): void {
         (new CssFile())->loadFromConfig((object)[
@@ -69,11 +72,21 @@ class StateButton extends Component {
                         ?>
                     </button>
                     <?php if($this->states!==NULL) { ?>
+                        <?php
+                            $csrfInputs = '';
+                            if ($this->csrfFormId) {
+                                $csrfHelper = new Form((object)['id' => $this->csrfFormId, 'fields' => []]);
+                                $csrfToken = Input::stringHtmlSafe($csrfHelper->getCsrfToken());
+                                $csrfFieldName = Input::stringHtmlSafe($csrfHelper->getCsrfFieldName());
+                                $csrfInputs = "<input type='hidden' name='{$csrfFieldName}' value='{$csrfToken}'>";
+                            }
+                        ?>
                         <hr>
                         <div class="navbar navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link"></a>
                             <div class="navbar-dropdown">
                                 <form action='<?php echo $this->multiStateFormAction;?>' method="post">
+                                    <?php echo $csrfInputs; ?>
                                     <input type='hidden' name='content_type' value='<?= $this->contentType;?>'/>
                                     <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $this->itemId; ?>'/>
                                     <button type='submit' formaction='<?php echo $this->multiStateFormAction;?>' name='togglestate[]' value='0' class="navbar-item">
@@ -81,16 +94,18 @@ class StateButton extends Component {
                                     </button>
                                 </form>
                                 <form action='<?php echo $this->multiStateFormAction;?>' method="post">
+                                    <?php echo $csrfInputs; ?>
                                     <input type='hidden' name='content_type' value='<?= $this->contentType;?>'/>
                                     <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $this->itemId; ?>'/>
                                     <button type='submit' formaction='<?php echo $this->multiStateFormAction;?>' name='togglestate[]' value='1' class="navbar-item">
                                         <i class="state1 is-success fas fa-times-circle" aria-hidden="true"></i>Published
                                     </button>
                                 </form>
-                                
+
                                 <hr class="dropdown-divider">
                                 <?php foreach($this->states as $stateDetails) { ?>
                                     <form action='<?php echo $this->multiStateFormAction;?>' method="post">
+                                        <?php echo $csrfInputs; ?>
                                         <input type='hidden' name='content_type' value='<?= $this->contentType;?>'/>
                                         <input style="display:none" checked type='checkbox' name='togglestate[]' value='<?php echo $this->itemId; ?>'/>
                                         <button type='submit' formaction='<?php echo $this->multiStateFormAction;?>' name='togglestate[]' value='<?php echo $stateDetails->state; ?>' class="navbar-item">
@@ -115,6 +130,7 @@ class StateButton extends Component {
         $this->dualStateFormAction = $config->dualStateFormAction ?? "";
         $this->states = $config->states ?? null;
         $this->contentType = $config->contentType ?? null;
+        $this->csrfFormId = $config->csrfFormId ?? null;
 
         return $this->hookObjectIntance();
     }
