@@ -34,7 +34,13 @@
 	?>
 </form>
 
+<?php
+	$_csrf = new Form((object)['id' => 'admin_users_action', 'fields' => []]);
+	$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+	$_csrfFieldName = $_csrf->getCsrfFieldName();
+?>
 <form action='' method='post' name='user_action' id='user_action_form'>
+<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 	<?php
 		(new AdminButtonToolBar())->loadFromConfig((object)[
             "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
@@ -78,7 +84,8 @@
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/users/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/users/action/toggle",
 							"states"=>$this->state[2],
-							"contentType"=>-1
+							"contentType"=>-1,
+							"csrfFormId"=>"admin_users_action",
 						]);
 						$stateButton->state = $this->state[1];
 						$stateButton->display();

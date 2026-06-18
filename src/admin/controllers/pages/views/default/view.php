@@ -1,6 +1,6 @@
 <?php
 	Use HoltBosse\Alba\Core\{Component, Content, Page, Template, CMS};
-	Use HoltBosse\Form\{Input};
+	Use HoltBosse\Form\{Input, Form};
 	Use HoltBosse\DB\DB;
 	Use HoltBosse\Alba\Components\StateButton\StateButton;
 	Use HoltBosse\Alba\Components\Html\Html;
@@ -34,7 +34,13 @@
 <form style="margin-bottom: 0;">
 	<?php $searchForm->display(); ?>
 </form>
+<?php
+	$_csrf = new Form((object)['id' => 'admin_pages_action', 'fields' => []]);
+	$_csrfToken = Input::stringHtmlSafe($_csrf->getCsrfToken());
+	$_csrfFieldName = $_csrf->getCsrfFieldName();
+?>
 <form action='' method='post' name='page_action' id='page_action_form'>
+<input type='hidden' name='<?= $_csrfFieldName ?>' value='<?= $_csrfToken ?>'>
 	<?php
 		(new AdminButtonToolBar())->loadFromConfig((object)[
             "stateButtonGroup"=>(new AdminStateButtonGroup())->loadFromConfig((object)[
@@ -72,7 +78,8 @@
 							"multiStateFormAction"=>$_ENV["uripath"] . "/admin/pages/action/togglestate",
 							"dualStateFormAction"=>$_ENV["uripath"] . "/admin/pages/action/toggle",
 							"states"=>$this->state[2],
-							"contentType"=>-1
+							"contentType"=>-1,
+							"csrfFormId"=>"admin_pages_action",
 						]);
 						$stateButton->state = $this->state[1];
 						$stateButton->display();

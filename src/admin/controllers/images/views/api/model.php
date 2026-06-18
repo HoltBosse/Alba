@@ -1,7 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Actions, File};
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
 
@@ -121,6 +121,13 @@ if ($action=='untag_media') {
 }
 
 if ($action=='rename_image') {
+	$_csrf = new Form((object)['id' => 'admin_images_rename', 'fields' => []]);
+	$_submittedToken = Input::getVar($_csrf->getCsrfFieldName(), v::StringVal());
+	if (!$_submittedToken || !hash_equals($_csrf->getCsrfToken(), $_submittedToken)) {
+		echo '{"success":0,"msg":"Invalid CSRF token"}';
+		exit(0);
+	}
+
 	$title = Input::getvar('title',v::StringVal(),'');
 	$alt = Input::getvar('alt',v::StringVal(),'');
 	$image_id = Input::getvar('image_id',v::IntVal());

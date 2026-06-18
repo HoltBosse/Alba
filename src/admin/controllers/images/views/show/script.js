@@ -205,10 +205,14 @@ function rename_image_action() {
 	// hide modal early
 	modal.classList.remove('is-active');
 	// save data
+	const csrfInput = modal.querySelector('#rename_csrf_token');
 	const api_data = {"action":"rename_image","title":title,"alt":alt,"image_id":image_id};
 	const formData = new FormData();
 	for (const [key, value] of Object.entries(api_data)) {
 		formData.append(key, value);
+	}
+	if (csrfInput) {
+		formData.append(csrfInput.name, csrfInput.value);
 	}
 
 	fetch(`${window.uripath}/admin/images/api`, {

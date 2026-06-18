@@ -2,6 +2,7 @@
 
 Use HoltBosse\Alba\Core\{CMS, Component};
 Use HoltBosse\Form\{Form, Input};
+Use Respect\Validation\Validator as v;
 Use \Exception;
 
 // any variables created here will be available to the view
@@ -15,6 +16,15 @@ function human_filesize(int $bytes, int $decimals = 2): string {
 $segments = CMS::Instance()->uri_segments;
 
 $submitted = Input::getvar('backup_please');
+
+if ($submitted) {
+	$_csrf = new Form((object)['id' => 'admin_backups', 'fields' => []]);
+	$_submittedToken = Input::getVar($_csrf->getCsrfFieldName(), v::StringVal());
+	if (!$_submittedToken || !hash_equals($_csrf->getCsrfToken(), $_submittedToken)) {
+		CMS::Instance()->queue_message('Invalid CSRF token', 'danger', $_ENV["uripath"] . "/admin/settings/backups");
+		die;
+	}
+}
 
 // Perform backup if required
 

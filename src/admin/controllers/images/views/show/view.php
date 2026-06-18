@@ -1,7 +1,7 @@
 <?php
 
 Use HoltBosse\Alba\Core\{CMS, Tag, Component, File};
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\Alba\Components\Pagination\Pagination;
 Use HoltBosse\Alba\Components\Html\Html;
 Use HoltBosse\Alba\Components\CssFile\CssFile;
@@ -73,7 +73,13 @@ Use HoltBosse\Alba\Components\CssFile\CssFile;
 	<div id='rename_image_modal' class="modal">
 	<div class="modal-background"></div>
 	<div class="modal-content">
+		<?php
+			$_csrfImg = new Form((object)['id' => 'admin_images_rename', 'fields' => []]);
+			$_imgCsrfToken = Input::stringHtmlSafe($_csrfImg->getCsrfToken());
+			$_imgCsrfField = $_csrfImg->getCsrfFieldName();
+		?>
 		<form class='form'>
+			<input type='hidden' id='rename_csrf_token' name='<?= $_imgCsrfField ?>' value='<?= $_imgCsrfToken ?>'>
 			<input type='hidden' value='' id='rename_image_id' name='rename_image_id'/>
 			<div class='field'>
 				<label class='label'  for='rename_title'>Title</label>
