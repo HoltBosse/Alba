@@ -25,7 +25,6 @@ if(!$new_user) {
 }
 
 if (!$core_user_fields_form->isSubmitted() || !$core_user_fields_form->validate()) {
-	CMS::pprint_r($core_user_fields_form->getFailedValidationFields()); die;
 	CMS::Instance()->queue_message('Invalid form submission', 'danger', $_ENV["uripath"].'/admin/users');
 	exit;
 }
