@@ -18,6 +18,17 @@ if (!$user_ok) {
 $response = Hook::execute_hook_actions('validate_user_fields_form');
 $new_user = !$user->id; //check for new user
 
+$core_user_fields_form = new Form(__DIR__ . "/../edit/core_user_fields.json");
+
+if(!$new_user) {
+	$core_user_fields_form->fields["password"]->required = false;
+}
+
+if (!$core_user_fields_form->isSubmitted() || !$core_user_fields_form->validate()) {
+	CMS::Instance()->queue_message('Invalid form submission', 'danger', $_ENV["uripath"].'/admin/users');
+	exit;
+}
+
 $success = $user->save();
 $custom_field_error = false; // only set to true if any errors occur during custom field saving
 

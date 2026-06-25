@@ -195,13 +195,22 @@ class Image {
         $n=0;
         $img_ids = [];
         $errorMessages = [];
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'];
         foreach ($files["error"] as $key => $error) {
             if ($error == UPLOAD_ERR_OK) {
                 $tmp_name = $files["tmp_name"][$key];
-                // basename() may prevent filesystem traversal attacks;
-                // further validation/sanitation of the filename may be appropriate
-                // make filename unique-ish
-                // TODO: per user images or per-date a la wordpress for unode / performance reasons?
+                $tmpMime = (string) mime_content_type($tmp_name);
+                if (!array_key_exists($tmpMime, $image_types_data)) {
+                    $errorMessages[] = $files["name"][$key] . " (Unsupported file type)";
+                    $n++;
+                    continue;
+                }
+                $ext = strtolower(pathinfo($files["name"][$key], PATHINFO_EXTENSION));
+                if (!in_array($ext, $allowed_extensions, true)) {
+                    $errorMessages[] = $files["name"][$key] . " (Invalid file extension)";
+                    $n++;
+                    continue;
+                }
                 $name = uniqid() . "_" . basename($files["name"][$key]);
                 $dest = $directory . "/" . $name;
                 move_uploaded_file($tmp_name, $dest);

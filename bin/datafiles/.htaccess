@@ -17,6 +17,9 @@ Options -Indexes
 
 RewriteEngine On
 
+# Block direct PHP execution in uploaded content directories
+RewriteRule ^images/.*\.php[0-9]?$ - [F,L]
+
 ## Begin - Rewrite rules to block out some common exploits.
 # If you experience problems on your site then comment out the operations listed
 # below by adding a # to the beginning of the line.
