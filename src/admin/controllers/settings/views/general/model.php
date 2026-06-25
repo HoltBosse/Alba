@@ -16,12 +16,12 @@ $general_options_config->load_from_db();
 
 $submitted = Input::getvar('form_general_options');
 
-if ($submitted) {
+if ($submitted && $general_options_form->validate()) {
 	// update form with submitted values
 	$general_options_form->setFromSubmit();
 	// create new config object based on updated form and save
-	$general_options_config = new Configuration($general_options_form); 
-	
+	$general_options_config = new Configuration($general_options_form);
+
 	$saved = $general_options_config->save();
 	if ($saved) {
 		CMS::Instance()->queue_message('Options saved','success',$_ENV["uripath"]."/admin/settings/general");

@@ -154,7 +154,14 @@ foreach ($all_content_types as $content_type) {
 					}
 				}
 				// new column needed, try and get type from JSON obj
-				$coltype = $f->coltype ?? null ? $f->coltype : " mediumtext " ;
+				if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $f->name)) {
+					continue;
+				}
+				$allowed_coltypes = ['mediumtext', 'text', 'varchar(255)', 'int', 'tinyint', 'datetime', 'timestamp', 'float'];
+				$coltype = isset($f->coltype) ? strtolower(trim((string)$f->coltype)) : 'mediumtext';
+				if (!in_array($coltype, $allowed_coltypes, true)) {
+					$coltype = 'mediumtext';
+				}
             	DB::exec('ALTER TABLE ' . $table_name . ' ADD COLUMN ' . $f->name . ' ' . $coltype);
 				// add to report array
 				$cols_added[] = [$table_name, $f->name];
