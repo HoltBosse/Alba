@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/HoltBosse/Alba#readme",
   "dependencies": {
-    "@tiptap/core": "^3.7.2",
+    "@tiptap/core": "^3.31.0",
     "@tiptap/extension-bubble-menu": "^3.7.2",
     "@tiptap/extension-details": "^3.7.2",
     "@tiptap/extension-file-handler": "^3.7.2",
