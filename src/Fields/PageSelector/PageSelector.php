@@ -7,18 +7,16 @@ Use Respect\Validation\Validator as v;
 
 class PageSelector extends Field {
 	public bool $multiple = true;
-	public mixed $domain = null;
+	public ?int $domain = null; // null = current domain
+	public bool $all_domains = false;
 
 	public function display(): void {
-		$all_pages = Page::get_all_pages_by_depth();
+		$all_pages = Page::get_all_pages_by_depth(-1, -1, $this->domain, $this->all_domains);
 		//CMS::pprint_r ($this);
 		if ($this->multiple) {
 			echo "<style>label.checkbox {display:block; margin-bottom:1rem;} label.checkbox input {margin-right:1rem;}</style>";
 			echo "<div class='field'>";
 				foreach ($all_pages as $page) {
-					if($this->domain !== null && $page->domain != $this->domain) {
-						continue;
-					}
 					echo "<label class='checkbox'>";
 						$checked = "";
 						if (is_array($this->default)) {
@@ -90,6 +88,7 @@ class PageSelector extends Field {
 		$this->filter = $config->filter ?? v::arrayType()->each(v::intVal());
 		$this->multiple = $config->multiple ?? true;
 		$this->domain = $config->domain ?? null;
+		$this->all_domains = $config->all_domains ?? false;
 
 		return $this;
 	}

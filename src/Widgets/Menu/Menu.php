@@ -28,7 +28,7 @@ class Menu extends Widget {
 	}
 
 	public function render_custom_backend(): void {
-		$all_pages = Page::get_all_pages_by_depth();
+		$all_pages = Page::get_all_pages_by_depth(-1, -1, is_numeric($this->domain) ? (int) $this->domain : null);
 
 		echo "<style>";
 			echo File::getContents(__DIR__ . "/backend_style.css");

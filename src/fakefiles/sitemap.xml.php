@@ -12,10 +12,6 @@ function get_page_details(string $location, object $page, float $maxpriority, st
 $sitemap_data = [];
 $pages = Page::get_all_pages_by_depth();
 
-$pages = array_filter($pages, function($page) {
-    return $page->domain == CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
-});
-
 foreach($pages as $page) {
     if($page->state<=0) {
         continue;

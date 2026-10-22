@@ -17,6 +17,7 @@ if (!$success) {
 
 if(Input::getvar("id",v::IntVal())==0) {
 	$new_page = true;
+	$page->domain = Page::getCurrentDomain();
 	$existing_page = DB::fetch("SELECT * FROM pages WHERE alias=? AND parent=? AND domain=?", [$page->alias, $page->parent, $page->domain]);
 	if($existing_page) {
 		CMS::Instance()->queue_message('Page already exists (user created)','danger',$_ENV["uripath"].'/admin/pages');
@@ -29,6 +30,18 @@ if(Input::getvar("id",v::IntVal())==0) {
 if(Input::getvar("id",v::IntVal())!=0) {
 	$existingPage = new Page();
 	$existingPage->load_from_id(Input::getvar("id",v::IntVal()));
+	if ($existingPage->domain !== Page::getCurrentDomain()) {
+		CMS::raise_404();
+	}
+	// never move an existing page to another domain
+	$page->domain = $existingPage->domain;
+}
+
+if ($page->parent !== null && $page->parent != -1) {
+	$parentPage = DB::fetch("SELECT domain FROM pages WHERE id=?", [$page->parent]);
+	if (!$parentPage || (int) $parentPage->domain !== $page->domain) {
+		CMS::Instance()->queue_message('Invalid parent page','danger',$_ENV["uripath"].'/admin/pages');
+	}
 }
 
 /* CMS::pprint_r($page);
@@ -64,7 +77,6 @@ if (!$is_valid) {
 	CMS::Instance()->queue_message('Page creation/update failed - invalid page options form','danger',$_ENV["uripath"].'/admin/pages');
 }
 
-$page->domain = $_SESSION["current_domain"];
 $success = $page->save();
 
 if ($success) {

@@ -40,7 +40,11 @@ class Page {
 		$this->view_configuration = null;
 		$this->page_options_form = new Form(File::realpath(__DIR__ . "/../admin/controllers/pages/views/edit/page_options.json"));
 		$this->page_options = null;
-		$this->domain = CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
+		$this->domain = Page::getCurrentDomain();
+	}
+
+	public static function getCurrentDomain(): int {
+		return CMS::Instance()->isAdmin() ? ($_SESSION["current_domain"] ?? CMS::getDomainIndex($_SERVER["HTTP_HOST"])) : CMS::getDomainIndex($_SERVER["HTTP_HOST"]);
 	}
 
 	public function get_url(): string {
@@ -84,21 +88,31 @@ class Page {
 		return $depth;
 	}
 
+	// domain null = current domain, $all_domains = true to ignore domain entirely
 	// @phpstan-ignore missingType.iterableValue
-	public static function get_all_pages(): array {
-		$result = DB::fetchAll("SELECT * FROM pages WHERE state>-1");
-		return $result;
+	public static function get_all_pages(?int $domain=null, bool $all_domains=false): array {
+		if ($all_domains) {
+			return DB::fetchAll("SELECT * FROM pages WHERE state>-1");
+		}
+		return DB::fetchAll("SELECT * FROM pages WHERE state>-1 AND domain=?", [$domain ?? Page::getCurrentDomain()]);
 	}
 
+	// domain null = current domain, $all_domains = true to ignore domain entirely
 	// @phpstan-ignore missingType.iterableValue
-	public static function get_all_pages_by_depth(int $parent=-1, int $depth=-1): array {
+	public static function get_all_pages_by_depth(int $parent=-1, int $depth=-1, ?int $domain=null, bool $all_domains=false): array {
 		$depth = $depth+1;
 		$result=[];
-		$children = DB::fetchAll("SELECT * FROM pages WHERE state>-1 AND parent=? ORDER BY domain", [$parent]);
+		if ($all_domains) {
+			$children = DB::fetchAll("SELECT * FROM pages WHERE state>-1 AND parent=? ORDER BY domain", [$parent]);
+		}
+		else {
+			$domain = $domain ?? Page::getCurrentDomain();
+			$children = DB::fetchAll("SELECT * FROM pages WHERE state>-1 AND parent=? AND domain=?", [$parent, $domain]);
+		}
 		foreach ($children as $child) {
 			$child->depth = $depth;
 			$result[] = $child;
-			$result = array_merge ($result, Page::get_all_pages_by_depth($child->id, $depth));
+			$result = array_merge ($result, Page::get_all_pages_by_depth($child->id, $depth, $domain, $all_domains));
 		}
 		return $result;
 	}
@@ -141,8 +155,6 @@ class Page {
 		
 		$this->id = Input::getvar('id',v::IntVal());
 
-		$this->domain = Input::getvar("domain", v::StringVal());
-
 		$this->page_options_form->setFromSubmit();
 		return true;
 	}
@@ -172,8 +184,8 @@ class Page {
 	}
 
 
-	public function load_from_alias(string $alias): bool {
-		$result = DB::fetch("select * from pages where alias=?", [$alias]);
+	public function load_from_alias(string $alias, ?int $domain=null): bool {
+		$result = DB::fetch("select * from pages where alias=? and domain=?", [$alias, $domain ?? Page::getCurrentDomain()]);
 		if ($result) {
 			$this->id = $result->id;
 			$this->state = $result->state;
@@ -188,6 +200,7 @@ class Page {
 			$this->view_configuration = $result->content_view_configuration;
 			$this->page_options = $result->page_options;
 			$this->page_options_form->deserializeJson($this->page_options); // json from db pulled into form object in page
+			$this->domain = $result->domain;
 			return true;
 		}
 		else {

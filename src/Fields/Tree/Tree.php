@@ -3,6 +3,7 @@ namespace HoltBosse\Alba\Fields\Tree;
 
 Use HoltBosse\Form\Field;
 Use HoltBosse\DB\DB;
+Use HoltBosse\Alba\Core\Page;
 
 class Tree extends Field {
 
@@ -397,8 +398,15 @@ class Tree extends Field {
 	public function loadFromConfig(object $config): self {
 		parent::loadFromConfig($config);
 		
-		$this->sql = $config->sql ?? 'SELECT id AS value, title AS text FROM pages WHERE state=1';
-		$this->dataset = DB::fetchAll($this->sql);
+		if (isset($config->sql)) {
+			$this->sql = $config->sql;
+			$this->dataset = DB::fetchAll($this->sql);
+		}
+		else {
+			// default to current domain's pages
+			$this->sql = 'SELECT id AS value, title AS text FROM pages WHERE state=1 AND domain=?';
+			$this->dataset = DB::fetchAll($this->sql, [Page::getCurrentDomain()]);
+		}
 		$this->default = $config->default ?? '{"parent":null,"value":"-1","text":"Root","children":[]}';
 
 		return $this;

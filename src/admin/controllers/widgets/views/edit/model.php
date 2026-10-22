@@ -45,7 +45,13 @@ if(!Widget::isAccessibleOnDomain($widget->type_id, $_SESSION["current_domain"]))
 // prep forms
 $required_details_form = new Form(__DIR__ . '/required_fields_form.json');
 $position_options_form = new Form(__DIR__ . '/position_options_form.json');
-$position_options_form->fields["position_pages"]->domain = $widget->domain;
+// shared widgets (existing with null domain, or new of a shared type) can be placed on any domain's pages
+$widgetIsShared = $new_widget
+	? (isset($widget->form_data->multi_domain_shared_instances) && $widget->form_data->multi_domain_shared_instances===true)
+	: $widget->domain===null;
+$widgetPageDomain = $widgetIsShared ? null : ($widget->domain ?? Page::getCurrentDomain());
+$position_options_form->fields["position_pages"]->domain = $widgetPageDomain;
+$position_options_form->fields["position_pages"]->all_domains = $widgetIsShared;
 $widget_options_form = new Form($widget->form_data);
 
 // old way - TODO: delete?
@@ -67,7 +73,7 @@ if ($required_details_form->isSubmitted()) {
 	//assume 0 by default
 	$pagesToCheck = $pageFilters;
 	if($pageSelectorType==1) {
-		$allPages = array_column(Page::get_all_pages(), "id");
+		$allPages = array_column(Page::get_all_pages($widgetPageDomain, $widgetIsShared), "id");
 
 		$pagesToCheck = array_filter($allPages, function($input) use ($pageFilters) {
 			if(in_array($input, $pageFilters)) {

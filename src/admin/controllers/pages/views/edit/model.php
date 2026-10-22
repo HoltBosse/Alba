@@ -63,6 +63,9 @@ if (array_key_exists(2, CMS::Instance()->uri_segments)) {
 			CMS::Instance()->queue_message('Failed to load Page id: ' . $uri_id, 'danger',$_ENV["uripath"].'/admin/pages');
 			exit(0);
 		}
+		if ($page->domain !== Page::getCurrentDomain()) {
+			CMS::raise_404();
+		}
 		// set CMS property edit_page_id for template layout.php file to access
 		CMS::Instance()->edit_page_id = $page->id;
 	
