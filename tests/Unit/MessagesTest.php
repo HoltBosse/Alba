@@ -37,9 +37,7 @@ test('Messages::clear removes messages by type', function () {
     $messages = new Messages();
     $messages->clear(MessageType::Info);
 
-    //@phpstan-ignore-next-line
     expect(isset($_SESSION['flash_messages'][MessageType::Info->value]))->toBeFalse();
-    //@phpstan-ignore-next-line
     expect(isset($_SESSION['flash_messages'][MessageType::Danger->value]))->toBeTrue();
 });
 
@@ -54,6 +52,5 @@ test('Messages::clear removes all messages if no type given', function () {
     $messages = new Messages();
     $messages->clear();
     
-    //@phpstan-ignore-next-line
     expect(isset($_SESSION['flash_messages']))->toBeFalse();
 });
