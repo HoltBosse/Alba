@@ -2,7 +2,7 @@
 namespace HoltBosse\Alba\Plugins\GoogleLoginJwt;
 
 Use HoltBosse\Alba\Core\{CMS, Plugin, File, User};
-Use HoltBosse\Form\Input;
+Use HoltBosse\Form\{Input, Form};
 Use HoltBosse\DB\DB;
 Use Respect\Validation\Validator as v;
 Use \stdClass;
@@ -57,10 +57,10 @@ class GoogleLoginJwt extends Plugin {
             return $user_object;
         }
 
-        // double-cookie CSRF mitigation check
-        $csrf_token_body = Input::getvar('g_csrf_token', v::StringVal());
-        $csrf_token_cookie = $_COOKIE['g_csrf_token'];
-        if (!$csrf_token_body || !$csrf_token_cookie || ($csrf_token_body!=$csrf_token_cookie)) {
+        // csrf token posted by the js callback in display_button
+        $csrf = new Form((object)['id' => 'google_login', 'fields' => []]);
+        $csrf_token = Input::getvar($csrf->getCsrfFieldName(), v::StringVal());
+        if (!$csrf_token || !hash_equals($csrf->getCsrfToken(), $csrf_token)) {
             CMS::Instance()->queue_message('CSRF verification check failed','danger', $_ENV["uripath"] . "/admin");
         }
 
@@ -136,19 +136,33 @@ class GoogleLoginJwt extends Plugin {
     }
 
     public function display_button(mixed ...$args): void {
-        // 1. Get the current URL for the redirect
-        // Google requires an absolute URL. 
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
-        $login_page = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        
+        $csrf = new Form((object)['id' => 'google_login', 'fields' => []]);
         ?>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <script>
+            function albaGoogleLogin(response) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = window.location.href;
+                const addField = (name, value) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = value;
+                    form.appendChild(input);
+                };
+                addField('credential', response.credential);
+                addField(<?php echo json_encode($csrf->getCsrfFieldName()); ?>, <?php echo json_encode($csrf->getCsrfToken()); ?>);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        </script>
 
         <div id="g_id_onload"
-            data-client_id="<?php echo $this->get_option('client_id');?>"
+            data-client_id="<?php echo Input::stringHtmlSafe($this->get_option('client_id'));?>"
             data-context="signin"
-            data-ux_mode="redirect"
-            data-login_uri="<?php echo $login_page; ?>"
+            data-ux_mode="popup"
+            data-callback="albaGoogleLogin"
             data-auto_select="true"
             data-itp_support="true">
         </div>
