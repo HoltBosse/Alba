@@ -59,6 +59,14 @@ class Mail extends PHPMailer {
 			if($port) {
 				$this->Port = $port;
 			}
+			// optionally force the smtp connection over a single ip family
+			if(isset($_ENV["smtp_ip_version"])) {
+				if($_ENV["smtp_ip_version"]==="ipv4") {
+					$this->SMTPOptions["socket"]["bindto"] = "0.0.0.0:0";
+				} elseif($_ENV["smtp_ip_version"]==="ipv6") {
+					$this->SMTPOptions["socket"]["bindto"] = "[::]:0";
+				}
+			}
 			$this->setFrom($smtp_from, $smtp_name);
 			$this->addReplyTo($smtp_replyto, $smtp_name);
 
