@@ -45,7 +45,7 @@ if(!Widget::isAccessibleOnDomain($widget->type_id, $_SESSION["current_domain"]))
 // prep forms
 $required_details_form = new Form(__DIR__ . '/required_fields_form.json');
 $position_options_form = new Form(__DIR__ . '/position_options_form.json');
-$position_options_form->fields["position_pages"]->domain = $widget->domain;
+$position_options_form->fields["position_pages"]->domain = $_SESSION["current_domain"];
 $widget_options_form = new Form($widget->form_data);
 
 // old way - TODO: delete?
