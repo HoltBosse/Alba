@@ -167,6 +167,7 @@ final class CMS {
 			$valid_redirect = DB::fetch("SELECT * FROM redirects WHERE `state`=1 AND old_url=? AND domain=?", [$relative_url, $domainIndex]);
 			if ($valid_redirect) {
 				header('Location: '.$valid_redirect->new_url, true, $valid_redirect->header);
+				exit(0);
 			} else {
 				// handle redirect/404 capturing
 				if ($_ENV["capture_404s"]!=="false") {
@@ -193,12 +194,12 @@ final class CMS {
 					}
 				}
 			}
+		}
 
-			if (isset($_ENV["custom_404_file_path"])) {
-				include($_ENV["custom_404_file_path"]); // provide your own HTML for the error page
-			} else {
-				CMS::show_error("Oops, something went wrong &#129300", 404);
-			}
+		if (isset($_ENV["custom_404_file_path"])) {
+			include($_ENV["custom_404_file_path"]); // provide your own HTML for the error page
+		} else {
+			CMS::show_error("Oops, something went wrong &#129300", 404);
 		}
 		exit(0);
 	}
