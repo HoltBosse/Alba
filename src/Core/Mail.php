@@ -14,6 +14,7 @@ class Mail extends PHPMailer {
 
 	public function __construct($exceptions = true) {
 		parent::__construct($exceptions);
+		$this->CharSet = PHPMailer::CHARSET_UTF8;
 	}
 
 	// Legacy API: store addresses for backwards compatibility
