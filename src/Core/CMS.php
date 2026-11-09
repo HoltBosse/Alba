@@ -59,10 +59,9 @@ final class CMS {
 
 	public final static function Instance(): CMS {
 		if (self::$instance === null) {
-			// check for singleton instancing errors caused by circular class references inside CMS construction
-			/* echo "<pre>"; print_r(debug_backtrace()); echo "</pre>"; 
-			echo "<pre>"; print_r('CMS created'); echo "</pre>"; echo "<hr>"; */
-			self::$instance = new CMS();
+			// constructor registers itself in self::$instance, so calls to Instance()
+			// made during construction get the in-progress object instead of recursing
+			new CMS();
 		}
 		return self::$instance;
 	}
@@ -379,6 +378,9 @@ final class CMS {
 	}
 
 	private function __construct() {
+		// register singleton before anything can call CMS::Instance() re-entrantly
+		// otherwise each nested call builds another CMS (unbounded if session_start fails)
+		self::$instance = $this;
 
 		// setup domain
 		if ($_ENV["domain"]=='auto') {
@@ -430,6 +432,11 @@ final class CMS {
 		
 		
 		if( session_status() == PHP_SESSION_NONE && $this->need_session) {
+			// drop malformed session ids, php refuses them and session_start() fails
+			$sid = $_COOKIE[session_name()] ?? null;
+			if ($sid !== null && (!is_string($sid) || !preg_match('/^[A-Za-z0-9,-]{1,256}$/', $sid))) {
+				unset($_COOKIE[session_name()]);
+			}
 			session_start();
 			$session_user_id = null;
 			if (isset($_SESSION['user_id'])) {
