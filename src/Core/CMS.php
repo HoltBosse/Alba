@@ -154,8 +154,15 @@ final class CMS {
 
 	public static function raise_404(): void {
 		ob_end_clean ();ob_end_clean ();
+		// percent-encode bytes that aren't valid UTF-8 so they can be stored in utf8mb4 columns
+		// (strict mode rejects invalid sequences with error 1366); valid sequences are kept as-is
+		$sanitize_utf8 = fn(string $s): string => mb_check_encoding($s, 'UTF-8') ? $s : preg_replace_callback(
+			'/[\x00-\x7F]|[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2}|(.)/s',
+			fn($m) => isset($m[1]) ? '%' . strtoupper(bin2hex($m[1])) : $m[0],
+			$s
+		);
 		// check if we need to redirect this page
-		$relative_url = rtrim(CMS::Instance()->request, '/');
+		$relative_url = $sanitize_utf8(rtrim(CMS::Instance()->request, '/'));
 		if(CMS::Instance()->isAdmin()) {
 			$relative_url = "/admin" . $relative_url;
 		}
@@ -187,8 +194,14 @@ final class CMS {
 						if (!$ignore_file && !$ignore_request) {
 							// create new redirect
 							$user_id_int = CMS::Instance()->user->id ? CMS::Instance()->user->id : 0;
-							$params = [$relative_url, $_SERVER['HTTP_REFERER'], $user_id_int , $user_id_int, $domainIndex];
-							DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits, domain) VALUES(0,?,?,?,?,"auto",1,?)', $params);
+							$referer = mb_strcut($sanitize_utf8($_SERVER['HTTP_REFERER'] ?? ''), 0, 2000, 'UTF-8');
+							$params = [$relative_url, $referer, $user_id_int , $user_id_int, $domainIndex];
+							try {
+								DB::exec('INSERT INTO redirects (`state`, old_url, referer, created_by, updated_by, note, hits, domain) VALUES(0,?,?,?,?,"auto",1,?)', $params);
+							} catch (\PDOException $e) {
+								// logging a 404 must never prevent the 404 page from rendering
+								error_log("Failed to record 404 for {$relative_url}: " . $e->getMessage());
+							}
 						}
 					}
 				}
