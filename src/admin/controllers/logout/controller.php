@@ -8,3 +8,4 @@ session_destroy();
 $_SESSION = [];
 //print_r ($_SESSION);
 header('Location: ' . $_ENV["uripath"] . "/admin");
+exit(0);
