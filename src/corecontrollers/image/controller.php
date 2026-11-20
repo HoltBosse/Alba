@@ -193,7 +193,12 @@ function get_image (int $id): ?stdClass {
 	}
 
 	if($image->state==0) {
-		$userGroups = User::get_all_groups_for_user(CMS::Instance()->user->id);
+		$userId = CMS::Instance()->user->id;
+		if($userId === null) {
+			http_response_code(401);
+			exit(0);
+		}
+		$userGroups = User::get_all_groups_for_user($userId);
 		//check that user has backend access
 		$hasBackendAccess = in_array(1, array_column($userGroups, 'backend'));
 		if(!$hasBackendAccess) {
@@ -270,7 +275,7 @@ if ($segsize==2 && !$req_width && !$req_format && $req_quality==75) {
 			}
 			// got int size
 			// NO UPSCALING - preserves quality
-			if ($image->width <= $size) {
+			if ($image->width && $image->width <= $size) {
 				$size = $image->width;
 			}
 			// if format shifted, add additional suffix to processed filename
