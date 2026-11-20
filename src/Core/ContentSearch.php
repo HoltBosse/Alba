@@ -3,7 +3,7 @@ namespace HoltBosse\Alba\Core;
 
 Use HoltBosse\DB\DB;
 Use \Exception;
-use HoltBosse\Form\{Input, Form, Field};
+use HoltBosse\Form\{Input, Form};
 
 class ContentSearch {
 	// TODO
@@ -60,6 +60,23 @@ class ContentSearch {
 		$this->page_size=Configuration::get_configuration_value ('general_options', 'pagination_size'); // default to system default
 	}
 
+	/**
+	 * Returns the name of a custom_fields.json field definition if it should be queried
+	 * (not explicitly ignored, and saveable - fields without a save option are assumed saveable)
+	 */
+	private function getQueryableFieldName(mixed $custom_field): ?string {
+		if (!is_object($custom_field) || !isset($custom_field->name) || !is_string($custom_field->name)) {
+			return null;
+		}
+		if (in_array($custom_field->name, $this->ignore_fields)) {
+			return null;
+		}
+		if (isset($custom_field->save) && $custom_field->save !== true) {
+			return null;
+		}
+		return $custom_field->name;
+	}
+
 	public function get_count(): int {
 		return $this->count;
 	}
@@ -88,17 +105,9 @@ class ContentSearch {
 				if ($this->fetch_all) {
 					// get all saveable, not explicitly ignored fields
 					foreach ($custom_fields->fields as $custom_field) {
-						/** @var Field $custom_field */
-						if (!in_array($custom_field->name,$this->ignore_fields)) {
-							if (isset($custom_field->save)) { //@phpstan-ignore-line
-								if ($custom_field->save===true) {
-									$this->list_fields[] = $custom_field->name;
-								}
-							}
-							else {
-								// assume saveable, add to query list
-								$this->list_fields[] = $custom_field->name;
-							} 
+						$field_name = $this->getQueryableFieldName($custom_field);
+						if ($field_name !== null) {
+							$this->list_fields[] = $field_name;
 						}
 					}
 				}
@@ -108,20 +117,10 @@ class ContentSearch {
 					// checking it's not ignored and is an actual saveable field
 					if (property_exists($custom_fields,'list')) {
 						foreach ($custom_fields->list as $list_name) {
-							// check if field is explicitly saveable or no saveable option set
 							foreach ($custom_fields->fields as $custom_field) {
-								if (!in_array($custom_field->name,$this->ignore_fields)) {
-									if ($custom_field->name==$list_name) {
-										if (isset($custom_field->save)) {
-											if ($custom_field->save===true) {
-												$this->list_fields[] = $custom_field->name;
-											}
-										}
-										else {
-											// assume saveable, add to query list
-											$this->list_fields[] = $custom_field->name;
-										} 
-									}
+								$field_name = $this->getQueryableFieldName($custom_field);
+								if ($field_name !== null && $field_name==$list_name) {
+									$this->list_fields[] = $field_name;
 								}
 							}
 						}

@@ -19,10 +19,12 @@ foreach ($iterator as $file) {
     }
 }
 
-test("Fields are valid", function ($file) {
-    $contents = json_decode(File::getContents($file));
+foreach ($files as $file) {
+    test("Fields are valid in {$file}", function () use ($file) {
+        $contents = json_decode(File::getContents($file));
 
-    foreach($contents->fields as $field) {
-        expect(new (Form::getFieldClass($field->type)))->toBeInstanceOf(Field::class);
-    }
-})->with($files);
+        foreach($contents->fields as $field) {
+            expect(new (Form::getFieldClass($field->type)))->toBeInstanceOf(Field::class);
+        }
+    });
+}
